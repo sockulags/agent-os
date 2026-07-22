@@ -1,0 +1,13 @@
+{
+  "name": "agent-os-marketplace",
+  "owner": {
+    "name": "Agent OS Maintainers"
+  },
+  "plugins": [
+    {
+      "name": "agent-os",
+      "source": "./",
+      "description": "A lightweight agent operating system with explicit workflows and automatic disciplines, shared between Claude Code and Codex."
+    }
+  ]
+}

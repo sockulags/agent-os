@@ -1,0 +1,6 @@
+{
+  "name": "agent-os",
+  "description": "A lightweight agent operating system with explicit workflows and automatic disciplines, shared between Claude Code and Codex.",
+  "version": "0.2.0",
+  "skills": "./skills/"
+}
