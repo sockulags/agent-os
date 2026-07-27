@@ -10,7 +10,7 @@ Turn a rough idea into a spec the user can approve without follow-up questions. 
 
 ## Steps
 
-1. **Read before asking.** Explore the repo and its project policy (design system location, conventions, verify commands) first. Never ask a question the repo already answers.
+1. **Read before asking.** Explore the repo and its project policy (design system location, conventions, verify commands) first. When invoked on a chart-work branch, read its map link and canonical decision receipts; preserve those decisions and ask only what the graduated branch left open. Never ask a question the repo or its decision evidence already answers.
 2. **Interview one decision at a time.** Present each open decision with a recommendation and the reason for it. Grill until the spec is decision-complete: scope, non-goals, acceptance criteria, affected seams. Collapse into digestible chunks for sign-off rather than one giant questionnaire.
 3. **Visualize.** Every feature gets a visualization before the spec is final:
    - Backend feature: a Mermaid flow diagram of the affected flow.

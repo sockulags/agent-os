@@ -3,6 +3,7 @@
 #
 # Semantics (locked in the agent-os plan, M3):
 #   - No block in target      -> append exactly one block, preserve everything else.
+#   - Empty target file       -> treated as "no block"; the block becomes the whole file.
 #   - Exactly one well-formed -> replace only the content between the markers.
 #   - Duplicated, crossed, or half-open markers -> abort without mutation, exit 2.
 #   - -Check                  -> read-only; exit 0 in sync, exit 1 on drift/missing, never writes.
@@ -42,7 +43,9 @@ foreach ($target in $Targets) {
         continue
     }
 
+    # An empty file returns $null from -Raw, which would throw in Matches below.
     $content = Get-Content -Raw -Path $target
+    if ($null -eq $content) { $content = '' }
     $beginCount = ([regex]::Matches($content, [regex]::Escape($BeginMarker))).Count
     $endCount   = ([regex]::Matches($content, [regex]::Escape($EndMarker))).Count
 
@@ -51,7 +54,7 @@ foreach ($target in $Targets) {
             Write-Output "DRIFT  $label : managed block missing"
             $exit = 1
         } else {
-            $sep = if ($content.EndsWith("`n")) { "`n" } else { "`n`n" }
+            $sep = if ($content.Length -eq 0) { '' } elseif ($content.EndsWith("`n")) { "`n" } else { "`n`n" }
             Set-Content -NoNewline -Path $target -Value ($content + $sep + $block + "`n")
             Write-Output "ADDED  $label : appended managed block"
         }

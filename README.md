@@ -8,6 +8,7 @@ Claude Code and Codex. One skill source, two platforms, ceremony proportional to
 | Skill | Bucket | Invocation | Purpose |
 |---|---|---|---|
 | `init-agent-os` | workflow | manual | Machine setup (managed policy blocks) or repo policy interview |
+| `chart-work` | workflow | manual | Chart broad work as a parallel graph of evidence-backed decision tickets; spawn side paths and graduate bounded branches |
 | `shape-work` | workflow | manual | Interview → decision-complete spec + visualization (Mermaid/mockup) |
 | `deliver-work` | workflow | manual | Stateful step files: readiness → plan → checkpoint → implement → review → verify → PR |
 | `dispatch-next` | workflow | manual | Pick exactly one decision-ready action from live GitHub state; shadow by default |

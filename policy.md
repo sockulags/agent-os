@@ -24,10 +24,10 @@ Rules:
 - Never force the reader to cross-reference labels or numbering invented earlier in the text — say what you mean in place.
 - Explanations belong in prose; tables only for short enumerable facts.
 - Calibrate tone to the topic: playfulness is fine, neutral and factual the moment the subject is serious. When in doubt, it is serious.
-- Orchestration is opt-in: `/agent-os:shape-work`, `/agent-os:deliver-work`, `/agent-os:dispatch-next`, `/agent-os:init-agent-os` exist for planned work; never self-invoke them.
+- Orchestration is opt-in: `/agent-os:chart-work`, `/agent-os:shape-work`, `/agent-os:deliver-work`, `/agent-os:dispatch-next`, `/agent-os:init-agent-os` exist for planned work; never self-invoke them.
 
 ## Preferences (seed defaults — project policy overrides)
 
 - UI feedback under ~250 ms; feedback must not block the next interaction.
 - Own design identity; do not imitate the look of well-known apps.
-- Every repo keeps a living project policy (design system location, verify commands, conventions, gotchas, merge policy, durable lessons). It grows over time; `init-agent-os` seeds it.
+- Every repo keeps a living project policy (planning surface and decision-work conventions, design system location, verify commands, conventions, gotchas, merge policy, durable lessons). It grows over time; `init-agent-os` seeds it.

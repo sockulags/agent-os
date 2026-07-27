@@ -13,7 +13,9 @@ One run, one decision. The dispatcher chooses work; it never does the work.
 1. **Learn the local contract.** Read the repo's project policy and `CLAUDE.md`/`AGENTS.md` for queue rules, labels, lanes, and roles. The contract lives in the repo — this skill hardcodes no repo-specific labels or role names.
 2. **Read live state**: open issues, open PRs, CI status — using read-only commands only (see hard rules).
 3. **Prioritize work in flight first.** An open PR awaiting review or a red CI run outranks starting anything new.
-4. **Select exactly one target** that is decision-ready: everything needed to act exists (clear acceptance criteria, no open product questions). Work that needs product or planning decisions is routed to `shape-work`/`deliver-work` — it is never dispatched as implementation.
+4. **Select exactly one target.** Route an open map decision ticket to `chart-work`, a graduated
+   branch to `shape-work`, and only decision-complete implementation to `deliver-work`. A captured
+   spawned issue stays ordinary backlog until separately prioritized; capture is not dispatch.
 5. **Output one decision**: the target, the motivation, the proposed role, and the proposed next action. Nothing else.
 
 ## Modes

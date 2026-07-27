@@ -26,6 +26,8 @@ Invoked in a repo working directory.
    - **Merge policy** — may agents merge? Under what conditions (green CI, review)? No answer recorded means no agent ever merges.
    - **Verify commands** — the exact commands that prove the project works (test, build, lint, run).
    - **Design system** — where tokens/components live, for the frontend mockup step.
+   - **Planning surface** — tracker or local folders; map and decision-ticket representation; type
+     labels; blocking, claiming, spawned-issue links, and branch graduation.
    - **Branch/PR flow** — target branch, PR conventions, who reviews.
    - **Conventions and gotchas** worth recording now.
 3. Draft the project policy section (seeded from the Preferences section of global `policy.md`), show it as a diff against the repo's policy file (`CLAUDE.md`/`AGENTS.md`, or a new `policy.md` if the repo has neither).
