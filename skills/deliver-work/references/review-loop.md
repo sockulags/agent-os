@@ -59,6 +59,29 @@ For each finding, reproduce it first, add a regression check when practical, mak
 
 Run the original verification plus every new regression check. Then request at most one targeted re-review covering the fixes and their immediate interactions. Route new material findings through classification once; surface anything unresolved instead of starting an unbounded review loop.
 
+## Decide out-of-scope follow-ups
+
+After the fixer and any targeted re-review, collect every evidence-supported
+`out-of-scope-follow-up` from the full review, including simplifier findings. Keep them out of the
+current diff and do not send them to the fixer.
+
+Before completing review, write each candidate to the review receipt as
+`awaiting-follow-up-choice`, then present one concise list with a proposed issue title, the finding's
+value, and its evidence. Ask the user once whether to create issues for the listed findings or leave
+them unfiled; when there are several, the user may choose a subset. HALT before any tracker mutation
+and before setting the work to `reviewed`.
+
+After the user decides:
+
+- For each approved issue, check the project's planning surface for a duplicate, then create or link
+  one ordinary backlog issue with the work item or PR and finding ID as origin. Capturing the issue
+  does not prioritize or implement it.
+- For each declined issue, record `left-unfiled: user choice`.
+- Record an approved issue as `issue-created: <link>` or `existing-issue: <link>`.
+
+Do not ask about rejected, duplicate, or unsupported findings. If no
+`out-of-scope-follow-up` remains after classification, continue without this decision.
+
 ## Review receipt
 
 Before leaving review, record:
@@ -72,4 +95,8 @@ targeted re-review: not-needed | pass | concerns
 unresolved: none | exact blocker/decision
 ```
 
-The receipt is complete only when every finding maps to fixed, rejected, deferred, decision-needed, or unresolved. Fresh completion evidence belongs to Step 6, not this receipt.
+The receipt is complete only when every finding maps to fixed, rejected, deferred, issue-created,
+existing-issue, left-unfiled, decision-needed, or unresolved. For an
+`out-of-scope-follow-up`, `deferred` does not substitute for the user's choice: until that choice is
+recorded it remains `awaiting-follow-up-choice` and keeps review incomplete. Fresh completion
+evidence belongs to Step 6, not this receipt.

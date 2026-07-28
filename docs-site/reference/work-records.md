@@ -38,9 +38,10 @@ before it. `implementing` carries a `baseline_sha` captured before the first mut
 carries a frozen review target — the baseline, the exact changed and untracked file list, and a
 SHA-256 snapshot hash — and no mutation is permitted until every independent report returns.
 
-`reviewed` means every finding has a disposition and the receipt holds no unresolved blocker or
-decision. `verified` means every acceptance criterion traces to fresh evidence of the matching class.
-`delivered` means the requested delivery boundary was reached and evidenced.
+`reviewed` means every finding has a disposition, every out-of-scope follow-up records the user's
+create-or-leave choice, and the receipt holds no unresolved blocker or decision. `verified` means
+every acceptance criterion traces to fresh evidence of the matching class. `delivered` means the
+requested delivery boundary was reached and evidenced.
 
 ## Body sections
 

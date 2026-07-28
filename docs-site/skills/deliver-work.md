@@ -52,7 +52,9 @@ target: baseline, exact changed and untracked file list, and a SHA-256 snapshot 
 
 **5 — Review.** Run the independent [review loop](/reference/review-loop) against the frozen target at
 proportional depth, classify findings by evidence, send only validated findings to one fixer, allow at
-most one targeted re-review, and write the review receipt.
+most one targeted re-review, and write the review receipt. Evidence-supported out-of-scope findings
+stay out of the diff and pause review for one explicit choice: create ordinary backlog issues for all
+or a selected subset, or leave them unfiled.
 
 **6 — Verify.** Apply [`verify-before-done`](/skills/verify-before-done) to the resulting candidate,
 not the pre-fix snapshot. Run every planned verification plus the regression checks added during
