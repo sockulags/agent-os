@@ -17,10 +17,9 @@ ticket. When the user cannot judge the difference in words, convert the ticket t
 
 ## Prototype
 
-Build the smallest disposable comparison that makes the contested behavior observable. Offer the
-alternatives side by side or behind one obvious toggle, verify that the artifact actually runs, and
-ask the user to perform the shortest meaningful task. Record the artifact, observation, and user's
-judgment; the prototype is evidence, not the destination deliverable.
+Follow [prototypes.md](prototypes.md) for artifact and verification mechanics. Preserve both the
+observed user reaction and the user's explicit judgment with rationale as distinct decision
+evidence.
 
 ## Research
 

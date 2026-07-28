@@ -16,6 +16,7 @@ proposed layout is:
 ```text
 planning/<map-slug>/map.md
 planning/<map-slug>/decisions/<ticket-slug>.md
+planning/<map-slug>/shape-work/<branch-slug>.md
 backlog/<spawned-issue-slug>.md
 ```
 
@@ -86,7 +87,7 @@ the ticket, not to a body that pretends the choice is still open.
 
 ## Resolution receipt
 
-Close with one receipt:
+Prepare one receipt while the ticket remains open:
 
 ```text
 ## Decision
@@ -108,6 +109,48 @@ A path not worth pursuing is parked or ruled out with the reason recorded.
 
 A receipt without evidence or route consequence is a note, not a resolved decision.
 
+## Shape-work handoff
+
+A bounded branch creates exactly one separate open `shape-work` handoff before its canonical source
+decision ticket closes. The handoff is the next work object; the closed decision ticket remains
+canonical only for the decision it resolved.
+
+Use the tracker representation named by policy. The local fallback is
+`planning/<map-slug>/shape-work/<branch-slug>.md`. Tracker and local-file handoffs contain the same
+sections:
+
+```text
+## Shape-work handoff
+## Goal
+## Non-goals
+## Map
+## Source decisions
+## Prototype artifacts
+## Decisions already settled
+## Questions left for shape-work
+## Next action
+Run shape-work on this handoff.
+```
+
+`Map` and `Source decisions` link the origin map and canonical source decision receipts.
+`Prototype artifacts` links every relevant stable artifact. Settled decisions stay out of the
+remaining questions, so a fresh session can continue without hidden conversation context or
+re-litigating them.
+
+Creation and closure follow one order:
+
+1. Derive a stable identity from the origin map, source decision ticket and branch slug.
+2. Re-read the planning surface and reuse the existing open handoff with that identity. Create one
+   only when none exists; if several match, stop before closure and report the conflict.
+3. Populate the handoff and keep it open.
+4. Link the map's `Graduated branches` entry and the source receipt's
+   `Graduated to shape-work` entry to that open handoff.
+5. Re-read both links, then close the source decision ticket.
+
+This makes retries idempotent. Map approval authorizes creating the planning handoff, but shaping and
+implementation remain separate user-controlled actions. The completion report names the clickable
+handoff and says `Run shape-work on this handoff.` It does not start `shape-work`.
+
 ## Elicitation by type
 
 **Grilling** starts by asking what hurts, fails or feels wrong in the current experience, then presents
@@ -117,10 +160,9 @@ option. Silence, momentum, approval of the map or approval of a bundle is not an
 individual ticket — and when the user cannot judge the difference in words, the ticket converts to
 `prototype`.
 
-**Prototype** builds the smallest disposable comparison that makes the contested behavior observable,
-offers the alternatives side by side or behind one obvious toggle, verifies the artifact actually
-runs, and asks the user to perform the shortest meaningful task. The prototype is evidence, not the
-destination deliverable.
+**Prototype** follows [Prototype evidence](/reference/prototypes) for the smallest useful comparison,
+stable artifact, verification receipt, observation, judgment and retention record. The prototype is
+evidence, not the destination deliverable.
 
 **Research** answers factual questions with primary sources, repository evidence or direct
 measurements, recording source links, commands, relevant outputs and uncertainty. A plausible

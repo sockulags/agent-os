@@ -7,13 +7,14 @@ is gone.
 ```mermaid
 flowchart TD
     A[Broad, foggy effort] -->|chart-work| B[Map + decision tickets]
-    B -->|ticket resolved, branch bounded| C[Graduated branch]
-    C -->|shape-work| D[Decision-complete spec]
+    B -->|evidence supports decision| C[Closed source decision ticket]
+    C -.->|receipt points to| H[Open shape-work handoff]
+    H -->|user runs shape-work| D[Decision-complete spec]
     A2[Bounded idea with open questions] -->|shape-work| D
     D -->|deliver-work| E[Reviewed, verified PR]
     A3[Decision-ready fix] -->|deliver-work| E
     F[dispatch-next] -.->|selects one target| B
-    F -.-> C
+    F -.-> H
     F -.-> D
 ```
 
@@ -31,9 +32,11 @@ several interdependent open product decisions during its readiness step and halt
 ## Handover rules
 
 A chart-work branch **graduates** when its remaining product decisions fit inside a single shape-work
-interview. Graduation carries the branch's decision receipts with it, and `shape-work` is required to
-read them and ask only what the branch left open. Decisions do not get re-litigated at the next
-level.
+interview. Before the canonical source decision closes, chart-work creates or reuses exactly one open
+shape-work handoff, links it from the map and source receipt, and keeps it as the next work object.
+The handoff carries the branch's decision receipts and prototype artifacts, names only the remaining
+questions, and says `Run shape-work on this handoff.` Chart-work waits for that user-controlled
+invocation. `shape-work` reads the handoff and does not re-litigate settled decisions.
 
 A spec is **decision-complete** when every open product question is either answered or listed
 explicitly as deferred with an owner. That is the contract `deliver-work` relies on — it does not

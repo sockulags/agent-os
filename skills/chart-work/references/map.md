@@ -13,6 +13,7 @@ Where no tracker exists, use the policy's local planning folders. With no local 
 ```text
 planning/<map-slug>/map.md
 planning/<map-slug>/decisions/<ticket-slug>.md
+planning/<map-slug>/shape-work/<branch-slug>.md
 backlog/<spawned-issue-slug>.md
 ```
 
@@ -83,7 +84,7 @@ resolves the ticket, not to a body that pretends the choice is still open.
 
 ## Resolution
 
-Close with one resolution receipt:
+Prepare one resolution receipt while the ticket remains open:
 
 ```text
 ## Decision
@@ -107,3 +108,43 @@ Route each consequence explicitly:
 - A path not worth pursuing is parked or ruled out with the reason recorded.
 
 A receipt without evidence or route consequence is a note, not a resolved decision.
+
+## Shape-work handoff
+
+A bounded branch creates exactly one separate open `shape-work` handoff before its canonical source
+decision ticket closes. This handoff is the next work object; the closed decision ticket remains
+canonical only for the decision it resolved.
+
+Use the tracker representation named by policy. With the local fallback, create
+`planning/<map-slug>/shape-work/<branch-slug>.md`. The open handoff contains:
+
+```text
+## Shape-work handoff
+## Goal
+## Non-goals
+## Map
+## Source decisions
+## Prototype artifacts
+## Decisions already settled
+## Questions left for shape-work
+## Next action
+Run shape-work on this handoff.
+```
+
+Link the map and canonical source decision receipts under `Map` and `Source decisions`. Link every
+relevant stable prototype artifact under `Prototype artifacts`. Keep settled decisions out of the
+remaining questions so a fresh session can continue without hidden conversation context or
+re-litigating them.
+
+Create the handoff in this order:
+
+1. Derive stable identity from the origin map, source decision ticket, and branch slug.
+2. Re-read the planning surface and reuse the existing open handoff with that identity; create one
+   only when none exists. If several match, stop before closure and report the conflict.
+3. Populate the handoff and keep it open.
+4. Link the map's `Graduated branches` entry and the source receipt's
+   `Graduated to shape-work` entry to that open handoff.
+5. Re-read both links, then close the source decision ticket.
+
+This ordering makes handoff creation idempotent on retry. Map approval authorizes creating this
+planning handoff, but shaping and implementation remain separate user-controlled actions.

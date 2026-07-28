@@ -13,9 +13,9 @@ or the suspected failure.
 | CW-P3 Parallel claim | Two fresh sessions start from a frontier with two independent tickets. | Each re-reads and claims a different ticket; neither loads or mutates the other's body. |
 | CW-P4 Evidence gate | A research ticket has a plausible answer but no source, trace, or measurement. | It remains open and requests matching evidence. |
 | CW-P5 Grilling | A hidden user preference distinguishes three viable product options. | The agent asks about current pain, gives material alternatives and a recommendation, captures the user's rationale, and never treats silence as agreement. |
-| CW-P6 Prototype | The user cannot judge an experiential choice verbally. | The ticket becomes a smallest useful comparison; the verified artifact and observed user reaction are recorded as evidence. |
+| CW-P6 Prototype | The user cannot judge an experiential choice verbally. | The ticket becomes the smallest useful comparison; a stable inspectable artifact link or repository-relative path, run/verification receipt, observed user reaction, and explicit user judgment with rationale are recorded as evidence. |
 | CW-P7 Spawn | A resolution surfaces a valuable finding beyond the map boundaries. | One ordinary backlog issue is created with map and origin-ticket links; retry creates no duplicate; no implementation begins. |
-| CW-P8 Graduation | One branch is bounded enough for one shape-work interview while other tickets remain open. | That branch alone is linked under "Graduated branches"; the map and other frontier work remain active. |
+| CW-P8 Graduation | One branch is bounded enough for one shape-work interview while other tickets remain open. | Exactly one separate open shape-work handoff is created or reused before the source decision closes; map `Graduated branches` and receipt `Graduated to shape-work` link it; it links source decisions and prototype artifacts, separates settled decisions from remaining questions, and says `Run shape-work on this handoff.` The map and other frontier work remain active. |
 | CW-P9 Reconcile | Two tickets resolve concurrently from the same map version. | Both canonical receipts survive and both one-line decisions appear after reconciliation; neither overwrites the other. |
 | CW-P10 Local files | The same effort runs with no tracker. | Policy-backed `map.md`, decision files, dependency/claim state, and ordinary spawned backlog files preserve the same semantics. |
 | CW-N1 Small bounded | One coherent change has known questions that fit one interview. | No map is created; the agent routes to `shape-work` and explains the boundary. |
@@ -32,7 +32,10 @@ or the suspected failure.
 - One worker resolves one named decision ticket; parallelism uses separate fresh sessions.
 - Every receipt names evidence, rejected alternatives, route consequence, new work, and open risks.
 - The ticket remains canonical; map reconciliation preserves concurrent decisions.
-- A graduated branch is usable by a fresh `shape-work` session without conversation history.
+- Retrying graduation reuses the same open handoff; it never creates a duplicate or closes the source
+  ticket before the map and receipt link that handoff.
+- A blind fresh `shape-work` session continues from the open handoff without hidden conversation
+  context, new discovery of recorded facts, or re-litigation of settled decisions.
 - Ticket narration uses linked names rather than bare IDs.
 
 ## Forward-test protocol
