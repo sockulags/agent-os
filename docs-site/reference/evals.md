@@ -5,11 +5,11 @@ description can be shown not to have broken invocation.
 
 ## Layout
 
-`evals/cases/` holds the versioned trigger and behavior cases. Every discipline skill has at least two
-positive and two negative cases: positive cases are naive prompts that must activate the skill,
-negative cases are adjacent prompts that must not. Workflow skills add non-invocation cases — proving
-they stay dormant until invoked — plus sequential-gate cases that check the workflow halts where it is
-supposed to.
+`evals/cases/` holds the versioned trigger and behavior cases.
+`evals/cases/manifest.json` indexes at least two positive and two negative cases for every skill so
+structural validation can detect missing coverage. Positive cases exercise the intended trigger or
+explicit workflow invocation; negative cases are adjacent prompts that must not activate it.
+Workflow skills also add non-invocation and sequential-gate cases.
 
 `evals/RESULTS.md` holds the compact versioned evidence: date, agent, session type, Superpowers
 status, case, and pass or fail.
@@ -25,6 +25,10 @@ supply the behavior being tested and make a broken skill look healthy.
 Both platforms count separately. A case that passes in Claude Code says nothing about Codex, since
 invocation gating is implemented differently on each — `disable-model-invocation` versus
 `policy.allow_implicit_invocation`.
+
+Run `node scripts/validate-agent-os.mjs` for repository contracts and
+`node scripts/test-validate-agent-os.mjs` for mutation-isolated red cases. These checks cover static
+facts only; semantic behavior still requires live evals and forward tests.
 
 ## Forward tests
 

@@ -33,7 +33,7 @@ Manual skills carry `disable-model-invocation: true` (Claude) and `agents/openai
 
 ## Release routine
 
-1. Validate structure and run trigger evals (see `evals/`).
+1. Run `node scripts/validate-agent-os.mjs`, its red-case suite, and the live evals in `evals/`.
 2. Bump `version` in **both** manifests (`.claude-plugin/plugin.json`, `.codex-plugin/plugin.json`).
 3. Commit with the Git identity configured by the repository or current session, without AI attribution, and push.
 4. Update the plugin on both platforms; verify the new version loaded.
@@ -54,7 +54,8 @@ name. A skill edit and its documentation page are one change — the pages under
 
 ## Evals
 
-- `evals/cases/` — versioned trigger and behavior cases: per discipline skill at least 2 positive + 2 negative; workflow skills have non-invocation cases plus sequential-gate cases.
+- `evals/cases/` — versioned trigger and behavior cases plus `manifest.json`, which indexes at least
+  2 positive and 2 negative cases per skill.
 - `evals/RESULTS.md` — compact versioned evidence: date, agent, session type, Superpowers status, case, pass/fail. Results from sessions with unknown Superpowers status are invalid as acceptance evidence.
 - `evals/runs/` — raw logs, gitignored.
 

@@ -26,7 +26,7 @@ export default withMermaid(defineConfig({
       { text: 'Skills', link: '/skills/', activeMatch: '/skills/' },
       { text: 'Reference', link: '/reference/plugin-manifests', activeMatch: '/reference/' },
       {
-        text: 'v0.4.1',
+        text: 'v0.4.2',
         items: [
           { text: 'Releases', link: 'https://github.com/sockulags/agent-os/releases' },
           { text: 'Commit history', link: 'https://github.com/sockulags/agent-os/commits/main' }

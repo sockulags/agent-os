@@ -53,6 +53,8 @@ target: baseline, exact changed and untracked file list, and a SHA-256 snapshot 
 **5 — Review.** Run the independent [review loop](/reference/review-loop) against the frozen target at
 proportional depth, classify findings by evidence, send only validated findings to one fixer, allow at
 most one targeted re-review, and write the review receipt. Evidence-supported out-of-scope findings
+are typed as `product`, `cleanup`, or `harness`; harness candidates carry failure evidence, recurrence
+risk, an enforcement layer, red case, proposed guardrail, and removal condition. All three kinds
 stay out of the diff and pause review for one explicit choice: create ordinary backlog issues for all
 or a selected subset, or leave them unfiled.
 

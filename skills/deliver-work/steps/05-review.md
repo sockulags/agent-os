@@ -14,7 +14,11 @@ to Step 4.
 2. Read [../references/review-loop.md](../references/review-loop.md) completely and select its proportional depth.
 3. Run the required independent reviewers against the same frozen target. Keep every reviewer read-only and isolated from implementer rationale and other reports.
 4. Classify evidence, send only validated in-scope findings to one fixer, rerun affected checks, and allow at most one targeted re-review.
-5. Collect all evidence-supported `out-of-scope-follow-up` findings from the completed review. Write their pending dispositions to the review receipt, present the issue candidates together, and HALT to ask whether to create issues for all, a selected subset, or none. Do not mutate the tracker before the answer.
+5. Collect all evidence-supported `out-of-scope-follow-up` findings from the completed review,
+   classify each as `product`, `cleanup`, or `harness`, and apply the candidate schema in the review
+   reference. Write their pending dispositions to the review receipt, present the issue candidates
+   together, and HALT to ask whether to create issues for all, a selected subset, or none. Do not
+   mutate the tracker, policy, scripts, hooks, or CI before the answer.
 6. Record each follow-up choice and finish the review receipt in the work record, or retain the same fields for the one-shot final report. Skip the question when no supported out-of-scope follow-up exists.
 7. Set tracked work to `status: reviewed` and `next_step: steps/06-verify.md` only when the receipt has no unresolved blocker, decision, or unanswered follow-up choice.
 

@@ -65,17 +65,48 @@ After the fixer and any targeted re-review, collect every evidence-supported
 `out-of-scope-follow-up` from the full review, including simplifier findings. Keep them out of the
 current diff and do not send them to the fixer.
 
-Before completing review, write each candidate to the review receipt as
-`awaiting-follow-up-choice`, then present one concise list with a proposed issue title, the finding's
-value, and its evidence. Ask the user once whether to create issues for the listed findings or leave
-them unfiled; when there are several, the user may choose a subset. HALT before any tracker mutation
-and before setting the work to `reviewed`.
+Give every candidate exactly one kind:
+
+- `product`: a valuable behavior or capability outside the approved acceptance criteria.
+- `cleanup`: a behavior-preserving simplification or maintenance improvement.
+- `harness`: a recurring failure pattern that may deserve stronger enforcement.
+
+Record every candidate as:
+
+```text
+finding_id: <review finding>
+kind: product | cleanup | harness
+title: <proposed issue title>
+value: <why capture is worthwhile>
+evidence: <observable support>
+disposition: awaiting-follow-up-choice
+```
+
+A `harness` candidate also records:
+
+```text
+failure_evidence: <observed failure or near miss>
+recurrence_risk: <why the failure can repeat>
+enforcement_layer: test-lint | script-hook-ci | skill-eval | policy | decision-hitl
+red_case: <smallest check that currently fails>
+proposed_guardrail: <bounded enforcement change>
+removal_condition: <evidence that would make the guardrail unnecessary>
+```
+
+Use the [writing-skills enforcement ladder](../../writing-skills/SKILL.md#enforcement-ladder) to
+recommend the layer; the review does not install the guardrail.
+
+Before completing review, write each candidate to the review receipt, then present one concise list
+with its kind, proposed issue title, value, and evidence. Ask the user once whether to create issues
+for all listed findings, a selected subset, or none. HALT before any tracker, policy, script, hook,
+or CI mutation and before setting the work to `reviewed`.
 
 After the user decides:
 
 - For each approved issue, check the project's planning surface for a duplicate, then create or link
-  one ordinary backlog issue with the work item or PR and finding ID as origin. Capturing the issue
-  does not prioritize or implement it.
+  one ordinary backlog issue with the work item or PR, finding ID, kind, and candidate fields as
+  origin. Capturing the issue does not prioritize or implement it; a harness issue still requires
+  its own approved delivery before it can change enforcement.
 - For each declined issue, record `left-unfiled: user choice`.
 - Record an approved issue as `issue-created: <link>` or `existing-issue: <link>`.
 

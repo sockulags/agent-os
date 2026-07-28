@@ -82,15 +82,24 @@ After the fixer and any targeted re-review, collect every evidence-supported
 `out-of-scope-follow-up` from the full review, including findings from the simplifier. They stay out
 of the current diff and never go to the fixer.
 
-Before review can complete, write each candidate to the review receipt as
-`awaiting-follow-up-choice`, then show one concise list with a proposed issue title, the value of the
-finding and its evidence. Ask once whether to create issues for the listed findings or leave them
-unfiled; if there are several, the user can select a subset. Halt before mutating the tracker or
-moving the work to `reviewed`.
+Give every candidate one kind: `product` for valuable behavior outside acceptance, `cleanup` for a
+behavior-preserving maintenance improvement, or `harness` for a recurring failure pattern that may
+deserve stronger enforcement.
+
+Every candidate records the finding ID, kind, proposed issue title, value, evidence, and
+`awaiting-follow-up-choice` disposition. A harness candidate additionally records failure evidence,
+recurrence risk, the recommended enforcement layer, a red case, a bounded proposed guardrail, and a
+removal condition. The [writing-skills enforcement ladder](/skills/writing-skills#enforcement-ladder)
+selects the lowest reliable layer; review does not install the guardrail.
+
+Show all candidates in one concise list and ask once whether to create issues for all, a selected
+subset, or none. Halt before mutating the tracker, policy, scripts, hooks or CI, or moving the work
+to `reviewed`.
 
 For each approved issue, first check the project's planning surface for a duplicate. Then create or
-link one ordinary backlog issue carrying the current work item or PR and finding ID as its origin.
-This capture does not prioritize or implement the issue. Record the disposition as
+link one ordinary backlog issue carrying the current work item or PR, finding ID, kind, and candidate
+fields as its origin. This capture does not prioritize or implement the issue; a harness issue still
+needs separately approved delivery before enforcement changes. Record the disposition as
 `issue-created: <link>` or `existing-issue: <link>`. Record declined candidates as
 `left-unfiled: user choice`.
 
