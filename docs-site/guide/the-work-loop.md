@@ -7,9 +7,9 @@ is gone.
 ```mermaid
 flowchart TD
     A[Broad, foggy effort] -->|chart-work| B[Map + decision tickets]
-    B -->|evidence supports decision| C[Closed source decision ticket]
-    C -.->|receipt points to| H[Open shape-work handoff]
-    H -->|user runs shape-work| D[Decision-complete spec]
+    B -->|decision resolves| H[Open shape-work handoff created + linked]
+    H -->|then| C[Source decision ticket closes]
+    C -->|user runs shape-work on the handoff| D[Decision-complete spec]
     A2[Bounded idea with open questions] -->|shape-work| D
     D -->|deliver-work| E[Reviewed, verified PR]
     A3[Decision-ready fix] -->|deliver-work| E
@@ -42,8 +42,9 @@ A spec is **decision-complete** when every open product question is either answe
 explicitly as deferred with an owner. That is the contract `deliver-work` relies on — it does not
 make product decisions, so a hidden open question would resurface as an implementation guess.
 
-Neither handover authorizes implementation on its own. Map approval authorizes map children and
-capture-only spawned issues, and nothing else. The only thing that authorizes product mutation is the
+Neither handover authorizes implementation on its own. Map approval authorizes map children,
+capture-only spawned issues, and creation of the planning-only shape-work handoff. It authorizes
+neither shaping nor implementation. The only thing that authorizes product mutation is the
 `deliver-work` checkpoint.
 
 ## Disciplines run underneath
