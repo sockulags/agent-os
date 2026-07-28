@@ -40,6 +40,19 @@ Match freedom to fragility: prose for judgment calls, templates for preferred pa
 for fragile operations. Paths use forward slashes, and the body is English while user-facing output
 follows the language policy.
 
+## Enforcement ladder
+
+Choose the lowest layer that can reliably prevent the observed failure.
+
+1. A **deterministic invariant** belongs in a test or lint rule with a red case.
+2. A **fragile operation or state transition** belongs in a script, hook or CI check.
+3. **Semantic judgment** belongs in a skill with trigger cases and blind forward tests.
+4. A **contextual preference** belongs in project policy.
+5. **Product intent or mutation authority** belongs in a decision ticket or human gate.
+
+The choice starts from failure evidence and recurrence risk. A preference should not become
+infrastructure, and a machine-checkable invariant should not remain a prose reminder.
+
 ## Anti-patterns
 
 Delete on sight: **no-ops**, lines describing what the agent already does by default; **negation**,

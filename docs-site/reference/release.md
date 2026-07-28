@@ -1,7 +1,8 @@
 # Release routine
 
-1. **Validate structure and run the trigger evals.** Folder names match `name`, frontmatter is
-   complete, manual skills carry both invocation gates. See [Evals](/reference/evals).
+1. **Validate structure and run the trigger evals.** Run
+   `node scripts/validate-agent-os.mjs` and `node scripts/test-validate-agent-os.mjs`, then collect
+   the live trigger and forward-test evidence described in [Evals](/reference/evals).
 2. **Bump `version` in both manifests** — `.claude-plugin/plugin.json` and
    `.codex-plugin/plugin.json`. They are the same version and are bumped together.
 3. **Commit and push**, using the Git identity configured by the repository or the current session,

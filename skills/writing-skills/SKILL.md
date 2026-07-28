@@ -32,6 +32,24 @@ Write in third person. Every word costs context for model-invoked skills; cut an
 - Match freedom to fragility: prose for judgment calls, templates for preferred patterns, exact scripts for fragile operations.
 - Forward slashes in all paths. English body; user-facing output follows the language policy.
 
+## Enforcement ladder
+
+Choose the lowest layer that can reliably stop the failure:
+
+1. **Deterministic invariant → test or lint.** Machine-checkable repository facts belong in an
+   executable validator with a red case.
+2. **Fragile operation or state transition → script, hook, or CI.** Put ordering, identity,
+   idempotency, and exact writes behind one deterministic operation.
+3. **Semantic judgment → skill plus eval.** Use prose for reasoning that depends on meaning, then
+   test it with trigger cases and blind forward tests.
+4. **Context or preference → policy.** Record project-specific defaults where the agent reads them
+   at decision time.
+5. **Product intent or mutation authority → decision ticket or HITL gate.** Keep the choice with the
+   authorized human and record the answer.
+
+Start from observed failure evidence and recurrence risk. Do not promote a preference into
+infrastructure or leave a deterministic invariant as a reminder.
+
 ## Anti-patterns (delete on sight)
 
 - **No-ops**: lines the agent already does by default.

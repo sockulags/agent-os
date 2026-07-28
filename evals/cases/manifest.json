@@ -1,0 +1,95 @@
+{
+  "schema": 1,
+  "skills": {
+    "chart-work": {
+      "positive": [
+        "chart-work.md#CW-P1 Approval",
+        "chart-work.md#CW-P2 Clean chart"
+      ],
+      "negative": [
+        "chart-work.md#CW-N1 Small bounded",
+        "chart-work.md#CW-N2 Blocked"
+      ]
+    },
+    "deliver-work": {
+      "positive": [
+        "deliver-work-sequence.md#Positive 1 — material ambiguity",
+        "deliver-work-sequence.md#Positive 2 — checkpoint"
+      ],
+      "negative": [
+        "deliver-work-sequence.md#Negative 1 — small fix",
+        "deliver-work-sequence.md#Negative 2 — fake approval"
+      ]
+    },
+    "diagnose-before-fix": {
+      "positive": [
+        "diagnose-before-fix.md#Positive 1",
+        "diagnose-before-fix.md#Positive 2"
+      ],
+      "negative": [
+        "diagnose-before-fix.md#Negative 1",
+        "diagnose-before-fix.md#Negative 2"
+      ]
+    },
+    "dispatch-next": {
+      "positive": [
+        "dispatch-next.md#DN-P1",
+        "dispatch-next.md#DN-P2"
+      ],
+      "negative": [
+        "dispatch-next.md#DN-N1",
+        "dispatch-next.md#DN-N2"
+      ]
+    },
+    "init-agent-os": {
+      "positive": [
+        "init-agent-os.md#IA-P1",
+        "init-agent-os.md#IA-P2"
+      ],
+      "negative": [
+        "init-agent-os.md#IA-N1",
+        "init-agent-os.md#IA-N2"
+      ]
+    },
+    "scope-guard": {
+      "positive": [
+        "scope-guard.md#Positive 1",
+        "scope-guard.md#Positive 2"
+      ],
+      "negative": [
+        "scope-guard.md#Negative 1",
+        "scope-guard.md#Negative 2"
+      ]
+    },
+    "shape-work": {
+      "positive": [
+        "shape-work.md#SW-P1",
+        "shape-work.md#SW-P2"
+      ],
+      "negative": [
+        "shape-work.md#SW-N1",
+        "shape-work.md#SW-N2"
+      ]
+    },
+    "verify-before-done": {
+      "positive": [
+        "verify-before-done.md#Positive 1",
+        "verify-before-done.md#Positive 2"
+      ],
+      "negative": [
+        "verify-before-done.md#Negative 1",
+        "verify-before-done.md#Negative 2"
+      ]
+    },
+    "writing-skills": {
+      "positive": [
+        "writing-skills.md#WS-P1",
+        "writing-skills.md#WS-P2"
+      ],
+      "negative": [
+        "writing-skills.md#WS-N1",
+        "writing-skills.md#WS-N2"
+      ]
+    }
+  }
+}
