@@ -16,7 +16,7 @@ proposed layout is:
 ```text
 planning/<map-slug>/map.md
 planning/<map-slug>/decisions/<ticket-slug>.md
-planning/<map-slug>/shape-work/<branch-slug>.md
+planning/<map-slug>/shape-work/<branch-key>.md
 backlog/<spawned-issue-slug>.md
 ```
 
@@ -112,15 +112,20 @@ A receipt without evidence or route consequence is a note, not a resolved decisi
 ## Shape-work handoff
 
 A bounded branch creates exactly one separate open `shape-work` handoff before its canonical source
-decision ticket closes. The handoff is the next work object; the closed decision ticket remains
+decision ticket closes. This handoff is the next work object; the closed decision ticket remains
 canonical only for the decision it resolved.
 
-Use the tracker representation named by policy. The local fallback is
-`planning/<map-slug>/shape-work/<branch-slug>.md`. Tracker and local-file handoffs contain the same
-sections:
+Use the tracker representation named by policy. With the local fallback, create
+`planning/<map-slug>/shape-work/<branch-key>.md`. Tracker and local-file handoffs use the same
+canonical identity: `(origin map, branch key)`. A branch key is stable within its origin map. The
+handoff contains:
 
 ```text
 ## Shape-work handoff
+Status: open
+Origin map: <stable map link/id>
+Branch key: <stable branch slug/key>
+
 ## Goal
 ## Non-goals
 ## Map
@@ -132,24 +137,29 @@ sections:
 Run shape-work on this handoff.
 ```
 
-`Map` and `Source decisions` link the origin map and canonical source decision receipts.
-`Prototype artifacts` links every relevant stable artifact. Settled decisions stay out of the
-remaining questions, so a fresh session can continue without hidden conversation context or
+Link the map and canonical source decision receipts under `Map` and `Source decisions`. Link every
+relevant stable prototype artifact under `Prototype artifacts`. Keep settled decisions out of the
+remaining questions so a fresh session can continue without hidden conversation context or
 re-litigating them.
 
-Creation and closure follow one order:
+Create or reuse the handoff in this order:
 
-1. Derive a stable identity from the origin map, source decision ticket and branch slug.
-2. Re-read the planning surface and reuse the existing open handoff with that identity. Create one
-   only when none exists; if several match, stop before closure and report the conflict.
-3. Populate the handoff and keep it open.
+1. Derive `(origin map, branch key)` and search matching handoffs across all statuses.
+2. If several match, stop before closure and report the conflict. If one match is not open, stop and
+   report its state; never create another or silently reopen it. Reuse one open match, or create an
+   open handoff only when no match exists.
+3. Append missing source decisions and prototype-artifact links idempotently, then update settled
+   decisions and remaining questions without duplicating existing entries.
 4. Link the map's `Graduated branches` entry and the source receipt's
    `Graduated to shape-work` entry to that open handoff.
-5. Re-read both links, then close the source decision ticket.
+5. Re-read both links, record their verification in the action log, then close the source decision
+   ticket.
 
-This makes retries idempotent. Map approval authorizes creating the planning handoff, but shaping and
-implementation remain separate user-controlled actions. The completion report names the clickable
-handoff and says `Run shape-work on this handoff.` It does not start `shape-work`.
+This ordering makes handoff creation idempotent on retry. Map approval authorizes creating this
+planning handoff, but shaping and implementation remain separate user-controlled actions.
+
+The completion report names the clickable handoff and says `Run shape-work on this handoff.` It does
+not start `shape-work`.
 
 ## Elicitation by type
 
