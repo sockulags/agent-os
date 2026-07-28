@@ -3,6 +3,8 @@
 A lightweight personal agent operating system — an Agent Skills framework shared between
 Claude Code and Codex. One skill source, two platforms, ceremony proportional to the work.
 
+**Documentation: [sockulags.github.io/agent-os](https://sockulags.github.io/agent-os/)**
+
 ## Skills
 
 | Skill | Bucket | Invocation | Purpose |
@@ -35,6 +37,20 @@ Manual skills carry `disable-model-invocation: true` (Claude) and `agents/openai
 2. Bump `version` in **both** manifests (`.claude-plugin/plugin.json`, `.codex-plugin/plugin.json`).
 3. Commit with the Git identity configured by the repository or current session, without AI attribution, and push.
 4. Update the plugin on both platforms; verify the new version loaded.
+
+## Documentation site
+
+`docs-site/` is a [VitePress](https://vitepress.dev) site published to GitHub Pages by
+`.github/workflows/docs.yml` on every push to `main` that touches `docs-site/**`.
+
+```bash
+npm --prefix docs-site install
+npm --prefix docs-site run dev
+```
+
+The base path in `docs-site/.vitepress/config.mjs` is `/agent-os/` and must match the repository
+name. A skill edit and its documentation page are one change — the pages under `skills/` and
+`reference/` mirror the skill files and go stale first.
 
 ## Evals
 

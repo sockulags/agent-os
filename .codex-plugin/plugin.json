@@ -1,6 +1,24 @@
 {
   "name": "agent-os",
   "description": "A lightweight agent operating system with explicit workflows and automatic disciplines, shared between Claude Code and Codex.",
-  "version": "0.2.0",
-  "skills": "./skills/"
+  "version": "0.3.0",
+  "homepage": "https://sockulags.github.io/agent-os/",
+  "repository": "https://github.com/sockulags/agent-os",
+  "keywords": [
+    "workflow",
+    "planning",
+    "code-review",
+    "verification",
+    "scope-control",
+    "skills"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Agent OS",
+    "shortDescription": "Explicit workflows and automatic disciplines",
+    "longDescription": "Charts broad work as decision tickets, shapes bounded work into decision-complete specs, and delivers ready work through a gated implement-review-verify-PR sequence. Automatic disciplines keep the agent reproducing before it patches, staying inside the agreed scope, and proving completion claims with fresh evidence.",
+    "developerName": "Lucas Skog",
+    "category": "Engineering",
+    "websiteURL": "https://sockulags.github.io/agent-os/"
+  }
 }
