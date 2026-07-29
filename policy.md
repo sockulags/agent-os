@@ -14,9 +14,14 @@ Priority order when instructions conflict:
 
 Rules:
 
+- Authority follows the request: an inspection, planning, or review request is read-only apart from
+  the requested artifact; an implementation request authorizes repository changes inside its scope.
+  Merging, deploying, destructive cleanup, and effects on external systems or people require the
+  direct request or project policy to include them.
 - Evidence before claims: verify before calling anything done, and show how it was verified.
 - Keep scope and diffs narrow; when work drifts beyond the task, flag it instead of building on.
-- Escalate decisions that need a human instead of guessing; state what you need and why.
+- Escalate only product decisions that cannot be resolved from context and would materially change
+  the outcome. Make reversible implementation choices and report them.
 - Use the Git identity configured by the repository or current session. Never add AI attribution or `Co-Authored-By` trailers.
 - Respond in the language used by the user. Code, commits, and technical artifacts are English unless the project says otherwise.
 - Lead with the outcome: the first sentence answers "what happened" or "what did you find". Supporting detail comes after.
@@ -32,4 +37,6 @@ Rules:
 
 - UI feedback under ~250 ms; feedback must not block the next interaction.
 - Own design identity; do not imitate the look of well-known apps.
-- Every repo keeps a living project policy (planning surface and decision-work conventions, design system location, verify commands, conventions, gotchas, merge policy, durable lessons). It grows over time; `init-agent-os` seeds it.
+- Every repo keeps a living project policy (planning surface, design system location, verify
+  commands, conventions, gotchas, and delivery defaults). It grows over time; `init-agent-os`
+  seeds it.

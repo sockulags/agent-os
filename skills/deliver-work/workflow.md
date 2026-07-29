@@ -1,34 +1,59 @@
-# Sequential workflow contract
+# Delivery contract
 
-Only the current step is executable. Read it completely, finish its checkable criterion, update state, and then load the one file named by `NEXT`. `HALT` ends the turn without loading another step.
+## Establish the contract
 
-Tracked work uses `.agent-os/work/<slug>.md`. Its frontmatter is the durable cursor:
+Read the request, repository policy, relevant code, and working-tree state. Preserve existing work.
+Resolve discoverable facts yourself. Before editing, know:
+
+- **Outcome:** the observable change requested.
+- **Boundaries:** explicit non-goals and the smallest plausible change surface.
+- **Ground truth:** tests or observations that can prove the outcome.
+- **Delivery target:** local changes, commit, pull request, merge, or deployment as requested.
+
+An implementation request authorizes in-scope repository edits. Ask one focused question only when
+an unresolved product decision has materially different outcomes. Reversible implementation choices
+belong to the implementer.
+
+## Work loop
+
+1. Inspect enough of the affected system to choose a coherent change.
+2. Make the smallest complete implementation. Use `diagnose-before-fix` when the cause is unknown and
+   `scope-guard` when discoveries threaten the boundary.
+3. Run fast, relevant checks while working and adapt from their results.
+4. Review the resulting diff for correctness, unnecessary complexity, and scope.
+5. Add independent review when the developer or project policy requests it, or when the change is
+   unusually risky: security, authentication, billing, destructive data changes, concurrency, or a
+   public compatibility boundary.
+6. Apply `verify-before-done` to the final candidate and deliver only to the requested boundary.
+
+Ground truth governs the loop; no prescribed implementation sequence substitutes for it.
+
+## Resume only when useful
+
+Ordinary work needs no workflow record. For work expected to span sessions, keep a compact
+`.agent-os/work/<slug>.md`:
 
 ```yaml
 ---
-agent_os_work: 1
+agent_os_work: 2
 title: <work title>
-mode: tracked
-status: awaiting-approval
-next_step: steps/03-checkpoint.md
-baseline_sha: ""
-review_target: ""
-review_loop_iteration: 0
-batch_id: ""
-batch_task_key: ""
-batch_task_hash: ""
-batch_manifest_hash: ""
-batch_attempt: 0
-batch_manifest: ""
+status: active
+next_action: <concrete continuation>
 ---
 ```
 
-Allowed forward states are `awaiting-approval → approved → implementing → in-review → reviewed → verified → delivered`. Use `blocked` only with `blocked_from`, `next_step`, and a concrete reason. Resume from `next_step`; never infer a later state from code or conversation.
+Record only Outcome, Boundaries, Ground truth, Decisions, and Evidence. Use `blocked`, `verified`, or
+`delivered` when those words help the next session resume accurately. The record is working memory,
+not an approval ledger.
 
-One-shot work keeps the same sequence in memory but creates no work record. If the run is interrupted, restart its readiness check.
+## Batch workers
 
-Product mutations begin only in `approved`. Planning artifacts and the work record are allowed before approval. General requests to build, implement, finish, or continue do not grant checkpoint approval.
+A batch task definition supplies the outcome, scope, dependencies, and checks. Work only in the
+assigned task workspace, commit there, and return the head SHA, changed files, checks, and remaining
+uncertainty to the coordinator. The coordinator owns integration and aggregate verification.
 
-The optional batch fields are all empty for ordinary work. A batch-owned run populates all six and
-uses the frozen task's `local commit + worker receipt` delivery boundary. The batch manifest is the
-approval source and the coordinator remains the only manifest and integration-branch writer.
+## Stop conditions
+
+Stop with the exact decision or external action needed when the request does not cover it. Stop a
+completion claim when ground truth fails or cannot be exercised. Otherwise continue until the
+requested delivery target is reached.

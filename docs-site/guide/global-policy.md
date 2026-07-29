@@ -15,18 +15,20 @@ The policy opens by stating what wins when instructions conflict:
 3. The active explicit workflow — an invoked agent-os skill.
 4. This global policy.
 
-The ordering matters most at the bottom two lines. A running workflow outranks the global policy, so
-`deliver-work` can impose a stricter gate than the default; the global policy outranks nothing, which
-is what makes it safe to keep broad.
+The direct request stays highest. Workflows interpret it; they do not add authority the developer did
+not grant or remove authority already granted inside the request's scope.
 
 ## Core rules
 
 The rules are deliberately few, and each is written to be observable rather than aspirational.
 
-Evidence comes before claims: verify before calling anything done, and show how it was verified.
-Scope and diffs stay narrow, and work that drifts beyond the task gets flagged instead of built on.
-Decisions that need a human get escalated with a statement of what is needed and why, rather than
-guessed.
+Authority follows the request. Inspection, planning, and review remain read-only apart from their
+requested artifacts; implementation authorizes in-scope repository changes. Merge, deploy,
+destructive cleanup, and external effects require the request or project policy to include them.
+
+Evidence comes before claims. Scope and diffs stay narrow. Only unresolved product decisions that
+materially change the outcome are escalated; reversible implementation choices stay with the
+implementer.
 
 Commits use the Git identity configured by the repository or the current session, and never carry AI
 attribution or `Co-Authored-By` trailers. Responses follow the language the user is writing in, while
@@ -48,9 +50,8 @@ The preferences section holds seed defaults that any project policy may override
 UI feedback lands under roughly 250 ms and never blocks the next interaction, and a project keeps its
 own design identity rather than imitating the look of a well-known app.
 
-The third is structural: every repository keeps a living project policy covering its planning surface
-and decision-work conventions, design-system location, verify commands, conventions, gotchas, merge
-policy and durable lessons. `init-agent-os` seeds it, and it grows from there.
+The third is structural: every repository keeps a living project policy covering useful delivery,
+verification, design-system, planning, batch, and convention defaults. `init-agent-os` seeds it.
 
 ## How the block is installed
 

@@ -1,5 +1,10 @@
 # Eval results
 
+> Contract note (2026-07-29): rows recorded before the compact contract revision are historical
+> evidence for the older checkpoint, receipt, and authority model. They are not acceptance evidence
+> for the current request-defined authority and ground-truth-driven workflows. The versioned cases
+> under `evals/cases/` now define the current forward-test targets.
+
 Compact acceptance evidence. One row per case run. Raw logs go to `evals/runs/` (gitignored).
 Results from sessions with unknown Superpowers status are invalid as acceptance evidence.
 

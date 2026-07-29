@@ -5,16 +5,13 @@ description: Requires fresh execution evidence before an agent states that imple
 
 # Verify before done
 
-Turn completion claims into evidence-backed statements. Apply this discipline immediately before reporting that work is done, fixed, passing, or ready.
+Match each material completion claim to fresh evidence from the final candidate.
 
-## Evidence loop
+## Loop
 
-1. **Enumerate the claims.** List each outcome the response is about to assert: behavior, tests, build, generated artifact, deployment, or delivery state.
-2. **Choose direct checks.** Map every claim to the closest mechanically checkable evidence. Prefer the project's documented verify commands and acceptance path over proxies such as compilation, a narrow unit test, or an old CI result.
-3. **Run fresh checks.** Execute the checks against the current worktree or target state. Record the command or observation, exit status, and material result.
-4. **Inspect the result.** Confirm that the output proves the claim itself. A command that ran successfully proves only what that command exercised.
-5. **Resolve gaps.** Fix failures and rerun the affected checks. If a required check cannot run, state the exact unverified claim and blocker instead of calling it complete.
-6. **Report proportionally.** Lead with the verified outcome, cite the decisive evidence compactly, and distinguish remaining uncertainty from confirmed facts.
+Identify the material outcomes the final response will claim. Choose the closest practical checks,
+prefer the project's documented acceptance path, and run them against the final state. Inspect what
+the result actually proves. Fix failures and rerun affected checks.
 
 ## Evidence strength
 
@@ -25,11 +22,8 @@ Use the strongest practical layer:
 3. Broader build, lint, typecheck, or suite result.
 4. Static inspection only when execution is impossible and the limitation is explicit.
 
-Passing a weaker layer does not substitute for a required stronger layer.
+Passing a weaker layer does not prove a stronger claim. Stale or second-hand results are context, not
+verification.
 
-## Hard rules
-
-- Stop a completion claim when any material acceptance criterion lacks fresh evidence, because partial proof cannot establish the whole outcome.
-- Treat stale, unrelated, or second-hand results as context rather than verification, because the current state may differ.
-- Name failed and skipped checks with their impact, because readers must be able to tell what remains uncertain.
-- Keep evidence reproducible by reporting exact commands or observable paths, because confidence must survive beyond the current session.
+Lead with the outcome and cite the decisive checks compactly. If a material check cannot run, name
+the unverified claim and its impact instead of calling the whole result complete.
