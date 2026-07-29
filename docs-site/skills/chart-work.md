@@ -66,3 +66,6 @@ but never manufacture the human's answer.
 
 A ticket stays open until its evidence supports the recorded decision, and scope discoveries become
 children, spawned issues, graduated branches or parked paths rather than silent additions.
+
+Decision tickets graduate through `shape-work`. `batch-work` never consumes unresolved chart tickets
+directly.

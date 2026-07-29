@@ -28,8 +28,8 @@ The default, invoked in a repository working directory.
 1. Read the repo first — existing `CLAUDE.md` or `AGENTS.md`, README, package and build files, CI
    configuration. Do not ask about anything the repo already answers.
 2. Interview one decision at a time, with a recommendation each time, covering merge policy, verify
-   commands, design system, planning surface, branch and PR flow, and the conventions and gotchas
-   worth recording now.
+   commands, design system, planning surface, branch and PR flow, batch concurrency/worktree/retry/
+   integration/state/cleanup rules, and the conventions and gotchas worth recording now.
 3. Draft the project policy section, seeded from the Preferences section of the global `policy.md`,
    and show it as a diff against the repo's policy file — `CLAUDE.md`, `AGENTS.md`, or a new
    `policy.md` when the repo has neither.

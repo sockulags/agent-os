@@ -57,6 +57,20 @@ tradeoff for skipping the artifact.
 Classification is conservative: one-shot means clear intent, zero plausible blast radius, and no
 product or architecture decision. Uncertainty selects tracked.
 
+## Batch-owned work
+
+A `deliver-work` record may additionally carry `batch_id`, `batch_task_key`, `batch_task_hash`,
+`batch_manifest_hash`, `batch_attempt`, and `batch_manifest`. A batch launch can satisfy the tracked
+checkpoint only while those values and the frozen aggregate approval still match live manifest
+state.
+
+The worker's delivery boundary is different: one local task-branch commit plus the complete worker
+receipt. It does not push, open a PR, merge, edit the batch manifest or write the integration branch.
+The batch coordinator reconciles that receipt and owns the eventual batch PR.
+
+The coordinator's separate durable cursor is documented under
+[Batch manifests](/reference/batches).
+
 ## Approval semantics
 
 Product mutations begin only in `approved`. General requests to build, implement, finish or continue

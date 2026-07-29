@@ -55,3 +55,5 @@ map when every branch is decided, graduated, parked, or ruled out and no Fog rem
   manufacture the human's answer.
 - A ticket remains open until its evidence supports the recorded decision.
 - Scope discoveries become children, spawned issues, graduated branches, or parked paths.
+- Decision tickets graduate through `shape-work`; `batch-work` never consumes unresolved chart
+  tickets directly.

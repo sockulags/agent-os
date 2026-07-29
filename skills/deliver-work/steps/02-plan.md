@@ -9,6 +9,10 @@
 5. Record every reversible assumption explicitly.
 6. For tracked work, create `.agent-os/work/<slug>.md` using the workflow frontmatter plus these sections: Intent, Non-goals, Acceptance, Test seams, Intended mutations, Assumptions, Verification, Review receipt. Set `status: awaiting-approval` and `next_step: steps/03-checkpoint.md`.
 7. For one-shot work, keep a compact in-memory plan and intended file list; create no artifact.
+8. For batch-owned work, copy goal, non-goals, acceptance, test seams, authorized scope, verification,
+   and delivery boundary from the frozen task definition. Record the six batch identity fields in
+   the work record. A discovery that expands any definition field returns to the batch checkpoint
+   instead of changing the worker plan.
 
 ## Completion criterion
 

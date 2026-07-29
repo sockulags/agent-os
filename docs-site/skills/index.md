@@ -1,6 +1,6 @@
 # Skills overview
 
-agent-os ships nine skills in three buckets. Workflows are invoked by hand, disciplines trigger
+agent-os ships ten skills in three buckets. Workflows are invoked by hand, disciplines trigger
 themselves from the situation, and the meta-skill governs how the others are written.
 
 | Skill | Bucket | Invocation | Purpose |
@@ -8,6 +8,7 @@ themselves from the situation, and the meta-skill governs how the others are wri
 | [`init-agent-os`](/skills/init-agent-os) | workflow | manual | Machine setup, or a repo policy interview |
 | [`chart-work`](/skills/chart-work) | workflow | manual | Chart broad work as a parallel graph of decision tickets |
 | [`shape-work`](/skills/shape-work) | workflow | manual | Interview to a decision-complete spec plus visualization |
+| [`batch-work`](/skills/batch-work) | workflow | manual | Dispatch and reconcile many frozen, independent work units |
 | [`deliver-work`](/skills/deliver-work) | workflow | manual | Readiness through review, verification and PR |
 | [`dispatch-next`](/skills/dispatch-next) | workflow | manual | Pick exactly one decision-ready action from live state |
 | [`verify-before-done`](/skills/verify-before-done) | discipline | automatic | Fresh evidence before any completion claim |

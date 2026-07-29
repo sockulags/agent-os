@@ -21,8 +21,8 @@ hero:
 
 features:
   - icon: 🧭
-    title: Chart, shape, deliver
-    details: Three workflows for three sizes of problem. A foggy effort becomes a graph of decision tickets, a bounded branch becomes a decision-complete spec, and a ready spec becomes a reviewed, verified pull request.
+    title: Chart, shape, batch, deliver
+    details: A foggy effort becomes decision tickets, a bounded branch becomes a decision-complete spec, many ready units become a reconciled batch, and implementation becomes reviewed and verified delivery.
   - icon: 🧾
     title: Evidence before claims
     details: The verify-before-done discipline turns "it works" into a command, an exit status and a result. A check that ran proves only what that check exercised — and unverified claims get named as unverified.

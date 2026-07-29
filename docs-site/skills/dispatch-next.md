@@ -18,8 +18,9 @@ a product or planning decision.
    anything new.
 4. **Select exactly one target.** Route an open map decision ticket to
    [`chart-work`](/skills/chart-work), a graduated branch to [`shape-work`](/skills/shape-work), and
-   only decision-complete implementation to [`deliver-work`](/skills/deliver-work). A captured spawned
-   issue stays ordinary backlog until it is separately prioritized — capture is not dispatch.
+   an approved or resumable batch manifest to [`batch-work`](/skills/batch-work). Route one
+   decision-complete implementation unit to [`deliver-work`](/skills/deliver-work). A loose backlog
+   is not a batch, and a captured spawned issue stays ordinary backlog until separately prioritized.
 5. **Output one decision:** the target, the motivation, the proposed role and the proposed next
    action. Nothing else.
 
@@ -29,7 +30,8 @@ a product or planning decision.
 opened or edited, no merges, no issues closed, no workers started.
 
 **Non-shadow** applies only when the project policy or the session explicitly allows it. Then at most
-one worker may be started for the selected target, and nothing else.
+one worker may be started for the selected target. A `batch-work` coordinator counts as that one
+worker; its later dispatch still requires the separately approved manifest.
 
 ## Hard rules
 

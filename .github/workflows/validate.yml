@@ -25,3 +25,6 @@ jobs:
 
       - name: Test validator red cases
         run: node scripts/test-validate-agent-os.mjs
+
+      - name: Test batch manifest hashing
+        run: node skills/batch-work/scripts/test-manifest-hash.mjs

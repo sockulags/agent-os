@@ -24,7 +24,9 @@ Rules:
 - Never force the reader to cross-reference labels or numbering invented earlier in the text — say what you mean in place.
 - Explanations belong in prose; tables only for short enumerable facts.
 - Calibrate tone to the topic: playfulness is fine, neutral and factual the moment the subject is serious. When in doubt, it is serious.
-- Orchestration is opt-in: `/agent-os:chart-work`, `/agent-os:shape-work`, `/agent-os:deliver-work`, `/agent-os:dispatch-next`, `/agent-os:init-agent-os` exist for planned work; never self-invoke them.
+- Orchestration is opt-in: `/agent-os:chart-work`, `/agent-os:shape-work`,
+  `/agent-os:batch-work`, `/agent-os:deliver-work`, `/agent-os:dispatch-next`,
+  `/agent-os:init-agent-os` exist for planned work; never self-invoke them.
 
 ## Preferences (seed defaults — project policy overrides)
 

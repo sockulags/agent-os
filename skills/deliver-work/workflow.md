@@ -14,6 +14,12 @@ next_step: steps/03-checkpoint.md
 baseline_sha: ""
 review_target: ""
 review_loop_iteration: 0
+batch_id: ""
+batch_task_key: ""
+batch_task_hash: ""
+batch_manifest_hash: ""
+batch_attempt: 0
+batch_manifest: ""
 ---
 ```
 
@@ -22,3 +28,7 @@ Allowed forward states are `awaiting-approval → approved → implementing → 
 One-shot work keeps the same sequence in memory but creates no work record. If the run is interrupted, restart its readiness check.
 
 Product mutations begin only in `approved`. Planning artifacts and the work record are allowed before approval. General requests to build, implement, finish, or continue do not grant checkpoint approval.
+
+The optional batch fields are all empty for ordinary work. A batch-owned run populates all six and
+uses the frozen task's `local commit + worker receipt` delivery boundary. The batch manifest is the
+approval source and the coordinator remains the only manifest and integration-branch writer.

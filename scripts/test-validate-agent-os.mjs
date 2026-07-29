@@ -14,7 +14,7 @@ function fixture() {
   const target = fs.mkdtempSync(path.join(os.tmpdir(), 'agent-os-validator-'))
   temporaryRoots.push(target)
   for (const item of [
-    '.agents', '.claude-plugin', '.codex-plugin', 'docs-site', 'evals', 'skills',
+    '.agents', '.claude-plugin', '.codex-plugin', '.github', 'docs-site', 'evals', 'skills',
     'README.md', 'policy.md'
   ]) {
     fs.cpSync(path.join(root, item), path.join(target, item), {
@@ -108,6 +108,35 @@ try {
     rewrite(path.join(target, 'skills/chart-work/references/map.md'), (text) =>
       text.replaceAll('Branch key:', 'Branch identity:'))
   }, 'CHART_HANDOFF_CONTRACT')
+
+  expectFailure('missing batch approval hash', (target) => {
+    rewrite(path.join(target, 'skills/batch-work/references/manifest.md'), (text) =>
+      text.replace('approved_manifest_hash: ""', 'manifest_approval: ""'))
+  }, 'BATCH_MANIFEST_CONTRACT')
+
+  expectFailure('missing batch worker delivery boundary', (target) => {
+    rewrite(path.join(target, 'skills/deliver-work/steps/07-deliver.md'), (text) =>
+      text.replace('Do not push, open a PR, merge, edit the batch manifest', 'Return to the coordinator'))
+  }, 'BATCH_DELIVERY_BOUNDARY')
+
+  expectFailure('missing batch runtime block', (target) => {
+    rewrite(path.join(target, 'skills/batch-work/references/manifest.md'), (text) =>
+      text.replace('```json batch-runtime', '```json runtime-state'))
+  }, 'BATCH_MANIFEST_CONTRACT')
+
+  expectFailure('missing aggregate hash at worker delivery', (target) => {
+    rewrite(path.join(target, 'skills/deliver-work/steps/07-deliver.md'), (text) =>
+      text.replace('approved manifest hash', 'batch approval'))
+  }, 'BATCH_DELIVERY_BOUNDARY')
+
+  expectFailure('missing aggregate hash in worker cursor', (target) => {
+    rewrite(path.join(target, 'skills/deliver-work/workflow.md'), (text) =>
+      text.replace('batch_manifest_hash: ""', 'batch_approval: ""'))
+  }, 'BATCH_DELIVERY_BOUNDARY')
+
+  expectFailure('missing deterministic batch hash script', (target) => {
+    fs.rmSync(path.join(target, 'skills/batch-work/scripts/manifest-hash.mjs'))
+  }, 'BATCH_HASH_SCRIPT')
 
   expectFailure('leading-zero release version', (target) => {
     const currentVersion = JSON.parse(fs.readFileSync(path.join(target, '.claude-plugin/plugin.json'), 'utf8')).version
