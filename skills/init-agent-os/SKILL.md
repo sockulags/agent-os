@@ -29,6 +29,9 @@ Invoked in a repo working directory.
    - **Planning surface** — tracker or local folders; map and decision-ticket representation; type
      labels; blocking, claiming, spawned-issue links, and branch graduation.
    - **Branch/PR flow** — target branch, PR conventions, who reviews.
+   - **Batch execution** — maximum mutating concurrency while reserving review capacity; worktree
+     and branch convention; retry limit; integration strategy; whether operational manifests are
+     tracked; cleanup authority.
    - **Conventions and gotchas** worth recording now.
 3. Draft the project policy section (seeded from the Preferences section of global `policy.md`), show it as a diff against the repo's policy file (`CLAUDE.md`/`AGENTS.md`, or a new `policy.md` if the repo has neither).
 4. On approval, write it. The project policy is a living document — `deliver-work` will propose additions over time.

@@ -271,6 +271,48 @@ export function validate(root = path.resolve(scriptDir, '..')) {
     fail('CHART_HANDOFF_EVAL', 'chart-work must retain the CW-P8R partial retry case.')
   }
 
+  checkContains(diagnostics, path.join(root, 'skills/batch-work/references/manifest.md'), [
+    'awaiting-approval → approved → running → reconciling → verifying → ready-to-deliver → delivered',
+    'pending → ready → running → succeeded → integrated',
+    'manifest_hash: ""',
+    'approved_manifest_hash: ""',
+    '```json batch-plan',
+    '```json batch-runtime',
+    '"rejected_receipts": []',
+    '`blocked_reason`',
+    'Identity is `(batch_id, task_key)`',
+    'delivery_boundary: local commit + worker receipt',
+    'A rejected receipt is retained',
+    'active-attempt, worker and baseline mismatch reasons'
+  ], 'BATCH_MANIFEST_CONTRACT')
+  checkContains(diagnostics, path.join(root, 'skills/batch-work/SKILL.md'), [
+    'HALT before branches,',
+    'hash-bound handoffs and HALT',
+    'Only the coordinator updates the manifest',
+    'Individual green receipts never substitute for aggregate verification'
+  ], 'BATCH_WORKFLOW_CONTRACT')
+  checkContains(diagnostics, path.join(root, 'skills/deliver-work/steps/07-deliver.md'), [
+    'commit only to the isolated task',
+    'approved manifest hash',
+    'complete worker receipt defined by `batch-work`',
+    'Do not push, open a PR, merge, edit the batch manifest'
+  ], 'BATCH_DELIVERY_BOUNDARY')
+  checkContains(diagnostics, path.join(root, 'skills/deliver-work/workflow.md'), [
+    'batch_manifest_hash: ""'
+  ], 'BATCH_DELIVERY_BOUNDARY')
+  for (const script of ['manifest-hash.mjs', 'test-manifest-hash.mjs']) {
+    if (!fs.existsSync(path.join(root, 'skills/batch-work/scripts', script))) {
+      fail('BATCH_HASH_SCRIPT', `skills/batch-work/scripts/${script} is required.`)
+    }
+  }
+  checkContains(diagnostics, path.join(root, '.github/workflows/validate.yml'), [
+    'node skills/batch-work/scripts/test-manifest-hash.mjs'
+  ], 'BATCH_HASH_SCRIPT')
+  if (!read(path.join(root, 'evals/cases/workflow-non-invocation.md')).includes('| W7 |') ||
+      !read(path.join(root, 'evals/cases/workflow-non-invocation.md')).includes('| batch-work |')) {
+    fail('BATCH_NON_INVOCATION', 'batch-work must retain an explicit non-invocation case.')
+  }
+
   const markdownRoots = [
     path.join(root, 'README.md'),
     path.join(root, 'policy.md'),

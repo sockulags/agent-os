@@ -24,7 +24,7 @@ short, always-available correctives rather than procedures you run.
 
 ## Ceremony proportional to the work
 
-The three delivery workflows exist because problems come in three sizes.
+The four delivery workflows separate deciding, shaping, batching and implementing.
 
 [`chart-work`](/skills/chart-work) is for an effort so broad you cannot yet state the questions
 precisely. It produces a map and a graph of decision tickets that independent workers resolve in
@@ -36,11 +36,16 @@ interviews you one decision at a time, always with a recommendation attached, an
 decision-complete spec plus a visualization — a Mermaid flow for a backend change, a mockup built
 from the repo's real design tokens for a frontend one.
 
+[`batch-work`](/skills/batch-work) is for several decision-complete units that have stable
+dependencies, scopes and acceptance. It freezes task hashes behind one checkpoint, dispatches
+isolated `deliver-work` workers, reconciles receipts and commits serially, and verifies the complete
+integrated candidate before delivery.
+
 [`deliver-work`](/skills/deliver-work) is for work that is decision-ready. It walks readiness, plan,
 checkpoint, implement, review, verify and deliver as seven separate step files, loading only the
 current one so later steps cannot pull attention past the gate in front of them.
 
-[`dispatch-next`](/skills/dispatch-next) sits beside all three. It reads a repository's live GitHub
+[`dispatch-next`](/skills/dispatch-next) sits beside all four. It reads a repository's live GitHub
 state and picks exactly one decision-ready next action, then stops. It never does the work it
 selects, and in its default shadow mode it never mutates anything at all.
 

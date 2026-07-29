@@ -30,7 +30,7 @@ visible until you reinstall or refresh the plugin **and** start a new session. S
 
 ### Verify the install
 
-Ask the agent to list its available skills. All nine should be present under the `agent-os`
+Ask the agent to list its available skills. All ten should be present under the `agent-os`
 namespace. If only some appear, the plugin was loaded from a stale cache — reinstall before
 debugging anything else.
 
@@ -60,8 +60,9 @@ In the repository you want to work in, run the same skill without an argument:
 
 It reads the repo first — existing `CLAUDE.md` or `AGENTS.md`, the README, package and build files,
 CI configuration — and then interviews you only about what the repo does not already answer: merge
-policy, verify commands, design-system location, planning surface, branch and PR flow, and the
-conventions and gotchas worth writing down now. Every question arrives with a recommendation.
+policy, verify commands, design-system location, planning surface, branch and PR flow, batch
+execution policy, and the conventions and gotchas worth writing down now. Every question arrives
+with a recommendation.
 
 The result is the repository's [project policy](/guide/project-policy), a living document that
 `deliver-work` will later propose additions to.
@@ -78,6 +79,12 @@ For work whose decisions are already made, go straight to delivery:
 
 ```text
 /agent-os:deliver-work Fix the timezone offset in the nightly digest
+```
+
+For several approved, dependency-mapped units, freeze and run one batch:
+
+```text
+/agent-os:batch-work Execute the approved platform migration work units
 ```
 
 Nothing forces you to use a workflow at all. The disciplines are active in every session regardless,

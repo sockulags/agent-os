@@ -4,7 +4,8 @@
 
 Turns a rough idea into a spec you can approve without follow-up questions. Use it at the start of
 new work, before any plan or code exists. Skip it for small fixes and for work that already has an
-approved spec. Its output feeds [`deliver-work`](/skills/deliver-work).
+approved spec. Its output routes to [`deliver-work`](/skills/deliver-work) for one unit or
+[`batch-work`](/skills/batch-work) for several frozen units.
 
 ## Steps
 
@@ -24,8 +25,10 @@ approved spec. Its output feeds [`deliver-work`](/skills/deliver-work).
 4. **Scale the investment.** A small frontend feature gets a simple wireframe; a larger one gets an
    HTML/CSS proposal built in the project's existing design system. State the chosen level and a
    one-sentence justification.
-5. **Deliver the spec** — goal, scope, non-goals, acceptance criteria, the visualization, open risks.
-   Short enough to scan, complete enough that `deliver-work` needs no new product decisions.
+5. **Deliver the spec** — goal, scope, non-goals, acceptance criteria, the visualization, open risks
+   and execution route. One implementation unit routes to [`deliver-work`](/skills/deliver-work);
+   several decision-complete units with stable dependencies and scopes route to
+   [`batch-work`](/skills/batch-work).
 
 ## Hard rules
 

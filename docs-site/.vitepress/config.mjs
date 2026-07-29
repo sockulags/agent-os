@@ -13,7 +13,7 @@ export default withMermaid(defineConfig({
     ['link', { rel: 'icon', type: 'image/svg+xml', href: '/agent-os/logo.svg' }],
     ['meta', { property: 'og:type', content: 'website' }],
     ['meta', { property: 'og:title', content: 'agent-os — explicit workflows, automatic disciplines' }],
-    ['meta', { property: 'og:description', content: 'One skill source, two platforms. Charting, shaping and delivering work with evidence before claims — for Claude Code and Codex.' }],
+    ['meta', { property: 'og:description', content: 'One skill source, two platforms. Charting, shaping, batching and delivering work with evidence before claims — for Claude Code and Codex.' }],
     ['meta', { property: 'og:url', content: 'https://sockulags.github.io/agent-os/' }],
     ['meta', { name: 'twitter:card', content: 'summary' }]
   ],
@@ -26,7 +26,7 @@ export default withMermaid(defineConfig({
       { text: 'Skills', link: '/skills/', activeMatch: '/skills/' },
       { text: 'Reference', link: '/reference/plugin-manifests', activeMatch: '/reference/' },
       {
-        text: 'v0.4.2',
+        text: 'v0.5.0',
         items: [
           { text: 'Releases', link: 'https://github.com/sockulags/agent-os/releases' },
           { text: 'Commit history', link: 'https://github.com/sockulags/agent-os/commits/main' }
@@ -65,6 +65,7 @@ export default withMermaid(defineConfig({
             { text: 'init-agent-os', link: '/skills/init-agent-os' },
             { text: 'chart-work', link: '/skills/chart-work' },
             { text: 'shape-work', link: '/skills/shape-work' },
+            { text: 'batch-work', link: '/skills/batch-work' },
             { text: 'deliver-work', link: '/skills/deliver-work' },
             { text: 'dispatch-next', link: '/skills/dispatch-next' }
           ]
@@ -90,6 +91,7 @@ export default withMermaid(defineConfig({
           items: [
             { text: 'Plugin manifests', link: '/reference/plugin-manifests' },
             { text: 'Work records', link: '/reference/work-records' },
+            { text: 'Batch manifests', link: '/reference/batches' },
             { text: 'Review loop', link: '/reference/review-loop' },
             { text: 'Maps and decision tickets', link: '/reference/maps-and-tickets' },
             { text: 'Prototype evidence', link: '/reference/prototypes' },

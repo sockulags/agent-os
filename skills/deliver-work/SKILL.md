@@ -1,6 +1,6 @@
 ---
 name: deliver-work
-description: Takes decision-ready intent or a focused fix through a sequential implementation, review, verification, and PR workflow. User-invoked when work is ready to build. Not for exploration or specification-only work (use shape-work).
+description: Takes one decision-ready work unit or focused fix through sequential implementation, review, verification, and its delivery boundary. User-invoked when work is ready to build, including as a batch worker. Not for exploration or specification-only work (use shape-work).
 disable-model-invocation: true
 ---
 

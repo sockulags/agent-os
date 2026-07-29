@@ -11,7 +11,7 @@ The Claude Code plugin manifest.
 {
   "name": "agent-os",
   "description": "A lightweight agent operating system with explicit workflows and automatic disciplines, shared between Claude Code and Codex.",
-  "version": "0.4.2",
+  "version": "0.5.0",
   "author": { "name": "Lucas Skog" },
   "homepage": "https://sockulags.github.io/agent-os/",
   "repository": "https://github.com/sockulags/agent-os",
@@ -48,7 +48,7 @@ site.
 ```json
 {
   "name": "agent-os",
-  "version": "0.4.2",
+  "version": "0.5.0",
   "homepage": "https://sockulags.github.io/agent-os/",
   "repository": "https://github.com/sockulags/agent-os",
   "skills": "./skills/",

@@ -9,6 +9,10 @@
    - `one-shot`: clear intent, zero plausible blast radius, no product or architecture decision.
    - `tracked`: everything else; uncertainty selects this path.
 5. If an active `.agent-os/work/*.md` matches the request, read its frontmatter and load only its `next_step`. If several could match, list them and `HALT` for selection.
+6. For a batch-owned launch, read the named batch manifest and require matching batch ID, task key,
+   task hash, approved manifest hash, active attempt, baseline, authorized scope, and
+   `local commit + worker receipt` boundary. Require batch state `approved`, `running`, or
+   `reconciling` and task state `ready` or `running`; any mismatch `HALT`s before product mutation.
 
 ## Completion criterion
 

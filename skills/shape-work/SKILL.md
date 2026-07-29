@@ -6,7 +6,8 @@ disable-model-invocation: true
 
 # shape-work
 
-Turn a rough idea into a spec the user can approve without follow-up questions. The output feeds `deliver-work`.
+Turn a rough idea into a spec the user can approve without follow-up questions. The output routes to
+`deliver-work` for one unit or `batch-work` for several frozen units.
 
 ## Steps
 
@@ -16,7 +17,10 @@ Turn a rough idea into a spec the user can approve without follow-up questions. 
    - Backend feature: a Mermaid flow diagram of the affected flow.
    - Frontend feature: follow [references/mockups.md](references/mockups.md) — read it before producing any mockup, because it defines the design-system bootstrap and the checklist the mockup must pass.
 4. **Scale the investment.** Small frontend feature: simple wireframe. Larger feature: an HTML/CSS proposal in the project's existing design system. State the chosen level and its one-sentence justification.
-5. **Deliver the spec**: goal, scope, non-goals, acceptance criteria, the visualization, and open risks. Short enough to scan, complete enough that `deliver-work` needs no new product decisions.
+5. **Deliver the spec**: goal, scope, non-goals, acceptance criteria, the visualization, open risks,
+   and execution route. One implementation unit routes to `deliver-work`; several decision-complete
+   units with stable dependencies and scopes route to `batch-work`. Short enough to scan, complete
+   enough that execution needs no new product decisions.
 
 ## Hard rules
 

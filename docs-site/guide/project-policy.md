@@ -27,6 +27,10 @@ branch graduation. `chart-work` and `dispatch-next` are both unusable without th
 
 **Branch and PR flow.** Target branch, PR conventions, who reviews.
 
+**Batch execution.** Maximum mutating concurrency with capacity reserved for review, worktree and
+branch naming, retry limit, integration strategy, whether operational manifests are tracked, and
+cleanup authority. Absent cleanup authority means worktrees and branches are reported, not removed.
+
 **Conventions, gotchas and durable lessons.** Everything a new contributor — human or agent — would
 otherwise learn by breaking something.
 
