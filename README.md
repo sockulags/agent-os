@@ -9,12 +9,12 @@ Claude Code and Codex. One skill source, two platforms, ceremony proportional to
 
 | Skill | Bucket | Invocation | Purpose |
 |---|---|---|---|
-| `init-agent-os` | workflow | manual | Machine setup (managed policy blocks) or repo policy interview |
-| `chart-work` | workflow | manual | Chart broad work as a parallel graph of evidence-backed decision tickets; spawn side paths and graduate bounded branches |
-| `shape-work` | workflow | manual | Interview → decision-complete spec + visualization (Mermaid/mockup) |
-| `batch-work` | workflow | manual | Freeze, dispatch, reconcile and aggregate-verify many decision-complete units |
-| `deliver-work` | workflow | manual | Stateful step files: readiness → plan → checkpoint → implement → review → verify → PR |
-| `dispatch-next` | workflow | manual | Pick exactly one decision-ready action from live GitHub state; shadow by default |
+| `init-agent-os` | workflow | manual | Install managed policy or seed one repo's working defaults |
+| `chart-work` | workflow | manual | Chart broad work as parallel evidence-backed decision tickets |
+| `shape-work` | workflow | manual | Turn bounded open choices into a decision-ready contract |
+| `batch-work` | workflow | manual | Dispatch isolated ready units and verify the integrated result |
+| `deliver-work` | workflow | manual | Implement one ready change against boundaries and ground truth |
+| `dispatch-next` | workflow | manual | Pick or dispatch one next action according to the request |
 | `verify-before-done` | discipline | automatic | Fresh, mechanically checkable evidence before any completion claim *(Codex writes)* |
 | `diagnose-before-fix` | discipline | automatic | Reproduce and root-cause before patching *(Codex writes)* |
 | `scope-guard` | discipline | automatic | Keep work inside the task; flag drift instead of building on *(Codex writes)* |
@@ -57,7 +57,8 @@ name. A skill edit and its documentation page are one change — the pages under
 
 - `evals/cases/` — versioned trigger and behavior cases plus `manifest.json`, which indexes at least
   2 positive and 2 negative cases per skill.
-- `evals/RESULTS.md` — compact versioned evidence: date, agent, session type, Superpowers status, case, pass/fail. Results from sessions with unknown Superpowers status are invalid as acceptance evidence.
+- `evals/RESULTS.md` — historical forward-test results. New results evaluate observable contracts,
+  not approval ceremony or reasoning traces.
 - `evals/runs/` — raw logs, gitignored.
 
 ## Global policy

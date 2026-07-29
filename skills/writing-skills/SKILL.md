@@ -6,31 +6,32 @@ disable-model-invocation: true
 
 # Writing skills
 
-The doctrine every agent-os skill must follow. Load this before writing a single line of a new or changed SKILL.md.
+Write a skill as a compact program for an agent, not a transcript of how one successful run happened.
 
-## Descriptions
+## Contract
 
-A description does exactly four jobs, in this order:
+Make these elements discoverable without forcing headings when prose is clearer:
 
-1. **What** the skill does, in one clause.
-2. **Triggers**: the natural situations and keywords that should activate it. One trigger per branch; collapse synonyms.
-3. **Timing**: when in the workflow to load it ("before writing the first line of UI code", "before opening the target file") — not just when the topic matches.
-4. **Skip**: when NOT to load it. If a borderline case can be settled cheaply (a grep, a file check), name that check briefly.
+- **Objective:** the observable result.
+- **Inputs:** the minimum context and tools to inspect.
+- **Working surface:** what the agent may create or change when the request authorizes it.
+- **Boundaries:** product decisions, destructive actions, or external effects the request does not cover.
+- **Ground truth:** the checks or observations that decide success.
+- **Loop:** inspect, act, evaluate, and adapt.
+- **Exit:** the delivered artifact, evidence, or precise blocker.
 
-The procedure itself — steps, hard rules, sequencing — lives in the body or its references, never in the description. A description must not become a shortened, incomplete version of the workflow.
+The description says what the skill does, when it applies, and when it does not. Keep execution detail
+in the body.
 
-Write in third person. Every word costs context for model-invoked skills; cut anything already in the body.
+## Freedom and control
 
-## Body
-
-- Keep SKILL.md short: aim for 400–500 words, hard cap 500 lines.
-- Ordered, checkable steps for workflows; each ends in a completion criterion and one explicit `NEXT` or `HALT` transition.
-- Split a sequence into just-in-time step files after observed premature completion: load only the current step so future work cannot pull attention past its gate.
-- Reference files stay one hop away for detail; deterministic operations belong in `scripts/`, never in prose approximations.
-- Hard rules are observable and have stop conditions ("abort without mutation when…"), and each carries its why in the same sentence.
-- Use leading words — compact pretrained concepts ("seam", "tracer bullet", "red-green-refactor") — consistently; they anchor both invocation and execution.
-- Match freedom to fragility: prose for judgment calls, templates for preferred patterns, exact scripts for fragile operations.
-- Forward slashes in all paths. English body; user-facing output follows the language policy.
+- Lock objectives, boundaries, ground truth, and stop conditions. Let the agent choose local tactics.
+- The developer's request is the authority boundary. Do not add a second approval ceremony for work
+  the request already asks the agent to perform.
+- Ask the developer only when an unresolved product choice would materially change the outcome.
+- Use prose for judgment, examples for preferred shapes, and scripts for exact transformations.
+- Add ordering only where changing the order causes a demonstrated failure.
+- Keep references one hop away and load them only when the task needs them.
 
 ## Enforcement ladder
 
@@ -38,14 +39,13 @@ Choose the lowest layer that can reliably stop the failure:
 
 1. **Deterministic invariant → test or lint.** Machine-checkable repository facts belong in an
    executable validator with a red case.
-2. **Fragile operation or state transition → script, hook, or CI.** Put ordering, identity,
-   idempotency, and exact writes behind one deterministic operation.
+2. **Fragile operation → script, hook, or CI.** Put parsing, identity, idempotency, and exact writes
+   behind one deterministic operation.
 3. **Semantic judgment → skill plus eval.** Use prose for reasoning that depends on meaning, then
    test it with trigger cases and blind forward tests.
 4. **Context or preference → policy.** Record project-specific defaults where the agent reads them
    at decision time.
-5. **Product intent or mutation authority → decision ticket or HITL gate.** Keep the choice with the
-   authorized human and record the answer.
+5. **Product intent → developer decision.** Ask only for the unresolved choice, with a recommendation.
 
 Start from observed failure evidence and recurrence risk. Do not promote a preference into
 infrastructure or leave a deterministic invariant as a reminder.
@@ -53,14 +53,16 @@ infrastructure or leave a deterministic invariant as a reminder.
 ## Anti-patterns (delete on sight)
 
 - **No-ops**: lines the agent already does by default.
-- **Negation**: prohibitions phrased negatively backfire; phrase positively where possible.
+- **Tactic locks**: prescribing the method when several methods can satisfy the contract.
 - **Duplication**: one source of truth per meaning; link, do not restate.
 - **Sediment**: stale layers from old iterations; prune when editing.
-- **Sprawl**: a skill doing two jobs splits only when it reduces context or cognitive load.
+- **Audit theater**: receipts, states, or logs that do not protect recovery, correctness, or trust.
+- **Authority theater**: asking again for permission already granted by the direct request.
 
 ## Definition of done — a skill is not finished until
 
 1. Structural validation passes: folder name equals `name`, frontmatter has `name` + `description`, manual skills (all workflows and this meta-skill) have `disable-model-invocation: true` and `agents/openai.yaml` with `policy.allow_implicit_invocation: false`.
-2. At least two positive and two negative trigger cases exist in `evals/cases/` and pass on both platforms. Positive: naive prompts that must activate it. Negative: adjacent prompts that must not.
-3. For complex behavior, a forward test: a fresh agent gets the raw task and the artifact — never the diagnosis or the expected answer — and behaves correctly.
+2. At least two positive and two negative trigger cases describe the intended boundary.
+3. Risky or complex behavior has a blind forward test against the observable contract, not the
+   preferred reasoning trace.
 4. Retired skills move to root `deprecated/`, never get deleted, and re-enter `skills/` only through this definition of done again.

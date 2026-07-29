@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 # init-agent-os
 
-Two explicit modes. Both end the same way: show the exact diff, wait for approval, only then write. Never mix the modes in one run.
+The invocation authorizes setup writes for the named target. Use one mode per run.
 
 ## Mode: `global` (once per machine)
 
@@ -14,31 +14,25 @@ Invoked as `init-agent-os global`.
 
 1. Verify the plugin is visible on this platform (skills listed under the `agent-os` namespace). Report what you find.
 2. Run `scripts/policy-block.ps1 -Check` and report drift between `policy.md` and the managed blocks in `~/.claude/CLAUDE.md` and `~/.codex/AGENTS.md`.
-3. Show the resulting block content as a diff against each target file.
-4. On approval, run `scripts/policy-block.ps1` to apply. The script is the only writer — never edit the blocks by hand, so block handling stays deterministic.
+3. Run `scripts/policy-block.ps1` to apply the managed blocks and show the resulting diff. The script
+   is the only writer.
 
 ## Mode: repo init (default)
 
 Invoked in a repo working directory.
 
 1. Read the repo first: existing `CLAUDE.md`/`AGENTS.md`, README, package/build files, CI config. Do not ask about anything the repo already answers.
-2. Interview the user one decision at a time, with a recommendation each time:
-   - **Merge policy** — may agents merge? Under what conditions (green CI, review)? No answer recorded means no agent ever merges.
+2. Ask only about material facts the repository does not answer, with a recommendation:
+   - **Delivery defaults** — branch, PR, merge, and deploy conventions.
    - **Verify commands** — the exact commands that prove the project works (test, build, lint, run).
-   - **Design system** — where tokens/components live, for the frontend mockup step.
-   - **Planning surface** — tracker or local folders; map and decision-ticket representation; type
-     labels; blocking, claiming, spawned-issue links, and branch graduation.
-   - **Branch/PR flow** — target branch, PR conventions, who reviews.
-   - **Batch execution** — maximum mutating concurrency while reserving review capacity; worktree
-     and branch convention; retry limit; integration strategy; whether operational manifests are
-     tracked; cleanup authority.
+   - **Design system** — where tokens and components live.
+   - **Planning surface** — tracker or local folders and decision-ticket conventions.
+   - **Batch execution** — concurrency, worktree naming, retries, and integration strategy.
    - **Conventions and gotchas** worth recording now.
-3. Draft the project policy section (seeded from the Preferences section of global `policy.md`), show it as a diff against the repo's policy file (`CLAUDE.md`/`AGENTS.md`, or a new `policy.md` if the repo has neither).
-4. On approval, write it. The project policy is a living document — `deliver-work` will propose additions over time.
+3. Write the smallest useful policy section to the repo's existing instruction file, or a new
+   `policy.md` when none exists, and show the resulting diff.
 
-## Hard rules
-
-- Never write any file before the user has approved the shown diff — approval is the entire point of this skill.
-- Block handling follows `policy-block.ps1` semantics: add exactly one block when missing, update only inside well-formed markers, abort without mutation on duplicated or malformed markers, never touch text outside the block.
-- If project policy has no explicit merge policy, record nothing that permits merging — absence means forbidden.
-- One repo per run, and global mode touches no repo files — mixing targets makes the shown diff unreviewable, and the diff is what the user approves.
+Block handling remains deterministic: add one missing block, update only well-formed managed content,
+and stop on duplicate or malformed markers. Global mode touches no repository files; repo mode
+touches one repository. The direct request or recorded delivery defaults govern merge and deploy
+actions.

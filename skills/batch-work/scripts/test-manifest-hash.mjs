@@ -6,21 +6,17 @@ import os from 'node:os'
 import path from 'node:path'
 import { spawnSync } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
-import { checkManifest, hashManifest, hashTask, parseCursor, parseManifest, parsePlan } from './manifest-hash.mjs'
+import { checkManifest, hashManifest, hashTask, parseCursor, parseManifest } from './manifest-hash.mjs'
 
 function task(key, dependencies = []) {
   return {
     task_key: key,
     source: 'spec.md',
     dependencies,
-    owned_scope: [`src/${key}/`],
-    goal: `Implement ${key}`,
-    non_goals: ['No unrelated cleanup'],
-    acceptance: [`${key} works`],
-    verification: [`test ${key}`],
-    mutation_authority: 'owned_scope only',
-    external_side_effect_authority: 'none',
-    delivery_boundary: 'local commit + worker receipt',
+    scope: [`src/${key}/`],
+    outcome: `Implement ${key}`,
+    non_goals: ['Unrelated cleanup'],
+    checks: [`test ${key}`],
     task_hash: ''
   }
 }
@@ -29,38 +25,41 @@ function plan() {
   return {
     baseline_sha: 'abc123',
     integration_branch: 'batch/demo',
-    max_mutating_workers: 2,
+    max_workers: 2,
     retry_limit: 1,
     integration_strategy: 'serial cherry-pick',
-    aggregate_verification: ['npm test'],
-    pr_authority: 'permitted',
-    merge_authority: 'explicit only',
-    cleanup_authority: 'explicit only'
+    aggregate_checks: ['npm test']
   }
 }
 
-function manifest(tasks, manifestHash = '', approvedHash = '', status = 'awaiting-approval', batchId = 'demo-batch', batchPlan = plan(), cursorExtras = '') {
-  const planBlock = `\`\`\`json batch-plan\n${JSON.stringify(batchPlan, null, 2)}\n\`\`\``
-  const blocks = tasks.map((value) => `\`\`\`json batch-task\n${JSON.stringify(value, null, 2)}\n\`\`\``).join('\n\n')
+function manifest(tasks, status = 'planned', cursorExtras = {}) {
+  const batchPlan = plan()
+  const taskHashes = Object.fromEntries(tasks.map((value) => [value.task_key, hashTask(value)]))
+  const complete = tasks.map((value) => ({ ...value, task_hash: taskHashes[value.task_key] }))
+  const manifestHash = hashManifest('demo-batch', batchPlan, complete)
   const runtime = {
-    tasks: tasks.map((value) => ({
+    tasks: complete.map((value) => ({
       task_key: value.task_key,
-      task_hash: value.task_hash,
-      approved_manifest_hash: approvedHash,
       state: 'pending',
-      state_reason: '',
-      active_attempt: 0,
-      branch_key: '',
-      worktree_key: '',
-      baseline_sha: batchPlan.baseline_sha,
+      attempt: 0,
+      branch: '',
+      worktree: '',
       worker_id: '',
-      dispatch_time: '',
-      receipts: [],
-      rejected_receipts: []
+      head_sha: '',
+      result: ''
     }))
   }
-  const runtimeBlock = `\`\`\`json batch-runtime\n${JSON.stringify(runtime, null, 2)}\n\`\`\``
-  return `---\nagent_os_batch: 1\nbatch_id: ${batchId}\nstatus: ${status}\nnext_action: continue\nmanifest_hash: "${manifestHash}"\napproved_manifest_hash: "${approvedHash}"${cursorExtras ? `\n${cursorExtras}` : ''}\n---\n\n${planBlock}\n\n${blocks}\n\n${runtimeBlock}\n`
+  const cursor = {
+    agent_os_batch: '2',
+    batch_id: 'demo-batch',
+    status,
+    next_action: status === 'delivered' ? '' : 'dispatch-frontier',
+    manifest_hash: manifestHash,
+    ...cursorExtras
+  }
+  const frontmatter = Object.entries(cursor).map(([key, value]) => `${key}: "${value}"`).join('\n')
+  const taskBlocks = complete.map((value) => `\`\`\`json batch-task\n${JSON.stringify(value, null, 2)}\n\`\`\``).join('\n\n')
+  return `---\n${frontmatter}\n---\n\n\`\`\`json batch-plan\n${JSON.stringify(batchPlan, null, 2)}\n\`\`\`\n\n${taskBlocks}\n\n\`\`\`json batch-runtime\n${JSON.stringify(runtime, null, 2)}\n\`\`\`\n`
 }
 
 function rewriteRuntime(content, update) {
@@ -71,261 +70,63 @@ function rewriteRuntime(content, update) {
   })
 }
 
-function receipt(taskValue, approvedHash, overrides = {}) {
-  return {
-    batch_id: 'demo-batch',
-    task_key: taskValue.task_key,
-    task_hash: taskValue.task_hash,
-    approved_manifest_hash: approvedHash,
-    attempt: 1,
-    worker: 'worker-1',
-    baseline_sha: 'abc123',
-    head_sha: 'deadbeef',
-    changed_files: [`src/${taskValue.task_key}/index.js`],
-    acceptance_evidence: [`${taskValue.task_key} works`],
-    commands_and_results: [`test ${taskValue.task_key}: pass`],
-    review_result: 'pass',
-    external_side_effects: [],
-    remaining_uncertainty: [],
-    ...overrides
-  }
-}
-
 const alpha = task('alpha')
 const beta = task('beta', ['alpha'])
-const first = hashManifest([alpha, beta], 'demo-batch', plan())
-const reversed = hashManifest([beta, alpha], 'demo-batch', plan())
-assert.deepEqual(first, reversed, 'aggregate hash must ignore manifest block order')
-const reorderedPlan = Object.fromEntries(Object.entries(plan()).reverse())
+const valid = manifest([alpha, beta])
+assert.deepEqual(checkManifest(valid).mismatches, [])
+assert.equal(parseManifest(valid).tasks.length, 2)
+assert.equal(parseCursor(valid).status, 'planned')
+
+assert.equal(hashTask(alpha), hashTask({ ...alpha, task_hash: 'ignored' }))
+assert.notEqual(hashTask(alpha), hashTask({ ...alpha, outcome: 'Changed outcome' }))
 assert.equal(
-  first.manifest_hash,
-  hashManifest([alpha, beta], 'demo-batch', reorderedPlan).manifest_hash,
-  'aggregate hash must ignore batch-plan property order'
-)
-assert.notEqual(first.manifest_hash, hashManifest([alpha, beta], 'other-batch', plan()).manifest_hash)
-assert.notEqual(first.manifest_hash, hashManifest([alpha, beta], 'demo-batch', { ...plan(), retry_limit: 2 }).manifest_hash)
-
-const crlf = { ...alpha, goal: 'line one\r\nline two' }
-const lf = { ...alpha, goal: 'line one\nline two' }
-assert.equal(hashTask(crlf), hashTask(lf), 'line endings must normalize to LF')
-
-const changed = { ...alpha, acceptance: ['different acceptance'] }
-assert.notEqual(hashTask(alpha), hashTask(changed), 'definition drift must change task hash')
-
-const approvedTasks = [alpha, beta].map((value) => ({
-  ...value,
-  task_hash: first.task_hashes.find((entry) => entry.task_key === value.task_key).task_hash
-}))
-assert.deepEqual(checkManifest(manifest(approvedTasks, first.manifest_hash)).mismatches, [])
-assert.deepEqual(checkManifest(manifest(approvedTasks, first.manifest_hash, first.manifest_hash, 'approved')).mismatches, [])
-assert.match(
-  checkManifest(manifest(approvedTasks, first.manifest_hash, first.manifest_hash)).mismatches.join('\n'),
-  /must be empty before approval/
+  hashManifest('demo-batch', plan(), [alpha, beta]),
+  hashManifest('demo-batch', plan(), [beta, alpha]),
+  'task order must not affect aggregate hash'
 )
 
-const staleTasks = approvedTasks.map((value) => value.task_key === 'alpha'
-  ? { ...value, acceptance: ['drift after approval'] }
-  : value)
-assert.throws(
-  () => checkManifest(manifest(staleTasks, first.manifest_hash, first.manifest_hash, 'approved')),
-  /runtime: task_hash mismatch/
-)
+assert.throws(() => parseCursor(valid.replace('status: "planned"', 'status: "planned"\nstatus: "running"')), /duplicate cursor/)
+assert.throws(() => parseManifest(valid.replace('"dependencies": []', '"dependencies": ["missing"]')), /unknown dependency/)
+assert.throws(() => parseManifest(manifest([task('alpha', ['beta']), task('beta', ['alpha'])])), /dependency cycle/)
 
-assert.throws(() => parseManifest(manifest([alpha, alpha])), /duplicate task_key/)
-assert.throws(() => parseManifest(manifest([task('orphan', ['missing'])])), /unknown dependency/)
-assert.throws(() => parseManifest(manifest([task('a', ['b']), task('b', ['a'])])), /dependency cycle/)
-assert.throws(() => hashTask({ ...alpha, hidden_scope: 'src/other/**' }), /unknown fields/)
-assert.throws(() => parsePlan(manifest([alpha], '', '', 'awaiting-approval', 'demo-batch', { ...plan(), hidden: true })), /unknown fields/)
-assert.throws(() => checkManifest(manifest([alpha], first.manifest_hash, '', 'draft')), /unsupported batch status/)
-for (const field of ['owned_scope', 'acceptance', 'verification']) {
-  assert.throws(() => hashTask({ ...alpha, [field]: [''] }), /non-empty strings/)
-}
-assert.throws(
-  () => hashManifest([alpha], 'demo-batch', { ...plan(), aggregate_verification: [''] }),
-  /non-empty strings/
-)
-assert.throws(() => parseCursor(manifest([alpha]).replace(/^---\n/, '')), /must start with YAML frontmatter/)
-assert.throws(
-  () => parseCursor(manifest([alpha]).replace('status: awaiting-approval', 'status: awaiting-approval\nstatus: approved')),
-  /duplicate frontmatter field/
-)
-assert.throws(() => parseCursor(manifest([alpha]).replace('agent_os_batch: 1\n', '')), /missing frontmatter field/)
-const blockedBeforeApproval = manifest(
-  approvedTasks,
-  first.manifest_hash,
-  '',
-  'blocked',
-  'demo-batch',
-  plan(),
-  'blocked_from: awaiting-approval\nblocked_reason: waiting for corrected scope'
-)
-assert.deepEqual(checkManifest(blockedBeforeApproval).mismatches, [])
-assert.throws(
-  () => checkManifest(manifest(approvedTasks, first.manifest_hash, '', 'blocked')),
-  /requires a valid blocked_from/
-)
-assert.throws(
-  () => checkManifest(manifest(approvedTasks, first.manifest_hash).replace(/```json batch-runtime[\s\S]*?\n```\n/, '')),
-  /exactly one json batch-runtime/
-)
+const activeWithoutWorkspace = rewriteRuntime(valid, (runtime) => {
+  runtime.tasks[0].state = 'running'
+  runtime.tasks[0].attempt = 1
+})
+assert.throws(() => parseManifest(activeWithoutWorkspace), /requires attempt, branch, and worktree/)
 
-const changedPlan = { ...plan(), pr_authority: 'different authority' }
-const changedPlanHash = hashManifest(approvedTasks, 'demo-batch', changedPlan).manifest_hash
-const staleApprovalReceipt = rewriteRuntime(
-  manifest(approvedTasks, changedPlanHash, changedPlanHash, 'approved', 'demo-batch', changedPlan),
-  (runtime) => {
-    runtime.tasks[0] = {
-      ...runtime.tasks[0],
-      state: 'succeeded',
-      active_attempt: 1,
-      branch_key: 'batch/demo/alpha',
-      worktree_key: 'alpha-attempt-1',
-      worker_id: 'worker-1',
-      dispatch_time: '2026-07-29T12:00:00Z',
-      receipts: [receipt(approvedTasks[0], first.manifest_hash)]
-    }
-  }
-)
-assert.throws(() => checkManifest(staleApprovalReceipt), /receipt: approved_manifest_hash mismatch/)
-const retainedRejectedReceipt = rewriteRuntime(
-  manifest(approvedTasks, changedPlanHash, changedPlanHash, 'approved', 'demo-batch', changedPlan),
-  (runtime) => {
-    const rejectedReceipt = receipt(approvedTasks[0], first.manifest_hash)
-    runtime.tasks[0] = {
-      ...runtime.tasks[0],
-      state: 'failed',
-      state_reason: 'rejected receipt: approved_manifest_hash mismatch',
-      active_attempt: 1,
-      branch_key: 'batch/demo/alpha',
-      worktree_key: 'alpha-attempt-1',
-      worker_id: 'worker-1',
-      dispatch_time: '2026-07-29T12:00:00Z',
-      rejected_receipts: [{
-        receipt: rejectedReceipt,
-        rejection_reasons: ['approved_manifest_hash mismatch']
-      }]
-    }
-  }
-)
-assert.deepEqual(checkManifest(retainedRejectedReceipt).mismatches, [])
+const absoluteWorktree = rewriteRuntime(valid, (runtime) => {
+  Object.assign(runtime.tasks[0], {
+    state: 'ready',
+    attempt: 1,
+    branch: 'task/alpha',
+    worktree: 'C:\\temp\\alpha'
+  })
+})
+assert.throws(() => parseManifest(absoluteWorktree), /worktree must be portable/)
 
-const staleAttemptReceipt = rewriteRuntime(
-  manifest(approvedTasks, first.manifest_hash, first.manifest_hash, 'running'),
-  (runtime) => {
-    runtime.tasks[0] = {
-      ...runtime.tasks[0],
-      state: 'running',
-      active_attempt: 2,
-      branch_key: 'batch/demo/alpha-2',
-      worktree_key: 'alpha-attempt-2',
-      worker_id: 'current-worker',
-      dispatch_time: '2026-07-29T13:00:00Z',
-      receipts: [receipt(approvedTasks[0], first.manifest_hash, { worker: 'old-worker' })]
-    }
-  }
-)
-assert.throws(() => checkManifest(staleAttemptReceipt), /attempt mismatch, worker mismatch/)
+const blockedDependency = rewriteRuntime(valid, (runtime) => {
+  Object.assign(runtime.tasks[1], {
+    state: 'ready',
+    attempt: 1,
+    branch: 'task/beta',
+    worktree: 'worktrees/beta'
+  })
+})
+assert.throws(() => parseManifest(blockedDependency), /dependency alpha is not integrated/)
 
-const wrongWorkerReceipt = rewriteRuntime(
-  manifest(approvedTasks, first.manifest_hash, first.manifest_hash, 'running'),
-  (runtime) => {
-    runtime.tasks[0] = {
-      ...runtime.tasks[0],
-      state: 'running',
-      active_attempt: 1,
-      branch_key: 'batch/demo/alpha-1',
-      worktree_key: 'alpha-attempt-1',
-      worker_id: 'current-worker',
-      dispatch_time: '2026-07-29T13:00:00Z',
-      receipts: [receipt(approvedTasks[0], first.manifest_hash, { worker: 'different-worker' })]
-    }
-  }
-)
-assert.throws(() => checkManifest(wrongWorkerReceipt), /worker mismatch/)
+const staleHash = valid.replace(/task_hash": "[a-f0-9]+"/, 'task_hash": "stale"')
+assert(checkManifest(staleHash).mismatches.includes('alpha: task_hash mismatch'))
 
-const fabricatedRejection = rewriteRuntime(
-  manifest(approvedTasks, first.manifest_hash, first.manifest_hash, 'running'),
-  (runtime) => {
-    runtime.tasks[0] = {
-      ...runtime.tasks[0],
-      state: 'running',
-      active_attempt: 1,
-      branch_key: 'batch/demo/alpha-1',
-      worktree_key: 'alpha-attempt-1',
-      worker_id: 'worker-1',
-      dispatch_time: '2026-07-29T13:00:00Z',
-      rejected_receipts: [{
-        receipt: receipt(approvedTasks[0], first.manifest_hash),
-        rejection_reasons: ['fabricated reason']
-      }]
-    }
-  }
-)
-assert.throws(() => checkManifest(fabricatedRejection), /unsupported reasons/)
-
-const historicalRetained = rewriteRuntime(
-  manifest(approvedTasks, first.manifest_hash, first.manifest_hash, 'running'),
-  (runtime) => {
-    runtime.tasks[0] = {
-      ...runtime.tasks[0],
-      state: 'running',
-      active_attempt: 2,
-      branch_key: 'batch/demo/alpha-2',
-      worktree_key: 'alpha-attempt-2',
-      worker_id: 'current-worker',
-      dispatch_time: '2026-07-29T13:00:00Z',
-      rejected_receipts: [{
-        receipt: receipt(approvedTasks[0], first.manifest_hash, { worker: 'old-worker' }),
-        rejection_reasons: ['attempt mismatch', 'worker mismatch']
-      }]
-    }
-  }
-)
-assert.deepEqual(checkManifest(historicalRetained).mismatches, [])
-
-const semanticCurrentRejection = rewriteRuntime(
-  manifest(approvedTasks, first.manifest_hash, first.manifest_hash, 'running'),
-  (runtime) => {
-    runtime.tasks[0] = {
-      ...runtime.tasks[0],
-      state: 'failed',
-      state_reason: 'semantic: changed_files outside owned_scope',
-      active_attempt: 1,
-      branch_key: 'batch/demo/alpha-1',
-      worktree_key: 'alpha-attempt-1',
-      worker_id: 'worker-1',
-      dispatch_time: '2026-07-29T13:00:00Z',
-      rejected_receipts: [{
-        receipt: receipt(approvedTasks[0], first.manifest_hash),
-        rejection_reasons: ['semantic: changed_files outside owned_scope']
-      }]
-    }
-  }
-)
-assert.deepEqual(checkManifest(semanticCurrentRejection).mismatches, [])
-
-assert.throws(
-  () => checkManifest(
-    manifest(approvedTasks, first.manifest_hash, first.manifest_hash, 'approved')
-      .replace('next_action: continue', 'next_action:')
-  ),
-  /active manifest requires next_action/
-)
-
-const temporaryRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'agent-os-batch-hash-'))
+const temporary = fs.mkdtempSync(path.join(os.tmpdir(), 'agent-os-batch-'))
 try {
-  const validPath = path.join(temporaryRoot, 'valid.md')
-  const mismatchPath = path.join(temporaryRoot, 'mismatch.md')
-  const malformedPath = path.join(temporaryRoot, 'malformed.md')
-  fs.writeFileSync(validPath, manifest(approvedTasks, first.manifest_hash), 'utf8')
-  fs.writeFileSync(mismatchPath, manifest(approvedTasks, '0'.repeat(64)), 'utf8')
-  fs.writeFileSync(malformedPath, manifest(approvedTasks, first.manifest_hash).replace(/^---\n/, ''), 'utf8')
-  const script = fileURLToPath(new URL('./manifest-hash.mjs', import.meta.url))
-  assert.equal(spawnSync(process.execPath, [script, '--check', validPath]).status, 0)
-  assert.equal(spawnSync(process.execPath, [script, '--check', mismatchPath]).status, 1)
-  assert.equal(spawnSync(process.execPath, [script, '--check', malformedPath]).status, 2)
+  const file = path.join(temporary, 'manifest.md')
+  fs.writeFileSync(file, valid)
+  const script = path.resolve(path.dirname(fileURLToPath(import.meta.url)), 'manifest-hash.mjs')
+  const result = spawnSync(process.execPath, [script, '--check', file], { encoding: 'utf8' })
+  assert.equal(result.status, 0, result.stderr)
 } finally {
-  fs.rmSync(temporaryRoot, { recursive: true, force: true })
+  fs.rmSync(temporary, { recursive: true, force: true })
 }
 
-console.log('batch manifest hash tests passed.')
+console.log('batch manifest tests passed.')

@@ -223,82 +223,38 @@ export function validate(root = path.resolve(scriptDir, '..')) {
     }
   }
 
-  const workflowFile = path.join(root, 'skills/deliver-work/workflow.md')
-  const workflow = read(workflowFile)
-  const orderedStates = 'awaiting-approval → approved → implementing → in-review → reviewed → verified → delivered'
-  if (!workflow.includes(orderedStates)) fail('DELIVER_STATE_ORDER', 'deliver-work state order has drifted.')
-  const stepsRoot = path.join(root, 'skills/deliver-work/steps')
-  const stepFiles = fs.readdirSync(stepsRoot).filter((name) => /^\d\d-.*\.md$/.test(name)).sort()
-  const expectedSteps = [
-    '01-readiness.md', '02-plan.md', '03-checkpoint.md', '04-implement.md',
-    '05-review.md', '06-verify.md', '07-deliver.md'
-  ]
-  if (!sortedEqual(stepFiles, expectedSteps)) fail('DELIVER_STEP_SET', 'deliver-work steps must be contiguous 01 through 07.')
-  expectedSteps.forEach((name, index) => {
-    const file = path.join(stepsRoot, name)
-    if (!fs.existsSync(file)) return
-    const content = read(file)
-    if (!content.includes('## Completion criterion')) fail('DELIVER_COMPLETION', `${name}: missing completion criterion.`)
-    const nextMatches = [...content.matchAll(/`NEXT`:/g)]
-    if (index < expectedSteps.length - 1) {
-      const next = expectedSteps[index + 1]
-      if (nextMatches.length !== 1 || !content.includes(`(${next})`)) {
-        fail('DELIVER_NEXT', `${name}: must contain exactly one NEXT to ${next}.`)
-      }
-    } else if (nextMatches.length || !content.includes('Workflow complete.')) {
-      fail('DELIVER_NEXT', `${name}: final step must complete without NEXT.`)
-    }
-  })
-  const statePairs = [
-    ['02-plan.md', ['status: awaiting-approval', 'next_step: steps/03-checkpoint.md']],
-    ['03-checkpoint.md', ['status: approved', 'next_step: steps/04-implement.md']],
-    ['04-implement.md', ['status: implementing', 'next_step: steps/05-review.md']],
-    ['05-review.md', ['status: in-review', 'status: reviewed', 'next_step: steps/06-verify.md']],
-    ['06-verify.md', ['status: verified', 'next_step: steps/07-deliver.md']],
-    ['07-deliver.md', ['status: delivered', 'clear `next_step`']]
-  ]
-  for (const [name, tokens] of statePairs) {
-    checkContains(diagnostics, path.join(stepsRoot, name), tokens, 'DELIVER_STATE_PAIR')
-  }
-  checkContains(diagnostics, path.join(root, 'skills/deliver-work/references/review-loop.md'),
-    ['target:', 'roles:', 'findings:', 'fixer:', 'targeted re-review:', 'unresolved:'],
-    'DELIVER_REVIEW_RECEIPT')
+  checkContains(diagnostics, path.join(root, 'skills/deliver-work/workflow.md'), [
+    '**Outcome:**',
+    '**Boundaries:**',
+    '**Ground truth:**',
+    'An implementation request authorizes in-scope repository edits.',
+    'The record is working memory,',
+    'Add independent review when'
+  ], 'DELIVER_CONTRACT')
 
   checkContains(diagnostics, path.join(root, 'skills/chart-work/references/map.md'),
-    ['Status: open', 'Origin map:', 'Branch key:', 'across all statuses', 'If several match', 'Re-read both links'],
+    ['The map orients.', 'Identity is', 'Origin map:', 'Branch key:', 'Search before creating'],
     'CHART_HANDOFF_CONTRACT')
-  if (!read(path.join(root, 'evals/cases/chart-work.md')).includes('| CW-P8R Partial retry |')) {
-    fail('CHART_HANDOFF_EVAL', 'chart-work must retain the CW-P8R partial retry case.')
-  }
 
   checkContains(diagnostics, path.join(root, 'skills/batch-work/references/manifest.md'), [
-    'awaiting-approval → approved → running → reconciling → verifying → ready-to-deliver → delivered',
-    'pending → ready → running → succeeded → integrated',
+    'agent_os_batch: 2',
+    'Statuses are `planned`, `running`, `reconciling`, `verifying`, `ready`, `delivered`, and `blocked`.',
     'manifest_hash: ""',
-    'approved_manifest_hash: ""',
     '```json batch-plan',
+    '```json batch-task',
     '```json batch-runtime',
-    '"rejected_receipts": []',
-    '`blocked_reason`',
     'Identity is `(batch_id, task_key)`',
-    'delivery_boundary: local commit + worker receipt',
-    'A rejected receipt is retained',
-    'active-attempt, worker and baseline mismatch reasons'
+    'Hashes detect definition drift; they do not represent human approval.',
+    'Worker-local checks are useful context but are not proof'
   ], 'BATCH_MANIFEST_CONTRACT')
   checkContains(diagnostics, path.join(root, 'skills/batch-work/SKILL.md'), [
-    'HALT before branches,',
-    'hash-bound handoffs and HALT',
-    'Only the coordinator updates the manifest',
-    'Individual green receipts never substitute for aggregate verification'
+    'The request defines whether',
+    'A planning-only request stops here;',
+    'Each worker gets',
+    'Individual worker checks never substitute for aggregate verification.'
   ], 'BATCH_WORKFLOW_CONTRACT')
-  checkContains(diagnostics, path.join(root, 'skills/deliver-work/steps/07-deliver.md'), [
-    'commit only to the isolated task',
-    'approved manifest hash',
-    'complete worker receipt defined by `batch-work`',
-    'Do not push, open a PR, merge, edit the batch manifest'
-  ], 'BATCH_DELIVERY_BOUNDARY')
   checkContains(diagnostics, path.join(root, 'skills/deliver-work/workflow.md'), [
-    'batch_manifest_hash: ""'
+    'The coordinator owns integration and aggregate verification.'
   ], 'BATCH_DELIVERY_BOUNDARY')
   for (const script of ['manifest-hash.mjs', 'test-manifest-hash.mjs']) {
     if (!fs.existsSync(path.join(root, 'skills/batch-work/scripts', script))) {

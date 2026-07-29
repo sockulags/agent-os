@@ -1,15 +1,12 @@
 ---
 name: deliver-work
-description: Takes one decision-ready work unit or focused fix through sequential implementation, review, verification, and its delivery boundary. User-invoked when work is ready to build, including as a batch worker. Not for exploration or specification-only work (use shape-work).
+description: Delivers one decision-ready change against explicit boundaries and ground truth. User-invoked for implementation, including as a batch worker. Not for exploration or specification-only work.
 disable-model-invocation: true
 ---
 
 # Deliver work
 
-Run one visible step at a time so later work cannot pull attention past the current gate.
-
-1. Read [workflow.md](workflow.md) completely and keep its state contract for the run.
-2. Read only the step named by the active work record. With no active record, begin at [steps/01-readiness.md](steps/01-readiness.md).
-3. Complete that step's criterion, then follow its single `NEXT` or `HALT` instruction.
-
-The workflow is complete only when the delivery step reports `delivered`, or names the exact blocked transition. A summary, implementation progress, or green tests alone never advance state.
+Read [workflow.md](workflow.md), then execute its contract. The invocation grants authority to change
+repository files inside the requested scope. It does not grant authority to choose unresolved product
+behavior or to merge, deploy, perform destructive cleanup, or affect external systems unless the
+request or project policy includes those actions.

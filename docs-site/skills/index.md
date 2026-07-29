@@ -5,12 +5,12 @@ themselves from the situation, and the meta-skill governs how the others are wri
 
 | Skill | Bucket | Invocation | Purpose |
 |---|---|---|---|
-| [`init-agent-os`](/skills/init-agent-os) | workflow | manual | Machine setup, or a repo policy interview |
+| [`init-agent-os`](/skills/init-agent-os) | workflow | manual | Managed policy setup or repo defaults |
 | [`chart-work`](/skills/chart-work) | workflow | manual | Chart broad work as a parallel graph of decision tickets |
-| [`shape-work`](/skills/shape-work) | workflow | manual | Interview to a decision-complete spec plus visualization |
-| [`batch-work`](/skills/batch-work) | workflow | manual | Dispatch and reconcile many frozen, independent work units |
-| [`deliver-work`](/skills/deliver-work) | workflow | manual | Readiness through review, verification and PR |
-| [`dispatch-next`](/skills/dispatch-next) | workflow | manual | Pick exactly one decision-ready action from live state |
+| [`shape-work`](/skills/shape-work) | workflow | manual | Turn bounded choices into a decision-ready contract |
+| [`batch-work`](/skills/batch-work) | workflow | manual | Run isolated ready units and verify the integrated result |
+| [`deliver-work`](/skills/deliver-work) | workflow | manual | Implement one change against boundaries and ground truth |
+| [`dispatch-next`](/skills/dispatch-next) | workflow | manual | Pick or dispatch one action according to the request |
 | [`verify-before-done`](/skills/verify-before-done) | discipline | automatic | Fresh evidence before any completion claim |
 | [`diagnose-before-fix`](/skills/diagnose-before-fix) | discipline | automatic | Reproduce and root-cause before patching |
 | [`scope-guard`](/skills/scope-guard) | discipline | automatic | Keep work inside the task; flag drift |
@@ -23,10 +23,8 @@ Manual skills are opted into explicitly on both platforms. In Claude Code they c
 they carry an `agents/openai.yaml` with `policy.allow_implicit_invocation: false` and are typed as
 `$<skill>`.
 
-Automatic skills carry neither switch. Their description does the work instead: it names what the
-skill does, the situations that should activate it, the point in the workflow to load it, and the
-cases where it should be skipped. That last part matters as much as the first — a discipline that
-fires on adjacent-but-wrong situations costs context on every session.
+Automatic skills carry neither switch. Their descriptions name the situation and boundary clearly
+enough to trigger only when useful.
 
 ## Retirement
 

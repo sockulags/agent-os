@@ -94,45 +94,30 @@ try {
     fs.writeFileSync(file, `${JSON.stringify(manifest, null, 2)}\n`)
   }, 'EVAL_CASE_POLARITY')
 
-  expectFailure('wrong workflow transition', (target) => {
-    rewrite(path.join(target, 'skills/deliver-work/steps/05-review.md'), (text) =>
-      text.replace('(06-verify.md)', '(07-deliver.md)'))
-  }, 'DELIVER_NEXT')
-
-  expectFailure('missing review receipt field', (target) => {
-    rewrite(path.join(target, 'skills/deliver-work/references/review-loop.md'), (text) =>
-      text.replace('unresolved:', 'open-items:'))
-  }, 'DELIVER_REVIEW_RECEIPT')
+  expectFailure('missing delivery ground truth', (target) => {
+    rewrite(path.join(target, 'skills/deliver-work/workflow.md'), (text) =>
+      text.replace('**Ground truth:**', '**Checks:**'))
+  }, 'DELIVER_CONTRACT')
 
   expectFailure('missing handoff identity field', (target) => {
     rewrite(path.join(target, 'skills/chart-work/references/map.md'), (text) =>
-      text.replaceAll('Branch key:', 'Branch identity:'))
+      text.replace('Branch key:', 'Branch identity:'))
   }, 'CHART_HANDOFF_CONTRACT')
 
-  expectFailure('missing batch approval hash', (target) => {
+  expectFailure('missing batch manifest hash', (target) => {
     rewrite(path.join(target, 'skills/batch-work/references/manifest.md'), (text) =>
-      text.replace('approved_manifest_hash: ""', 'manifest_approval: ""'))
+      text.replace('manifest_hash: ""', 'definition_digest: ""'))
   }, 'BATCH_MANIFEST_CONTRACT')
 
   expectFailure('missing batch worker delivery boundary', (target) => {
-    rewrite(path.join(target, 'skills/deliver-work/steps/07-deliver.md'), (text) =>
-      text.replace('Do not push, open a PR, merge, edit the batch manifest', 'Return to the coordinator'))
+    rewrite(path.join(target, 'skills/deliver-work/workflow.md'), (text) =>
+      text.replace('The coordinator owns integration and aggregate verification.', 'Return to the coordinator.'))
   }, 'BATCH_DELIVERY_BOUNDARY')
 
   expectFailure('missing batch runtime block', (target) => {
     rewrite(path.join(target, 'skills/batch-work/references/manifest.md'), (text) =>
       text.replace('```json batch-runtime', '```json runtime-state'))
   }, 'BATCH_MANIFEST_CONTRACT')
-
-  expectFailure('missing aggregate hash at worker delivery', (target) => {
-    rewrite(path.join(target, 'skills/deliver-work/steps/07-deliver.md'), (text) =>
-      text.replace('approved manifest hash', 'batch approval'))
-  }, 'BATCH_DELIVERY_BOUNDARY')
-
-  expectFailure('missing aggregate hash in worker cursor', (target) => {
-    rewrite(path.join(target, 'skills/deliver-work/workflow.md'), (text) =>
-      text.replace('batch_manifest_hash: ""', 'batch_approval: ""'))
-  }, 'BATCH_DELIVERY_BOUNDARY')
 
   expectFailure('missing deterministic batch hash script', (target) => {
     fs.rmSync(path.join(target, 'skills/batch-work/scripts/manifest-hash.mjs'))

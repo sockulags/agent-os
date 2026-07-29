@@ -5,22 +5,20 @@ description: Finds the root cause of reproducible technical failures before code
 
 # Diagnose before fix
 
-Establish a supported cause before changing production code. The goal is the smallest explanation that accounts for the observed failure and predicts a useful test.
+Find the smallest supported explanation that accounts for the failure and predicts a useful check.
 
-## Diagnostic loop
+## Contract
 
-1. **State the symptom.** Record expected behavior, actual behavior, environment, and the narrowest known failing path. Separate observations from interpretations.
-2. **Reproduce.** Run the smallest reliable reproduction. If the failure is intermittent, capture frequency and conditions instead of treating one pass as disproof.
-3. **Reduce.** Remove unrelated inputs, layers, and timing until the failure boundary is clear. Compare a working case with the failing case when possible.
-4. **Trace the seam.** Follow data and control flow across the nearest boundary: caller/callee, client/server, parser/input, state/event, or configuration/runtime. Instrument the boundary rather than guessing inside it.
-5. **Form competing hypotheses.** Write the leading explanation and at least one plausible alternative. For each, choose a check whose result would distinguish them.
-6. **Falsify cheaply.** Run the highest-information checks first. Update the hypotheses from evidence; avoid accumulating speculative edits.
-7. **Name the root cause.** Identify the faulty condition, why it produces the symptom, and the evidence that excludes the closest alternative.
-8. **Cross the patch gate.** Propose or implement a fix only after the cause is supported. Add a regression check that fails for the diagnosed reason, then verify the fix through the original reproduction.
+- **Ground truth:** the narrowest reliable reproduction or observed failure.
+- **Working surface:** tests, diagnostics, logs, and instrumentation inside the task scope.
+- **Boundary:** do not commit a production fix whose causal story is still guesswork.
 
-## Hard rules
+## Loop
 
-- Keep production files unchanged until evidence supports a root cause, because an early patch destroys diagnostic information and can mask the defect.
-- Change one diagnostic variable at a time, because bundled experiments cannot identify which condition mattered.
-- Stop and report bounded uncertainty when the failure cannot be reproduced or distinguished with available evidence, because a hypothesis is not a diagnosis.
-- Re-run the original failing path after the patch, because a passing proxy does not prove the reported symptom is resolved.
+Reproduce, reduce, trace the nearest seam, and compare plausible causes with high-information checks.
+Use temporary instrumentation when it helps. Once evidence supports a cause, implement the smallest
+fix and add a regression check when practical. Re-run the original failing path.
+
+If the failure cannot be reproduced or competing explanations cannot be distinguished, report the
+bounded uncertainty and the next discriminating check. Do not turn a plausible hypothesis into a
+confirmed diagnosis.

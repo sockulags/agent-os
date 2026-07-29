@@ -27,11 +27,11 @@ features:
     title: Evidence before claims
     details: The verify-before-done discipline turns "it works" into a command, an exit status and a result. A check that ran proves only what that check exercised — and unverified claims get named as unverified.
   - icon: 🚧
-    title: Gates that hold
-    details: deliver-work loads one step file at a time, so implementation cannot read past its own checkpoint. State lives in a work record on disk, not in the conversation, and only forward transitions are allowed.
+    title: Authority follows the request
+    details: An implementation request authorizes in-scope repository work. The agent asks only for unresolved product decisions and stops delivery at the requested boundary.
   - icon: 🔍
-    title: Independent review
-    details: A frozen candidate goes to blind, adversarial and simplifier reviewers that never see the implementer's reasoning or each other's findings. Classification follows evidence, not majority vote.
+    title: Control the contract
+    details: Skills lock outcomes, boundaries and ground truth while leaving local tactics to the implementer. Independent review appears when risk warrants it.
   - icon: 🤝
     title: Two platforms, one source
     details: Every skill ships once and loads in both Claude Code and Codex. Manual workflows are opted into explicitly on both; disciplines trigger themselves from the situation.

@@ -42,9 +42,9 @@ Run the setup skill in global mode once per machine:
 /agent-os:init-agent-os global
 ```
 
-It checks that the plugin is visible, reports any drift between `policy.md` in the repository and the
-managed blocks already installed on the machine, shows you the resulting block as a diff against
-`~/.claude/CLAUDE.md` and `~/.codex/AGENTS.md`, and writes only after you approve.
+It checks that the plugin is visible, reports drift, applies the managed blocks through the
+deterministic script, and shows the resulting diff. The explicit setup invocation authorizes these
+writes.
 
 The block is delimited by `<!-- BEGIN AGENT OS -->` and `<!-- END AGENT OS -->` markers, and the
 PowerShell script `skills/init-agent-os/scripts/policy-block.ps1` is its only writer. Never edit
@@ -58,11 +58,9 @@ In the repository you want to work in, run the same skill without an argument:
 /agent-os:init-agent-os
 ```
 
-It reads the repo first — existing `CLAUDE.md` or `AGENTS.md`, the README, package and build files,
-CI configuration — and then interviews you only about what the repo does not already answer: merge
-policy, verify commands, design-system location, planning surface, branch and PR flow, batch
-execution policy, and the conventions and gotchas worth writing down now. Every question arrives
-with a recommendation.
+It reads the repo first and asks only about missing material defaults: delivery, verification,
+design-system location, planning surface, batch execution, and durable conventions. Every question
+arrives with a recommendation. It writes the smallest useful policy and shows the resulting diff.
 
 The result is the repository's [project policy](/guide/project-policy), a living document that
 `deliver-work` will later propose additions to.
@@ -81,10 +79,10 @@ For work whose decisions are already made, go straight to delivery:
 /agent-os:deliver-work Fix the timezone offset in the nightly digest
 ```
 
-For several approved, dependency-mapped units, freeze and run one batch:
+For several decision-ready, dependency-mapped units, run one batch:
 
 ```text
-/agent-os:batch-work Execute the approved platform migration work units
+/agent-os:batch-work Execute the platform migration work units
 ```
 
 Nothing forces you to use a workflow at all. The disciplines are active in every session regardless,
