@@ -1,0 +1,11 @@
+.VPDocFooter .edit-info .last-updated {
+  display: none;
+}
+
+.agent-os-last-updated {
+  margin: 0 0 8px;
+  text-align: right;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--vp-c-text-2);
+}

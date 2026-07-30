@@ -1,3 +1,8 @@
+---
+title: Work records
+description: Compact resumable state for delivery work that spans sessions.
+---
+
 # Work records
 
 Ordinary `deliver-work` runs need no state file. Use `.agent-os/work/<slug>.md` only when work is

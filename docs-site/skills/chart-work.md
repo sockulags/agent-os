@@ -1,3 +1,10 @@
+---
+title: chart-work
+description: Chart broad work as a parallel graph of evidence-backed decision tickets.
+skill-description: Charts broad work as a parallel graph of evidence-backed decision tickets. User-invoked when an effort spans several decision threads or sessions. Not for one bounded choice or decision-ready implementation.
+summary: Chart broad work as a parallel graph of decision tickets
+---
+
 # chart-work
 
 **Bucket:** workflow · **Invocation:** manual · `/agent-os:chart-work` or `$chart-work`

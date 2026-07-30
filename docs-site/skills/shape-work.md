@@ -1,3 +1,10 @@
+---
+title: shape-work
+description: Turn one bounded idea with open product choices into a decision-ready contract.
+skill-description: Shapes a bounded idea into a decision-ready implementation contract. User-invoked while material product choices remain. Not for small fixes or work whose outcome is already clear.
+summary: Turn bounded choices into a decision-ready contract
+---
+
 # shape-work
 
 **Bucket:** workflow · **Invocation:** manual · `/agent-os:shape-work` or `$shape-work`

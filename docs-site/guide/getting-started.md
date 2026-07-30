@@ -1,3 +1,8 @@
+---
+title: Getting started
+description: Install agent-os, initialize policy, and choose the first workflow for a task.
+---
+
 # Getting started
 
 Installing agent-os takes three steps: install the plugin on the platforms you use, install the

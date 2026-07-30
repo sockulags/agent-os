@@ -1,3 +1,8 @@
+---
+title: Frontend mockups
+description: Use the smallest visual comparison needed to settle a product decision.
+---
+
 # Frontend mockups
 
 Use a mockup when seeing the behavior improves a product decision.

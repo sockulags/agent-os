@@ -1,3 +1,8 @@
+---
+title: Batch manifests
+description: Stable task identity, dependencies, reconciliation, and aggregate verification for batch-work.
+---
+
 # Batch manifests
 
 `batch-work` keeps resumable coordinator state in `.agent-os/batches/<batch-slug>.md`.

@@ -1,3 +1,8 @@
+---
+title: What is agent-os?
+description: The authority, workflow, discipline, and evidence model behind agent-os.
+---
+
 # What is agent-os?
 
 agent-os is a small set of Agent Skills that gives coding agents shared working contracts across

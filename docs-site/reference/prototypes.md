@@ -1,3 +1,8 @@
+---
+title: Prototype evidence
+description: Record what a prototype exercised, what was observed, and which decision it settled.
+---
+
 # Prototype evidence
 
 A prototype exists to settle a decision.

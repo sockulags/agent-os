@@ -1,3 +1,8 @@
+---
+title: Skills overview
+description: The ten agent-os workflows, automatic disciplines, and meta-skill with their invocation boundaries.
+---
+
 # Skills overview
 
 agent-os ships ten skills in three buckets. Workflows are invoked by hand, disciplines trigger
@@ -5,7 +10,7 @@ themselves from the situation, and the meta-skill governs how the others are wri
 
 | Skill | Bucket | Invocation | Purpose |
 |---|---|---|---|
-| [`init-agent-os`](/skills/init-agent-os) | workflow | manual | Managed policy setup or repo defaults |
+| [`init-agent-os`](/skills/init-agent-os) | workflow | manual | Managed policy setup or repository defaults |
 | [`chart-work`](/skills/chart-work) | workflow | manual | Chart broad work as a parallel graph of decision tickets |
 | [`shape-work`](/skills/shape-work) | workflow | manual | Turn bounded choices into a decision-ready contract |
 | [`batch-work`](/skills/batch-work) | workflow | manual | Run isolated ready units and verify the integrated result |
@@ -14,7 +19,7 @@ themselves from the situation, and the meta-skill governs how the others are wri
 | [`verify-before-done`](/skills/verify-before-done) | discipline | automatic | Fresh evidence before any completion claim |
 | [`diagnose-before-fix`](/skills/diagnose-before-fix) | discipline | automatic | Reproduce and root-cause before patching |
 | [`scope-guard`](/skills/scope-guard) | discipline | automatic | Keep work inside the task; flag drift |
-| [`writing-skills`](/skills/writing-skills) | meta | manual | Doctrine and definition of done for skills here |
+| [`writing-skills`](/skills/writing-skills) | meta | manual | Doctrine and definition of done for agent-os skills |
 
 ## Invocation
 

@@ -1,3 +1,10 @@
+---
+title: deliver-work
+description: Implement one decision-ready change against explicit boundaries and ground truth.
+skill-description: Delivers one decision-ready change against explicit boundaries and ground truth. User-invoked for implementation, including as a batch worker. Not for exploration or specification-only work.
+summary: Implement one change against boundaries and ground truth
+---
+
 # deliver-work
 
 **Bucket:** workflow · **Invocation:** manual · `/agent-os:deliver-work` or `$deliver-work`

@@ -69,6 +69,16 @@ try {
     fs.rmSync(path.join(target, 'docs-site/skills/dispatch-next.md'))
   }, 'SKILL_DOC_MISSING')
 
+  expectFailure('skill documentation description drift', (target) => {
+    rewrite(path.join(target, 'docs-site/skills/scope-guard.md'), (text) =>
+      text.replace('skill-description: Detects and contains task drift', 'skill-description: Contains any drift'))
+  }, 'SKILL_DOC_DESCRIPTION')
+
+  expectFailure('skills overview summary drift', (target) => {
+    rewrite(path.join(target, 'docs-site/skills/index.md'), (text) =>
+      text.replace('Fresh evidence before any completion claim', 'Evidence eventually'))
+  }, 'SKILL_OVERVIEW_DRIFT')
+
   expectFailure('broken relative link', (target) => {
     fs.appendFileSync(path.join(target, 'README.md'), '\n[broken](missing-contract.md)\n')
   }, 'LINK_BROKEN')

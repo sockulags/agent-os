@@ -78,6 +78,19 @@ function checkContains(diagnostics, file, required, code) {
   }
 }
 
+function skillTable(content) {
+  const rows = new Map()
+  const pattern = /^\| (?:\[`([^`]+)`\]\([^)]*\)|`([^`]+)`) \| (workflow|discipline|meta) \| (manual|automatic) \| ([^|]+?) \|$/gm
+  for (const match of content.matchAll(pattern)) {
+    rows.set(match[1] ?? match[2], {
+      bucket: match[3],
+      invocation: match[4],
+      summary: match[5].trim()
+    })
+  }
+  return rows
+}
+
 export function validate(root = path.resolve(scriptDir, '..')) {
   const diagnostics = []
   const fail = (code, message) => diagnostics.push({ code, message })
@@ -95,6 +108,7 @@ export function validate(root = path.resolve(scriptDir, '..')) {
       .map((name) => name.slice(0, -3))
       .sort()
     : []
+  const documentedSkills = new Map()
 
   if (!skillNames.length) fail('SKILL_NONE', 'No skills found.')
 
@@ -117,8 +131,16 @@ export function validate(root = path.resolve(scriptDir, '..')) {
       continue
     }
     const docText = read(docFile)
-    if (!docText.startsWith(`# ${name}\n`) && !docText.startsWith(`# ${name}\r\n`)) {
+    const docMeta = frontmatter(docText)
+    const docBody = docText.replace(/^---\r?\n[\s\S]*?\r?\n---\r?\n/, '').trimStart()
+    if (!docBody.startsWith(`# ${name}\n`) && !docBody.startsWith(`# ${name}\r\n`)) {
       fail('SKILL_DOC_HEADING', `${name}: documentation H1 must equal the skill name.`)
+    }
+    if (docMeta?.['skill-description'] !== meta.description) {
+      fail('SKILL_DOC_DESCRIPTION', `${name}: skill-description must equal SKILL.md frontmatter description.`)
+    }
+    if (!docMeta?.summary) {
+      fail('SKILL_DOC_SUMMARY', `${name}: documentation frontmatter summary is required.`)
     }
     const contract = docText.match(/\*\*Bucket:\*\*\s*(workflow|discipline|meta)\s*·\s*\*\*Invocation:\*\*\s*(manual|automatic)/)
     if (!contract) {
@@ -126,6 +148,7 @@ export function validate(root = path.resolve(scriptDir, '..')) {
       continue
     }
     const [, bucket, invocation] = contract
+    documentedSkills.set(name, { bucket, invocation, summary: docMeta?.summary })
     const shouldBeManual = bucket === 'workflow' || bucket === 'meta'
     if ((invocation === 'manual') !== shouldBeManual) {
       fail('SKILL_INVOCATION_CLASS', `${name}: ${bucket} must use ${shouldBeManual ? 'manual' : 'automatic'} invocation.`)
@@ -147,6 +170,24 @@ export function validate(root = path.resolve(scriptDir, '..')) {
 
   if (!sortedEqual(skillNames, docsSkillNames)) {
     fail('SKILL_DOC_PARITY', `Skill sources and documentation pages differ: skills=${skillNames.join(',')} docs=${docsSkillNames.join(',')}.`)
+  }
+
+  for (const [surface, rows] of [
+    ['README.md', skillTable(read(path.join(root, 'README.md')))],
+    ['docs-site/skills/index.md', skillTable(read(path.join(root, 'docs-site/skills/index.md')))]
+  ]) {
+    if (!sortedEqual(skillNames, [...rows.keys()])) {
+      fail('SKILL_OVERVIEW_PARITY', `${surface}: skill table differs from distributed skills.`)
+      continue
+    }
+    for (const name of skillNames) {
+      const row = rows.get(name)
+      const contract = documentedSkills.get(name)
+      if (!contract || row.bucket !== contract.bucket || row.invocation !== contract.invocation ||
+          row.summary !== contract.summary) {
+        fail('SKILL_OVERVIEW_DRIFT', `${surface}: ${name} disagrees with its documentation contract.`)
+      }
+    }
   }
 
   const claudeManifest = json(path.join(root, '.claude-plugin/plugin.json'), diagnostics, 'MANIFEST_CLAUDE_JSON')
