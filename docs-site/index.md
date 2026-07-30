@@ -33,7 +33,7 @@ features:
     details: An implementation request authorizes in-scope repository work. The agent asks only for unresolved product decisions and stops delivery at the requested boundary.
   - icon: 🔍
     title: Control the contract
-    details: Skills lock outcomes, boundaries and ground truth while leaving local tactics to the implementer. Independent review appears when risk warrants it.
+    details: Skills lock outcomes, boundaries and ground truth while leaving local tactics to the implementer. Material delivery gets independent review; a fully qualified small fix may skip it.
   - icon: 🤝
     title: Two platforms, one source
     details: Every skill ships once and loads in both Claude Code and Codex. Manual workflows are opted into explicitly on both; disciplines trigger themselves from the situation.

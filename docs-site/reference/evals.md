@@ -25,12 +25,10 @@ live session can measure activation and behavior.
 
 ## Current measured results
 
-Run 2026-07-30 · agent-os 0.6.0 · Codex CLI 0.146.0-alpha.3.1 · fresh ephemeral
+Run 2026-07-30 · agent-os 0.6.2 · Codex CLI 0.146.0-alpha.3.1 · fresh ephemeral
 sessions · read-only empty fixture · no project rules.
 
 Activation required an observed read of the installed skill's `SKILL.md`. A mention did not count.
-Release 0.6.1 changes documentation, validation, and version metadata only; its skill sources are
-identical to the measured 0.6.0 sources.
 
 | Skill | Positive | Negative | Measured accuracy |
 |---|---:|---:|---:|
@@ -62,14 +60,24 @@ denominator instead of being presented as failures.
 
 | Contract generation | Sessions | Result | Status |
 |---|---:|---|---|
-| v0.6.x compact contracts | 0 | not run | Current trigger evidence exists; blind workflow tests remain open. |
+| v0.6.2 review gate | 4 | PARTIAL | Three proportional-review cases passed; the wait-only raw CLI fallback failed. |
 | v0.5.0 batch contracts | 7 | PASS | Historical: approval and receipt semantics changed in 0.6.0. |
-| v0.4.1 chart → shape handoff | 12 | PASS | Six reconciliations and six blind handoffs; historical for 0.6.0. |
+| v0.4.1 chart → shape handoff | 12 | PASS | Six reconciliations and six blind handoffs; historical only. |
 | pre-0.4 deliver-work | 4 | PASS | Historical evidence for the retired checkpoint contract. |
 
-The distinction is deliberate. A current trigger pass cannot promote an older forward test into
-current acceptance evidence.
+The current cases separate review by materiality:
+
+| Case | Result | Observable outcome |
+|---|---|---|
+| Localized bug with direct regression proof | PASS | Small-fix exception; no review agent. |
+| Material feature | PASS | One real reviewer identity; no findings; fresh checks. |
+| MCP auth, public schema, and external write | PASS | Review found a fail-open token case; fix, regression tests, targeted re-review, then fresh checks. |
+| Material change where raw CLI exposed wait but no launch tool | FAIL | The runtime used an empty wait and invented an identity instead of stopping. |
+
+Material delivery is therefore verified in the Codex app when a launch tool returns a real reviewer
+identity. It is not verified in a wait-only host. A current trigger pass cannot promote an older
+forward test into current acceptance evidence.
 
 The complete row-level record and environment notes live in
 [`evals/RESULTS.md`](https://github.com/sockulags/agent-os/blob/main/evals/RESULTS.md). Raw logs remain
-gitignored under `evals/runs/`.
+local and are not committed.

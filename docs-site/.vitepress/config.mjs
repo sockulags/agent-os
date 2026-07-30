@@ -32,7 +32,7 @@ export default withMermaid(defineConfig({
       { text: 'Evals', link: '/reference/evals' },
       { text: 'Reference', link: '/reference/plugin-manifests', activeMatch: '/reference/' },
       {
-        text: 'v0.6.1',
+        text: 'v0.6.2',
         items: [
           { text: 'Releases', link: 'https://github.com/sockulags/agent-os/releases' },
           { text: 'Commit history', link: 'https://github.com/sockulags/agent-os/commits/main' }
