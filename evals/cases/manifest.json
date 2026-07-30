@@ -4,7 +4,8 @@
     "batch-work": {
       "positive": [
         "batch-work.md#BW-P1 Plan only",
-        "batch-work.md#BW-P2 Parallel frontier"
+        "batch-work.md#BW-P2 Parallel frontier",
+        "batch-work.md#BW-P9 Aggregate review"
       ],
       "negative": [
         "batch-work.md#BW-N1 One unit",
@@ -24,7 +25,10 @@
     "deliver-work": {
       "positive": [
         "deliver-work-sequence.md#Positive 1 — implementation authority",
-        "deliver-work-sequence.md#Positive 2 — material decision"
+        "deliver-work-sequence.md#Positive 2 — material decision",
+        "deliver-work-sequence.md#Positive 3 — material review",
+        "deliver-work-sequence.md#Positive 4 — risk-focused review",
+        "deliver-work-sequence.md#Positive 6 — no review mechanism"
       ],
       "negative": [
         "deliver-work-sequence.md#Negative 1 — planning only",

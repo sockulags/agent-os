@@ -26,9 +26,28 @@ Before editing, establish:
 - tests or observations that decide success;
 - the requested delivery target.
 
-Then inspect, implement, check, adapt, review the diff, and verify the final candidate. The agent
-chooses the local method. Independent review is added when requested or warranted by unusual risk,
-not as a default audit loop.
+Then inspect, classify review, implement, check, adapt, review the diff, and verify the final
+candidate. The agent chooses the local method.
+
+## Review without a review panel
+
+Independent review is the default. It may be skipped only for a localized, low-risk fix that adds no
+capability, crosses no public or sensitive boundary, and has direct regression evidence.
+
+For material work, the agent confirms that the current session has a real reviewer launch tool before
+editing. A wait tool alone is not sufficient. Without a launch mechanism, the workflow stops before
+mutation with a review-required handoff.
+
+Required review uses at least one read-only reviewer in a separate context against a frozen
+candidate. One general adversarial reviewer is enough by default. Add a focused security or
+compatibility reviewer only when a distinct risk needs it.
+
+The reviewer identity must come from a successful launch-tool result in the current run. On Codex,
+`spawn_agent` returns the ID before `wait_agent` may name it. Empty receiver IDs and
+implementer-written `/root/...` labels are not review. The result records reviewer identity and role,
+candidate identity, scope, findings, and disposition. Supported findings are fixed and re-reviewed
+before final verification. If no independent reviewer can run, delivery stops with a review handoff;
+self-review is not presented as independent review.
 
 Ask only when an unresolved product decision would materially change the outcome. Reversible
 implementation choices belong to the implementer.
@@ -37,4 +56,5 @@ Ordinary work creates no state artifact. Work expected to span sessions may use 
 [work record](/reference/work-records) as resumable working memory.
 
 Batch workers stay in their assigned task workspace and return a commit SHA, changed files, checks,
-and remaining uncertainty. The coordinator owns integration and aggregate verification.
+and remaining uncertainty. The coordinator owns integration, aggregate review, and aggregate
+verification.

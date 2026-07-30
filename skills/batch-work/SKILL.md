@@ -29,8 +29,11 @@ to plan the batch, execute it, or both.
    one current task definition and returns a commit SHA, changed files, checks, and uncertainty.
 5. Integrate completed tasks in dependency order. Detect already-contained commits, rerun relevant
    checks on the integrated head, and stop on conflicts rather than guessing.
-6. After all tasks integrate, run fresh aggregate checks. Deliver the candidate only to the boundary
-   named by the request or project policy.
+6. After all tasks integrate, run fresh aggregate checks.
+7. Treat the integrated batch as material. Apply the
+   [deliver-work review gate](../deliver-work/workflow.md#review-gate) to the complete candidate,
+   resolve supported findings, and rerun affected aggregate checks.
+8. Deliver the candidate only to the boundary named by the request or project policy.
 
 Definition drift while work is active invalidates the affected task result and requires an explicit
 replan or fresh attempt. Individual worker checks never substitute for aggregate verification.

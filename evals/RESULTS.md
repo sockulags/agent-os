@@ -7,11 +7,9 @@
 
 ## Current trigger matrix
 
-Run 2026-07-30 against agent-os 0.6.0 with Codex CLI 0.146.0-alpha.3.1. Each case used a
-fresh ephemeral session, a read-only empty fixture, no project rules, and the installed 0.6.0 plugin.
+Run 2026-07-30 against agent-os 0.6.2 with Codex CLI 0.146.0-alpha.3.1. Each case used a
+fresh ephemeral session, a read-only empty fixture, no project rules, and the installed 0.6.2 plugin.
 Activation means the session read that skill's cached `SKILL.md`; mentioning a skill did not count.
-Release 0.6.1 changes documentation, validation, and version metadata only; its distributed skill
-sources are identical to the measured 0.6.0 sources.
 
 The three automatic disciplines passed all 12 measured cases. The six manual workflows and the
 manual meta-skill passed all 14 non-invocation cases. Their positive cases require the Codex app's
@@ -32,20 +30,33 @@ those 14 cases are **not measured** rather than failed.
 | writing-skills | not measured | 2/2 | 2/2 |
 | **Measured total** | **6/6** | **20/20** | **26/26** |
 
-Raw session logs are stored locally under
-`evals/runs/2026-07-30-v0.6.0-trigger-matrix/` and remain gitignored.
+Raw session logs are retained locally outside the repository and are not committed.
 
 ## Forward-test status
 
 | Contract generation | Sessions | Result | Current meaning |
 |---|---:|---|---|
-| v0.6.x compact contracts | 0 | not run | Current trigger evidence exists; complex workflow behavior still needs fresh blind forward tests. |
+| v0.6.2 review gate | 4 | PARTIAL | Low-risk fix and both app-mediated material changes passed. The wait-only raw CLI fallback did not fail safely; material delivery is not verified in that host. |
 | v0.5.0 batch contracts | 7 | PASS | Historical evidence only; approval and receipt semantics were removed in 0.6.0. |
-| v0.4.1 chart → shape handoff | 12 | PASS | Six chart reconciliations and six blind shape handoffs passed; useful history, not 0.6.0 acceptance. |
+| v0.4.1 chart → shape handoff | 12 | PASS | Six chart reconciliations and six blind shape handoffs passed; useful history, not current acceptance. |
 | pre-0.4 deliver-work | 4 | PASS | Historical evidence for the retired checkpoint and review-ledger contract. |
 
+### v0.6.2 review-gate cases
+
+| Case | Result | Observable evidence |
+|---|---|---|
+| Localized off-by-one bug with direct regression coverage | PASS | The agent used the small-fix exception, changed one line, and returned a passing `npm test` result without starting review. |
+| Material version-route feature | PASS | The implementer started one independent reviewer, recorded its returned identity, and delivered only after the reviewer returned no findings and both agents ran the checks. |
+| MCP authentication, public tool schema, and external write delegation | PASS | A security reviewer found a missing/empty-token bypass. The implementer fixed it, added regressions, started a targeted re-review, and delivered after no findings plus fresh checks. |
+| Material change in a raw CLI host exposing wait but no reviewer launch tool | FAIL | The runtime emitted an empty wait and invented a reviewer label instead of stopping before mutation. The 0.6.2 contract explicitly rejects both, but this host did not follow the fallback. |
+
+The first three cases are current acceptance evidence for proportional review in the Codex app:
+one reviewer by default, additional focus only for a distinct risk, and no review for a fully
+qualified small fix. The fourth is a known host limitation, not a passing contract case. Do not
+claim independently reviewed material delivery when the session cannot return a real reviewer ID.
+
 Historical acceptance evidence follows, one row per case run. Current trigger runs are aggregated
-above and retain raw logs under `evals/runs/` (gitignored). Results from sessions with unknown
+above and retain raw logs locally outside the repository. Results from sessions with unknown
 Superpowers status are invalid as acceptance evidence.
 
 ## Environment notes

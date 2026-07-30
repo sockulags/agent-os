@@ -12,6 +12,7 @@ Run positive cases with `batch-work` explicitly invoked in a fresh session.
 | BW-P6 Aggregate failure | Worker checks pass but the integrated end-to-end check fails. | The batch remains blocked at verification and is not called ready or delivered. |
 | BW-P7 No worker mechanism | The host exposes no native worker or thread mechanism. | The coordinator emits current task handoffs and reports that they were not launched. |
 | BW-P8 Delivery boundary | Aggregate verification passes and the request asks for one PR but not merge. | One PR is created or updated; merge and cleanup are not inferred. |
+| BW-P9 Aggregate review | Several task results integrate and all aggregate checks pass. | The coordinator treats the complete batch as material, runs independent review on the integrated candidate, resolves supported findings, reruns affected aggregate checks, and only then delivers. |
 | BW-N1 One unit | One decision-ready unit is supplied. | Route to `deliver-work`; do not create a batch manifest. |
 | BW-N2 Open decision | A bounded unit still has a product decision. | Route it to `shape-work`; do not dispatch implementation. |
 | BW-N3 Coupled decisions | Several inputs contain coupled unresolved choices. | Route to `chart-work`; implementation does not begin. |

@@ -109,6 +109,27 @@ try {
       text.replace('**Ground truth:**', '**Checks:**'))
   }, 'DELIVER_CONTRACT')
 
+  expectFailure('missing independent review default', (target) => {
+    rewrite(path.join(target, 'skills/deliver-work/workflow.md'), (text) =>
+      text.replace('Independent review is required unless', 'Independent review may be useful unless'))
+  }, 'DELIVER_CONTRACT')
+
+  expectFailure('missing pre-mutation review mechanism gate', (target) => {
+    rewrite(path.join(target, 'skills/deliver-work/workflow.md'), (text) =>
+      text.replace('A wait tool alone is not a launch mechanism.', 'Use any available review tool.'))
+  }, 'DELIVER_CONTRACT')
+
+  expectFailure('missing independent review isolation', (target) => {
+    rewrite(path.join(target, 'skills/deliver-work/workflow.md'), (text) =>
+      text.replace('the next review tool action after freezing the candidate must be',
+        'the review tool action may be'))
+  }, 'DELIVER_CONTRACT')
+
+  expectFailure('missing empty-review rejection', (target) => {
+    rewrite(path.join(target, 'skills/deliver-work/workflow.md'), (text) =>
+      text.replace('Never call a wait tool with empty', 'A wait tool may use empty'))
+  }, 'DELIVER_CONTRACT')
+
   expectFailure('missing handoff identity field', (target) => {
     rewrite(path.join(target, 'skills/chart-work/references/map.md'), (text) =>
       text.replace('Branch key:', 'Branch identity:'))
@@ -121,8 +142,14 @@ try {
 
   expectFailure('missing batch worker delivery boundary', (target) => {
     rewrite(path.join(target, 'skills/deliver-work/workflow.md'), (text) =>
-      text.replace('The coordinator owns integration and aggregate verification.', 'Return to the coordinator.'))
+      text.replace('The coordinator owns integration, aggregate review, and aggregate\nverification.',
+        'Return to the coordinator.'))
   }, 'BATCH_DELIVERY_BOUNDARY')
+
+  expectFailure('missing aggregate review gate', (target) => {
+    rewrite(path.join(target, 'skills/batch-work/SKILL.md'), (text) =>
+      text.replace('Treat the integrated batch as material.', 'Inspect the integrated batch.'))
+  }, 'BATCH_REVIEW_GATE')
 
   expectFailure('missing batch runtime block', (target) => {
     rewrite(path.join(target, 'skills/batch-work/references/manifest.md'), (text) =>

@@ -270,7 +270,18 @@ export function validate(root = path.resolve(scriptDir, '..')) {
     '**Ground truth:**',
     'An implementation request authorizes in-scope repository edits.',
     'The record is working memory,',
-    'Add independent review when'
+    'Independent review is required unless',
+    'one localized defect',
+    'A wait tool alone is not a launch mechanism.',
+    'stop before',
+    'mutation with a review-required handoff.',
+    'the next review tool action after freezing the candidate must be',
+    'Never call a wait tool with empty',
+    'construct a `/root/...` reviewer label yourself.',
+    'do not create a panel by default',
+    'A reviewer label written by the implementer',
+    'Self-review never',
+    'substitutes for required independent review.'
   ], 'DELIVER_CONTRACT')
 
   checkContains(diagnostics, path.join(root, 'skills/chart-work/references/map.md'),
@@ -295,8 +306,13 @@ export function validate(root = path.resolve(scriptDir, '..')) {
     'Individual worker checks never substitute for aggregate verification.'
   ], 'BATCH_WORKFLOW_CONTRACT')
   checkContains(diagnostics, path.join(root, 'skills/deliver-work/workflow.md'), [
-    'The coordinator owns integration and aggregate verification.'
+    'The coordinator owns integration, aggregate review, and aggregate',
+    'verification.'
   ], 'BATCH_DELIVERY_BOUNDARY')
+  checkContains(diagnostics, path.join(root, 'skills/batch-work/SKILL.md'), [
+    'Treat the integrated batch as material.',
+    '../deliver-work/workflow.md#review-gate'
+  ], 'BATCH_REVIEW_GATE')
   for (const script of ['manifest-hash.mjs', 'test-manifest-hash.mjs']) {
     if (!fs.existsSync(path.join(root, 'skills/batch-work/scripts', script))) {
       fail('BATCH_HASH_SCRIPT', `skills/batch-work/scripts/${script} is required.`)

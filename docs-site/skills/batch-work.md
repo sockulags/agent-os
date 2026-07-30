@@ -22,6 +22,10 @@ After each integration the coordinator reruns relevant checks. After all tasks i
 aggregate checks decide whether the complete candidate is ready. Worker-local success is never a
 substitute for integrated behavior.
 
+An executed batch is material. The coordinator applies the
+[deliver-work review gate](/skills/deliver-work#review-without-a-review-panel) to the integrated
+candidate before delivery, resolves supported findings, and reruns affected aggregate checks.
+
 Definition drift invalidates an affected result. Merge, deploy, destructive cleanup, and external
 effects follow the request or project policy.
 
