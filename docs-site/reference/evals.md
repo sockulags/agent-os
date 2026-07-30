@@ -1,43 +1,75 @@
+---
+title: Evals
+description: Measured trigger accuracy, case design, and forward-test history for agent-os skills.
+---
+
 # Evals
 
-Skills are prompts, and prompts regress silently. The eval suite exists so that a change to a
-description can be shown not to have broken invocation.
+Skills are prompts, and prompts regress silently. The suite measures observable contracts: whether a
+skill activates in the intended situation, stays dormant next to it, and produces the required
+artifact or boundary. It does not grade approval ceremony or hidden reasoning traces.
 
-## Layout
+## Case design
 
-`evals/cases/` holds the versioned trigger and behavior cases.
-`evals/cases/manifest.json` indexes at least two positive and two negative cases for every skill so
-structural validation can detect missing coverage. Positive cases exercise the intended trigger or
-explicit workflow invocation; negative cases are adjacent prompts that must not activate it.
-Workflow skills also add non-invocation and sequential-gate cases.
+`evals/cases/manifest.json` indexes every distributed skill. Each skill has at least two positive and
+two negative cases:
 
-`evals/RESULTS.md` holds the compact versioned evidence: date, agent, session type, Superpowers
-status, case, and pass or fail.
+- **Positive cases** exercise an automatic trigger or an explicit manual invocation.
+- **Negative cases** are adjacent requests where that skill must stay dormant.
+- **Forward tests** give a fresh agent the raw request and available artifacts, then grade only the
+  resulting behavior.
 
-`evals/runs/` holds raw logs and is gitignored.
+`node scripts/validate-agent-os.mjs` rejects missing, duplicated, cross-owned, or incorrectly
+polarized manifest entries. Static validation proves the case set is structurally complete. Only a
+live session can measure activation and behavior.
 
-## Session hygiene
+## Current measured results
 
-A result is only usable as acceptance evidence when the session's Superpowers status is known. Results
-from sessions with unknown status are invalid, because an unrelated framework in the same context can
-supply the behavior being tested and make a broken skill look healthy.
+Run 2026-07-30 · agent-os 0.6.0 · Codex CLI 0.146.0-alpha.3.1 · fresh ephemeral
+sessions · read-only empty fixture · no project rules.
 
-Both platforms count separately. A case that passes in Claude Code says nothing about Codex, since
-invocation gating is implemented differently on each — `disable-model-invocation` versus
-`policy.allow_implicit_invocation`.
+Activation required an observed read of the installed skill's `SKILL.md`. A mention did not count.
+Release 0.6.1 changes documentation, validation, and version metadata only; its skill sources are
+identical to the measured 0.6.0 sources.
 
-Run `node scripts/validate-agent-os.mjs` for repository contracts and
-`node scripts/test-validate-agent-os.mjs` for mutation-isolated red cases. These checks cover static
-facts only; semantic behavior still requires live evals and forward tests.
+| Skill | Positive | Negative | Measured accuracy |
+|---|---:|---:|---:|
+| `batch-work` | not measured | 2/2 | 2/2 |
+| `chart-work` | not measured | 2/2 | 2/2 |
+| `deliver-work` | not measured | 2/2 | 2/2 |
+| `diagnose-before-fix` | 2/2 | 2/2 | 4/4 |
+| `dispatch-next` | not measured | 2/2 | 2/2 |
+| `init-agent-os` | not measured | 2/2 | 2/2 |
+| `scope-guard` | 2/2 | 2/2 | 4/4 |
+| `shape-work` | not measured | 2/2 | 2/2 |
+| `verify-before-done` | 2/2 | 2/2 | 4/4 |
+| `writing-skills` | not measured | 2/2 | 2/2 |
+| **Measured total** | **6/6** | **20/20** | **26/26** |
 
-## Forward tests
+The automatic disciplines passed all 12 trigger and non-trigger cases. The manual skills passed all
+14 non-invocation cases. Their positive cases need the Codex app's explicit skill attachment; raw
+`$skill` text sent through `codex exec` does not carry that signal. Those cases are excluded from the
+denominator instead of being presented as failures.
 
-For complex behavior, trigger cases are not enough. A forward test gives a fresh agent the raw task
-and the artifact — never the diagnosis, never the expected answer — and checks that it behaves
-correctly. This is the only test that catches a skill which reads well and produces nothing.
+## Positive and negative outcomes
 
-## Where evals fit in the definition of done
+| Group | Positive outcome | Negative outcome |
+|---|---|---|
+| Automatic disciplines | 6/6 loaded the exact target skill before acting. | 6/6 kept that skill dormant. |
+| Manual workflows and meta-skill | Not measurable in this raw CLI harness. | 14/14 stayed dormant without app-mediated invocation. |
 
-A skill is not finished until structural validation passes, its trigger cases pass on both platforms,
-and any complex behavior has a passing forward test. See
-[writing-skills](/skills/writing-skills#definition-of-done).
+## Forward-test history
+
+| Contract generation | Sessions | Result | Status |
+|---|---:|---|---|
+| v0.6.x compact contracts | 0 | not run | Current trigger evidence exists; blind workflow tests remain open. |
+| v0.5.0 batch contracts | 7 | PASS | Historical: approval and receipt semantics changed in 0.6.0. |
+| v0.4.1 chart → shape handoff | 12 | PASS | Six reconciliations and six blind handoffs; historical for 0.6.0. |
+| pre-0.4 deliver-work | 4 | PASS | Historical evidence for the retired checkpoint contract. |
+
+The distinction is deliberate. A current trigger pass cannot promote an older forward test into
+current acceptance evidence.
+
+The complete row-level record and environment notes live in
+[`evals/RESULTS.md`](https://github.com/sockulags/agent-os/blob/main/evals/RESULTS.md). Raw logs remain
+gitignored under `evals/runs/`.

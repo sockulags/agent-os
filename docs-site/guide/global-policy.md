@@ -1,3 +1,8 @@
+---
+title: Global policy
+description: Install and maintain the shared agent-os behavior policy for Claude Code and Codex.
+---
+
 # Global policy
 
 `policy.md` in the repository root is the source of truth for how the agent behaves on your machine,

@@ -1,3 +1,10 @@
+---
+title: batch-work
+description: Run several decision-ready units in isolation and verify the integrated result.
+skill-description: Plans and runs several decision-ready units through isolated workers and aggregate verification. User-invoked for an explicit batch. Not for unresolved decisions, one unit, or a loose backlog.
+summary: Run isolated ready units and verify the integrated result
+---
+
 # batch-work
 
 **Bucket:** workflow · **Invocation:** manual · `/agent-os:batch-work` or `$batch-work`

@@ -1,3 +1,10 @@
+---
+title: dispatch-next
+description: Read live project state and select one decision-ready next action.
+skill-description: Reads live project state and selects one decision-ready next action. User-invoked for queue triage or dispatch. Not for an already selected task.
+summary: Pick or dispatch one action according to the request
+---
+
 # dispatch-next
 
 **Bucket:** workflow · **Invocation:** manual · `/agent-os:dispatch-next` or `$dispatch-next`

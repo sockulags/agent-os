@@ -1,3 +1,8 @@
+---
+title: Maps and decision tickets
+description: How chart-work separates orientation, canonical decisions, evidence, and stable handoffs.
+---
+
 # Maps and decision tickets
 
 The map gives low-resolution orientation; each ticket owns its question, evidence, and decision.

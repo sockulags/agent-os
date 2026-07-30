@@ -1,3 +1,10 @@
+---
+title: writing-skills
+description: Write and validate compact agent-os skills with observable eval contracts.
+skill-description: Doctrine for writing and validating agent-os skills, loaded before creating or editing any SKILL.md, description, or eval case in this framework. Not for ordinary coding tasks that do not touch skill files.
+summary: Doctrine and definition of done for agent-os skills
+---
+
 # writing-skills
 
 **Bucket:** meta · **Invocation:** manual · `/agent-os:writing-skills` or `$writing-skills`

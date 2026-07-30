@@ -1,5 +1,7 @@
 ---
 layout: home
+title: agent-os
+description: Compact workflows and automatic disciplines for coding agents on Claude Code and Codex.
 
 hero:
   name: agent-os

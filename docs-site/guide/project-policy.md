@@ -1,3 +1,8 @@
+---
+title: Project policy
+description: Record repository-specific commands, boundaries, conventions, and delivery defaults.
+---
+
 # Project policy
 
 Project policy holds repository-specific facts that should not be hardcoded into reusable skills.

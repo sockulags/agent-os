@@ -1,3 +1,10 @@
+---
+title: init-agent-os
+description: Install shared agent-os policy or initialize one repository's living defaults.
+skill-description: Sets up agent-os globally on a machine, or initializes a repo's living project policy through an interview. User-invoked only, at machine setup or when onboarding a repo. Not for ordinary tasks.
+summary: Managed policy setup or repository defaults
+---
+
 # init-agent-os
 
 **Bucket:** workflow · **Invocation:** manual · `/agent-os:init-agent-os` or `$init-agent-os`

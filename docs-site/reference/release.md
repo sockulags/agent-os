@@ -1,3 +1,8 @@
+---
+title: Release routine
+description: Validate, version, publish, and verify an agent-os release.
+---
+
 # Release routine
 
 1. **Validate structure and run the trigger evals.** Run

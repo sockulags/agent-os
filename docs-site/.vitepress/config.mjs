@@ -9,11 +9,16 @@ export default withMermaid(defineConfig({
   lastUpdated: true,
   cleanUrls: true,
 
+  transformHead({ title, description }) {
+    return [
+      ['meta', { property: 'og:title', content: title }],
+      ['meta', { property: 'og:description', content: description }]
+    ]
+  },
+
   head: [
     ['link', { rel: 'icon', type: 'image/svg+xml', href: '/agent-os/logo.svg' }],
     ['meta', { property: 'og:type', content: 'website' }],
-    ['meta', { property: 'og:title', content: 'agent-os — explicit workflows, automatic disciplines' }],
-    ['meta', { property: 'og:description', content: 'One skill source, two platforms. Charting, shaping, batching and delivering work with evidence before claims — for Claude Code and Codex.' }],
     ['meta', { property: 'og:url', content: 'https://sockulags.github.io/agent-os/' }],
     ['meta', { name: 'twitter:card', content: 'summary' }]
   ],
@@ -24,9 +29,10 @@ export default withMermaid(defineConfig({
     nav: [
       { text: 'Guide', link: '/guide/what-is-agent-os', activeMatch: '/guide/' },
       { text: 'Skills', link: '/skills/', activeMatch: '/skills/' },
+      { text: 'Evals', link: '/reference/evals' },
       { text: 'Reference', link: '/reference/plugin-manifests', activeMatch: '/reference/' },
       {
-        text: 'v0.6.0',
+        text: 'v0.6.1',
         items: [
           { text: 'Releases', link: 'https://github.com/sockulags/agent-os/releases' },
           { text: 'Commit history', link: 'https://github.com/sockulags/agent-os/commits/main' }
@@ -116,6 +122,15 @@ export default withMermaid(defineConfig({
     editLink: {
       pattern: 'https://github.com/sockulags/agent-os/edit/main/docs-site/:path',
       text: 'Edit this page on GitHub'
+    },
+
+    lastUpdated: {
+      text: 'Last updated',
+      formatOptions: {
+        dateStyle: 'medium',
+        timeStyle: 'short',
+        forceLocale: true
+      }
     }
   },
 
