@@ -11,6 +11,19 @@ summary: Turn bounded choices into implementation-ready issues
 
 Shapes a bounded idea into implementation-ready issues backed by settled product decisions.
 
+```mermaid
+flowchart TD
+    A[Bounded idea] --> B[Read repo, policy, linked decisions]
+    B --> C{Material product choice left?}
+    C -->|recommend + one question| D[Developer decides]
+    D --> C
+    C -->|all settled| E[Product shape: outcome, boundaries,<br>acceptance, ground truth]
+    E --> F[Create or reuse implementation issues]
+    F --> G[Ready frontier exposed]
+    G -.->|developer selects one issue| H([deliver-work starts])
+    G -.->|developer explicitly requests a batch| I([batch-work starts])
+```
+
 Read the repository, policy, and linked decisions before asking questions. Resolve discoverable
 facts yourself. Ask only about product choices that materially change the outcome, always with a
 recommendation and its consequence.

@@ -11,6 +11,19 @@ summary: Implement one change against boundaries and ground truth
 
 Delivers one decision-ready change against explicit boundaries and ground truth.
 
+```mermaid
+flowchart TD
+    A[One ready issue or bounded request] --> B[Contract: outcome, boundaries,<br>ground truth, delivery target]
+    B --> C[Smallest complete implementation]
+    C --> D[Fast relevant checks]
+    D --> C
+    D --> E{Review gate}
+    E -->|qualified small fix| G
+    E -->|material change| F[Independent reviewer<br>on frozen candidate]
+    F --> G[verify-before-done on final candidate]
+    G --> H([Delivery at the requested boundary])
+```
+
 ## Authority follows the request
 
 An implementation request authorizes repository changes inside its scope. Planning and review

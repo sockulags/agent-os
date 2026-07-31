@@ -10,21 +10,22 @@ themselves from the situation, and the meta-skill governs how the others are wri
 page top to bottom: the planning foundation, the on-ramp in front of it, the remaining workflows,
 and finally the component skills the workflows compose.
 
-## The foundation: chart and shape
+## The foundation: shape and chart
 
-Planning starts here. A broad effort becomes decision tickets; a bounded idea becomes
-implementation-ready issues.
+Planning starts here, and each layer builds on the one before it. `shape-work` turns one bounded
+idea into implementation-ready issues. `chart-work` builds on it: a broad effort becomes decision
+tickets, and every bounded branch ends exactly where shape-work begins.
 
 | Skill | Bucket | Invocation | Purpose |
 |---|---|---|---|
-| [`chart-work`](/skills/chart-work) | workflow | manual | Chart broad work as a parallel graph of decision tickets |
 | [`shape-work`](/skills/shape-work) | workflow | manual | Turn bounded choices into implementation-ready issues |
+| [`chart-work`](/skills/chart-work) | workflow | manual | Chart broad work as a parallel graph of decision tickets |
 
 ## The on-ramp: guide-me
 
-When you cannot state the goal yet, `guide-me` sits in front of the foundation. It only shows the
-way: questioning through its component `understand-work`, the plain-language gate through
-`explain-work`, and — once you approve the summary — straight into `chart-work` or `shape-work`.
+`guide-me` builds on both. When you cannot state the goal yet, it only shows the way: questioning
+through its component `understand-work`, the plain-language gate through `explain-work`, and — once
+you approve the summary — it ends where `chart-work` or `shape-work` begins.
 
 | Skill | Bucket | Invocation | Purpose |
 |---|---|---|---|

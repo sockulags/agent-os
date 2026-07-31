@@ -9,7 +9,20 @@ summary: Chart broad work as a parallel graph of decision tickets
 
 **Bucket:** workflow · **Invocation:** manual · `/agent-os:chart-work` or `$chart-work`
 
-Charts broad work as a parallel graph of evidence-backed decision tickets.
+Charts broad work as a parallel graph of evidence-backed decision tickets. It builds on
+[shape-work](/skills/shape-work): a bounded branch ends exactly where shape-work begins.
+
+```mermaid
+flowchart TD
+    A[Broad effort] --> B[Map: destination, boundaries, Fog]
+    B --> C[Decision tickets on the open frontier]
+    C -->|research / prototype /<br>developer choice / task| D[Resolved decisions]
+    D --> C
+    D --> E{Branch bounded enough<br>for one session?}
+    E -->|not yet| B
+    E -->|yes| F[Shaping handoff: settled decisions<br>+ remaining questions]
+    F -.-> G([shape-work starts])
+```
 
 The invocation authorizes writes to the configured planning surface. It does not authorize product
 implementation.

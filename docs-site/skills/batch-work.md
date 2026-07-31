@@ -10,6 +10,19 @@ summary: Run isolated ready units and verify the integrated result
 **Bucket:** workflow · **Invocation:** manual · `/agent-os:batch-work` or `$batch-work`
 
 Plans and runs several decision-ready units through isolated workers and aggregate verification.
+Each worker is simply [deliver-work](/skills/deliver-work) starting in an isolated workspace.
+
+```mermaid
+flowchart TD
+    A[Ready dependency-mapped issues] --> B[Manifest: definitions, hashes,<br>integration plan]
+    B --> C[Dispatch open frontier<br>to isolated workspaces]
+    C -.->|each worker| D([deliver-work starts in its workspace])
+    D --> E[Integrate in dependency order]
+    E --> C
+    E --> F[Fresh aggregate checks]
+    F --> G[Review gate on integrated candidate]
+    G --> H([Delivery at the requested boundary])
+```
 
 Batch-work consumes an existing set of implementation-ready, dependency-mapped issues. It does not
 discover or decompose the product shape, and several issues do not invoke it automatically. The

@@ -11,8 +11,20 @@ summary: Guide a vague desire to an approved goal and into planning
 
 Takes a developer who cannot yet state what they want to an approved goal and into the right
 planning workflow. Guide-me is the on-ramp, not the foundation: it owns no doctrine of its own and
-only shows the way through its two component skills and onward into `chart-work` or `shape-work`.
-It writes no product code and no implementation issues.
+only shows the way through its two component skills and onward to where
+[chart-work](/skills/chart-work) or [shape-work](/skills/shape-work) begins. It writes no product
+code and no implementation issues.
+
+```mermaid
+flowchart TD
+    A[Vague desire] --> B[understand-work: questioning]
+    B --> C[explain-work: plain-language summary]
+    C -->|challenge| B
+    C -->|approved| D{Route}
+    D -.->|several open threads| E([chart-work starts])
+    D -.->|one bounded idea| F([shape-work starts])
+    D -.->|small and clear| G([ready direct request])
+```
 
 The workflow composes two standalone skills:
 
