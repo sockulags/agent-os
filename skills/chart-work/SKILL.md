@@ -27,8 +27,11 @@ then update the map without overwriting concurrent work. Human preference eviden
 the developer; the agent may recommend and challenge but cannot invent the answer.
 
 When a branch becomes bounded enough for one `shape-work` session, create or reuse one linked
-handoff containing settled decisions and remaining questions. Close the map when every path is
-decided, graduated, parked, or ruled out and no Fog remains.
+handoff containing settled decisions and remaining questions. This moves the branch to shaping; it
+does not make the branch delivery-ready. Shape-work later creates the implementation issues and
+reconciles their links and frontier into the map. A selected branch in shaping keeps the map open.
+Close the decision map only when every selected path is delivery-ready, parked, or ruled out and no
+Fog remains.
 
 Planning writes do not imply product implementation. Side discoveries become child decisions,
-ordinary backlog items, graduated branches, or parked paths rather than hidden scope expansion.
+ordinary backlog items, shaping handoffs, or parked paths rather than hidden scope expansion.

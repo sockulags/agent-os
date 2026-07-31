@@ -24,7 +24,7 @@ hero:
 features:
   - icon: 🧭
     title: Chart, shape, batch, deliver
-    details: A foggy effort becomes decision tickets, a bounded branch becomes a decision-complete spec, many ready units become a reconciled batch, and implementation becomes reviewed and verified delivery.
+    details: A foggy effort becomes decision tickets, a bounded branch becomes implementation-ready issues, and the developer chooses individual delivery or an explicit integrated batch.
   - icon: 🧾
     title: Evidence before claims
     details: The verify-before-done discipline turns "it works" into a command, an exit status and a result. A check that ran proves only what that check exercised — and unverified claims get named as unverified.

@@ -11,7 +11,7 @@ Claude Code and Codex. One skill source, two platforms, ceremony proportional to
 |---|---|---|---|
 | `init-agent-os` | workflow | manual | Managed policy setup or repository defaults |
 | `chart-work` | workflow | manual | Chart broad work as a parallel graph of decision tickets |
-| `shape-work` | workflow | manual | Turn bounded choices into a decision-ready contract |
+| `shape-work` | workflow | manual | Turn bounded choices into implementation-ready issues |
 | `batch-work` | workflow | manual | Run isolated ready units and verify the integrated result |
 | `deliver-work` | workflow | manual | Implement one change against boundaries and ground truth |
 | `dispatch-next` | workflow | manual | Pick or dispatch one action according to the request |

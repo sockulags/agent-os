@@ -18,8 +18,10 @@ Keep the map low-resolution and rebuildable from its tickets:
 ## Decisions
 - <ticket> → <decision gist> (<link>)
 ## Fog
-## Graduated branches
+## Shaping handoffs
 - <branch> → <shape-work handoff> (<link>)
+## Delivery-ready branches
+- <branch> → <implementation issues and frontier> (<links>)
 ## Spawned work
 ```
 
@@ -50,7 +52,7 @@ Resolve a ticket with:
 ```
 
 Evidence must support the decision. Route new findings as child decisions, ordinary backlog work,
-graduated branches, or parked paths.
+shaping handoffs, or parked paths.
 
 ## Shape-work handoff
 
@@ -70,5 +72,11 @@ Branch key: <stable key>
 ```
 
 Search before creating so retries reuse the same handoff. Link it from the map and relevant source
-tickets. Update links idempotently and preserve concurrent entries. A planning handoff does not
-authorize product implementation; a later implementation request does.
+tickets. Update links idempotently and preserve concurrent entries. The handoff moves the branch to
+shaping, not to `delivery-ready`. After shaping, `shape-work` creates or reuses the implementation
+issues, records the ready or blocked frontier, and moves the branch to Delivery-ready branches. A
+planning handoff or implementation issue does not authorize product implementation; a later
+implementation request does.
+
+A selected branch in shaping keeps the map open. Close it only when selected paths are
+delivery-ready, parked, or ruled out and no Fog remains.

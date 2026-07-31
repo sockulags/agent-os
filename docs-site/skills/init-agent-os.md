@@ -16,6 +16,7 @@ deterministic script. The explicit invocation authorizes those setup writes.
 
 Repository mode reads existing instructions, README, build files, and CI first. It asks only for
 missing material defaults: delivery, verification, design system, planning surface, batch execution,
-and durable conventions. It writes the smallest useful policy and shows the resulting diff.
+and durable conventions. Planning-surface defaults include both decision tickets and
+implementation-issue readiness. It writes the smallest useful policy and shows the resulting diff.
 
 Managed block edits remain script-owned and stop on duplicate or malformed markers.

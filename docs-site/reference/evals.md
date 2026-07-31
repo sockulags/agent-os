@@ -60,6 +60,7 @@ denominator instead of being presented as failures.
 
 | Contract generation | Sessions | Result | Status |
 |---|---:|---|---|
+| v0.7.0 implementation issues | 1 | PARTIAL | A sealed read-only shape-work test produced three complete issues, dependency status, map reconciliation, and the correct frontier without choosing batch. Tracker writes and retry idempotency remain unmeasured. |
 | v0.6.2 review gate | 4 | PARTIAL | Three proportional-review cases passed; the wait-only raw CLI fallback failed. |
 | v0.5.0 batch contracts | 7 | PASS | Historical: approval and receipt semantics changed in 0.6.0. |
 | v0.4.1 chart → shape handoff | 12 | PASS | Six reconciliations and six blind handoffs; historical only. |

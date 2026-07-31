@@ -21,3 +21,7 @@ The request wording governs action:
 
 Dispatch does not imply merge, closure, or unrelated tracker actions. If nothing is ready, report
 the closest blocker.
+
+A selected implementation-ready issue routes to `deliver-work`. `batch-work` is a route only when
+the developer explicitly requests integrated execution of an existing ready issue graph; multiple
+issues alone do not select it.

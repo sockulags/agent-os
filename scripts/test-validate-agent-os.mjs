@@ -135,6 +135,32 @@ try {
       text.replace('Branch key:', 'Branch identity:'))
   }, 'CHART_HANDOFF_CONTRACT')
 
+  expectFailure('shape-work may complete without implementation issues', (target) => {
+    rewrite(path.join(target, 'skills/shape-work/SKILL.md'), (text) =>
+      text.replace('Shape-work is complete only when', 'Shape-work should usually continue until'))
+  }, 'SHAPE_IMPLEMENTATION_ISSUES')
+
+  expectFailure('implementation issue identity missing', (target) => {
+    rewrite(path.join(target, 'skills/shape-work/references/implementation-issues.md'), (text) =>
+      text.replace('Identity is `(origin, unit key)`', 'Use a descriptive issue title'))
+  }, 'IMPLEMENTATION_ISSUE_CONTRACT')
+
+  expectFailure('multiple issues imply batch execution', (target) => {
+    rewrite(path.join(target, 'skills/shape-work/references/implementation-issues.md'), (text) =>
+      text.replace('the existence of several issues never invokes or recommends batch-work by itself',
+        'several issues should be routed to batch-work'))
+  }, 'IMPLEMENTATION_ISSUE_CONTRACT')
+
+  expectFailure('deliver-work accepts an undecomposed target', (target) => {
+    rewrite(path.join(target, 'skills/deliver-work/workflow.md'), (text) =>
+      text.replace('## Confirm one delivery unit', '## Confirm the broad request'))
+  }, 'DELIVER_UNIT_CONTRACT')
+
+  expectFailure('dispatch-next infers batch from issue count', (target) => {
+    rewrite(path.join(target, 'skills/dispatch-next/SKILL.md'), (text) =>
+      text.replace('issue count alone', 'multiple issues'))
+  }, 'DISPATCH_ROUTE_CONTRACT')
+
   expectFailure('missing batch manifest hash', (target) => {
     rewrite(path.join(target, 'skills/batch-work/references/manifest.md'), (text) =>
       text.replace('manifest_hash: ""', 'definition_digest: ""'))
@@ -142,7 +168,7 @@ try {
 
   expectFailure('missing batch worker delivery boundary', (target) => {
     rewrite(path.join(target, 'skills/deliver-work/workflow.md'), (text) =>
-      text.replace('The coordinator owns integration, aggregate review, and aggregate\nverification.',
+      text.replace(/The coordinator owns integration, aggregate review, and aggregate\r?\nverification\./,
         'Return to the coordinator.'))
   }, 'BATCH_DELIVERY_BOUNDARY')
 

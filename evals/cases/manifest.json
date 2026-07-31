@@ -5,21 +5,26 @@
       "positive": [
         "batch-work.md#BW-P1 Plan only",
         "batch-work.md#BW-P2 Parallel frontier",
-        "batch-work.md#BW-P9 Aggregate review"
+        "batch-work.md#BW-P9 Aggregate review",
+        "batch-work.md#BW-P10 Existing issue graph"
       ],
       "negative": [
         "batch-work.md#BW-N1 One unit",
-        "batch-work.md#BW-N4 Implicit batch request"
+        "batch-work.md#BW-N4 Implicit batch request",
+        "batch-work.md#BW-N5 Multiple issues only"
       ]
     },
     "chart-work": {
       "positive": [
         "chart-work.md#CW-P1 Chart",
-        "chart-work.md#CW-P2 Clean chart"
+        "chart-work.md#CW-P2 Clean chart",
+        "chart-work.md#CW-P8 Shaping handoff",
+        "chart-work.md#CW-P11 Delivery reconciliation"
       ],
       "negative": [
         "chart-work.md#CW-N1 Small bounded",
-        "chart-work.md#CW-N2 Blocked"
+        "chart-work.md#CW-N2 Blocked",
+        "chart-work.md#CW-N5 Premature closure"
       ]
     },
     "deliver-work": {
@@ -28,11 +33,13 @@
         "deliver-work-sequence.md#Positive 2 — material decision",
         "deliver-work-sequence.md#Positive 3 — material review",
         "deliver-work-sequence.md#Positive 4 — risk-focused review",
-        "deliver-work-sequence.md#Positive 6 — no review mechanism"
+        "deliver-work-sequence.md#Positive 6 — no review mechanism",
+        "deliver-work-sequence.md#Positive 7 — ready implementation issue"
       ],
       "negative": [
         "deliver-work-sequence.md#Negative 1 — planning only",
-        "deliver-work-sequence.md#Negative 2 — external boundary"
+        "deliver-work-sequence.md#Negative 2 — external boundary",
+        "deliver-work-sequence.md#Negative 5 — undecomposed target"
       ]
     },
     "diagnose-before-fix": {
@@ -48,7 +55,8 @@
     "dispatch-next": {
       "positive": [
         "dispatch-next.md#DN-P1",
-        "dispatch-next.md#DN-P2"
+        "dispatch-next.md#DN-P2",
+        "dispatch-next.md#DN-P4"
       ],
       "negative": [
         "dispatch-next.md#DN-N1",
@@ -78,11 +86,14 @@
     "shape-work": {
       "positive": [
         "shape-work.md#SW-P1",
-        "shape-work.md#SW-P2"
+        "shape-work.md#SW-P2",
+        "shape-work.md#SW-P3",
+        "shape-work.md#SW-P4"
       ],
       "negative": [
         "shape-work.md#SW-N1",
-        "shape-work.md#SW-N2"
+        "shape-work.md#SW-N2",
+        "shape-work.md#SW-N3"
       ]
     },
     "verify-before-done": {

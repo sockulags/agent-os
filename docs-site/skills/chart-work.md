@@ -23,7 +23,10 @@ decision, or a prerequisite task. Human preference evidence must come from the d
 
 Independent frontier tickets may run in parallel. Reconcile the map without overwriting canonical
 ticket results. When a branch becomes bounded, create or reuse one linked `shape-work` handoff with
-settled decisions and remaining questions.
+settled decisions and remaining questions. The handoff moves the branch to shaping, not to
+delivery-ready. Shape-work later creates the implementation issues and reconciles their links and
+frontier into the map. A selected branch in shaping keeps the map open; the map closes only when
+selected paths are delivery-ready, parked, or ruled out and no Fog remains.
 
 See [Maps and decision tickets](/reference/maps-and-tickets) and
 [Prototype evidence](/reference/prototypes).

@@ -26,6 +26,11 @@ Before editing, establish:
 - tests or observations that decide success;
 - the requested delivery target.
 
+The target must be one coherent implementation issue or equivalently bounded request: one
+observable outcome, one reviewable change boundary, explicit ground truth, and satisfied
+dependencies. A target with several separately closable outcomes or delivery boundaries returns to
+shaping before mutation. Deliver-work never chooses batch execution for the developer.
+
 Then inspect, classify review, implement, check, adapt, review the diff, and verify the final
 candidate. The agent chooses the local method.
 

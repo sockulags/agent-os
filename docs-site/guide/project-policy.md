@@ -13,7 +13,7 @@ Record only useful defaults:
 - verification and acceptance commands;
 - branch, PR, merge, and deploy conventions;
 - design-system locations;
-- planning surface and decision-ticket conventions;
+- planning surface, decision-ticket conventions, and implementation-issue readiness states or labels;
 - batch concurrency, worktree naming, retries, and integration strategy;
 - conventions, gotchas, and durable lessons.
 

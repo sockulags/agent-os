@@ -36,6 +36,7 @@ Raw session logs are retained locally outside the repository and are not committ
 
 | Contract generation | Sessions | Result | Current meaning |
 |---|---:|---|---|
+| v0.7.0 implementation issues | 1 | PARTIAL | A fresh read-only shape-work session produced exact contents for API and UI issues (`ready`), dependent browser verification (`blocked`), handoff reconciliation, and a two-issue frontier without choosing batch. Tracker mutation and retry idempotency were not exercised. |
 | v0.6.2 review gate | 4 | PARTIAL | Low-risk fix and both app-mediated material changes passed. The wait-only raw CLI fallback did not fail safely; material delivery is not verified in that host. |
 | v0.5.0 batch contracts | 7 | PASS | Historical evidence only; approval and receipt semantics were removed in 0.6.0. |
 | v0.4.1 chart → shape handoff | 12 | PASS | Six chart reconciliations and six blind shape handoffs passed; useful history, not current acceptance. |

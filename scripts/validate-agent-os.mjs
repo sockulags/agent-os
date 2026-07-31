@@ -285,8 +285,40 @@ export function validate(root = path.resolve(scriptDir, '..')) {
   ], 'DELIVER_CONTRACT')
 
   checkContains(diagnostics, path.join(root, 'skills/chart-work/references/map.md'),
-    ['The map orients.', 'Identity is', 'Origin map:', 'Branch key:', 'Search before creating'],
+    [
+      'The map orients.',
+      'Identity is',
+      'Origin map:',
+      'Branch key:',
+      'Search before creating',
+      '## Shaping handoffs',
+      '## Delivery-ready branches',
+      'The handoff moves the branch to',
+      'not to `delivery-ready`',
+      'A selected branch in shaping keeps the map open.'
+    ],
     'CHART_HANDOFF_CONTRACT')
+
+  checkContains(diagnostics, path.join(root, 'skills/shape-work/SKILL.md'), [
+    'references/implementation-issues.md',
+    'create or reuse its implementation issues',
+    'Multiple issues do not imply',
+    'Shape-work is complete only when',
+    'reconcile the issue links and readiness back into'
+  ], 'SHAPE_IMPLEMENTATION_ISSUES')
+  checkContains(diagnostics, path.join(root, 'skills/shape-work/references/implementation-issues.md'), [
+    'A selected product branch is not `delivery-ready`',
+    'Identity is `(origin, unit key)`',
+    'Status: ready | blocked',
+    '## Outcome',
+    '## Boundaries',
+    '## Acceptance',
+    '## Ground truth',
+    '## Dependencies',
+    '## Delivery target',
+    'the existence of several issues never invokes or recommends batch-work by itself',
+    'branch from shaping to `delivery-ready` only when'
+  ], 'IMPLEMENTATION_ISSUE_CONTRACT')
 
   checkContains(diagnostics, path.join(root, 'skills/batch-work/references/manifest.md'), [
     'agent_os_batch: 2',
@@ -303,8 +335,22 @@ export function validate(root = path.resolve(scriptDir, '..')) {
     'The request defines whether',
     'A planning-only request stops here;',
     'Each worker gets',
-    'Individual worker checks never substitute for aggregate verification.'
+    'Individual worker checks never substitute for aggregate verification.',
+    'Batch-work consumes an existing set of implementation-ready',
+    'only when the developer explicitly requests an integrated batch'
   ], 'BATCH_WORKFLOW_CONTRACT')
+  checkContains(diagnostics, path.join(root, 'skills/deliver-work/workflow.md'), [
+    '## Confirm one delivery unit',
+    'one coherent implementation issue',
+    'stop before mutation and return it for',
+    'Do not choose `batch-work`'
+  ], 'DELIVER_UNIT_CONTRACT')
+  checkContains(diagnostics, path.join(root, 'skills/dispatch-next/SKILL.md'), [
+    'one selected',
+    'implementation-ready issue to `deliver-work`',
+    'only when the developer',
+    'issue count alone'
+  ], 'DISPATCH_ROUTE_CONTRACT')
   checkContains(diagnostics, path.join(root, 'skills/deliver-work/workflow.md'), [
     'The coordinator owns integration, aggregate review, and aggregate',
     'verification.'

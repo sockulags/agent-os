@@ -11,6 +11,10 @@ summary: Run isolated ready units and verify the integrated result
 
 Plans and runs several decision-ready units through isolated workers and aggregate verification.
 
+Batch-work consumes an existing set of implementation-ready, dependency-mapped issues. It does not
+discover or decompose the product shape, and several issues do not invoke it automatically. The
+developer explicitly chooses when the issue graph should run as an integrated batch.
+
 The request decides whether the workflow plans, executes, or does both. A planning-only request
 creates the manifest and stops. An execution request continues without a second approval checkpoint.
 
