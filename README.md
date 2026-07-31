@@ -7,18 +7,22 @@ Claude Code and Codex. One skill source, two platforms, ceremony proportional to
 
 ## Skills
 
+Reading order: the planning foundation (`chart-work`, `shape-work`), the on-ramp in front of it
+(`guide-me`), the remaining workflows, then the component skills the workflows compose
+(`understand-work`, `explain-work`), the disciplines, and the meta-skill.
+
 | Skill | Bucket | Invocation | Purpose |
 |---|---|---|---|
-| `init-agent-os` | workflow | manual | Managed policy setup or repository defaults |
 | `chart-work` | workflow | manual | Chart broad work as a parallel graph of decision tickets |
 | `shape-work` | workflow | manual | Turn bounded choices into implementation-ready issues |
-| `batch-work` | workflow | manual | Run isolated ready units and verify the integrated result |
-| `deliver-work` | workflow | manual | Implement one change against boundaries and ground truth |
-| `dispatch-next` | workflow | manual | Pick or dispatch one action according to the request |
 | `guide-me` | workflow | manual | Guide a vague desire to an approved goal and into planning |
+| `deliver-work` | workflow | manual | Implement one change against boundaries and ground truth |
+| `batch-work` | workflow | manual | Run isolated ready units and verify the integrated result |
+| `dispatch-next` | workflow | manual | Pick or dispatch one action according to the request |
+| `init-agent-os` | workflow | manual | Managed policy setup or repository defaults |
+| `record-lesson` | workflow | manual | Record a durable lesson in repo or global policy |
 | `understand-work` | workflow | manual | Question out the need behind a stated wish |
 | `explain-work` | workflow | manual | Explain the task in plain language for approval |
-| `record-lesson` | workflow | manual | Record a durable lesson in repo or global policy |
 | `verify-before-done` | discipline | automatic | Fresh evidence before any completion claim |
 | `diagnose-before-fix` | discipline | automatic | Reproduce and root-cause before patching |
 | `scope-guard` | discipline | automatic | Keep work inside the task; flag drift |

@@ -9,8 +9,8 @@ Enter at the lowest workflow that matches the uncertainty.
 
 ```mermaid
 flowchart TD
-    V[Vague desire] -->|guide-me: questioning + approved plain-language TLDR| A
-    V -->|guide-me| A2
+    V[Vague desire] -.->|guide-me: questioning + approved plain-language TLDR| A
+    V -.->|guide-me| A2
     A[Broad effort] -->|chart-work| B[Decision tickets]
     B -->|bounded branch| C[shape-work]
     A2[Bounded open choices] -->|shape-work| C
@@ -26,14 +26,15 @@ flowchart TD
     H -.-> E
 ```
 
-Use `guide-me` when the developer cannot yet state what they want: it questions out the need
-through `understand-work`, closes with a plain-language summary through `explain-work`, and — once
-that summary is approved — continues into `chart-work` or `shape-work` with the summary as a
-`## TLDR` at the top of the artifact it creates. Use `chart-work` when several decision threads can
-move independently. Use `shape-work` for one bounded set of product choices and to materialize its
-implementation-ready issues. Use `deliver-work` for one selected ready issue. Use `batch-work` only
-when the developer explicitly chooses integrated execution of several ready issues with stable
-dependencies.
+Use `chart-work` when several decision threads can move independently. Use `shape-work` for one
+bounded set of product choices and to materialize its implementation-ready issues. Use
+`deliver-work` for one selected ready issue. Use `batch-work` only when the developer explicitly
+chooses integrated execution of several ready issues with stable dependencies.
+
+In front of the foundation sits an optional on-ramp: when the developer cannot yet state what they
+want, `guide-me` shows the way — questioning through `understand-work`, a plain-language summary
+through `explain-work`, and, once that summary is approved, straight into `chart-work` or
+`shape-work` with the summary as a `## TLDR` at the top of the artifact it creates.
 
 Each workflow inherits the same authority rule: the request governs what happens. Planning requests
 produce planning artifacts. Execution requests may mutate repository files in scope. Delivery stops
@@ -56,7 +57,7 @@ The journey begins before the request exists:
 
 > Reports feel useless for our big customers and I don't know what to do about it.
 
-### 0. guide-me finds the goal
+### Optional entry: guide-me finds the goal
 
 `guide-me` questions out the need: the pain is not seeing the data but taking it along — customers
 paste screenshots into slides today. The goal stops moving, and the plain-language gate plays it

@@ -23,8 +23,8 @@ hero:
 
 features:
   - icon: 🧭
-    title: Guide, chart, shape, deliver
-    details: A vague desire becomes an approved plain-language goal, a foggy effort becomes decision tickets, a bounded branch becomes implementation-ready issues, and the developer chooses individual delivery or an explicit integrated batch.
+    title: Chart, shape, batch, deliver
+    details: A foggy effort becomes decision tickets, a bounded branch becomes implementation-ready issues, and the developer chooses individual delivery or an explicit integrated batch. When you cannot state the goal yet, guide-me questions it out first.
   - icon: 🧾
     title: Evidence before claims
     details: The verify-before-done discipline turns "it works" into a command, an exit status and a result. A check that ran proves only what that check exercised — and unverified claims get named as unverified.
@@ -44,7 +44,8 @@ features:
 
 ## What it looks like
 
-A vague desire in, an approved plain-language goal out — and evidence before any completion claim:
+The optional on-ramp in action — a vague desire becomes an approved plain-language goal, planning
+takes over, and evidence lands before any completion claim:
 
 ```text
 User:

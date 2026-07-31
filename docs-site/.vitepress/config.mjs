@@ -68,18 +68,33 @@ export default withMermaid(defineConfig({
           ]
         },
         {
-          text: 'Workflows',
+          text: 'Foundation',
           items: [
-            { text: 'init-agent-os', link: '/skills/init-agent-os' },
             { text: 'chart-work', link: '/skills/chart-work' },
-            { text: 'shape-work', link: '/skills/shape-work' },
-            { text: 'batch-work', link: '/skills/batch-work' },
+            { text: 'shape-work', link: '/skills/shape-work' }
+          ]
+        },
+        {
+          text: 'On-ramp',
+          items: [
+            { text: 'guide-me', link: '/skills/guide-me' }
+          ]
+        },
+        {
+          text: 'Execution and operations',
+          items: [
             { text: 'deliver-work', link: '/skills/deliver-work' },
+            { text: 'batch-work', link: '/skills/batch-work' },
             { text: 'dispatch-next', link: '/skills/dispatch-next' },
-            { text: 'guide-me', link: '/skills/guide-me' },
-            { text: 'understand-work', link: '/skills/understand-work' },
-            { text: 'explain-work', link: '/skills/explain-work' },
+            { text: 'init-agent-os', link: '/skills/init-agent-os' },
             { text: 'record-lesson', link: '/skills/record-lesson' }
+          ]
+        },
+        {
+          text: 'Component skills',
+          items: [
+            { text: 'understand-work', link: '/skills/understand-work' },
+            { text: 'explain-work', link: '/skills/explain-work' }
           ]
         },
         {

@@ -6,24 +6,68 @@ description: The agent-os workflows, automatic disciplines, and meta-skill with 
 # Skills overview
 
 agent-os ships its skills in three buckets. Workflows are invoked by hand, disciplines trigger
-themselves from the situation, and the meta-skill governs how the others are written.
+themselves from the situation, and the meta-skill governs how the others are written. Read this
+page top to bottom: the planning foundation, the on-ramp in front of it, the remaining workflows,
+and finally the component skills the workflows compose.
+
+## The foundation: chart and shape
+
+Planning starts here. A broad effort becomes decision tickets; a bounded idea becomes
+implementation-ready issues.
 
 | Skill | Bucket | Invocation | Purpose |
 |---|---|---|---|
-| [`init-agent-os`](/skills/init-agent-os) | workflow | manual | Managed policy setup or repository defaults |
 | [`chart-work`](/skills/chart-work) | workflow | manual | Chart broad work as a parallel graph of decision tickets |
 | [`shape-work`](/skills/shape-work) | workflow | manual | Turn bounded choices into implementation-ready issues |
-| [`batch-work`](/skills/batch-work) | workflow | manual | Run isolated ready units and verify the integrated result |
-| [`deliver-work`](/skills/deliver-work) | workflow | manual | Implement one change against boundaries and ground truth |
-| [`dispatch-next`](/skills/dispatch-next) | workflow | manual | Pick or dispatch one action according to the request |
+
+## The on-ramp: guide-me
+
+When you cannot state the goal yet, `guide-me` sits in front of the foundation. It only shows the
+way: questioning through its component `understand-work`, the plain-language gate through
+`explain-work`, and — once you approve the summary — straight into `chart-work` or `shape-work`.
+
+| Skill | Bucket | Invocation | Purpose |
+|---|---|---|---|
 | [`guide-me`](/skills/guide-me) | workflow | manual | Guide a vague desire to an approved goal and into planning |
+
+## Execution and operations
+
+The workflows that run, pick, set up, and remember work.
+
+| Skill | Bucket | Invocation | Purpose |
+|---|---|---|---|
+| [`deliver-work`](/skills/deliver-work) | workflow | manual | Implement one change against boundaries and ground truth |
+| [`batch-work`](/skills/batch-work) | workflow | manual | Run isolated ready units and verify the integrated result |
+| [`dispatch-next`](/skills/dispatch-next) | workflow | manual | Pick or dispatch one action according to the request |
+| [`init-agent-os`](/skills/init-agent-os) | workflow | manual | Managed policy setup or repository defaults |
+| [`record-lesson`](/skills/record-lesson) | workflow | manual | Record a durable lesson in repo or global policy |
+
+## Component skills
+
+Standalone pieces that guide-me composes. Invoke them directly whenever the piece is useful on its
+own — a grilling without the routing, or a plain-language summary of any plan, diff, or pull
+request.
+
+| Skill | Bucket | Invocation | Purpose |
+|---|---|---|---|
 | [`understand-work`](/skills/understand-work) | workflow | manual | Question out the need behind a stated wish |
 | [`explain-work`](/skills/explain-work) | workflow | manual | Explain the task in plain language for approval |
-| [`record-lesson`](/skills/record-lesson) | workflow | manual | Record a durable lesson in repo or global policy |
+
+## Disciplines
+
+Always on; no invocation.
+
+| Skill | Bucket | Invocation | Purpose |
+|---|---|---|---|
 | [`verify-before-done`](/skills/verify-before-done) | discipline | automatic | Fresh evidence before any completion claim |
 | [`diagnose-before-fix`](/skills/diagnose-before-fix) | discipline | automatic | Reproduce and root-cause before patching |
 | [`scope-guard`](/skills/scope-guard) | discipline | automatic | Keep work inside the task; flag drift |
 | [`notice-lesson`](/skills/notice-lesson) | discipline | automatic | Treat interruptions as misunderstanding signals |
+
+## Meta
+
+| Skill | Bucket | Invocation | Purpose |
+|---|---|---|---|
 | [`writing-skills`](/skills/writing-skills) | meta | manual | Doctrine and definition of done for agent-os skills |
 
 ## Invocation

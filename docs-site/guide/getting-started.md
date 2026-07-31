@@ -95,16 +95,6 @@ The result is the repository's [project policy](/guide/project-policy), a living
 
 ## Your first run
 
-When you cannot yet say what you want — only that something should change — let the workflow find
-it with you:
-
-```text
-/agent-os:guide-me Something about this project feels off and I don't know where to start
-```
-
-It questions out the need, plays the goal back as a plain-language summary you approve or
-challenge, and only then continues into charting or shaping with that summary at the top.
-
 For a bounded change with open product questions, start at the top:
 
 ```text
@@ -123,6 +113,16 @@ integrated as one batch, invoke it:
 ```text
 /agent-os:batch-work Execute the platform migration work units
 ```
+
+And when you cannot yet say what you want — only that something should change — the on-ramp finds
+the goal with you before any of the above:
+
+```text
+/agent-os:guide-me Something about this project feels off and I don't know where to start
+```
+
+It questions out the need, plays the goal back as a plain-language summary you approve or
+challenge, and only then continues into charting or shaping with that summary at the top.
 
 Nothing forces you to use a workflow at all. The disciplines are active in every session regardless,
 which is most of the day-to-day value: the agent reproduces before it patches, keeps unrelated

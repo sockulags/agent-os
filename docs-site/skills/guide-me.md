@@ -10,7 +10,9 @@ summary: Guide a vague desire to an approved goal and into planning
 **Bucket:** workflow · **Invocation:** manual · `/agent-os:guide-me` or `$guide-me`
 
 Takes a developer who cannot yet state what they want to an approved goal and into the right
-planning workflow. Guide-me writes no product code and no implementation issues.
+planning workflow. Guide-me is the on-ramp, not the foundation: it owns no doctrine of its own and
+only shows the way through its two component skills and onward into `chart-work` or `shape-work`.
+It writes no product code and no implementation issues.
 
 The workflow composes two standalone skills:
 

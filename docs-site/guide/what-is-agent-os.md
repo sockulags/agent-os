@@ -16,9 +16,10 @@ It answers three questions:
 
 ## Two kinds of skill
 
-**Workflows** are manually invoked. They structure guiding a vague desire to an approved goal, broad
-decisions, bounded shaping, parallel batches, delivery, dispatch, durable lessons, and setup. They
-do not activate merely because a request resembles them.
+**Workflows** are manually invoked. They structure broad decisions, bounded shaping, parallel
+batches, delivery, dispatch, durable lessons, and setup — with `guide-me` as an optional on-ramp
+that guides a vague desire to an approved goal in front of them. They do not activate merely
+because a request resembles them.
 
 **Disciplines** activate from the situation: diagnose an unknown failure, contain scope drift,
 verify a completion claim, and treat a developer correction as a misunderstanding signal.
