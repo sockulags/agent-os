@@ -10,10 +10,11 @@ Enter at the lowest workflow that matches the uncertainty.
 ```mermaid
 flowchart TD
     A[Broad effort] -->|chart-work| B[Decision tickets]
-    B -->|bounded branch| C[shape-work contract]
+    B -->|bounded branch| C[shape-work]
     A2[Bounded open choices] -->|shape-work| C
-    C -->|one ready unit| D[deliver-work]
-    C -->|several ready units| E[batch-work]
+    C --> I[Implementation-ready issues]
+    I -->|developer selects one issue| D[deliver-work]
+    I -->|developer explicitly selects a batch| E[batch-work]
     E -->|isolated workers| F[Integrated candidate]
     D --> G[Verified delivery target]
     F --> G
@@ -24,8 +25,9 @@ flowchart TD
 ```
 
 Use `chart-work` when several decision threads can move independently. Use `shape-work` for one
-bounded set of product choices. Use `batch-work` for several decision-ready units with stable
-dependencies. Use `deliver-work` for one ready change.
+bounded set of product choices and to materialize its implementation-ready issues. Use
+`deliver-work` for one selected ready issue. Use `batch-work` only when the developer explicitly
+chooses integrated execution of several ready issues with stable dependencies.
 
 Each workflow inherits the same authority rule: the request governs what happens. Planning requests
 produce planning artifacts. Execution requests may mutate repository files in scope. Delivery stops
@@ -62,30 +64,41 @@ bounded branch with settled product decisions.
 
 ### 2. shape-work makes the branch executable
 
-`shape-work` follows those tickets and produces a decision-ready contract:
+`shape-work` follows those tickets, settles the product shape, and creates implementation-ready
+issues:
 
 ```text
 Outcome: A permitted user downloads the active report filter as UTF-8 CSV.
 Boundaries: No scheduled exports, background jobs, or new permission model.
 Ground truth: API contract test + rendered download flow + unauthorized request test.
 Delivery: One pull request; no merge or deployment.
+
+Implementation issues:
+EXPORT-API  -> serializer, endpoint, authorization tests
+EXPORT-UI   -> download action, loading and error states
+EXPORT-E2E  -> depends on EXPORT-API + EXPORT-UI
+
+Ready frontier: EXPORT-API, EXPORT-UI
 ```
 
 **Ground truth** is the observation that can decide the claim. “The build passes” is not ground truth
 for a browser download.
 
-### 3. batch-work runs the ready units
+The three issues are the required shaping output. They exist regardless of whether the developer
+later chooses serial delivery or a batch.
 
-The contract splits into two independent implementation tasks and one dependent integration task:
+### 3. The developer chooses batch-work
+
+For this example, the developer explicitly asks to run the ready issue graph as an integrated batch:
 
 ```text
-EXPORT-API  -> serializer, endpoint, authorization tests
-EXPORT-UI   -> download action, loading and error states
-EXPORT-E2E  -> depends on EXPORT-API + EXPORT-UI
+/agent-os:batch-work Execute the report-export implementation issues as one integrated batch.
 ```
 
-`batch-work` records stable task definitions, dependencies, hashes, worker commits, and aggregate
-checks in `.agent-os/batches/report-export.md`. API and UI run in isolated workspaces. E2E waits.
+`batch-work` consumes the existing issues and records execution definitions, dependencies, hashes,
+worker commits, and aggregate checks in `.agent-os/batches/report-export.md`. API and UI run in
+isolated workspaces. E2E waits. Without that explicit batch request, the same issues remain available
+for individual `deliver-work` runs.
 
 ### 4. deliver-work produces evidence
 

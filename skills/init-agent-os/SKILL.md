@@ -26,7 +26,8 @@ Invoked in a repo working directory.
    - **Delivery defaults** — branch, PR, merge, and deploy conventions.
    - **Verify commands** — the exact commands that prove the project works (test, build, lint, run).
    - **Design system** — where tokens and components live.
-   - **Planning surface** — tracker or local folders and decision-ticket conventions.
+   - **Planning surface** — tracker or local folders, decision-ticket conventions, and
+     implementation-issue readiness states or labels.
    - **Batch execution** — concurrency, worktree naming, retries, and integration strategy.
    - **Conventions and gotchas** worth recording now.
 3. Write the smallest useful policy section to the repo's existing instruction file, or a new

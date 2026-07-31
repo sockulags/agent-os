@@ -12,7 +12,7 @@ themselves from the situation, and the meta-skill governs how the others are wri
 |---|---|---|---|
 | [`init-agent-os`](/skills/init-agent-os) | workflow | manual | Managed policy setup or repository defaults |
 | [`chart-work`](/skills/chart-work) | workflow | manual | Chart broad work as a parallel graph of decision tickets |
-| [`shape-work`](/skills/shape-work) | workflow | manual | Turn bounded choices into a decision-ready contract |
+| [`shape-work`](/skills/shape-work) | workflow | manual | Turn bounded choices into implementation-ready issues |
 | [`batch-work`](/skills/batch-work) | workflow | manual | Run isolated ready units and verify the integrated result |
 | [`deliver-work`](/skills/deliver-work) | workflow | manual | Implement one change against boundaries and ground truth |
 | [`dispatch-next`](/skills/dispatch-next) | workflow | manual | Pick or dispatch one action according to the request |

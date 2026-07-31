@@ -84,7 +84,8 @@ For work whose decisions are already made, go straight to delivery:
 /agent-os:deliver-work Fix the timezone offset in the nightly digest
 ```
 
-For several decision-ready, dependency-mapped units, run one batch:
+When you explicitly want several implementation-ready, dependency-mapped issues executed and
+integrated as one batch, invoke it:
 
 ```text
 /agent-os:batch-work Execute the platform migration work units

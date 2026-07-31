@@ -15,8 +15,10 @@ Read project policy, queue conventions, issues, pull requests, and CI. Prioritiz
 flight when it has an actionable review or failure. Select one target using the repository's
 priority rules and explain why it wins.
 
-Route broad decision work to `chart-work`, a bounded open decision to `shape-work`, several ready
-units to `batch-work`, and one ready change to `deliver-work`.
+Route broad decision work to `chart-work`, a bounded open decision to `shape-work`, and one selected
+implementation-ready issue to `deliver-work`. Route to `batch-work` only when the developer
+explicitly asks to execute an existing ready issue graph as an integrated batch; issue count alone
+does not choose the workflow.
 
 “What should I do next?” is a read-only selection request. “Dispatch the next task” authorizes the
 project-state changes and one launch needed to dispatch the selected target. Do not infer merge,

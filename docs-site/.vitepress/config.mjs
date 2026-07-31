@@ -32,7 +32,7 @@ export default withMermaid(defineConfig({
       { text: 'Evals', link: '/reference/evals' },
       { text: 'Reference', link: '/reference/plugin-manifests', activeMatch: '/reference/' },
       {
-        text: 'v0.6.2',
+        text: 'v0.7.0',
         items: [
           { text: 'Releases', link: 'https://github.com/sockulags/agent-os/releases' },
           { text: 'Commit history', link: 'https://github.com/sockulags/agent-os/commits/main' }
@@ -99,6 +99,7 @@ export default withMermaid(defineConfig({
             { text: 'Work records', link: '/reference/work-records' },
             { text: 'Batch manifests', link: '/reference/batches' },
             { text: 'Maps and decision tickets', link: '/reference/maps-and-tickets' },
+            { text: 'Implementation issues', link: '/reference/implementation-issues' },
             { text: 'Prototype evidence', link: '/reference/prototypes' },
             { text: 'Frontend mockups', link: '/reference/mockups' },
             { text: 'Evals', link: '/reference/evals' },

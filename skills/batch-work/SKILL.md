@@ -9,6 +9,10 @@ disable-model-invocation: true
 Read project policy and [references/manifest.md](references/manifest.md). The request defines whether
 to plan the batch, execute it, or both.
 
+Batch-work consumes an existing set of implementation-ready, dependency-mapped issues. It does not
+discover, decompose, or represent a product shape, and the existence of several issues does not
+invoke it. Use this workflow only when the developer explicitly requests an integrated batch.
+
 ## Contract
 
 - **Outcome:** one integrated candidate whose full behavior passes the aggregate ground truth.
@@ -20,8 +24,8 @@ to plan the batch, execute it, or both.
 
 ## Loop
 
-1. Confirm every unit has a stable outcome, scope, dependencies, and checks. Route unresolved product
-   decisions to `shape-work` or `chart-work`.
+1. Confirm every source issue has a stable identity, outcome, scope, dependencies, and checks. Route
+   unresolved product decisions or missing decomposition to `shape-work` or `chart-work`.
 2. Create or update `.agent-os/batches/<batch-slug>.md`. Validate its graph and definition hashes.
    A planning-only request stops here; an execution request continues.
 3. Reconcile the manifest with live Git and worktree state before every dispatch wave.

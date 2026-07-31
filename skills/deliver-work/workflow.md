@@ -14,6 +14,15 @@ An implementation request authorizes in-scope repository edits. Ask one focused 
 an unresolved product decision has materially different outcomes. Reversible implementation choices
 belong to the implementer.
 
+## Confirm one delivery unit
+
+Before editing, verify that the target is one coherent implementation issue or an equivalently
+bounded direct request: one observable outcome, one reviewable change boundary, explicit ground
+truth, and satisfied dependencies. If the target contains several separately closable outcomes,
+different delivery targets, or unresolved product choices, stop before mutation and return it for
+shaping into implementation-ready issues. Do not choose `batch-work`; execution strategy belongs to
+the developer.
+
 ## Work loop
 
 1. Inspect enough of the affected system to choose a coherent change.
