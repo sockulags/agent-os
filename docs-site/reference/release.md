@@ -8,8 +8,12 @@ description: Validate, version, publish, and verify an agent-os release.
 1. **Validate structure and run the trigger evals.** Run
    `node scripts/validate-agent-os.mjs` and `node scripts/test-validate-agent-os.mjs`, then collect
    the live trigger and forward-test evidence described in [Evals](/reference/evals).
-2. **Bump `version` in both manifests** — `.claude-plugin/plugin.json` and
-   `.codex-plugin/plugin.json`. They are the same version and are bumped together.
+2. **Bump the version everywhere it lives.** The release version appears in four validated places:
+   `.claude-plugin/plugin.json`, `.codex-plugin/plugin.json`, the navigation version in
+   `docs-site/.vitepress/config.mjs`, and the manifest examples on the
+   [plugin manifests](/reference/plugin-manifests) page. `validate-agent-os.mjs` fails the release
+   until all four agree, so bump them in the same commit. Add the release to the
+   [changelog](/changelog) while you are there.
 3. **Commit and push**, using the Git identity configured by the repository or the current session,
    without AI attribution.
 4. **Update the plugin on both platforms and verify the new version loaded.** On Codex this means

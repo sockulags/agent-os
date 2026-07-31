@@ -5,6 +5,9 @@ description: Record what a prototype exercised, what was observed, and which dec
 
 # Prototype evidence
 
+> This page orients. The canonical contract agents load is
+> [`skills/chart-work/references/prototypes.md`](https://github.com/sockulags/agent-os/blob/main/skills/chart-work/references/prototypes.md).
+
 A prototype exists to settle a decision.
 
 Build the smallest comparison that makes the contested behavior observable. Record the question,

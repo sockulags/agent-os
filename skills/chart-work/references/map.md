@@ -13,6 +13,7 @@ planning/<map-slug>/shape-work/<branch-key>.md
 Keep the map low-resolution and rebuildable from its tickets:
 
 ```text
+## TLDR
 ## Destination
 ## Boundaries
 ## Decisions
@@ -25,7 +26,8 @@ Keep the map low-resolution and rebuildable from its tickets:
 ## Spawned work
 ```
 
-The map orients. It does not duplicate ticket evidence.
+The map orients. It does not duplicate ticket evidence. `## TLDR` holds the approved plain-language
+summary when the map originates from `guide-me`; omit the section otherwise.
 
 ## Decision tickets
 

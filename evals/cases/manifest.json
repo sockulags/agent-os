@@ -42,6 +42,61 @@
         "deliver-work-sequence.md#Negative 5 — undecomposed target"
       ]
     },
+    "explain-work": {
+      "positive": [
+        "explain-work.md#EW-P1 Plain summary",
+        "explain-work.md#EW-P2 Challenge handling",
+        "explain-work.md#EW-P3 Jargon leak"
+      ],
+      "negative": [
+        "explain-work.md#EW-N1 Technical review",
+        "explain-work.md#EW-N2 Documentation"
+      ]
+    },
+    "guide-me": {
+      "positive": [
+        "guide-me.md#GM-P1 Vague desire",
+        "guide-me.md#GM-P2 Gate before route",
+        "guide-me.md#GM-P3 Challenge reopens",
+        "guide-me.md#GM-P4 Approved continuation"
+      ],
+      "negative": [
+        "guide-me.md#GM-N1 Clear request",
+        "guide-me.md#GM-N2 Bounded choice"
+      ]
+    },
+    "notice-lesson": {
+      "positive": [
+        "notice-lesson.md#NL-P1 Interruption",
+        "notice-lesson.md#NL-P2 Repeated correction"
+      ],
+      "negative": [
+        "notice-lesson.md#NL-N1 Clarifying question",
+        "notice-lesson.md#NL-N2 Requested iteration"
+      ]
+    },
+    "record-lesson": {
+      "positive": [
+        "record-lesson.md#RL-P1 Repo lesson",
+        "record-lesson.md#RL-P2 Global lesson",
+        "record-lesson.md#RL-P3 Enforcement ladder"
+      ],
+      "negative": [
+        "record-lesson.md#RL-N1 Session detail",
+        "record-lesson.md#RL-N2 Already recorded"
+      ]
+    },
+    "understand-work": {
+      "positive": [
+        "understand-work.md#UW-P1 Facts first",
+        "understand-work.md#UW-P2 Ruled out",
+        "understand-work.md#UW-P3 No premature solution"
+      ],
+      "negative": [
+        "understand-work.md#UW-N1 Repository fact",
+        "understand-work.md#UW-N2 Stated goal"
+      ]
+    },
     "diagnose-before-fix": {
       "positive": [
         "diagnose-before-fix.md#Positive 1",

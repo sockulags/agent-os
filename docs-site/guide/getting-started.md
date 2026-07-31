@@ -28,14 +28,33 @@ it is a valid marketplace on its own. Skills then appear under the plugin namesp
 
 ### Codex
 
-Codex installs from the local repository marketplace at `.agents/plugins/marketplace.json`.
+Codex reads the repository's marketplace manifest at `.agents/plugins/marketplace.json`. Register
+the marketplace once — from a Git source or a local clone — then install the plugin from it:
+
+```bash
+codex plugin marketplace add sockulags/agent-os
+```
+
+```bash
+codex plugin add agent-os@agent-os
+```
+
+For development against a local clone, point the marketplace at the working copy instead:
+
+```bash
+codex plugin marketplace add /path/to/agent-os
+```
+
 Installation copies the plugin into the Codex cache, which means a change to a skill file is not
-visible until you reinstall or refresh the plugin **and** start a new session. Skills appear as
-`$<skill>`.
+visible until you reinstall (`codex plugin add agent-os@agent-os` again; for a Git source, run
+`codex plugin marketplace upgrade agent-os` first to refresh the snapshot) **and** start a new
+session. `codex plugin list` and `codex plugin marketplace list` show what Codex is actually
+serving, and `codex plugin remove agent-os` uninstalls. Skills appear as `$<skill>`.
 
 ### Verify the install
 
-Ask the agent to list its available skills. All ten should be present under the `agent-os`
+Ask the agent to list its available skills and compare against the
+[skills overview](/skills/) — every skill in that table should be present under the `agent-os`
 namespace. If only some appear, the plugin was loaded from a stale cache — reinstall before
 debugging anything else.
 
@@ -55,6 +74,10 @@ The block is delimited by `<!-- BEGIN AGENT OS -->` and `<!-- END AGENT OS -->` 
 PowerShell script `skills/init-agent-os/scripts/policy-block.ps1` is its only writer. Never edit
 inside the markers by hand — see [Global policy](/guide/global-policy) for why.
 
+"Once per machine" covers the first install. Re-run it after every change to `policy.md` and after
+plugin updates that ship a new policy — the installed blocks do not update themselves, and drift is
+silent until check mode reports it.
+
 ## 3. Initialize a repository
 
 In the repository you want to work in, run the same skill without an argument:
@@ -71,6 +94,16 @@ The result is the repository's [project policy](/guide/project-policy), a living
 `deliver-work` will later propose additions to.
 
 ## Your first run
+
+When you cannot yet say what you want — only that something should change — let the workflow find
+it with you:
+
+```text
+/agent-os:guide-me Something about this project feels off and I don't know where to start
+```
+
+It questions out the need, plays the goal back as a plain-language summary you approve or
+challenge, and only then continues into charting or shaping with that summary at the top.
 
 For a bounded change with open product questions, start at the top:
 

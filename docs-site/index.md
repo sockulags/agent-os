@@ -23,8 +23,8 @@ hero:
 
 features:
   - icon: 🧭
-    title: Chart, shape, batch, deliver
-    details: A foggy effort becomes decision tickets, a bounded branch becomes implementation-ready issues, and the developer chooses individual delivery or an explicit integrated batch.
+    title: Guide, chart, shape, deliver
+    details: A vague desire becomes an approved plain-language goal, a foggy effort becomes decision tickets, a bounded branch becomes implementation-ready issues, and the developer chooses individual delivery or an explicit integrated batch.
   - icon: 🧾
     title: Evidence before claims
     details: The verify-before-done discipline turns "it works" into a command, an exit status and a result. A check that ran proves only what that check exercised — and unverified claims get named as unverified.
@@ -41,3 +41,41 @@ features:
     title: Policy you can edit
     details: A single policy.md is installed as a managed block in your global instruction files, and every repo grows its own living project policy through an interview instead of a template.
 ---
+
+## What it looks like
+
+A vague desire in, an approved plain-language goal out — and evidence before any completion claim:
+
+```text
+User:
+/agent-os:guide-me Reports feel useless for our big customers and I
+don't know what to do about it.
+
+Agent:
+Is the pain seeing the data, or taking it with them?
+
+User:
+Taking it with them. They paste screenshots into slides today.
+
+Agent:
+Plain-language summary: "This work gives large customers a proper way
+to take a filtered result with them. It will not change what they can
+see, only what they can carry away." Approve, or challenge it?
+
+User:
+Approved.
+
+Agent:
+Continuing into chart-work with that summary as the TLDR of the map.
+
+    ...later, after shaping and delivery...
+
+Command: npm test -- report-export
+Exit: 0
+Result: API, authorization, and CSV encoding cases pass.
+
+Delivered to the requested boundary: one verified pull request.
+Merge stays with you.
+```
+
+Read the whole journey in [The work loop](/guide/the-work-loop).

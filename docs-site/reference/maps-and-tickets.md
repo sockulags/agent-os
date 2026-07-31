@@ -5,12 +5,17 @@ description: How chart-work separates orientation, canonical decisions, evidence
 
 # Maps and decision tickets
 
+> This page orients. The canonical contract agents load is
+> [`skills/chart-work/references/map.md`](https://github.com/sockulags/agent-os/blob/main/skills/chart-work/references/map.md).
+
 The map gives low-resolution orientation; each ticket owns its question, evidence, and decision.
 
 ## Map
 
 A useful map contains destination, boundaries, decisions, Fog, shaping handoffs, delivery-ready
-branches, and spawned work. It links to canonical tickets instead of repeating their evidence.
+branches, and spawned work. It links to canonical tickets instead of repeating their evidence. When
+the map originates from [guide-me](/skills/guide-me), the approved plain-language summary sits at
+the top as a `## TLDR`, so the map opens with what the work solves before any planning vocabulary.
 
 ## Tickets
 

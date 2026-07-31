@@ -5,6 +5,9 @@ description: Use the smallest visual comparison needed to settle a product decis
 
 # Frontend mockups
 
+> This page orients. The canonical contract agents load is
+> [`skills/shape-work/references/mockups.md`](https://github.com/sockulags/agent-os/blob/main/skills/shape-work/references/mockups.md).
+
 Use a mockup when seeing the behavior improves a product decision.
 
 Inspect the project's tokens, components, and nearby views first. Reuse established patterns and

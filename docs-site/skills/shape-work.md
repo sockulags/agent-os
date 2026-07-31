@@ -33,3 +33,33 @@ branch points to implementation-ready issues or is explicitly parked or rejected
 The invocation authorizes planning artifacts, not product code.
 
 See [Implementation issues](/reference/implementation-issues).
+
+## Transcript: one question, then issues
+
+Condensed illustration of the recommend-then-ask pattern.
+
+```text
+User:
+/agent-os:shape-work Turn the report-export branch into ready issues.
+
+Agent:
+Settled from the tickets: CSV of the active filtered result, reuse
+report-view permission, synchronous through 10,000 rows.
+
+One product choice remains: what happens above the limit?
+  a) hide the export action        — invisible, but users ask why it's gone
+  b) disable it with an explanation — visible boundary, no silent failure
+Recommendation: b. One sentence of UI copy, no new capability.
+
+User:
+b.
+
+Agent:
+Issues created on the planning surface:
+  EXPORT-API  ready    serializer, endpoint, authorization tests
+  EXPORT-UI   ready    download action, disabled state above limit
+  EXPORT-E2E  blocked  depends on EXPORT-API + EXPORT-UI
+
+Delivery frontier: EXPORT-API, EXPORT-UI. Execution is your choice —
+deliver-work per issue, or batch-work if you ask for an integrated batch.
+```

@@ -5,6 +5,9 @@ description: The required delivery-ready output of shape-work and the developer-
 
 # Implementation issues
 
+> This page orients. The canonical contract agents load is
+> [`skills/shape-work/references/implementation-issues.md`](https://github.com/sockulags/agent-os/blob/main/skills/shape-work/references/implementation-issues.md).
+
 Research, grilling, and prototypes provide decision evidence. The durable output of shaping is one
 or more implementation-ready issues on the configured planning surface.
 

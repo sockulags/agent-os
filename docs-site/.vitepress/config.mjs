@@ -32,8 +32,9 @@ export default withMermaid(defineConfig({
       { text: 'Evals', link: '/reference/evals' },
       { text: 'Reference', link: '/reference/plugin-manifests', activeMatch: '/reference/' },
       {
-        text: 'v0.7.0',
+        text: 'v0.8.0',
         items: [
+          { text: 'Changelog', link: '/changelog' },
           { text: 'Releases', link: 'https://github.com/sockulags/agent-os/releases' },
           { text: 'Commit history', link: 'https://github.com/sockulags/agent-os/commits/main' }
         ]
@@ -54,7 +55,8 @@ export default withMermaid(defineConfig({
           items: [
             { text: 'The work loop', link: '/guide/the-work-loop' },
             { text: 'Global policy', link: '/guide/global-policy' },
-            { text: 'Project policy', link: '/guide/project-policy' }
+            { text: 'Project policy', link: '/guide/project-policy' },
+            { text: 'Troubleshooting', link: '/guide/troubleshooting' }
           ]
         }
       ],
@@ -73,7 +75,11 @@ export default withMermaid(defineConfig({
             { text: 'shape-work', link: '/skills/shape-work' },
             { text: 'batch-work', link: '/skills/batch-work' },
             { text: 'deliver-work', link: '/skills/deliver-work' },
-            { text: 'dispatch-next', link: '/skills/dispatch-next' }
+            { text: 'dispatch-next', link: '/skills/dispatch-next' },
+            { text: 'guide-me', link: '/skills/guide-me' },
+            { text: 'understand-work', link: '/skills/understand-work' },
+            { text: 'explain-work', link: '/skills/explain-work' },
+            { text: 'record-lesson', link: '/skills/record-lesson' }
           ]
         },
         {
@@ -81,7 +87,8 @@ export default withMermaid(defineConfig({
           items: [
             { text: 'verify-before-done', link: '/skills/verify-before-done' },
             { text: 'diagnose-before-fix', link: '/skills/diagnose-before-fix' },
-            { text: 'scope-guard', link: '/skills/scope-guard' }
+            { text: 'scope-guard', link: '/skills/scope-guard' },
+            { text: 'notice-lesson', link: '/skills/notice-lesson' }
           ]
         },
         {

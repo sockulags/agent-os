@@ -1,11 +1,11 @@
 ---
 title: Skills overview
-description: The ten agent-os workflows, automatic disciplines, and meta-skill with their invocation boundaries.
+description: The agent-os workflows, automatic disciplines, and meta-skill with their invocation boundaries.
 ---
 
 # Skills overview
 
-agent-os ships ten skills in three buckets. Workflows are invoked by hand, disciplines trigger
+agent-os ships its skills in three buckets. Workflows are invoked by hand, disciplines trigger
 themselves from the situation, and the meta-skill governs how the others are written.
 
 | Skill | Bucket | Invocation | Purpose |
@@ -16,9 +16,14 @@ themselves from the situation, and the meta-skill governs how the others are wri
 | [`batch-work`](/skills/batch-work) | workflow | manual | Run isolated ready units and verify the integrated result |
 | [`deliver-work`](/skills/deliver-work) | workflow | manual | Implement one change against boundaries and ground truth |
 | [`dispatch-next`](/skills/dispatch-next) | workflow | manual | Pick or dispatch one action according to the request |
+| [`guide-me`](/skills/guide-me) | workflow | manual | Guide a vague desire to an approved goal and into planning |
+| [`understand-work`](/skills/understand-work) | workflow | manual | Question out the need behind a stated wish |
+| [`explain-work`](/skills/explain-work) | workflow | manual | Explain the task in plain language for approval |
+| [`record-lesson`](/skills/record-lesson) | workflow | manual | Record a durable lesson in repo or global policy |
 | [`verify-before-done`](/skills/verify-before-done) | discipline | automatic | Fresh evidence before any completion claim |
 | [`diagnose-before-fix`](/skills/diagnose-before-fix) | discipline | automatic | Reproduce and root-cause before patching |
 | [`scope-guard`](/skills/scope-guard) | discipline | automatic | Keep work inside the task; flag drift |
+| [`notice-lesson`](/skills/notice-lesson) | discipline | automatic | Treat interruptions as misunderstanding signals |
 | [`writing-skills`](/skills/writing-skills) | meta | manual | Doctrine and definition of done for agent-os skills |
 
 ## Invocation

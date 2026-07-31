@@ -186,6 +186,11 @@ try {
     fs.rmSync(path.join(target, 'skills/batch-work/scripts/manifest-hash.mjs'))
   }, 'BATCH_HASH_SCRIPT')
 
+  expectFailure('hardcoded skill count in docs prose', (target) => {
+    rewrite(path.join(target, 'docs-site/skills/index.md'), (text) =>
+      text.replace('agent-os ships its skills in three buckets.', 'agent-os ships sixteen skills in three buckets.'))
+  }, 'DOCS_SKILL_COUNT')
+
   expectFailure('leading-zero release version', (target) => {
     const currentVersion = JSON.parse(fs.readFileSync(path.join(target, '.claude-plugin/plugin.json'), 'utf8')).version
     for (const manifestPath of ['.claude-plugin/plugin.json', '.codex-plugin/plugin.json']) {

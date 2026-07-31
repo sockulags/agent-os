@@ -10,6 +10,10 @@ With no project convention, use:
 planning/<shape-slug>/implementation/<unit-key>.md
 ```
 
+When the shape originates from `guide-me`, place the approved plain-language summary as a `## TLDR`
+at the top of the shape's origin document, so the shape opens with what it solves before any
+technical detail.
+
 ## Completion invariant
 
 A selected product branch is not `delivery-ready`, and shape-work is not complete, until one or

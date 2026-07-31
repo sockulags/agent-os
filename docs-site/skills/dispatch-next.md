@@ -25,3 +25,22 @@ the closest blocker.
 A selected implementation-ready issue routes to `deliver-work`. `batch-work` is a route only when
 the developer explicitly requests integrated execution of an existing ready issue graph; multiple
 issues alone do not select it.
+
+## Transcript: one target, nothing else
+
+Condensed illustration of the selection-versus-dispatch boundary.
+
+```text
+User:
+/agent-os:dispatch-next Dispatch the next task.
+
+Agent:
+Live state: PR #41 has an unanswered review comment; EXPORT-API and
+EXPORT-UI are ready; CI is green.
+
+Selection: PR #41 wins — work already in flight with an actionable
+review beats starting new work.
+
+Dispatched: one worker on the review comment. The ready issues stay
+untouched, and nothing is merged or closed under this invocation.
+```

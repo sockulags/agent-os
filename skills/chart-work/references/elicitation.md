@@ -4,9 +4,8 @@ Ask for the smallest evidence that can settle the active ticket.
 
 ## Developer choice
 
-Describe the concrete tension, present materially different alternatives, and recommend one with its
-main consequence. Ask one load-bearing question at a time. Record both the choice and why it was
-made. When words are insufficient, use a prototype.
+Follow the questioning loop in [understand-work](../../understand-work/SKILL.md). When words are
+insufficient, use a prototype.
 
 ## Research
 

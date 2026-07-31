@@ -5,6 +5,9 @@ description: Stable task identity, dependencies, reconciliation, and aggregate v
 
 # Batch manifests
 
+> This page orients. The canonical contract agents load is
+> [`skills/batch-work/references/manifest.md`](https://github.com/sockulags/agent-os/blob/main/skills/batch-work/references/manifest.md).
+
 `batch-work` keeps resumable coordinator state in `.agent-os/batches/<batch-slug>.md`.
 
 The cursor records batch ID, current status, next action, and a definition hash. The plan records the

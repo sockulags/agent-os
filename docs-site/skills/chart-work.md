@@ -30,3 +30,27 @@ selected paths are delivery-ready, parked, or ruled out and no Fog remains.
 
 See [Maps and decision tickets](/reference/maps-and-tickets) and
 [Prototype evidence](/reference/prototypes).
+
+## Transcript: fog becomes a frontier
+
+Condensed illustration; the full worked example lives in [The work loop](/guide/the-work-loop).
+
+```text
+User:
+/agent-os:chart-work Add export to reports. It should be safe and
+work for large customers.
+
+Agent:
+Destination: permitted users take report data with them.
+Boundaries: no scheduled exports, no new permission model.
+
+Tickets:
+  EXP-1 What is exported?        evidence: research (filter model, support requests)
+  EXP-2 Who may export?          evidence: research (existing authorization tests)
+  EXP-3 What counts as large?    evidence: research (production row counts)
+
+Fog: retention rules for exported files — too immature for a ticket.
+
+Open frontier: EXP-1, EXP-2, EXP-3 are independent and can run in
+parallel. Written to planning/report-export/. No product code changed.
+```

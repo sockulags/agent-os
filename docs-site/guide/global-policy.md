@@ -75,5 +75,9 @@ Check mode never writes. It exits `0` when the target is in sync, `1` on drift o
 `2` when the markers are malformed — the same exit code the write path uses when it aborts. An empty
 target file counts as "no block", and the block becomes the whole file.
 
+Drift is silent: nothing warns you when `policy.md` moves ahead of the installed blocks. Re-run
+`init-agent-os global` after every policy edit and after plugin updates, and let check mode settle
+any doubt.
+
 Deterministic block handling is the reason a script exists here at all. Marker surgery is exactly the
 kind of fragile operation that a prose instruction performs slightly differently every time.

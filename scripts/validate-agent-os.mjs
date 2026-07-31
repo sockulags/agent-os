@@ -372,6 +372,13 @@ export function validate(root = path.resolve(scriptDir, '..')) {
     fail('BATCH_NON_INVOCATION', 'batch-work must retain an explicit non-invocation case.')
   }
 
+  for (const file of filesUnder(path.join(root, 'docs-site'), (candidate) =>
+    candidate.endsWith('.md') && !candidate.includes(`${path.sep}.vitepress${path.sep}`))) {
+    if (/\b(?:ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty|\d+)\s+skills\b/i.test(stripFencedCode(read(file)))) {
+      fail('DOCS_SKILL_COUNT', `${path.relative(root, file)}: hardcoded skill count in documentation prose; counts drift — link the skills overview instead.`)
+    }
+  }
+
   const markdownRoots = [
     path.join(root, 'README.md'),
     path.join(root, 'policy.md'),

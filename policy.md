@@ -29,9 +29,12 @@ Rules:
 - Never force the reader to cross-reference labels or numbering invented earlier in the text — say what you mean in place.
 - Explanations belong in prose; tables only for short enumerable facts.
 - Calibrate tone to the topic: playfulness is fine, neutral and factual the moment the subject is serious. When in doubt, it is serious.
-- Orchestration is opt-in: `/agent-os:chart-work`, `/agent-os:shape-work`,
+- Orchestration is opt-in: `/agent-os:guide-me`, `/agent-os:chart-work`, `/agent-os:shape-work`,
   `/agent-os:batch-work`, `/agent-os:deliver-work`, `/agent-os:dispatch-next`,
-  `/agent-os:init-agent-os` exist for planned work; never self-invoke them.
+  `/agent-os:init-agent-os`, `/agent-os:understand-work`, `/agent-os:explain-work`,
+  `/agent-os:record-lesson` exist for planned work; never self-invoke them. One exception: a
+  workflow may continue into the workflow its exit contract names once the developer approves that
+  exit, as `guide-me` does after its approved plain-language gate.
 
 ## Preferences (seed defaults — project policy overrides)
 
@@ -39,4 +42,4 @@ Rules:
 - Own design identity; do not imitate the look of well-known apps.
 - Every repo keeps a living project policy (planning surface, design system location, verify
   commands, conventions, gotchas, and delivery defaults). It grows over time; `init-agent-os`
-  seeds it.
+  seeds it and `record-lesson` grows it.
