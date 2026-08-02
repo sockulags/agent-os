@@ -123,6 +123,7 @@ export default withMermaid(defineConfig({
             { text: 'Maps and decision tickets', link: '/reference/maps-and-tickets' },
             { text: 'Implementation issues', link: '/reference/implementation-issues' },
             { text: 'Prototype evidence', link: '/reference/prototypes' },
+            { text: 'Codex custom instructions', link: '/reference/codex-custom-instructions' },
             { text: 'Frontend mockups', link: '/reference/mockups' },
             { text: 'Evals', link: '/reference/evals' },
             { text: 'Release routine', link: '/reference/release' }
