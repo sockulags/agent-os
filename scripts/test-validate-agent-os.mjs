@@ -14,8 +14,8 @@ function fixture() {
   const target = fs.mkdtempSync(path.join(os.tmpdir(), 'agent-os-validator-'))
   temporaryRoots.push(target)
   for (const item of [
-    '.agents', '.claude-plugin', '.codex-plugin', '.github', 'docs-site', 'evals', 'skills',
-    'README.md', 'policy.md'
+    '.agents', '.claude-plugin', '.codex-plugin', '.github', 'cli', 'docs-site', 'evals', 'skills',
+    'README.md', 'package.json', 'policy.md'
   ]) {
     fs.cpSync(path.join(root, item), path.join(target, item), {
       recursive: true,
@@ -64,6 +64,13 @@ try {
     manifest.version = '9.9.9'
     fs.writeFileSync(file, `${JSON.stringify(manifest, null, 2)}\n`)
   }, 'MANIFEST_PARITY')
+
+  expectFailure('npm package version mismatch', (target) => {
+    const file = path.join(target, 'package.json')
+    const manifest = JSON.parse(fs.readFileSync(file, 'utf8'))
+    manifest.version = '9.9.9'
+    fs.writeFileSync(file, JSON.stringify(manifest, null, 2) + '\n')
+  }, 'MANIFEST_NPM_VERSION')
 
   expectFailure('missing skill documentation', (target) => {
     fs.rmSync(path.join(target, 'docs-site/skills/dispatch-next.md'))

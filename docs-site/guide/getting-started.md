@@ -5,10 +5,33 @@ description: Install agent-os, initialize policy, and choose the first workflow 
 
 # Getting started
 
-Installing agent-os takes three steps: install the plugin on the platforms you use, install the
-global policy block on your machine, and give each repository its own project policy.
+The guided npm installer is the fastest path. It configures the host plugin, optionally syncs the
+global policy, and leaves repository-specific policy initialization for the repository where you
+will work.
 
 ## 1. Install the plugin
+
+### Recommended: guided npm installer
+
+Run this from any directory:
+
+~~~bash
+npx agent-os install
+~~~
+
+The CLI asks whether to install for Codex, Claude Code, or both. For Claude Code it also asks for
+the installation scope. It can sync the shared policy files at the end of the flow.
+
+For automation, provide the choices explicitly:
+
+~~~bash
+npx agent-os install --platform both --yes
+npx agent-os update --platform codex --no-policy
+~~~
+
+The host CLI must already be installed. If one is missing, the installer prints the platform's
+recommended npm command. npx agent-os@latest refreshes the installer itself; npm install
+--global agent-os@latest keeps a reusable global copy.
 
 ### Claude Code
 
@@ -25,6 +48,19 @@ For normal use, add the repository as a personal marketplace and install the `ag
 it. The repository ships `.claude-plugin/marketplace.json` alongside `.claude-plugin/plugin.json`, so
 it is a valid marketplace on its own. Skills then appear under the plugin namespace as
 `/agent-os:<skill>`.
+
+The equivalent non-interactive commands are:
+
+~~~bash
+claude plugin marketplace add sockulags/agent-os
+claude plugin install agent-os@agent-os-marketplace --scope user
+~~~
+
+Refresh later with:
+
+~~~bash
+claude plugin marketplace update agent-os-marketplace
+~~~
 
 ### Codex
 
@@ -58,9 +94,10 @@ Ask the agent to list its available skills and compare against the
 namespace. If only some appear, the plugin was loaded from a stale cache — reinstall before
 debugging anything else.
 
-## 2. Install the global policy
+## 2. Install or refresh the global policy
 
-Run the setup skill in global mode once per machine:
+The npm installer can do this during installation. If you chose `--no-policy`, run the setup skill
+once per machine:
 
 ```text
 /agent-os:init-agent-os global

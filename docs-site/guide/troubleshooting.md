@@ -27,6 +27,20 @@ a marketplace install, update the plugin and start a new session.
 Compare the agent's skill list against the [skills overview](/skills/) — if they differ, fix the
 cache before debugging anything else.
 
+## The npx installer cannot find a host
+
+The installer delegates plugin installation to the host CLI. Install the missing host first, then
+rerun the guided command:
+
+~~~bash
+npm install --global @openai/codex
+npm install --global @anthropic-ai/claude-code
+~~~
+
+Use `npx agent-os update` to refresh an existing host installation. Use `npx agent-os@latest` when
+the installer itself is stale, or `npm install --global agent-os@latest` when you keep the CLI
+installed globally.
+
 ## The global policy block is stale
 
 **Symptom:** the agent follows old rules, or rules on one platform but not the other.

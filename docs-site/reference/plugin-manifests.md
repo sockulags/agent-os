@@ -6,7 +6,7 @@ description: How one agent-os repository is packaged for Claude Code and Codex.
 # Plugin manifests
 
 agent-os ships one repository that is a valid plugin — and a valid marketplace — on both platforms.
-Four small files do that work.
+The plugin manifests and one npm package manifest provide the distribution surfaces.
 
 ## `.claude-plugin/plugin.json`
 
@@ -16,7 +16,7 @@ The Claude Code plugin manifest.
 {
   "name": "agent-os",
   "description": "A lightweight agent operating system with explicit workflows and automatic disciplines, shared between Claude Code and Codex.",
-  "version": "0.8.0",
+  "version": "0.9.0",
   "author": { "name": "Lucas Skog" },
   "homepage": "https://sockulags.github.io/agent-os/",
   "repository": "https://github.com/sockulags/agent-os",
@@ -53,7 +53,7 @@ site.
 ```json
 {
   "name": "agent-os",
-  "version": "0.8.0",
+  "version": "0.9.0",
   "homepage": "https://sockulags.github.io/agent-os/",
   "repository": "https://github.com/sockulags/agent-os",
   "skills": "./skills/",
@@ -91,6 +91,26 @@ The Codex-side local marketplace:
 }
 ```
 
+## `package.json`
+
+The root npm manifest exposes the guided installer as the `agent-os` binary. It deliberately
+packages only the CLI, the policy source, and the deterministic policy writer; the host platforms
+continue to fetch the plugin from the Git marketplace.
+
+~~~json
+{
+  "name": "agent-os",
+  "version": "0.9.0",
+  "type": "module",
+  "bin": {
+    "agent-os": "./cli/index.mjs"
+  }
+}
+~~~
+
+This is what makes `npx agent-os install` and `npx agent-os update` possible without requiring the
+repository checkout on the user's machine.
+
 ## Per-skill invocation gating
 
 Manual invocation is expressed differently on each platform, and both files must exist for every
@@ -118,5 +138,6 @@ mode the [workflow non-invocation eval cases](/reference/evals) exist to catch.
 
 ## Version bumps
 
-The version lives in two manifests. Both get bumped in the same commit — see the
+The version lives in both plugin manifests and `package.json`. All three get bumped in the same
+commit, together with the validated documentation copies — see the
 [release routine](/reference/release).

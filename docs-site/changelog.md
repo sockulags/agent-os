@@ -8,7 +8,17 @@ description: What changed in each agent-os release, in plain terms.
 One entry per release: what changed, and what it means for how you work. Full commit-level history
 lives on [GitHub](https://github.com/sockulags/agent-os/commits/main).
 
-## 0.8.0 — 2026-07-31
+## 0.9.0 — 2026-08-02
+
+The guided installer release: agent-os can now be installed and refreshed through npm without a
+repository checkout.
+
+- **New npm CLI** — `npx agent-os install` guides Codex and Claude Code setup, including Claude
+  install scope and optional shared-policy synchronization.
+- **Updates** — `npx agent-os update` refreshes the selected host plugin and can resync the shared
+  policy; explicit flags support repeatable automation.
+- **Validation** — the package manifest, CLI tests, package contents, plugin manifests, and
+  documentation version copies are checked together.
 
 The guide-me release: agent-os now has an entry point for work you cannot articulate yet.
 

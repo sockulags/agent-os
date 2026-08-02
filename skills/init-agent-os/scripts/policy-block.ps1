@@ -11,11 +11,11 @@
 
 [CmdletBinding()]
 param(
-    [switch]$Check,
-    [string[]]$Targets = @(
-        (Join-Path $HOME '.claude\CLAUDE.md'),
-        (Join-Path $HOME '.codex\AGENTS.md')
-    )
+   [switch]$Check,
+   [string[]]$Targets = @(
+        (Join-Path (Join-Path $HOME '.claude') 'CLAUDE.md'),
+        (Join-Path (Join-Path $HOME '.codex') 'AGENTS.md')
+   )
 )
 
 $ErrorActionPreference = 'Stop'
