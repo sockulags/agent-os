@@ -1,0 +1,31 @@
+{
+  "name": "@sockulags/agent-os",
+  "version": "0.9.1",
+  "description": "A lightweight personal agent operating system with an npx installer for Claude Code and Codex.",
+  "type": "module",
+  "bin": {
+    "agent-os": "./cli/index.mjs"
+  },
+  "files": [
+    "cli/",
+    "policy.md",
+    "skills/"
+  ],
+  "engines": {
+    "node": ">=18.18"
+  },
+  "scripts": {
+    "test": "node --test cli/*.test.mjs",
+    "validate": "node scripts/validate-agent-os.mjs"
+  },
+  "keywords": [
+    "agent",
+    "claude-code",
+    "codex",
+    "workflow",
+    "skills",
+    "installer"
+  ],
+  "homepage": "https://sockulags.github.io/agent-os/",
+  "repository": "https://github.com/sockulags/agent-os"
+}

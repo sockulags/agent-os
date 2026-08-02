@@ -192,6 +192,7 @@ export function validate(root = path.resolve(scriptDir, '..')) {
 
   const claudeManifest = json(path.join(root, '.claude-plugin/plugin.json'), diagnostics, 'MANIFEST_CLAUDE_JSON')
   const codexManifest = json(path.join(root, '.codex-plugin/plugin.json'), diagnostics, 'MANIFEST_CODEX_JSON')
+  const npmManifest = json(path.join(root, 'package.json'), diagnostics, 'MANIFEST_NPM_JSON')
   if (claudeManifest && codexManifest) {
     for (const key of ['name', 'description', 'version', 'homepage', 'repository', 'keywords']) {
       if (JSON.stringify(claudeManifest[key]) !== JSON.stringify(codexManifest[key])) {
@@ -213,6 +214,29 @@ export function validate(root = path.resolve(scriptDir, '..')) {
     const documentedVersions = [...manifestDocs.matchAll(/"version":\s*"([^"]+)"/g)].map((match) => match[1])
     if (documentedVersions.length < 2 || documentedVersions.some((version) => version !== claudeManifest.version)) {
       fail('MANIFEST_DOCS_VERSION', 'Documented manifest examples do not match the release version.')
+    }
+  }
+  if (npmManifest && claudeManifest) {
+    if (npmManifest.name !== '@sockulags/agent-os') {
+      fail('MANIFEST_NPM_NAME', 'npm package name must be @sockulags/agent-os.')
+    }
+    if (npmManifest.version !== claudeManifest.version) {
+      fail('MANIFEST_NPM_VERSION', 'npm package version must match the plugin manifests.')
+    }
+    if (npmManifest.type !== 'module') {
+      fail('MANIFEST_NPM_TYPE', 'npm package must use ES modules.')
+    }
+    if (npmManifest.bin?.['agent-os'] !== './cli/index.mjs') {
+      fail('MANIFEST_NPM_BIN', 'npm package must expose the agent-os CLI.')
+    }
+    if (!Array.isArray(npmManifest.files) || !npmManifest.files.includes('skills/')) {
+      fail('MANIFEST_NPM_SKILLS', 'npm package must include the complete skills directory.')
+    }
+    if (!fs.existsSync(path.join(root, 'cli/index.mjs'))) {
+      fail('MANIFEST_NPM_CLI', 'cli/index.mjs is required by the npm package.')
+    }
+    if (!fs.existsSync(path.join(root, 'cli/index.test.mjs'))) {
+      fail('MANIFEST_NPM_TEST', 'cli/index.test.mjs is required by the npm package.')
     }
   }
 

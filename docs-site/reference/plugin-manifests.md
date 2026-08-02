@@ -6,7 +6,7 @@ description: How one agent-os repository is packaged for Claude Code and Codex.
 # Plugin manifests
 
 agent-os ships one repository that is a valid plugin — and a valid marketplace — on both platforms.
-Four small files do that work.
+The plugin manifests and one npm package manifest provide the distribution surfaces.
 
 ## `.claude-plugin/plugin.json`
 
@@ -16,7 +16,7 @@ The Claude Code plugin manifest.
 {
   "name": "agent-os",
   "description": "A lightweight agent operating system with explicit workflows and automatic disciplines, shared between Claude Code and Codex.",
-  "version": "0.8.0",
+  "version": "0.9.1",
   "author": { "name": "Lucas Skog" },
   "homepage": "https://sockulags.github.io/agent-os/",
   "repository": "https://github.com/sockulags/agent-os",
@@ -53,7 +53,7 @@ site.
 ```json
 {
   "name": "agent-os",
-  "version": "0.8.0",
+  "version": "0.9.1",
   "homepage": "https://sockulags.github.io/agent-os/",
   "repository": "https://github.com/sockulags/agent-os",
   "skills": "./skills/",
@@ -91,6 +91,29 @@ The Codex-side local marketplace:
 }
 ```
 
+## `package.json`
+
+The root npm manifest exposes the guided installer as the `agent-os` binary and packages the
+complete `skills/` tree with the policy source. Direct installation therefore needs neither a
+repository checkout nor a host CLI. The plugin manifests remain available for users who explicitly
+choose native marketplace installation.
+
+~~~json
+{
+  "name": "@sockulags/agent-os",
+  "version": "0.9.1",
+  "type": "module",
+  "bin": {
+    "agent-os": "./cli/index.mjs"
+  },
+  "files": ["cli/", "policy.md", "skills/"]
+}
+~~~
+
+This makes `npx @sockulags/agent-os install` and `npx @sockulags/agent-os update` self-contained.
+The installer records its owned skill directories in `.agent-os-install.json`, updates only those
+directories, and preserves unrelated host skills.
+
 ## Per-skill invocation gating
 
 Manual invocation is expressed differently on each platform, and both files must exist for every
@@ -118,5 +141,6 @@ mode the [workflow non-invocation eval cases](/reference/evals) exist to catch.
 
 ## Version bumps
 
-The version lives in two manifests. Both get bumped in the same commit — see the
+The version lives in both plugin manifests and `package.json`. All three get bumped in the same
+commit, together with the validated documentation copies — see the
 [release routine](/reference/release).

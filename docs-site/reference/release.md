@@ -8,17 +8,18 @@ description: Validate, version, publish, and verify an agent-os release.
 1. **Validate structure and run the trigger evals.** Run
    `node scripts/validate-agent-os.mjs` and `node scripts/test-validate-agent-os.mjs`, then collect
    the live trigger and forward-test evidence described in [Evals](/reference/evals).
-2. **Bump the version everywhere it lives.** The release version appears in four validated places:
-   `.claude-plugin/plugin.json`, `.codex-plugin/plugin.json`, the navigation version in
+2. **Bump the version everywhere it lives.** The release version appears in five validated places:
+   `.claude-plugin/plugin.json`, `.codex-plugin/plugin.json`, `package.json`, the navigation version in
    `docs-site/.vitepress/config.mjs`, and the manifest examples on the
    [plugin manifests](/reference/plugin-manifests) page. `validate-agent-os.mjs` fails the release
-   until all four agree, so bump them in the same commit. Add the release to the
+   until all five agree, so bump them in the same commit. Add the release to the
    [changelog](/changelog) while you are there.
 3. **Commit and push**, using the Git identity configured by the repository or the current session,
    without AI attribution.
-4. **Update the plugin on both platforms and verify the new version loaded.** On Codex this means
-   reinstalling or refreshing — installation copies into the cache, so an old copy will keep serving
-   the previous version — and then starting a new session.
+4. **Verify and publish the npm package.** Pack it locally, install that tarball directly into
+   isolated Claude and Codex homes, and prove an update preserves unrelated skills. Publish it as
+   `@sockulags/agent-os`, then verify `npx @sockulags/agent-os@latest update` resolves the released
+   version. Smoke-test `--method plugin` too when marketplace behavior changed.
 
 ## Documentation
 

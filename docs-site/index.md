@@ -49,7 +49,7 @@ takes over, and evidence lands before any completion claim:
 
 ```text
 User:
-/agent-os:guide-me Reports feel useless for our big customers and I
+/guide-me Reports feel useless for our big customers and I
 don't know what to do about it.
 
 Agent:

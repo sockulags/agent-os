@@ -20,6 +20,12 @@ jobs:
         with:
           node-version: '24'
 
+      - name: Test npm CLI
+        run: npm test
+
+      - name: Check npm package contents
+        run: npm pack --dry-run
+
       - name: Validate repository
         run: node scripts/validate-agent-os.mjs
 

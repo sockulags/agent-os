@@ -12,20 +12,39 @@ deterministic checks.
 
 **Symptom:** the agent lists only some skills, or a skill behaves like an older version.
 
-Codex installs by copying into a cache, so the installed plugin does not follow your clone. After
-any skill change — yours or a plugin update — reinstall and start a new session:
+For the default direct installation, update the same platform and scope you originally selected,
+then start a new host session:
 
 ```bash
-codex plugin add agent-os@agent-os
+npx @sockulags/agent-os@latest update --platform codex --scope user --no-policy
 ```
 
-For a Git-sourced marketplace, refresh the snapshot first with
-`codex plugin marketplace upgrade agent-os`. `codex plugin list` shows what Codex is actually
-serving. On Claude Code the development loop is `claude --plugin-dir .` plus `/reload-plugins`; for
-a marketplace install, update the plugin and start a new session.
+The `.agent-os-install.json` file in the target skill root records which directories the installer
+owns. The updater preserves unrelated skills and refuses to overwrite unmanaged same-name
+directories.
+
+For optional plugin mode, Codex installs by copying into a cache. Reinstall and start a new session.
+Refresh a Git-sourced marketplace first with `codex plugin marketplace upgrade agent-os`; do not run
+that command for a local marketplace because it is not a Git source. On Claude Code the development
+loop is `claude --plugin-dir .` plus `/reload-plugins`.
 
 Compare the agent's skill list against the [skills overview](/skills/) — if they differ, fix the
 cache before debugging anything else.
+
+## Plugin mode cannot find a host CLI
+
+Direct installation does not require Codex or Claude Code. If you selected `--method plugin`, install
+the selected host CLI or rerun without that option:
+
+~~~bash
+npm install --global @openai/codex
+npm install --global @anthropic-ai/claude-code
+~~~
+
+Use `npx @sockulags/agent-os update` to refresh an existing direct installation. Use
+`npx @sockulags/agent-os@latest update` when the installer itself is stale, or
+`npm install --global @sockulags/agent-os@latest` when you keep the CLI
+installed globally.
 
 ## The global policy block is stale
 
@@ -40,7 +59,8 @@ pwsh skills/init-agent-os/scripts/policy-block.ps1 -Check
 
 Exit `0` is in sync; `1` is drift or a missing block; `2` is malformed markers. On drift, run
 `init-agent-os global` to reinstall. Never edit inside the `<!-- BEGIN/END AGENT OS -->` markers by
-hand — the script is the only writer, and hand edits are overwritten on the next sync.
+hand. Both the npm installer's Node writer and the setup skill's PowerShell writer use the same
+managed-block rules, and hand edits are overwritten on the next sync.
 
 ## A workflow skill did not trigger
 
@@ -49,7 +69,8 @@ instead of running the workflow.
 
 This is the design, not a failure. Every workflow carries `disable-model-invocation: true` (Claude)
 and `allow_implicit_invocation: false` (Codex), so resembling a workflow never activates it. Invoke
-explicitly: `/agent-os:<skill>` on Claude Code, `$<skill>` on Codex. The
+explicitly: `/<skill>` for direct Claude skills, `/agent-os:<skill>` for the Claude plugin, or
+`$<skill>` on Codex. The
 [non-invocation eval cases](/reference/evals) exist precisely to keep naive phrasings from
 triggering workflows implicitly.
 

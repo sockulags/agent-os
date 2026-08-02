@@ -8,7 +8,31 @@ description: What changed in each agent-os release, in plain terms.
 One entry per release: what changed, and what it means for how you work. Full commit-level history
 lives on [GitHub](https://github.com/sockulags/agent-os/commits/main).
 
-## 0.8.0 — 2026-07-31
+## 0.9.1 — 2026-08-02
+
+The portable-installer correction: the npm CLI now owns skill installation instead of requiring
+Codex or Claude Code to install themselves.
+
+- **Direct by default** — installs the packaged skills into the selected user or project skill
+  directories with no host CLI requirement.
+- **Managed updates** — an Agent OS manifest records exactly which skill directories the installer
+  owns; updates replace those directories and preserve unrelated skills.
+- **Portable policy sync** — Node now applies the managed policy block on every supported platform,
+  with malformed-marker preflight before any mutation.
+- **Native plugin option** — `--method plugin` retains marketplace installation when explicitly
+  selected and skips Git refresh for local Codex marketplaces.
+
+## 0.9.0 — 2026-08-02
+
+The guided installer release: agent-os can now be installed and refreshed through npm without a
+repository checkout.
+
+- **New npm CLI** — `npx @sockulags/agent-os install` guides Codex and Claude Code setup, including Claude
+  install scope and optional shared-policy synchronization.
+- **Updates** — `npx @sockulags/agent-os update` refreshes the selected host plugin and can resync the shared
+  policy; explicit flags support repeatable automation.
+- **Validation** — the package manifest, CLI tests, package contents, plugin manifests, and
+  documentation version copies are checked together.
 
 The guide-me release: agent-os now has an entry point for work you cannot articulate yet.
 

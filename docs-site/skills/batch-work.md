@@ -7,7 +7,7 @@ summary: Run isolated ready units and verify the integrated result
 
 # batch-work
 
-**Bucket:** workflow · **Invocation:** manual · `/agent-os:batch-work` or `$batch-work`
+**Bucket:** workflow · **Invocation:** manual · `/batch-work` (direct Claude), `/agent-os:batch-work` (Claude plugin), or `$batch-work` (Codex)
 
 Plans and runs several decision-ready units through isolated workers and aggregate verification.
 Each worker is simply [deliver-work](/skills/deliver-work) starting in an isolated workspace.

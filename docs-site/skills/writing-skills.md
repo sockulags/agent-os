@@ -7,7 +7,7 @@ summary: Doctrine and definition of done for agent-os skills
 
 # writing-skills
 
-**Bucket:** meta · **Invocation:** manual · `/agent-os:writing-skills` or `$writing-skills`
+**Bucket:** meta · **Invocation:** manual · `/writing-skills` (direct Claude), `/agent-os:writing-skills` (Claude plugin), or `$writing-skills` (Codex)
 
 Writes skills as compact agent programs rather than procedural transcripts.
 

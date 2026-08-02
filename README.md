@@ -35,18 +35,51 @@ Manual skills carry `disable-model-invocation: true` (Claude) and `agents/openai
 
 ## Install
 
-**Claude Code (development):** from the repository root, run `claude --plugin-dir .`, then reload with `/reload-plugins`.
+### Guided npm installer
 
-**Claude Code (production):** add this repo as a personal marketplace, then install the `agent-os` plugin. Skills appear as `/agent-os:<skill>`.
+The recommended setup is a guided command that asks which host skill directories to configure and
+whether to sync the shared global policy:
 
-**Codex (development & production):** local repo marketplace via `.agents/plugins/marketplace.json`; install copies to the Codex cache — refresh/reinstall and start a new session after changes. Skills appear as `$<skill>`.
+~~~bash
+npx @sockulags/agent-os install
+~~~
+
+It supports Codex, Claude Code, or both without requiring either host CLI. By default it copies the
+packaged skills into the selected user-level directories (`~/.codex/skills` and/or
+`~/.claude/skills`). For a non-interactive install, make the choices explicit:
+
+~~~bash
+npx @sockulags/agent-os install --platform both --scope user --yes
+~~~
+
+To refresh an existing installation:
+
+~~~bash
+npx @sockulags/agent-os update
+npx @sockulags/agent-os update --platform codex --no-policy
+~~~
+
+Updates replace only skill directories recorded in `.agent-os-install.json` and preserve unrelated
+skills. Use `--scope project` to install into the current project's skill directories. The first
+command always downloads the current npm CLI; use `npx @sockulags/agent-os@latest update` to force
+the newest published installer.
+
+Direct Claude skills appear as `/<skill>` and direct Codex skills as `$<skill>`.
+
+Native marketplace installation remains available with `--method plugin`. It requires the selected
+host CLI. Claude plugin skills appear as `/agent-os:<skill>`; Codex plugin skills remain
+`$<skill>`.
+
+For development against this clone, Claude can still use `claude --plugin-dir .`, and Codex can
+register the local `.agents/plugins/marketplace.json` marketplace.
 
 ## Release routine
 
-1. Run `node scripts/validate-agent-os.mjs`, its red-case suite, and the live evals in `evals/`.
-2. Bump `version` in **both** manifests (`.claude-plugin/plugin.json`, `.codex-plugin/plugin.json`).
+1. Run `node scripts/validate-agent-os.mjs`, `npm test`, its red-case suite, and the live evals in `evals/`.
+2. Bump `version` in `.claude-plugin/plugin.json`, `.codex-plugin/plugin.json`, and `package.json`.
 3. Commit with the Git identity configured by the repository or current session, without AI attribution, and push.
-4. Update the plugin on both platforms; verify the new version loaded.
+4. Pack the npm artifact and verify a clean direct install for both hosts. Publish it, then verify
+   `npx @sockulags/agent-os@latest update`; also smoke-test native plugin mode when it changed.
 
 ## Documentation site
 
@@ -72,6 +105,6 @@ name. A skill edit and its documentation page are one change — the pages under
 
 ## Global policy
 
-`policy.md` is the source of truth. `init-agent-os global` installs it as a managed block
-(`<!-- BEGIN/END AGENT OS -->`) in `~/.claude/CLAUDE.md` and `~/.codex/AGENTS.md` via
-`skills/init-agent-os/scripts/policy-block.ps1`. Edit `policy.md`, never the installed blocks.
+`policy.md` is the source of truth. The npm installer and `init-agent-os global` install it as a
+managed block (`<!-- BEGIN/END AGENT OS -->`) in `~/.claude/CLAUDE.md` and
+`~/.codex/AGENTS.md`. Edit `policy.md`, never the installed blocks.

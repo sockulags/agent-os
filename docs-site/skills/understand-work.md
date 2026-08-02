@@ -7,7 +7,7 @@ summary: Question out the need behind a stated wish
 
 # understand-work
 
-**Bucket:** workflow · **Invocation:** manual · `/agent-os:understand-work` or `$understand-work`
+**Bucket:** workflow · **Invocation:** manual · `/understand-work` (direct Claude), `/agent-os:understand-work` (Claude plugin), or `$understand-work` (Codex)
 
 Finds the need behind the stated wish. The deliverable is a settled understanding — what the
 developer wants, why now, and what was ruled out — not a plan or a solution.

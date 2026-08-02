@@ -116,7 +116,7 @@ later chooses serial delivery or a batch.
 For this example, the developer explicitly asks to run the ready issue graph as an integrated batch:
 
 ```text
-/agent-os:batch-work Execute the report-export implementation issues as one integrated batch.
+/batch-work Execute the report-export implementation issues as one integrated batch.
 ```
 
 `batch-work` consumes the existing issues and records execution definitions, dependencies, hashes,
