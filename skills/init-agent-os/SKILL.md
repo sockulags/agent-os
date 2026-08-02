@@ -14,8 +14,8 @@ Invoked as `init-agent-os global`.
 
 1. Verify the plugin is visible on this platform (skills listed under the `agent-os` namespace). Report what you find.
 2. Run `scripts/policy-block.ps1 -Check` and report drift between `policy.md` and the managed blocks in `~/.claude/CLAUDE.md` and `~/.codex/AGENTS.md`.
-3. Run `scripts/policy-block.ps1` to apply the managed blocks and show the resulting diff. The script
-   is the only writer.
+3. Run `scripts/policy-block.ps1` to apply the managed blocks and show the resulting diff. This
+   deterministic writer shares its marker contract with the npm installer's policy writer.
 
 ## Mode: repo init (default)
 

@@ -7,7 +7,7 @@ summary: Guide a vague desire to an approved goal and into planning
 
 # guide-me
 
-**Bucket:** workflow · **Invocation:** manual · `/agent-os:guide-me` or `$guide-me`
+**Bucket:** workflow · **Invocation:** manual · `/guide-me` (direct Claude), `/agent-os:guide-me` (Claude plugin), or `$guide-me` (Codex)
 
 Takes a developer who cannot yet state what they want to an approved goal and into the right
 planning workflow. Guide-me is the on-ramp, not the foundation: it owns no doctrine of its own and
@@ -49,7 +49,7 @@ Condensed illustration of the full chain.
 
 ```text
 User:
-/agent-os:guide-me Reports feel useless for our big customers and I
+/guide-me Reports feel useless for our big customers and I
 don't know what to do about it.
 
 Agent:

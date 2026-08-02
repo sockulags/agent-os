@@ -7,7 +7,7 @@ summary: Managed policy setup or repository defaults
 
 # init-agent-os
 
-**Bucket:** workflow · **Invocation:** manual · `/agent-os:init-agent-os` or `$init-agent-os`
+**Bucket:** workflow · **Invocation:** manual · `/init-agent-os` (direct Claude), `/agent-os:init-agent-os` (Claude plugin), or `$init-agent-os` (Codex)
 
 Sets up managed global policy or seeds one repository's project policy.
 

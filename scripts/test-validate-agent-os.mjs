@@ -79,6 +79,13 @@ try {
     fs.writeFileSync(file, JSON.stringify(manifest, null, 2) + '\n')
   }, 'MANIFEST_NPM_NAME')
 
+  expectFailure('npm package omits skills', (target) => {
+    const file = path.join(target, 'package.json')
+    const manifest = JSON.parse(fs.readFileSync(file, 'utf8'))
+    manifest.files = manifest.files.filter((entry) => entry !== 'skills/')
+    fs.writeFileSync(file, JSON.stringify(manifest, null, 2) + '\n')
+  }, 'MANIFEST_NPM_SKILLS')
+
   expectFailure('missing skill documentation', (target) => {
     fs.rmSync(path.join(target, 'docs-site/skills/dispatch-next.md'))
   }, 'SKILL_DOC_MISSING')

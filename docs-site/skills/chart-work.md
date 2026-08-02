@@ -7,7 +7,7 @@ summary: Chart broad work as a parallel graph of decision tickets
 
 # chart-work
 
-**Bucket:** workflow · **Invocation:** manual · `/agent-os:chart-work` or `$chart-work`
+**Bucket:** workflow · **Invocation:** manual · `/chart-work` (direct Claude), `/agent-os:chart-work` (Claude plugin), or `$chart-work` (Codex)
 
 Charts broad work as a parallel graph of evidence-backed decision tickets. It builds on
 [shape-work](/skills/shape-work): a bounded branch ends exactly where shape-work begins.
@@ -50,7 +50,7 @@ Condensed illustration; the full worked example lives in [The work loop](/guide/
 
 ```text
 User:
-/agent-os:chart-work Add export to reports. It should be safe and
+/chart-work Add export to reports. It should be safe and
 work for large customers.
 
 Agent:

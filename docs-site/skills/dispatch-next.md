@@ -7,7 +7,7 @@ summary: Pick or dispatch one action according to the request
 
 # dispatch-next
 
-**Bucket:** workflow · **Invocation:** manual · `/agent-os:dispatch-next` or `$dispatch-next`
+**Bucket:** workflow · **Invocation:** manual · `/dispatch-next` (direct Claude), `/agent-os:dispatch-next` (Claude plugin), or `$dispatch-next` (Codex)
 
 Reads live project state and selects one decision-ready next action.
 
@@ -32,7 +32,7 @@ Condensed illustration of the selection-versus-dispatch boundary.
 
 ```text
 User:
-/agent-os:dispatch-next Dispatch the next task.
+/dispatch-next Dispatch the next task.
 
 Agent:
 Live state: PR #41 has an unanswered review comment; EXPORT-API and

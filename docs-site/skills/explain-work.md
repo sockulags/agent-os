@@ -7,7 +7,7 @@ summary: Explain the task in plain language for approval
 
 # explain-work
 
-**Bucket:** workflow · **Invocation:** manual · `/agent-os:explain-work` or `$explain-work`
+**Bucket:** workflow · **Invocation:** manual · `/explain-work` (direct Claude), `/agent-os:explain-work` (Claude plugin), or `$explain-work` (Codex)
 
 Says what the work solves as if the reader knows no technical terms — then lets the developer judge
 it.

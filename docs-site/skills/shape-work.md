@@ -7,7 +7,7 @@ summary: Turn bounded choices into implementation-ready issues
 
 # shape-work
 
-**Bucket:** workflow · **Invocation:** manual · `/agent-os:shape-work` or `$shape-work`
+**Bucket:** workflow · **Invocation:** manual · `/shape-work` (direct Claude), `/agent-os:shape-work` (Claude plugin), or `$shape-work` (Codex)
 
 Shapes a bounded idea into implementation-ready issues backed by settled product decisions.
 
@@ -53,7 +53,7 @@ Condensed illustration of the recommend-then-ask pattern.
 
 ```text
 User:
-/agent-os:shape-work Turn the report-export branch into ready issues.
+/shape-work Turn the report-export branch into ready issues.
 
 Agent:
 Settled from the tickets: CSV of the active filtered result, reuse

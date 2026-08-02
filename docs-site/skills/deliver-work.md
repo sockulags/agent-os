@@ -7,7 +7,7 @@ summary: Implement one change against boundaries and ground truth
 
 # deliver-work
 
-**Bucket:** workflow · **Invocation:** manual · `/agent-os:deliver-work` or `$deliver-work`
+**Bucket:** workflow · **Invocation:** manual · `/deliver-work` (direct Claude), `/agent-os:deliver-work` (Claude plugin), or `$deliver-work` (Codex)
 
 Delivers one decision-ready change against explicit boundaries and ground truth.
 

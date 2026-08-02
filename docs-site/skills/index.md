@@ -74,7 +74,8 @@ Always on; no invocation.
 ## Invocation
 
 Manual skills are opted into explicitly on both platforms. In Claude Code they carry
-`disable-model-invocation: true` in their frontmatter and are typed as `/agent-os:<skill>`. In Codex
+`disable-model-invocation: true` in their frontmatter and are typed as `/<skill>` when installed
+directly or `/agent-os:<skill>` through the plugin. In Codex
 they carry an `agents/openai.yaml` with `policy.allow_implicit_invocation: false` and are typed as
 `$<skill>`.
 

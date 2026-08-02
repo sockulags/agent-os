@@ -16,10 +16,10 @@ description: Validate, version, publish, and verify an agent-os release.
    [changelog](/changelog) while you are there.
 3. **Commit and push**, using the Git identity configured by the repository or the current session,
    without AI attribution.
-4. **Publish the npm CLI and update the plugin on both platforms.** Publish the package as
-   `@sockulags/agent-os`, then verify `npx @sockulags/agent-os@latest update` can refresh the host plugin. On Codex this
-   means refreshing and reinstalling — installation copies into the cache, so an old copy will keep
-   serving the previous version — and then starting a new session.
+4. **Verify and publish the npm package.** Pack it locally, install that tarball directly into
+   isolated Claude and Codex homes, and prove an update preserves unrelated skills. Publish it as
+   `@sockulags/agent-os`, then verify `npx @sockulags/agent-os@latest update` resolves the released
+   version. Smoke-test `--method plugin` too when marketplace behavior changed.
 
 ## Documentation
 

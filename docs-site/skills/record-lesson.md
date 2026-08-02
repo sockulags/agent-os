@@ -7,7 +7,7 @@ summary: Record a durable lesson in repo or global policy
 
 # record-lesson
 
-**Bucket:** workflow · **Invocation:** manual · `/agent-os:record-lesson` or `$record-lesson`
+**Bucket:** workflow · **Invocation:** manual · `/record-lesson` (direct Claude), `/agent-os:record-lesson` (Claude plugin), or `$record-lesson` (Codex)
 
 Captures a lesson while its evidence is fresh, at the narrowest level where it holds.
 

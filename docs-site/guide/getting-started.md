@@ -5,13 +5,11 @@ description: Install agent-os, initialize policy, and choose the first workflow 
 
 # Getting started
 
-The guided npm installer is the fastest path. It configures the host plugin, optionally syncs the
-global policy, and leaves repository-specific policy initialization for the repository where you
-will work.
+The guided npm installer is the fastest path. It installs the packaged skills directly, optionally
+syncs the global policy, and leaves repository-specific policy initialization for the repository
+where you will work. Codex and Claude Code do not need to be installed before this step.
 
-## 1. Install the plugin
-
-### Recommended: guided npm installer
+## 1. Install the skills
 
 Run this from any directory:
 
@@ -19,150 +17,109 @@ Run this from any directory:
 npx @sockulags/agent-os install
 ~~~
 
-The CLI asks whether to install for Codex, Claude Code, or both. For Claude Code it also asks for
-the installation scope. It can sync the shared policy files at the end of the flow.
-
-For automation, provide the choices explicitly:
-
-~~~bash
-npx @sockulags/agent-os install --platform both --yes
-npx @sockulags/agent-os update --platform codex --no-policy
-~~~
-
-The host CLI must already be installed. If one is missing, the installer prints the platform's
-recommended npm command. npx @sockulags/agent-os@latest refreshes the installer itself; npm install
---global @sockulags/agent-os@latest keeps a reusable global copy.
-
-### Claude Code
-
-For development against a clone, run Claude from the repository root with the plugin directory
-pointed at it, then reload:
-
-```bash
-claude --plugin-dir .
-```
-
-Inside the session, run `/reload-plugins` after any change to a skill file.
-
-For normal use, add the repository as a personal marketplace and install the `agent-os` plugin from
-it. The repository ships `.claude-plugin/marketplace.json` alongside `.claude-plugin/plugin.json`, so
-it is a valid marketplace on its own. Skills then appear under the plugin namespace as
-`/agent-os:<skill>`.
-
-The equivalent non-interactive commands are:
+The CLI asks whether to install for Codex, Claude Code, or both, whether the skills should be
+user-level or project-level, and whether to sync the shared policy files. For automation, provide
+the choices explicitly:
 
 ~~~bash
-claude plugin marketplace add sockulags/agent-os
-claude plugin install agent-os@agent-os-marketplace --scope user
+npx @sockulags/agent-os install --platform both --scope user --yes
+npx @sockulags/agent-os update --platform codex --scope user --no-policy
 ~~~
 
-Refresh later with:
+The direct installer writes to these locations:
+
+| Scope | Claude Code | Codex |
+|---|---|---|
+| User | `~/.claude/skills` | `~/.codex/skills` |
+| Project | `<project>/.claude/skills` | `<project>/.agents/skills` |
+
+It records the Agent OS-owned directories in `.agent-os-install.json`. An update replaces only
+those directories, removes managed skills that disappeared from the release, and leaves unrelated
+skills alone. It refuses to overwrite a same-name directory that it did not install.
+
+Use `npx @sockulags/agent-os@latest update` to force the latest published installer. A global CLI
+install is optional:
 
 ~~~bash
-claude plugin marketplace update agent-os-marketplace
+npm install --global @sockulags/agent-os@latest
+agent-os update
 ~~~
 
-### Codex
+Direct Claude skills are invoked as `/<skill>`, for example `/shape-work`. Codex skills are invoked
+as `$<skill>`, for example `$shape-work`. Start a new host session after installing or updating so
+the host discovers the new files.
 
-Codex reads the repository's marketplace manifest at `.agents/plugins/marketplace.json`. Register
-the marketplace once — from a Git source or a local clone — then install the plugin from it:
+### Optional: native plugin installation
 
-```bash
-codex plugin marketplace add sockulags/agent-os
-```
+If you specifically want host-managed marketplace installation, choose `--method plugin`:
 
-```bash
-codex plugin add agent-os@agent-os
-```
+~~~bash
+npx @sockulags/agent-os install --platform codex --method plugin
+npx @sockulags/agent-os install --platform claude --method plugin --scope user
+~~~
 
-For development against a local clone, point the marketplace at the working copy instead:
+Plugin mode requires the selected host CLI. Claude plugin skills use the namespace
+`/agent-os:<skill>`; Codex plugin skills remain `$<skill>`.
 
-```bash
-codex plugin marketplace add /path/to/agent-os
-```
-
-Installation copies the plugin into the Codex cache, which means a change to a skill file is not
-visible until you reinstall (`codex plugin add agent-os@agent-os` again; for a Git source, run
-`codex plugin marketplace upgrade agent-os` first to refresh the snapshot) **and** start a new
-session. `codex plugin list` and `codex plugin marketplace list` show what Codex is actually
-serving, and `codex plugin remove agent-os` uninstalls. Skills appear as `$<skill>`.
+For development against a clone, Claude can run `claude --plugin-dir .`. Codex can register the
+working copy with `codex plugin marketplace add /path/to/agent-os`. A local Codex marketplace is
+already the source, so the updater skips the Git-only marketplace upgrade step and reinstalls the
+plugin directly.
 
 ### Verify the install
 
-Ask the agent to list its available skills and compare against the
-[skills overview](/skills/) — every skill in that table should be present under the `agent-os`
-namespace. If only some appear, the plugin was loaded from a stale cache — reinstall before
-debugging anything else.
+Start a new Codex or Claude Code session, list the available skills, and compare them against the
+[skills overview](/skills/). Every skill in the table should be present. If only some appear, run
+the update command for the same platform and scope before debugging anything else.
 
 ## 2. Install or refresh the global policy
 
-The npm installer can do this during installation. If you chose `--no-policy`, run the setup skill
-once per machine:
+The npm installer can do this during installation. Its Node-based writer updates only the managed
+`<!-- BEGIN AGENT OS -->` block in `~/.claude/CLAUDE.md` and `~/.codex/AGENTS.md`, preserves text
+outside the block, and aborts before installing skills if markers are malformed.
+
+If you chose `--no-policy`, invoke the setup skill once per machine after opening the host:
 
 ```text
-/agent-os:init-agent-os global
+/init-agent-os global                 # direct Claude install
+/agent-os:init-agent-os global        # Claude plugin install
+$init-agent-os global                 # Codex
 ```
 
-It checks that the plugin is visible, reports drift, applies the managed blocks through the
-deterministic script, and shows the resulting diff. The explicit setup invocation authorizes these
-writes.
+The skill uses the bundled deterministic PowerShell writer and shows the resulting diff. Never edit
+inside the managed markers by hand — see [Global policy](/guide/global-policy) for why.
 
-The block is delimited by `<!-- BEGIN AGENT OS -->` and `<!-- END AGENT OS -->` markers, and the
-PowerShell script `skills/init-agent-os/scripts/policy-block.ps1` is its only writer. Never edit
-inside the markers by hand — see [Global policy](/guide/global-policy) for why.
-
-"Once per machine" covers the first install. Re-run it after every change to `policy.md` and after
-plugin updates that ship a new policy — the installed blocks do not update themselves, and drift is
-silent until check mode reports it.
+Re-run either the npm update with policy sync enabled or `init-agent-os global` after a release that
+changes `policy.md`. The installed blocks do not update themselves.
 
 ## 3. Initialize a repository
 
-In the repository you want to work in, run the same skill without an argument:
-
-```text
-/agent-os:init-agent-os
-```
-
-It reads the repo first and asks only about missing material defaults: delivery, verification,
-design-system location, planning surface, batch execution, and durable conventions. Every question
-arrives with a recommendation. It writes the smallest useful policy and shows the resulting diff.
+In the repository you want to work in, invoke `init-agent-os` without `global`. It reads the repo
+first and asks only about missing material defaults: delivery, verification, design-system
+location, planning surface, batch execution, and durable conventions. Every question arrives with
+a recommendation. It writes the smallest useful policy and shows the resulting diff.
 
 The result is the repository's [project policy](/guide/project-policy), a living document that
 `deliver-work` will later propose additions to.
 
 ## Your first run
 
-For a bounded change with open product questions, start at the top:
+For a bounded change with open product questions, invoke `shape-work` with the task. For work whose
+decisions are already made, use `deliver-work`. Use `batch-work` only when you explicitly want
+several implementation-ready, dependency-mapped issues executed and integrated as one batch.
+
+When you cannot yet say what you want, invoke `guide-me`. For example:
 
 ```text
-/agent-os:shape-work Add CSV export to the reports page
+/guide-me Something about this project feels off and I don't know where to start
 ```
 
-For work whose decisions are already made, go straight to delivery:
+That example uses a direct Claude install. Use `/agent-os:guide-me` in the Claude plugin or
+`$guide-me` in Codex. The workflow questions out the need, plays the goal back as a plain-language
+summary you approve or challenge, and only then continues into charting or shaping.
 
-```text
-/agent-os:deliver-work Fix the timezone offset in the nightly digest
-```
-
-When you explicitly want several implementation-ready, dependency-mapped issues executed and
-integrated as one batch, invoke it:
-
-```text
-/agent-os:batch-work Execute the platform migration work units
-```
-
-And when you cannot yet say what you want — only that something should change — the on-ramp finds
-the goal with you before any of the above:
-
-```text
-/agent-os:guide-me Something about this project feels off and I don't know where to start
-```
-
-It questions out the need, plays the goal back as a plain-language summary you approve or
-challenge, and only then continues into charting or shaping with that summary at the top.
-
-Nothing forces you to use a workflow at all. The disciplines are active in every session regardless,
-which is most of the day-to-day value: the agent reproduces before it patches, keeps unrelated
-cleanup out of your diff, and shows you the command output before it says the work is done.
+Nothing forces you to use a workflow. The disciplines are active in every session: the agent
+reproduces before it patches, keeps unrelated cleanup out of your diff, and shows command output
+before it says the work is done.
 
 Next: [The work loop](/guide/the-work-loop).

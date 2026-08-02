@@ -229,6 +229,9 @@ export function validate(root = path.resolve(scriptDir, '..')) {
     if (npmManifest.bin?.['agent-os'] !== './cli/index.mjs') {
       fail('MANIFEST_NPM_BIN', 'npm package must expose the agent-os CLI.')
     }
+    if (!Array.isArray(npmManifest.files) || !npmManifest.files.includes('skills/')) {
+      fail('MANIFEST_NPM_SKILLS', 'npm package must include the complete skills directory.')
+    }
     if (!fs.existsSync(path.join(root, 'cli/index.mjs'))) {
       fail('MANIFEST_NPM_CLI', 'cli/index.mjs is required by the npm package.')
     }

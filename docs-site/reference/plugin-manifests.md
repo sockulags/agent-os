@@ -16,7 +16,7 @@ The Claude Code plugin manifest.
 {
   "name": "agent-os",
   "description": "A lightweight agent operating system with explicit workflows and automatic disciplines, shared between Claude Code and Codex.",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "author": { "name": "Lucas Skog" },
   "homepage": "https://sockulags.github.io/agent-os/",
   "repository": "https://github.com/sockulags/agent-os",
@@ -53,7 +53,7 @@ site.
 ```json
 {
   "name": "agent-os",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "homepage": "https://sockulags.github.io/agent-os/",
   "repository": "https://github.com/sockulags/agent-os",
   "skills": "./skills/",
@@ -93,23 +93,26 @@ The Codex-side local marketplace:
 
 ## `package.json`
 
-The root npm manifest exposes the guided installer as the `agent-os` binary. It deliberately
-packages only the CLI, the policy source, and the deterministic policy writer; the host platforms
-continue to fetch the plugin from the Git marketplace.
+The root npm manifest exposes the guided installer as the `agent-os` binary and packages the
+complete `skills/` tree with the policy source. Direct installation therefore needs neither a
+repository checkout nor a host CLI. The plugin manifests remain available for users who explicitly
+choose native marketplace installation.
 
 ~~~json
 {
   "name": "@sockulags/agent-os",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "type": "module",
   "bin": {
     "agent-os": "./cli/index.mjs"
-  }
+  },
+  "files": ["cli/", "policy.md", "skills/"]
 }
 ~~~
 
-This is what makes `npx @sockulags/agent-os install` and `npx @sockulags/agent-os update` possible without requiring the
-repository checkout on the user's machine.
+This makes `npx @sockulags/agent-os install` and `npx @sockulags/agent-os update` self-contained.
+The installer records its owned skill directories in `.agent-os-install.json`, updates only those
+directories, and preserves unrelated host skills.
 
 ## Per-skill invocation gating
 
