@@ -34,6 +34,8 @@ repository checkout.
 - **Validation** — the package manifest, CLI tests, package contents, plugin manifests, and
   documentation version copies are checked together.
 
+## 0.8.0 — 2026-07-31
+
 The guide-me release: agent-os now has an entry point for work you cannot articulate yet.
 
 - **New workflow `guide-me`** — from a vague desire, through questioning, to a plain-language
