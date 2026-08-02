@@ -9,6 +9,7 @@ const packagePath = fileURLToPath(new URL('../package.json', import.meta.url))
 const packageJson = JSON.parse(fs.readFileSync(packagePath, 'utf8'))
 
 export const VERSION = packageJson.version
+export const PACKAGE_NAME = packageJson.name
 export const MARKETPLACE_SOURCE = 'sockulags/agent-os'
 
 export const PLATFORM_CONFIG = Object.freeze({
@@ -351,8 +352,8 @@ export function printHelp(output = process.stdout) {
   output.write(
     'Agent OS installer ' + VERSION + '\n\n' +
     'Usage:\n' +
-    '  npx agent-os install\n' +
-    '  npx agent-os update\n\n' +
+    '  npx ' + PACKAGE_NAME + ' install\n' +
+    '  npx ' + PACKAGE_NAME + ' update\n\n' +
     'Guided install asks where to install Agent OS and whether to sync the shared policy.\n\n' +
     'Options:\n' +
     '  -p, --platform <name>  claude, codex, or both\n' +
@@ -364,10 +365,10 @@ export function printHelp(output = process.stdout) {
     '  -h, --help             Show this help\n' +
     '  -v, --version          Show the CLI version\n\n' +
     'Examples:\n' +
-    '  npx agent-os install\n' +
-    '  npx agent-os install --platform both --yes\n' +
-    '  npx agent-os update --platform codex --no-policy\n' +
-    '  npm install --global agent-os@latest\n'
+    '  npx ' + PACKAGE_NAME + ' install\n' +
+    '  npx ' + PACKAGE_NAME + ' install --platform both --yes\n' +
+    '  npx ' + PACKAGE_NAME + ' update --platform codex --no-policy\n' +
+    '  npm install --global ' + PACKAGE_NAME + '@latest\n'
   )
 }
 
@@ -397,7 +398,7 @@ export async function run(argv = process.argv.slice(2), dependencies = {}) {
   await executeInstall(options, dependencies)
   const output = dependencies.output || process.stdout
   output.write('\nAgent OS ' + options.command + ' completed.\n')
-  output.write('To update the CLI itself later, use npx agent-os@latest or npm install --global agent-os@latest.\n')
+  output.write('To update the CLI itself later, use npx ' + PACKAGE_NAME + '@latest or npm install --global ' + PACKAGE_NAME + '@latest.\n')
   return 0
 }
 

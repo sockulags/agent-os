@@ -13,9 +13,9 @@ lives on [GitHub](https://github.com/sockulags/agent-os/commits/main).
 The guided installer release: agent-os can now be installed and refreshed through npm without a
 repository checkout.
 
-- **New npm CLI** — `npx agent-os install` guides Codex and Claude Code setup, including Claude
+- **New npm CLI** — `npx @sockulags/agent-os install` guides Codex and Claude Code setup, including Claude
   install scope and optional shared-policy synchronization.
-- **Updates** — `npx agent-os update` refreshes the selected host plugin and can resync the shared
+- **Updates** — `npx @sockulags/agent-os update` refreshes the selected host plugin and can resync the shared
   policy; explicit flags support repeatable automation.
 - **Validation** — the package manifest, CLI tests, package contents, plugin manifests, and
   documentation version copies are checked together.

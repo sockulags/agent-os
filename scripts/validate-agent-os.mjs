@@ -217,8 +217,8 @@ export function validate(root = path.resolve(scriptDir, '..')) {
     }
   }
   if (npmManifest && claudeManifest) {
-    if (npmManifest.name !== 'agent-os') {
-      fail('MANIFEST_NPM_NAME', 'npm package name must be agent-os.')
+    if (npmManifest.name !== '@sockulags/agent-os') {
+      fail('MANIFEST_NPM_NAME', 'npm package name must be @sockulags/agent-os.')
     }
     if (npmManifest.version !== claudeManifest.version) {
       fail('MANIFEST_NPM_VERSION', 'npm package version must match the plugin manifests.')

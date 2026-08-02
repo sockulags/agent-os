@@ -17,7 +17,7 @@ description: Validate, version, publish, and verify an agent-os release.
 3. **Commit and push**, using the Git identity configured by the repository or the current session,
    without AI attribution.
 4. **Publish the npm CLI and update the plugin on both platforms.** Publish the package as
-   `agent-os`, then verify `npx agent-os@latest update` can refresh the host plugin. On Codex this
+   `@sockulags/agent-os`, then verify `npx @sockulags/agent-os@latest update` can refresh the host plugin. On Codex this
    means refreshing and reinstalling — installation copies into the cache, so an old copy will keep
    serving the previous version — and then starting a new session.
 

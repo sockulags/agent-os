@@ -16,7 +16,7 @@ will work.
 Run this from any directory:
 
 ~~~bash
-npx agent-os install
+npx @sockulags/agent-os install
 ~~~
 
 The CLI asks whether to install for Codex, Claude Code, or both. For Claude Code it also asks for
@@ -25,13 +25,13 @@ the installation scope. It can sync the shared policy files at the end of the fl
 For automation, provide the choices explicitly:
 
 ~~~bash
-npx agent-os install --platform both --yes
-npx agent-os update --platform codex --no-policy
+npx @sockulags/agent-os install --platform both --yes
+npx @sockulags/agent-os update --platform codex --no-policy
 ~~~
 
 The host CLI must already be installed. If one is missing, the installer prints the platform's
-recommended npm command. npx agent-os@latest refreshes the installer itself; npm install
---global agent-os@latest keeps a reusable global copy.
+recommended npm command. npx @sockulags/agent-os@latest refreshes the installer itself; npm install
+--global @sockulags/agent-os@latest keeps a reusable global copy.
 
 ### Claude Code
 

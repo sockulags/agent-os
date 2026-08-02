@@ -72,6 +72,13 @@ try {
     fs.writeFileSync(file, JSON.stringify(manifest, null, 2) + '\n')
   }, 'MANIFEST_NPM_VERSION')
 
+  expectFailure('npm package name mismatch', (target) => {
+    const file = path.join(target, 'package.json')
+    const manifest = JSON.parse(fs.readFileSync(file, 'utf8'))
+    manifest.name = 'agent-os'
+    fs.writeFileSync(file, JSON.stringify(manifest, null, 2) + '\n')
+  }, 'MANIFEST_NPM_NAME')
+
   expectFailure('missing skill documentation', (target) => {
     fs.rmSync(path.join(target, 'docs-site/skills/dispatch-next.md'))
   }, 'SKILL_DOC_MISSING')

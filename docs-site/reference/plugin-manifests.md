@@ -99,7 +99,7 @@ continue to fetch the plugin from the Git marketplace.
 
 ~~~json
 {
-  "name": "agent-os",
+  "name": "@sockulags/agent-os",
   "version": "0.9.0",
   "type": "module",
   "bin": {
@@ -108,7 +108,7 @@ continue to fetch the plugin from the Git marketplace.
 }
 ~~~
 
-This is what makes `npx agent-os install` and `npx agent-os update` possible without requiring the
+This is what makes `npx @sockulags/agent-os install` and `npx @sockulags/agent-os update` possible without requiring the
 repository checkout on the user's machine.
 
 ## Per-skill invocation gating

@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { buildPlan, executeInstall, parseArgs, resolveOptions } from './index.mjs'
+import { buildPlan, executeInstall, parseArgs, resolveOptions, run } from './index.mjs'
 
 test('defaults to guided install', () => {
   assert.deepEqual(parseArgs([]), {
@@ -46,6 +46,14 @@ test('supports Claude Code as a platform alias and upgrade as update', () => {
     help: false,
     version: false
   })
+})
+
+test('prints scoped npm commands while preserving the agent-os binary name', async () => {
+  const chunks = []
+  await run(['--help'], { output: { write: (chunk) => chunks.push(chunk) } })
+  const help = chunks.join('')
+  assert.match(help, /npx @sockulags\/agent-os install/)
+  assert.match(help, /npm install --global @sockulags\/agent-os@latest/)
 })
 
 test('rejects conflicting policy flags', () => {

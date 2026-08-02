@@ -37,8 +37,9 @@ npm install --global @openai/codex
 npm install --global @anthropic-ai/claude-code
 ~~~
 
-Use `npx agent-os update` to refresh an existing host installation. Use `npx agent-os@latest` when
-the installer itself is stale, or `npm install --global agent-os@latest` when you keep the CLI
+Use `npx @sockulags/agent-os update` to refresh an existing host installation. Use
+`npx @sockulags/agent-os@latest` when the installer itself is stale, or
+`npm install --global @sockulags/agent-os@latest` when you keep the CLI
 installed globally.
 
 ## The global policy block is stale

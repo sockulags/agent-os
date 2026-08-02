@@ -41,25 +41,25 @@ The recommended setup is a guided command that asks which host to configure and 
 the shared global policy:
 
 ~~~bash
-npx agent-os install
+npx @sockulags/agent-os install
 ~~~
 
 It supports Codex, Claude Code, or both. The host CLI must already be installed. For a
 non-interactive install, make the choices explicit:
 
 ~~~bash
-npx agent-os install --platform both --yes
+npx @sockulags/agent-os install --platform both --yes
 ~~~
 
 To refresh an existing installation:
 
 ~~~bash
-npx agent-os update
-npx agent-os update --platform codex --no-policy
+npx @sockulags/agent-os update
+npx @sockulags/agent-os update --platform codex --no-policy
 ~~~
 
 The first command always downloads the current npm CLI. To keep the CLI itself installed locally,
-use npm install --global agent-os@latest or run npx agent-os@latest.
+use npm install --global @sockulags/agent-os@latest or run npx @sockulags/agent-os@latest.
 
 **Claude Code (development):** from the repository root, run `claude --plugin-dir .`, then reload with `/reload-plugins`.
 
