@@ -16,7 +16,8 @@
   },
   "scripts": {
     "test": "node --test cli/*.test.mjs",
-    "validate": "node scripts/validate-agent-os.mjs"
+    "validate": "node scripts/validate-agent-os.mjs",
+    "verify:release": "node scripts/verify-release.mjs"
   },
   "keywords": [
     "agent",

@@ -110,6 +110,32 @@ export function validate(root = path.resolve(scriptDir, '..')) {
     : []
   const documentedSkills = new Map()
 
+  const agentPolicyFile = path.join(root, 'AGENTS.md')
+  const claudePolicyFile = path.join(root, 'CLAUDE.md')
+  if (!fs.existsSync(agentPolicyFile) || !fs.existsSync(claudePolicyFile)) {
+    fail('PROJECT_POLICY_MISSING', 'AGENTS.md and CLAUDE.md are required project-policy surfaces.')
+  } else {
+    const agentPolicy = read(agentPolicyFile).replace(/\r\n/g, '\n')
+    const claudePolicy = read(claudePolicyFile).replace(/\r\n/g, '\n')
+    if (agentPolicy !== claudePolicy) {
+      fail('PROJECT_POLICY_PARITY', 'AGENTS.md and CLAUDE.md must remain identical.')
+    }
+    for (const token of [
+      'Never run `npm publish` from a dirty worktree',
+      'Create a GitHub tag and non-draft GitHub Release for every npm version',
+      'node scripts/verify-release.mjs <version>',
+      'A partial publication is not a completed'
+    ]) {
+      if (!agentPolicy.includes(token)) {
+        fail('PROJECT_RELEASE_POLICY', `AGENTS.md missing ${JSON.stringify(token)}`)
+      }
+    }
+  }
+
+  if (!fs.existsSync(path.join(root, 'scripts/verify-release.mjs'))) {
+    fail('RELEASE_VERIFY_SCRIPT', 'scripts/verify-release.mjs is required by the release policy.')
+  }
+
   if (!skillNames.length) fail('SKILL_NONE', 'No skills found.')
 
   for (const name of skillNames) {
@@ -237,6 +263,14 @@ export function validate(root = path.resolve(scriptDir, '..')) {
     }
     if (!fs.existsSync(path.join(root, 'cli/index.test.mjs'))) {
       fail('MANIFEST_NPM_TEST', 'cli/index.test.mjs is required by the npm package.')
+    }
+    if (npmManifest.scripts?.['verify:release'] !== 'node scripts/verify-release.mjs') {
+      fail('RELEASE_VERIFY_SCRIPT', 'npm verify:release must run scripts/verify-release.mjs.')
+    }
+    const changelog = read(path.join(root, 'docs-site/changelog.md'))
+    const escapedVersion = npmManifest.version.replaceAll('.', '\\.')
+    if (!new RegExp(`^## ${escapedVersion} —`, 'm').test(changelog)) {
+      fail('CHANGELOG_RELEASE_HEADING', `Changelog must have a dedicated ${npmManifest.version} heading.`)
     }
   }
 
