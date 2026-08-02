@@ -14,12 +14,19 @@ description: Validate, version, publish, and verify an agent-os release.
    [plugin manifests](/reference/plugin-manifests) page. `validate-agent-os.mjs` fails the release
    until all five agree, so bump them in the same commit. Add the release to the
    [changelog](/changelog) while you are there.
-3. **Commit and push**, using the Git identity configured by the repository or the current session,
-   without AI attribution.
+3. **Commit, review, merge, and tag.** Commit with the configured Git identity and no AI attribution,
+   push an `agent/<description>` branch, require the repository checks on its exact head, and merge
+   the pull request to `main`. Create the version tag on the release commit. Never publish npm from
+   a dirty worktree or an unmerged branch.
 4. **Verify and publish the npm package.** Pack it locally, install that tarball directly into
    isolated Claude and Codex homes, and prove an update preserves unrelated skills. Publish it as
    `@sockulags/agent-os`, then verify `npx @sockulags/agent-os@latest update` resolves the released
    version. Smoke-test `--method plugin` too when marketplace behavior changed.
+5. **Close every public release surface.** Create a non-draft GitHub Release for the tag, mark the
+   newest stable version `Latest`, and wait for successful Validate and Docs/Pages runs on current
+   `main`. Then run `node scripts/verify-release.mjs <version>`. It compares the tagged package with
+   npm, checks GitHub and Pages, and performs a public isolated `npx` install. The release is not
+   complete until this gate passes.
 
 ## Documentation
 

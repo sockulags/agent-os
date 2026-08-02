@@ -14,8 +14,8 @@ function fixture() {
   const target = fs.mkdtempSync(path.join(os.tmpdir(), 'agent-os-validator-'))
   temporaryRoots.push(target)
   for (const item of [
-    '.agents', '.claude-plugin', '.codex-plugin', '.github', 'cli', 'docs-site', 'evals', 'skills',
-    'README.md', 'package.json', 'policy.md'
+    '.agents', '.claude-plugin', '.codex-plugin', '.github', 'cli', 'docs-site', 'evals', 'scripts',
+    'skills', 'AGENTS.md', 'CLAUDE.md', 'README.md', 'package.json', 'policy.md'
   ]) {
     fs.cpSync(path.join(root, item), path.join(target, item), {
       recursive: true,
@@ -85,6 +85,20 @@ try {
     manifest.files = manifest.files.filter((entry) => entry !== 'skills/')
     fs.writeFileSync(file, JSON.stringify(manifest, null, 2) + '\n')
   }, 'MANIFEST_NPM_SKILLS')
+
+  expectFailure('project policy surfaces drift', (target) => {
+    fs.appendFileSync(path.join(target, 'CLAUDE.md'), '\nClaude-only release rule.\n')
+  }, 'PROJECT_POLICY_PARITY')
+
+  expectFailure('missing release verifier', (target) => {
+    fs.rmSync(path.join(target, 'scripts/verify-release.mjs'))
+  }, 'RELEASE_VERIFY_SCRIPT')
+
+  expectFailure('missing current changelog heading', (target) => {
+    const version = JSON.parse(fs.readFileSync(path.join(target, 'package.json'), 'utf8')).version
+    rewrite(path.join(target, 'docs-site/changelog.md'), (text) =>
+      text.replace(`## ${version}`, `### ${version}`))
+  }, 'CHANGELOG_RELEASE_HEADING')
 
   expectFailure('missing skill documentation', (target) => {
     fs.rmSync(path.join(target, 'docs-site/skills/dispatch-next.md'))

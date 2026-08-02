@@ -77,9 +77,12 @@ register the local `.agents/plugins/marketplace.json` marketplace.
 
 1. Run `node scripts/validate-agent-os.mjs`, `npm test`, its red-case suite, and the live evals in `evals/`.
 2. Bump `version` in `.claude-plugin/plugin.json`, `.codex-plugin/plugin.json`, and `package.json`.
-3. Commit with the Git identity configured by the repository or current session, without AI attribution, and push.
-4. Pack the npm artifact and verify a clean direct install for both hosts. Publish it, then verify
-   `npx @sockulags/agent-os@latest update`; also smoke-test native plugin mode when it changed.
+3. Add a dedicated changelog heading, commit and push, merge the green pull request to `main`, and
+   create the matching tag before publishing. Never publish npm from a dirty worktree.
+4. Pack the npm artifact and verify a clean direct install for both hosts, then publish it.
+5. Create the non-draft GitHub Release, confirm the newest stable release is marked `Latest`, wait
+   for Validate and Docs/Pages on current `main`, and run `node scripts/verify-release.mjs <version>`.
+   A release is incomplete until source, npm, GitHub, changelog, and live docs all pass that gate.
 
 ## Documentation site
 
