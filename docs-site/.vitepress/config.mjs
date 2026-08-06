@@ -87,7 +87,9 @@ export default withMermaid(defineConfig({
             { text: 'batch-work', link: '/skills/batch-work' },
             { text: 'dispatch-next', link: '/skills/dispatch-next' },
             { text: 'init-agent-os', link: '/skills/init-agent-os' },
-            { text: 'record-lesson', link: '/skills/record-lesson' }
+            { text: 'record-lesson', link: '/skills/record-lesson' },
+            { text: 'simplifier', link: '/skills/simplifier' },
+            { text: 'simplifier-audit', link: '/skills/simplifier-audit' }
           ]
         },
         {
@@ -103,12 +105,14 @@ export default withMermaid(defineConfig({
             { text: 'verify-before-done', link: '/skills/verify-before-done' },
             { text: 'diagnose-before-fix', link: '/skills/diagnose-before-fix' },
             { text: 'scope-guard', link: '/skills/scope-guard' },
+            { text: 'simplifier-review', link: '/skills/simplifier-review' },
             { text: 'notice-lesson', link: '/skills/notice-lesson' }
           ]
         },
         {
           text: 'Meta',
           items: [
+            { text: 'list-skills', link: '/skills/list-skills' },
             { text: 'writing-skills', link: '/skills/writing-skills' }
           ]
         }

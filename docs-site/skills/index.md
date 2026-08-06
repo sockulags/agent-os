@@ -42,6 +42,8 @@ The workflows that run, pick, set up, and remember work.
 | [`dispatch-next`](/skills/dispatch-next) | workflow | manual | Pick or dispatch one action according to the request |
 | [`init-agent-os`](/skills/init-agent-os) | workflow | manual | Managed policy setup or repository defaults |
 | [`record-lesson`](/skills/record-lesson) | workflow | manual | Record a durable lesson in repo or global policy |
+| [`simplifier`](/skills/simplifier) | workflow | manual | Remove unnecessary code and solution layers |
+| [`simplifier-audit`](/skills/simplifier-audit) | workflow | manual | Audit a repository for simplification opportunities |
 
 ## Component skills
 
@@ -63,12 +65,14 @@ Always on; no invocation.
 | [`verify-before-done`](/skills/verify-before-done) | discipline | automatic | Fresh evidence before any completion claim |
 | [`diagnose-before-fix`](/skills/diagnose-before-fix) | discipline | automatic | Reproduce and root-cause before patching |
 | [`scope-guard`](/skills/scope-guard) | discipline | automatic | Keep work inside the task; flag drift |
+| [`simplifier-review`](/skills/simplifier-review) | discipline | automatic | Review a diff for unnecessary complexity |
 | [`notice-lesson`](/skills/notice-lesson) | discipline | automatic | Treat interruptions as misunderstanding signals |
 
 ## Meta
 
 | Skill | Bucket | Invocation | Purpose |
 |---|---|---|---|
+| [`list-skills`](/skills/list-skills) | meta | manual | List installed skills and how to invoke them |
 | [`writing-skills`](/skills/writing-skills) | meta | manual | Doctrine and definition of done for agent-os skills |
 
 ## Invocation

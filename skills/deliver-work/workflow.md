@@ -32,7 +32,9 @@ the developer.
 3. Make the smallest complete implementation. Use `diagnose-before-fix` when the cause is unknown and
    `scope-guard` when discoveries threaten the boundary.
 4. Run fast, relevant checks while working and adapt from their results.
-5. Review the resulting diff for correctness, unnecessary complexity, and scope.
+5. Review the resulting diff for correctness, unnecessary complexity, and scope. Apply the
+   [`simplifier-review`](../simplifier-review/SKILL.md) lens and fix supported simplification
+   findings before freezing the candidate.
 6. Complete the review gate below.
 7. Apply `verify-before-done` to the final candidate and deliver only to the requested boundary.
 
@@ -74,7 +76,8 @@ waive required review; do not solicit a waiver. When review is required:
 A reviewer label written by the implementer, a wait call with no launched receiver, a self-review,
 or an unreturned reviewer is not independent review. If the host exposes no launch tool, launch
 fails, or no launched reviewer returns a result, stop before delivery with a review handoff
-containing the frozen candidate, review scope, and required ground truth. Self-review never
+containing the frozen candidate, review scope including unnecessary solution complexity, and
+required ground truth. Self-review never
 substitutes for required independent review.
 
 ## Resume only when useful

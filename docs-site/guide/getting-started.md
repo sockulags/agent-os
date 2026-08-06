@@ -68,9 +68,11 @@ plugin directly.
 
 ### Verify the install
 
-Start a new Codex or Claude Code session, list the available skills, and compare them against the
-[skills overview](/skills/). Every skill in the table should be present. If only some appear, run
-the update command for the same platform and scope before debugging anything else.
+Start a new Codex or Claude Code session and invoke [`list-skills`](/skills/list-skills), which
+reads the installation itself and reports every skill it finds with the invocation form for your
+host. Compare that card against the [skills overview](/skills/): every skill in the table should be
+present. If only some appear, run the update command for the same platform and scope before
+debugging anything else.
 
 ## 2. Install or refresh the global policy
 

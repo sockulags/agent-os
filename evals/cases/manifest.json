@@ -138,6 +138,36 @@
         "scope-guard.md#Negative 2"
       ]
     },
+    "simplifier": {
+      "positive": [
+        "simplifier.md#SIM-P1",
+        "simplifier.md#SIM-P2"
+      ],
+      "negative": [
+        "simplifier.md#SIM-N1",
+        "simplifier.md#SIM-N2"
+      ]
+    },
+    "simplifier-audit": {
+      "positive": [
+        "simplifier-audit.md#SIMA-P1",
+        "simplifier-audit.md#SIMA-P2"
+      ],
+      "negative": [
+        "simplifier-audit.md#SIMA-N1",
+        "simplifier-audit.md#SIMA-N2"
+      ]
+    },
+    "simplifier-review": {
+      "positive": [
+        "simplifier-review.md#SIMR-P1",
+        "simplifier-review.md#SIMR-P2"
+      ],
+      "negative": [
+        "simplifier-review.md#SIMR-N1",
+        "simplifier-review.md#SIMR-N2"
+      ]
+    },
     "shape-work": {
       "positive": [
         "shape-work.md#SW-P1",
@@ -159,6 +189,16 @@
       "negative": [
         "verify-before-done.md#Negative 1",
         "verify-before-done.md#Negative 2"
+      ]
+    },
+    "list-skills": {
+      "positive": [
+        "list-skills.md#LS-P1",
+        "list-skills.md#LS-P2"
+      ],
+      "negative": [
+        "list-skills.md#LS-N1",
+        "list-skills.md#LS-N2"
       ]
     },
     "writing-skills": {
