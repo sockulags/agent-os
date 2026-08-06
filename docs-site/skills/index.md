@@ -72,6 +72,7 @@ Always on; no invocation.
 
 | Skill | Bucket | Invocation | Purpose |
 |---|---|---|---|
+| [`list-skills`](/skills/list-skills) | meta | manual | List installed skills and how to invoke them |
 | [`writing-skills`](/skills/writing-skills) | meta | manual | Doctrine and definition of done for agent-os skills |
 
 ## Invocation

@@ -191,6 +191,16 @@
         "verify-before-done.md#Negative 2"
       ]
     },
+    "list-skills": {
+      "positive": [
+        "list-skills.md#LS-P1",
+        "list-skills.md#LS-P2"
+      ],
+      "negative": [
+        "list-skills.md#LS-N1",
+        "list-skills.md#LS-N2"
+      ]
+    },
     "writing-skills": {
       "positive": [
         "writing-skills.md#WS-P1",

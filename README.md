@@ -9,7 +9,7 @@ Claude Code and Codex. One skill source, two platforms, ceremony proportional to
 
 Reading order: the planning foundation (`shape-work`, then `chart-work`, which hands off into it),
 the on-ramp in front of both (`guide-me`), the remaining workflows, then the component skills the
-workflows compose (`understand-work`, `explain-work`), the disciplines, and the meta-skill.
+workflows compose (`understand-work`, `explain-work`), the disciplines, and the meta skills.
 
 | Skill | Bucket | Invocation | Purpose |
 |---|---|---|---|
@@ -30,6 +30,7 @@ workflows compose (`understand-work`, `explain-work`), the disciplines, and the 
 | `scope-guard` | discipline | automatic | Keep work inside the task; flag drift |
 | `simplifier-review` | discipline | automatic | Review a diff for unnecessary complexity |
 | `notice-lesson` | discipline | automatic | Treat interruptions as misunderstanding signals |
+| `list-skills` | meta | manual | List installed skills and how to invoke them |
 | `writing-skills` | meta | manual | Doctrine and definition of done for agent-os skills |
 
 Manual skills carry `disable-model-invocation: true` (Claude) and `agents/openai.yaml` with
