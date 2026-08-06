@@ -106,6 +106,15 @@ name. A skill edit and its documentation page are one change — the pages under
   not approval ceremony or reasoning traces.
 - `evals/runs/` — raw logs, gitignored.
 
+## Experiments
+
+Experimental work is kept outside the installable package until evidence supports promotion. The
+first recorded Codex experiment replaces a large shared GPT-5.6 prompt with smaller
+risk-calibrated core and Auto Review prompts, including exact text, eval evidence, local
+installation, and rollback:
+
+- [Codex custom instructions](https://github.com/sockulags/agent-os/blob/main/experimental/codex/custom_instructions.md)
+
 ## Global policy
 
 `policy.md` is the source of truth. The npm installer and `init-agent-os global` install it as a
