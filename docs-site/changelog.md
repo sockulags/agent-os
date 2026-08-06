@@ -8,6 +8,22 @@ description: What changed in each agent-os release, in plain terms.
 One entry per release: what changed, and what it means for how you work. Full commit-level history
 lives on [GitHub](https://github.com/sockulags/agent-os/commits/main).
 
+## 0.10.0 — 2026-08-06
+
+The simplification release: remove unnecessary solutions without turning readable code into code
+golf.
+
+- **New workflow `simplifier`** — reduces code, dependencies, abstractions, and solution layers
+  while preserving required behavior, readability, safety boundaries, and useful tests.
+- **New workflow `simplifier-audit`** — scans a repository for high-confidence simplification
+  opportunities without applying changes.
+- **New discipline `simplifier-review`** — reviews the current diff for unnecessary complexity and
+  is now part of `deliver-work` before a candidate is frozen.
+- **New reference skill `list-skills`** — reports the installed Agent OS skills and their invocation
+  boundaries without depending on a hardcoded inventory.
+- **Codex experiment documentation** — records the tested custom-instruction setup, mutation and
+  rollback procedure, observed results, and remaining limitations.
+
 ## 0.9.1 — 2026-08-02
 
 The portable-installer correction: the npm CLI now owns skill installation instead of requiring
