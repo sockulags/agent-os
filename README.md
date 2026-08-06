@@ -21,6 +21,7 @@ workflows compose (`understand-work`, `explain-work`), the disciplines, and the 
 | `dispatch-next` | workflow | manual | Pick or dispatch one action according to the request |
 | `init-agent-os` | workflow | manual | Managed policy setup or repository defaults |
 | `record-lesson` | workflow | manual | Record a durable lesson in repo or global policy |
+| `simplifier` | workflow | manual | Remove unnecessary code and solution layers |
 | `understand-work` | workflow | manual | Question out the need behind a stated wish |
 | `explain-work` | workflow | manual | Explain the task in plain language for approval |
 | `verify-before-done` | discipline | automatic | Fresh evidence before any completion claim |

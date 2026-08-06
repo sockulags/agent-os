@@ -42,6 +42,7 @@ The workflows that run, pick, set up, and remember work.
 | [`dispatch-next`](/skills/dispatch-next) | workflow | manual | Pick or dispatch one action according to the request |
 | [`init-agent-os`](/skills/init-agent-os) | workflow | manual | Managed policy setup or repository defaults |
 | [`record-lesson`](/skills/record-lesson) | workflow | manual | Record a durable lesson in repo or global policy |
+| [`simplifier`](/skills/simplifier) | workflow | manual | Remove unnecessary code and solution layers |
 
 ## Component skills
 

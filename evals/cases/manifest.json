@@ -138,6 +138,16 @@
         "scope-guard.md#Negative 2"
       ]
     },
+    "simplifier": {
+      "positive": [
+        "simplifier.md#SIM-P1",
+        "simplifier.md#SIM-P2"
+      ],
+      "negative": [
+        "simplifier.md#SIM-N1",
+        "simplifier.md#SIM-N2"
+      ]
+    },
     "shape-work": {
       "positive": [
         "shape-work.md#SW-P1",
