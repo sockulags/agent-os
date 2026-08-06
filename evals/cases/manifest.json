@@ -148,6 +148,26 @@
         "simplifier.md#SIM-N2"
       ]
     },
+    "simplifier-audit": {
+      "positive": [
+        "simplifier-audit.md#SIMA-P1",
+        "simplifier-audit.md#SIMA-P2"
+      ],
+      "negative": [
+        "simplifier-audit.md#SIMA-N1",
+        "simplifier-audit.md#SIMA-N2"
+      ]
+    },
+    "simplifier-review": {
+      "positive": [
+        "simplifier-review.md#SIMR-P1",
+        "simplifier-review.md#SIMR-P2"
+      ],
+      "negative": [
+        "simplifier-review.md#SIMR-N1",
+        "simplifier-review.md#SIMR-N2"
+      ]
+    },
     "shape-work": {
       "positive": [
         "shape-work.md#SW-P1",

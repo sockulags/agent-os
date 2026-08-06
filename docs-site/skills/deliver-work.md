@@ -45,7 +45,9 @@ dependencies. A target with several separately closable outcomes or delivery bou
 shaping before mutation. Deliver-work never chooses batch execution for the developer.
 
 Then inspect, classify review, implement, check, adapt, review the diff, and verify the final
-candidate. The agent chooses the local method.
+candidate. Diff review automatically applies the [simplifier-review](/skills/simplifier-review)
+lens before the candidate is frozen, so supported unnecessary code and solution layers are removed
+rather than carried into delivery. The agent chooses the local method.
 
 ## Review without a review panel
 
@@ -57,8 +59,9 @@ editing. A wait tool alone is not sufficient. Without a launch mechanism, the wo
 mutation with a review-required handoff.
 
 Required review uses at least one read-only reviewer in a separate context against a frozen
-candidate. One general adversarial reviewer is enough by default. Add a focused security or
-compatibility reviewer only when a distinct risk needs it.
+candidate. Its scope includes correctness, unnecessary solution complexity, scope, and material
+risk. One general adversarial reviewer is enough by default. Add a focused security or compatibility
+reviewer only when a distinct risk needs it.
 
 The reviewer identity must come from a successful launch-tool result in the current run. On Codex,
 `spawn_agent` returns the ID before `wait_agent` may name it. Empty receiver IDs and
