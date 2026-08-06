@@ -31,6 +31,10 @@ bounded set of product choices and to materialize its implementation-ready issue
 `deliver-work` for one selected ready issue. Use `batch-work` only when the developer explicitly
 chooses integrated execution of several ready issues with stable dependencies.
 
+Two workflows sit beside the loop rather than inside it, invoked when the developer asks for them:
+`simplifier` removes unnecessary code and solution layers from existing work, and
+`simplifier-audit` reports the same opportunities across a repository without changing files.
+
 In front of the foundation sits an optional on-ramp: when the developer cannot yet state what they
 want, `guide-me` shows the way — questioning through `understand-work`, a plain-language summary
 through `explain-work`, and, once that summary is approved, straight into `chart-work` or
@@ -44,6 +48,7 @@ The automatic disciplines run underneath:
 
 - `diagnose-before-fix` establishes a supported cause for unknown failures;
 - `scope-guard` contains required, adjacent, and conflicting discoveries;
+- `simplifier-review` checks the candidate diff for unnecessary code and solution layers;
 - `verify-before-done` matches material completion claims to fresh evidence;
 - `notice-lesson` treats developer interruptions and corrections as misunderstanding signals and
   offers `record-lesson` when the lesson is durable.
