@@ -15,7 +15,7 @@ Delivers one decision-ready change against explicit boundaries and ground truth.
 flowchart TD
     A[One ready issue or bounded request] --> B[Contract: outcome, boundaries,<br>ground truth, delivery target]
     B --> C[Smallest complete implementation]
-    C --> D[Fast relevant checks]
+    C --> D[Proportional relevant checks]
     D --> C
     D --> E{Review gate}
     E -->|qualified small fix| G
@@ -47,7 +47,10 @@ shaping before mutation. Deliver-work never chooses batch execution for the deve
 Then inspect, classify review, implement, check, adapt, review the diff, and verify the final
 candidate. Diff review automatically applies the [simplifier-review](/skills/simplifier-review)
 lens before the candidate is frozen, so supported unnecessary code and solution layers are removed
-rather than carried into delivery. The agent chooses the local method.
+rather than carried into delivery. Test selection applies
+[proportional-testing](/skills/proportional-testing): protect the changed behavior and plausible
+regressions with the minimum meaningful test surface, while retaining required delivery checks. The
+agent chooses the local method.
 
 ## Review without a review panel
 

@@ -138,6 +138,16 @@
         "scope-guard.md#Negative 2"
       ]
     },
+    "proportional-testing": {
+      "positive": [
+        "proportional-testing.md#Positive 1",
+        "proportional-testing.md#Positive 2"
+      ],
+      "negative": [
+        "proportional-testing.md#Negative 1",
+        "proportional-testing.md#Negative 2"
+      ]
+    },
     "simplifier": {
       "positive": [
         "simplifier.md#SIM-P1",

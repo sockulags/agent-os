@@ -27,6 +27,7 @@ workflows compose (`understand-work`, `explain-work`), the disciplines, and the 
 | `explain-work` | workflow | manual | Explain the task in plain language for approval |
 | `verify-before-done` | discipline | automatic | Fresh evidence before any completion claim |
 | `diagnose-before-fix` | discipline | automatic | Reproduce and root-cause before patching |
+| `proportional-testing` | discipline | automatic | Minimum meaningful regression coverage |
 | `scope-guard` | discipline | automatic | Keep work inside the task; flag drift |
 | `simplifier-review` | discipline | automatic | Review a diff for unnecessary complexity |
 | `notice-lesson` | discipline | automatic | Treat interruptions as misunderstanding signals |
