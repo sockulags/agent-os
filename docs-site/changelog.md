@@ -8,6 +8,20 @@ description: What changed in each agent-os release, in plain terms.
 One entry per release: what changed, and what it means for how you work. Full commit-level history
 lives on [GitHub](https://github.com/sockulags/agent-os/commits/main).
 
+## 0.11.0 — 2026-08-07
+
+The proportional-testing release: protect changed behavior without turning every small fix into a
+large test-generation exercise.
+
+- **New discipline `proportional-testing`** — inspects existing coverage and requires a realistic,
+  previously unprotected regression before adding another test.
+- **Behavior-first test selection** — prefers existing and table-driven tests, observable contracts,
+  and the cheapest test level that provides sufficient confidence.
+- **Focused bug-fix loop** — establishes one reproducing regression check when practical, then runs
+  relevant affected tests instead of generating unrelated cases.
+- **Delivery integration** — `deliver-work` applies proportional testing during implementation while
+  preserving every required repository, CI, and release check.
+
 ## 0.10.0 — 2026-08-06
 
 The simplification release: remove unnecessary solutions without turning readable code into code
