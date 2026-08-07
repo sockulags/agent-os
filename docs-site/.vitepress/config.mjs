@@ -104,6 +104,7 @@ export default withMermaid(defineConfig({
           items: [
             { text: 'verify-before-done', link: '/skills/verify-before-done' },
             { text: 'diagnose-before-fix', link: '/skills/diagnose-before-fix' },
+            { text: 'proportional-testing', link: '/skills/proportional-testing' },
             { text: 'scope-guard', link: '/skills/scope-guard' },
             { text: 'simplifier-review', link: '/skills/simplifier-review' },
             { text: 'notice-lesson', link: '/skills/notice-lesson' }
@@ -127,6 +128,7 @@ export default withMermaid(defineConfig({
             { text: 'Maps and decision tickets', link: '/reference/maps-and-tickets' },
             { text: 'Implementation issues', link: '/reference/implementation-issues' },
             { text: 'Prototype evidence', link: '/reference/prototypes' },
+            { text: 'Proportional testing', link: '/reference/proportional-testing' },
             { text: 'Codex custom instructions', link: '/reference/codex-custom-instructions' },
             { text: 'Frontend mockups', link: '/reference/mockups' },
             { text: 'Evals', link: '/reference/evals' },

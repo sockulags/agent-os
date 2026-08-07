@@ -31,7 +31,8 @@ the developer.
    diff.
 3. Make the smallest complete implementation. Use `diagnose-before-fix` when the cause is unknown and
    `scope-guard` when discoveries threaten the boundary.
-4. Run fast, relevant checks while working and adapt from their results.
+4. Apply [`proportional-testing`](../proportional-testing/SKILL.md) when selecting or creating tests.
+   Run fast, relevant checks while working and adapt from their results.
 5. Review the resulting diff for correctness, unnecessary complexity, and scope. Apply the
    [`simplifier-review`](../simplifier-review/SKILL.md) lens and fix supported simplification
    findings before freezing the candidate.

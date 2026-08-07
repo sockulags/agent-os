@@ -64,6 +64,7 @@ Always on; no invocation.
 |---|---|---|---|
 | [`verify-before-done`](/skills/verify-before-done) | discipline | automatic | Fresh evidence before any completion claim |
 | [`diagnose-before-fix`](/skills/diagnose-before-fix) | discipline | automatic | Reproduce and root-cause before patching |
+| [`proportional-testing`](/skills/proportional-testing) | discipline | automatic | Minimum meaningful regression coverage |
 | [`scope-guard`](/skills/scope-guard) | discipline | automatic | Keep work inside the task; flag drift |
 | [`simplifier-review`](/skills/simplifier-review) | discipline | automatic | Review a diff for unnecessary complexity |
 | [`notice-lesson`](/skills/notice-lesson) | discipline | automatic | Treat interruptions as misunderstanding signals |
