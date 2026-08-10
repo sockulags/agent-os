@@ -1,0 +1,73 @@
+name: Publish npm
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  actions: read
+  contents: read
+  id-token: write
+
+concurrency:
+  group: npm-release
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    name: Publish trusted package
+    if: github.event.release.prerelease == false
+    runs-on: ubuntu-latest
+    environment: npm
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.release.tag_name }}
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          registry-url: https://registry.npmjs.org
+          package-manager-cache: false
+
+      - name: Verify release identity
+        env:
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+        run: |
+          VERSION="$(node -p "require('./package.json').version")"
+          test "$RELEASE_TAG" = "v$VERSION"
+          git fetch origin main
+          git merge-base --is-ancestor HEAD origin/main
+
+      - name: Validate repository
+        run: |
+          node scripts/validate-agent-os.mjs
+          node scripts/test-validate-agent-os.mjs
+          npm test
+          node skills/batch-work/scripts/test-manifest-hash.mjs
+
+      - name: Build documentation
+        run: |
+          npm --prefix docs-site ci
+          npm --prefix docs-site run build
+
+      - name: Inspect and smoke-test package
+        run: |
+          npm pack --dry-run --json
+          node scripts/smoke-packed-install.mjs
+
+      - name: Publish package
+        run: npm publish --access public
+
+      - name: Verify public release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          VERSION="$(node -p "require('./package.json').version")"
+          for attempt in 1 2 3 4 5 6; do
+            node scripts/verify-release.mjs "$VERSION" && exit 0
+            sleep 30
+          done
+          exit 1

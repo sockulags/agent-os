@@ -14,19 +14,27 @@ description: Validate, version, publish, and verify an agent-os release.
    [plugin manifests](/reference/plugin-manifests) page. `validate-agent-os.mjs` fails the release
    until all five agree, so bump them in the same commit. Add the release to the
    [changelog](/changelog) while you are there.
-3. **Commit, review, merge, and tag.** Commit with the configured Git identity and no AI attribution,
+3. **Commit, review, and merge.** Commit with the configured Git identity and no AI attribution,
    push an `agent/<description>` branch, require the repository checks on its exact head, and merge
-   the pull request to `main`. Create the version tag on the release commit. Never publish npm from
-   a dirty worktree or an unmerged branch.
-4. **Verify and publish the npm package.** Pack it locally, install that tarball directly into
-   isolated Claude and Codex homes, and prove an update preserves unrelated skills. Publish it as
-   `@sockulags/agent-os`, then verify `npx @sockulags/agent-os@latest update` resolves the released
-   version. Smoke-test `--method plugin` too when marketplace behavior changed.
-5. **Close every public release surface.** Create a non-draft GitHub Release for the tag, mark the
-   newest stable version `Latest`, and wait for successful Validate and Docs/Pages runs on current
-   `main`. Then run `node scripts/verify-release.mjs <version>`. It compares the tagged package with
-   npm, checks GitHub and Pages, and performs a public isolated `npx` install. The release is not
-   complete until this gate passes.
+   the pull request to `main`. Never release from a dirty worktree or an unmerged branch.
+4. **Prepare the package.** Inspect `npm pack --dry-run --json`, then run
+   `node scripts/smoke-packed-install.mjs`. The smoke test installs and updates the packed artifact
+   in isolated Claude and Codex homes while proving that unrelated skills remain untouched.
+5. **Publish through GitHub Actions.** Create the version tag on the merged release commit, then
+   create a non-draft, non-prerelease GitHub Release and mark the newest stable version `Latest`.
+   That explicit release action triggers `.github/workflows/publish.yml`. Its protected `npm`
+   environment publishes `@sockulags/agent-os` through npm Trusted Publishing with short-lived OIDC
+   credentials; do not store a long-lived npm publish token in GitHub.
+6. **Close every public release surface.** The publish workflow reruns the repository and docs
+   checks, publishes npm, and retries `node scripts/verify-release.mjs <version>` while the registry
+   propagates. The verifier compares the tagged package with npm, checks GitHub and Pages, and
+   performs a public isolated `npx` install. The release is not complete until the workflow and the
+   Validate and Docs/Pages runs on current `main` all pass. Smoke-test `--method plugin` separately
+   when marketplace behavior changed.
+
+The npm package settings must trust GitHub repository `sockulags/agent-os`, workflow `publish.yml`,
+environment `npm`, and the `npm publish` action. The matching GitHub environment is the deployment
+approval surface for npm publication.
 
 ## Documentation
 

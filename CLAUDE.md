@@ -16,9 +16,11 @@ users as global policy; do not put repository-only release rules there.
   The published package must be built from the commit targeted by its version tag.
 - Create a GitHub tag and non-draft GitHub Release for every npm version. Keep the newest stable
   version marked `Latest`; when backfilling history, point each tag at the actual release commit.
+- Publish npm through `.github/workflows/publish.yml` using the `npm` environment and npm Trusted
+  Publishing with OIDC. Never store a long-lived npm publish token in GitHub.
 - A release request authorizes the normal PR, merge, tag, GitHub Release, npm verification, and docs
-  verification steps needed to complete that release. Publishing to npm still requires the
-  developer's authenticated session when the agent cannot authenticate.
+  verification steps needed to complete that release. Publishing starts only from an explicit
+  stable GitHub Release after the release commit is merged.
 
 ## Verification
 
