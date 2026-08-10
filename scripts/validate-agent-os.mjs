@@ -136,6 +136,32 @@ export function validate(root = path.resolve(scriptDir, '..')) {
     fail('RELEASE_VERIFY_SCRIPT', 'scripts/verify-release.mjs is required by the release policy.')
   }
 
+  if (!fs.existsSync(path.join(root, 'scripts/smoke-packed-install.mjs'))) {
+    fail('RELEASE_PACK_SMOKE_SCRIPT', 'scripts/smoke-packed-install.mjs is required by the release policy.')
+  }
+
+  const publishWorkflowFile = path.join(root, '.github/workflows/publish.yml')
+  if (!fs.existsSync(publishWorkflowFile)) {
+    fail('RELEASE_PUBLISH_WORKFLOW', '.github/workflows/publish.yml is required by the release policy.')
+  } else {
+    const publishWorkflow = read(publishWorkflowFile)
+    for (const token of [
+      'types: [published]',
+      'id-token: write',
+      'environment: npm',
+      'node scripts/smoke-packed-install.mjs',
+      'npm publish --access public',
+      'node scripts/verify-release.mjs'
+    ]) {
+      if (!publishWorkflow.includes(token)) {
+        fail('RELEASE_PUBLISH_WORKFLOW', `publish.yml missing ${JSON.stringify(token)}`)
+      }
+    }
+    if (/\b(?:NODE_AUTH_TOKEN|NPM_TOKEN)\b/.test(publishWorkflow)) {
+      fail('RELEASE_PUBLISH_WORKFLOW', 'publish.yml must use OIDC instead of a long-lived npm token.')
+    }
+  }
+
   if (!skillNames.length) fail('SKILL_NONE', 'No skills found.')
 
   for (const name of skillNames) {

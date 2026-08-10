@@ -94,6 +94,11 @@ try {
     fs.rmSync(path.join(target, 'scripts/verify-release.mjs'))
   }, 'RELEASE_VERIFY_SCRIPT')
 
+  expectFailure('npm publish workflow loses OIDC permission', (target) => {
+    rewrite(path.join(target, '.github/workflows/publish.yml'), (text) =>
+      text.replace('id-token: write', 'id-token: read'))
+  }, 'RELEASE_PUBLISH_WORKFLOW')
+
   expectFailure('missing current changelog heading', (target) => {
     const version = JSON.parse(fs.readFileSync(path.join(target, 'package.json'), 'utf8')).version
     rewrite(path.join(target, 'docs-site/changelog.md'), (text) =>
