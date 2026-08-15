@@ -10,6 +10,14 @@ themselves from the situation, and the meta-skill governs how the others are wri
 page top to bottom: the planning foundation, the on-ramp in front of it, the remaining workflows,
 and finally the component skills the workflows compose.
 
+<figure class="agent-os-diagram">
+  <a href="/diagrams/agent-os-workflow-overview.svg" target="_blank" rel="noopener" aria-label="Open the Agent OS workflow overview at full size">
+    <img class="diagram-light" src="/diagrams/agent-os-workflow-overview.svg" alt="">
+    <img class="diagram-dark" src="/diagrams/agent-os-workflow-overview-dark.svg" alt="">
+  </a>
+  <figcaption>The twelve manual workflows grouped by the uncertainty or operational need they resolve. Enter at the lowest layer that still has unresolved work. Select the diagram to open it at full size.</figcaption>
+</figure>
+
 ## The foundation: shape and chart
 
 Planning starts here, and each layer builds on the one before it. `shape-work` turns one bounded
@@ -59,6 +67,14 @@ request.
 ## Disciplines
 
 Always on; no invocation.
+
+<figure class="agent-os-diagram">
+  <a href="/diagrams/agent-os-operations-quality.svg" target="_blank" rel="noopener" aria-label="Open the Agent OS operations and quality diagram at full size">
+    <img class="diagram-light" src="/diagrams/agent-os-operations-quality.svg" alt="">
+    <img class="diagram-dark" src="/diagrams/agent-os-operations-quality-dark.svg" alt="">
+  </a>
+  <figcaption>Manual setup, dispatch, simplification, and learning workflows sit beside automatic disciplines that guard implementation and review. Select the diagram to open it at full size.</figcaption>
+</figure>
 
 | Skill | Bucket | Invocation | Purpose |
 |---|---|---|---|

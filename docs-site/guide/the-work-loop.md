@@ -7,24 +7,13 @@ description: Choose the lowest agent-os workflow that matches the uncertainty, t
 
 Enter at the lowest workflow that matches the uncertainty.
 
-```mermaid
-flowchart TD
-    V[Vague desire] -.->|guide-me: questioning + approved plain-language TLDR| A
-    V -.->|guide-me| A2
-    A[Broad effort] -->|chart-work| B[Decision tickets]
-    B -->|bounded branch| C[shape-work]
-    A2[Bounded open choices] -->|shape-work| C
-    C --> I[Implementation-ready issues]
-    I -->|developer selects one issue| D[deliver-work]
-    I -->|developer explicitly selects a batch| E[batch-work]
-    E -->|isolated workers| F[Integrated candidate]
-    D --> G[Verified delivery target]
-    F --> G
-    H[dispatch-next] -.->|selects or dispatches one target| B
-    H -.-> C
-    H -.-> D
-    H -.-> E
-```
+<figure class="agent-os-diagram">
+  <a href="/diagrams/agent-os-planning-delivery-flow.svg" target="_blank" rel="noopener" aria-label="Open the Agent OS planning and delivery flow at full size">
+    <img class="diagram-light" src="/diagrams/agent-os-planning-delivery-flow.svg" alt="">
+    <img class="diagram-dark" src="/diagrams/agent-os-planning-delivery-flow-dark.svg" alt="">
+  </a>
+  <figcaption>Uncertainty determines the planning entry point. The developer's explicit selection determines whether delivery runs one ready issue or a batch. Select the diagram to open it at full size.</figcaption>
+</figure>
 
 Use `chart-work` when several decision threads can move independently. Use `shape-work` for one
 bounded set of product choices and to materialize its implementation-ready issues. Use

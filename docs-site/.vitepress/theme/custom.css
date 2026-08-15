@@ -32,3 +32,45 @@
   min-width: 460px;
   height: auto;
 }
+
+.agent-os-diagram {
+  margin: 24px 0 32px;
+}
+
+.agent-os-diagram a {
+  display: block;
+  overflow: hidden;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 8px;
+  background: var(--vp-c-bg);
+  transition: border-color 0.2s ease;
+}
+
+.agent-os-diagram a:hover {
+  border-color: var(--vp-c-brand-1);
+}
+
+.agent-os-diagram img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.agent-os-diagram .diagram-dark {
+  display: none;
+}
+
+.dark .agent-os-diagram .diagram-light {
+  display: none;
+}
+
+.dark .agent-os-diagram .diagram-dark {
+  display: block;
+}
+
+.agent-os-diagram figcaption {
+  margin-top: 8px;
+  color: var(--vp-c-text-2);
+  font-size: 13px;
+  line-height: 1.5;
+}
