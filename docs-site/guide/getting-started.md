@@ -33,6 +33,11 @@ The direct installer writes to these locations:
 | User | `~/.claude/skills` | `~/.codex/skills` |
 | Project | `<project>/.claude/skills` | `<project>/.agents/skills` |
 
+These are the locations managed and verified by the current Agent OS installer. OpenAI's general
+Codex documentation now also lists `~/.agents/skills` for user-level authoring. Agent OS keeps its
+existing managed user location for backward compatibility; it will not move an installation until
+both discovery and update behavior have been verified as one migration.
+
 It records the Agent OS-owned directories in `.agent-os-install.json`. An update replaces only
 those directories, removes managed skills that disappeared from the release, and leaves unrelated
 skills alone. It refuses to overwrite a same-name directory that it did not install.

@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 1280 720" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="agent-os-architecture-title agent-os-architecture-desc">
+        <title id="agent-os-architecture-title">Agent OS architecture</title>
+        <desc id="agent-os-architecture-desc">Architecture diagram showing a developer using Claude Code or Codex to run Agent OS policies and skills against repositories and GitHub, with tests, CI, and runner-independent behavior evaluations returning completion evidence.</desc>
+        <defs>
+          <style>@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Geist+Mono:wght@400;500;600&amp;display=swap');</style>
+          <marker id="arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+            <polygon points="0 0, 8 3, 0 6" fill="#67676c"/>
+          </marker>
+          <marker id="arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+            <polygon points="0 0, 8 3, 0 6" fill="#6c4df6"/>
+          </marker>
+          <marker id="arrow-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+            <polygon points="0 0, 8 3, 0 6" fill="#12b5a0"/>
+          </marker>
+        </defs>
+
+        <rect width="1280" height="720" fill="#ffffff"/>
+
+        <!-- Zones -->
+        <rect x="40" y="64" width="300" height="500" rx="8" fill="rgba(60,60,67,0.02)" stroke="rgba(60,60,67,0.12)" stroke-width="0.8"/>
+        <rect x="56" y="68" width="92" height="16" rx="4" fill="#ffffff"/>
+        <text x="102" y="80" fill="#929295" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.14em">INTERACTION</text>
+
+        <rect x="380" y="64" width="380" height="500" rx="8" fill="rgba(108,77,246,0.025)" stroke="rgba(108,77,246,0.20)" stroke-width="0.8"/>
+        <rect x="396" y="68" width="104" height="16" rx="4" fill="#ffffff"/>
+        <text x="448" y="80" fill="#6c4df6" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.14em">OPERATING LAYER</text>
+
+        <rect x="800" y="64" width="440" height="500" rx="8" fill="rgba(60,60,67,0.02)" stroke="rgba(60,60,67,0.12)" stroke-width="0.8"/>
+        <rect x="816" y="68" width="96" height="16" rx="4" fill="#ffffff"/>
+        <text x="864" y="80" fill="#929295" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.14em">GROUND TRUTH</text>
+
+        <!-- Connectors, drawn before nodes -->
+        <path d="M 184,316 H 200 Q 208,316 208,308 V 264 Q 208,256 216,256 H 224" fill="none" stroke="#12b5a0" stroke-width="1.2" marker-end="url(#arrow-link)"/>
+        <path d="M 184,340 H 200 Q 208,340 208,348 V 408 Q 208,416 216,416 H 224" fill="none" stroke="#12b5a0" stroke-width="1.2" marker-end="url(#arrow-link)"/>
+
+        <path d="M 316,256 H 360 Q 368,256 368,264 V 280 Q 368,288 376,288 H 408" fill="none" stroke="#6c4df6" stroke-width="1.4" marker-end="url(#arrow-accent)"/>
+        <path d="M 316,416 H 360 Q 368,416 368,408 V 392 Q 368,384 376,384 H 408" fill="none" stroke="#6c4df6" stroke-width="1.4" marker-end="url(#arrow-accent)"/>
+
+        <line x1="728" y1="336" x2="820" y2="336" stroke="#6c4df6" stroke-width="1.4" marker-end="url(#arrow-accent)"/>
+
+        <path d="M 872,352 V 376 Q 872,384 880,384 H 896 Q 904,384 904,392 V 408" fill="none" stroke="#67676c" stroke-width="1.2" marker-end="url(#arrow)"/>
+        <path d="M 968,352 V 376 Q 968,384 976,384 H 1120 Q 1128,384 1128,392 V 408" fill="none" stroke="#67676c" stroke-width="1.2" marker-end="url(#arrow)"/>
+
+        <path d="M 812,448 H 776 Q 768,448 768,456 V 488 Q 768,496 760,496 H 608 Q 600,496 600,488 V 436" fill="none" stroke="#12b5a0" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arrow-link)"/>
+        <path d="M 1040,464 H 792 Q 784,464 784,472 V 512 Q 784,520 776,520 H 656 Q 648,520 648,512 V 436" fill="none" stroke="#12b5a0" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arrow-link)"/>
+
+        <!-- Connector labels with opaque masks -->
+        <rect x="188" y="268" width="76" height="16" rx="4" fill="#ffffff"/>
+        <text x="226" y="280" fill="#12b5a0" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.06em">PROMPTS</text>
+        <rect x="332" y="264" width="68" height="16" rx="4" fill="#ffffff"/>
+        <text x="366" y="276" fill="#6c4df6" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.06em">LOADS</text>
+        <rect x="744" y="316" width="64" height="16" rx="4" fill="#ffffff"/>
+        <text x="776" y="328" fill="#6c4df6" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.06em">ACTS ON</text>
+        <rect x="840" y="364" width="72" height="16" rx="4" fill="#ffffff"/>
+        <text x="876" y="376" fill="#67676c" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.06em">CHECKS</text>
+        <rect x="1000" y="364" width="92" height="16" rx="4" fill="#ffffff"/>
+        <text x="1046" y="376" fill="#67676c" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.06em">OBSERVES</text>
+        <rect x="672" y="476" width="80" height="16" rx="4" fill="#ffffff"/>
+        <text x="712" y="488" fill="#12b5a0" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.06em">EVIDENCE</text>
+        <rect x="680" y="500" width="80" height="16" rx="4" fill="#ffffff"/>
+        <text x="720" y="512" fill="#12b5a0" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.06em">EVIDENCE</text>
+
+        <!-- Interaction nodes -->
+        <rect x="72" y="288" width="112" height="80" rx="8" fill="rgba(103,103,108,0.08)" stroke="#929295" stroke-width="1"/>
+        <rect x="84" y="300" width="36" height="16" rx="4" fill="transparent" stroke="rgba(103,103,108,0.30)" stroke-width="0.8"/>
+        <text x="102" y="312" fill="#67676c" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">USER</text>
+        <text x="128" y="336" fill="#3c3c43" font-size="12" font-weight="600" font-family="'Inter', sans-serif" text-anchor="middle">Developer</text>
+        <text x="128" y="352" fill="#67676c" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle">intent + approval</text>
+
+        <rect x="224" y="216" width="92" height="80" rx="8" fill="#ffffff" stroke="#3c3c43" stroke-width="1"/>
+        <rect x="236" y="228" width="36" height="16" rx="4" fill="transparent" stroke="rgba(60,60,67,0.35)" stroke-width="0.8"/>
+        <text x="254" y="240" fill="#3c3c43" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">HOST</text>
+        <text x="270" y="264" fill="#3c3c43" font-size="12" font-weight="600" font-family="'Inter', sans-serif" text-anchor="middle">Claude Code</text>
+        <text x="270" y="280" fill="#67676c" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle">plugin / skills</text>
+
+        <rect x="224" y="376" width="92" height="80" rx="8" fill="#ffffff" stroke="#3c3c43" stroke-width="1"/>
+        <rect x="236" y="388" width="36" height="16" rx="4" fill="transparent" stroke="rgba(60,60,67,0.35)" stroke-width="0.8"/>
+        <text x="254" y="400" fill="#3c3c43" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">HOST</text>
+        <text x="270" y="424" fill="#3c3c43" font-size="12" font-weight="600" font-family="'Inter', sans-serif" text-anchor="middle">Codex</text>
+        <text x="270" y="440" fill="#67676c" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle">plugin / skills</text>
+
+        <!-- Focal Agent OS node -->
+        <rect x="408" y="236" width="320" height="200" rx="8" fill="rgba(108,77,246,0.08)" stroke="#6c4df6" stroke-width="1.2"/>
+        <rect x="424" y="252" width="68" height="16" rx="4" fill="transparent" stroke="rgba(108,77,246,0.45)" stroke-width="0.8"/>
+        <text x="458" y="264" fill="#6c4df6" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">AGENT OS</text>
+        <text x="424" y="300" fill="#3c3c43" font-size="20" font-weight="700" font-family="'Inter', sans-serif">Managed operating layer</text>
+        <text x="424" y="324" fill="#67676c" font-size="10" font-family="'Geist Mono', monospace">one source · two host formats</text>
+        <line x1="424" y1="344" x2="712" y2="344" stroke="rgba(60,60,67,0.14)" stroke-width="0.8"/>
+        <text x="424" y="368" fill="#3c3c43" font-size="12" font-weight="600" font-family="'Inter', sans-serif">Policy</text>
+        <text x="500" y="368" fill="#67676c" font-size="8" font-family="'Geist Mono', monospace">global + project boundaries</text>
+        <text x="424" y="392" fill="#3c3c43" font-size="12" font-weight="600" font-family="'Inter', sans-serif">Workflows</text>
+        <text x="500" y="392" fill="#67676c" font-size="8" font-family="'Geist Mono', monospace">manual, explicit orchestration</text>
+        <text x="424" y="416" fill="#3c3c43" font-size="12" font-weight="600" font-family="'Inter', sans-serif">Disciplines</text>
+        <text x="500" y="416" fill="#67676c" font-size="8" font-family="'Geist Mono', monospace">automatic quality controls</text>
+
+        <!-- Ground-truth nodes -->
+        <rect x="820" y="240" width="200" height="112" rx="8" fill="#ffffff" stroke="#3c3c43" stroke-width="1"/>
+        <rect x="836" y="256" width="60" height="16" rx="4" fill="transparent" stroke="rgba(60,60,67,0.35)" stroke-width="0.8"/>
+        <text x="866" y="268" fill="#3c3c43" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">DURABLE</text>
+        <text x="836" y="300" fill="#3c3c43" font-size="12" font-weight="600" font-family="'Inter', sans-serif">Repository + GitHub</text>
+        <text x="836" y="320" fill="#67676c" font-size="8" font-family="'Geist Mono', monospace">files · issues · pull requests</text>
+        <text x="836" y="336" fill="#67676c" font-size="8" font-family="'Geist Mono', monospace">state changes · review history</text>
+
+        <rect x="812" y="408" width="180" height="80" rx="8" fill="rgba(60,60,67,0.05)" stroke="#67676c" stroke-width="1"/>
+        <rect x="824" y="420" width="40" height="16" rx="4" fill="transparent" stroke="rgba(103,103,108,0.40)" stroke-width="0.8"/>
+        <text x="844" y="432" fill="#67676c" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">GATE</text>
+        <text x="902" y="456" fill="#3c3c43" font-size="12" font-weight="600" font-family="'Inter', sans-serif" text-anchor="middle">Tests + CI</text>
+        <text x="902" y="472" fill="#67676c" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle">validation · build · release</text>
+
+        <rect x="1040" y="408" width="180" height="80" rx="8" fill="rgba(60,60,67,0.05)" stroke="#67676c" stroke-width="1"/>
+        <rect x="1052" y="420" width="40" height="16" rx="4" fill="transparent" stroke="rgba(103,103,108,0.40)" stroke-width="0.8"/>
+        <text x="1072" y="432" fill="#67676c" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">EVAL</text>
+        <text x="1130" y="456" fill="#3c3c43" font-size="12" font-weight="600" font-family="'Inter', sans-serif" text-anchor="middle">Behavior scorecard</text>
+        <text x="1130" y="472" fill="#67676c" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle">observed state · thin runners</text>
+
+        <!-- Legend strip -->
+        <line x1="40" y1="604" x2="1240" y2="604" stroke="rgba(60,60,67,0.14)" stroke-width="0.8"/>
+        <text x="40" y="624" fill="#67676c" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.18em">LEGEND</text>
+
+        <rect x="40" y="644" width="16" height="12" rx="4" fill="rgba(108,77,246,0.08)" stroke="#6c4df6" stroke-width="1"/>
+        <text x="68" y="656" fill="#67676c" font-size="8" font-family="'Inter', sans-serif">Managed focal layer</text>
+
+        <rect x="220" y="644" width="16" height="12" rx="4" fill="#ffffff" stroke="#3c3c43" stroke-width="1"/>
+        <text x="248" y="656" fill="#67676c" font-size="8" font-family="'Inter', sans-serif">Host or work surface</text>
+
+        <rect x="420" y="644" width="16" height="12" rx="4" fill="rgba(60,60,67,0.05)" stroke="#67676c" stroke-width="1"/>
+        <text x="448" y="656" fill="#67676c" font-size="8" font-family="'Inter', sans-serif">Evidence gate</text>
+
+        <line x1="592" y1="652" x2="628" y2="652" stroke="#6c4df6" stroke-width="1.4" marker-end="url(#arrow-accent)"/>
+        <text x="640" y="656" fill="#67676c" font-size="8" font-family="'Inter', sans-serif">Primary execution</text>
+
+        <line x1="800" y1="652" x2="836" y2="652" stroke="#12b5a0" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arrow-link)"/>
+        <text x="848" y="656" fill="#67676c" font-size="8" font-family="'Inter', sans-serif">Evidence return</text>
+      </svg>

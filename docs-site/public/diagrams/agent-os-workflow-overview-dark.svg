@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 1280 720" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="workflow-overview-title workflow-overview-desc">
+    <title id="workflow-overview-title">Agent OS workflow overview</title>
+    <desc id="workflow-overview-desc">Layer stack organizing twelve manual Agent OS workflows into entry, planning, delivery, operations, and simplification layers.</desc>
+    <defs>
+          <style>@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Geist+Mono:wght@400;500;600&amp;display=swap');</style><marker id="arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#8b75ff"/></marker><marker id="arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#8b75ff"/></marker><marker id="arrow-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#44cbb8"/></marker></defs>
+    <rect width="1280" height="720" fill="#1b1b1f"/>
+    <!-- Direction indicator -->
+    <line x1="52" y1="116" x2="52" y2="512" stroke="#8b75ff" stroke-width="1.2" marker-end="url(#arrow)"/>
+    <text x="40" y="304" fill="#8b75ff" font-size="8" font-family="'Geist Mono',monospace" text-anchor="middle" letter-spacing=".12em" transform="rotate(-90 40 304)">MORE CONCRETE</text>
+    <!-- Layer bands -->
+    <rect x="80" y="80" width="1120" height="96" rx="8" fill="rgba(139,117,255,.08)" stroke="#8b75ff" stroke-width="1.2"/>
+    <rect x="80" y="176" width="1120" height="96" fill="#202127" stroke="rgba(223,223,214,.14)" stroke-width="1"/>
+    <rect x="80" y="272" width="1120" height="96" fill="#1b1b1f" stroke="rgba(223,223,214,.14)" stroke-width="1"/>
+    <rect x="80" y="368" width="1120" height="96" fill="#202127" stroke="rgba(223,223,214,.14)" stroke-width="1"/>
+    <rect x="80" y="464" width="1120" height="96" rx="8" fill="#1b1b1f" stroke="rgba(223,223,214,.14)" stroke-width="1"/>
+    <!-- Layer labels -->
+    <text x="104" y="108" fill="#8b75ff" font-size="8" font-family="'Geist Mono',monospace" letter-spacing=".14em">01 · ON-RAMP</text>
+    <text x="104" y="132" fill="#dfdfd6" font-size="16" font-weight="600" font-family="Inter,sans-serif">Find and confirm the goal</text>
+    <text x="104" y="152" fill="#98989f" font-size="9" font-family="'Geist Mono',monospace">only when the request is still vague</text>
+    <text x="104" y="204" fill="#98989f" font-size="8" font-family="'Geist Mono',monospace" letter-spacing=".14em">02 · PLANNING</text>
+    <text x="104" y="228" fill="#dfdfd6" font-size="16" font-weight="600" font-family="Inter,sans-serif">Settle product decisions</text>
+    <text x="104" y="248" fill="#98989f" font-size="9" font-family="'Geist Mono',monospace">produce durable, implementation-ready issues</text>
+    <text x="104" y="300" fill="#98989f" font-size="8" font-family="'Geist Mono',monospace" letter-spacing=".14em">03 · DELIVERY</text>
+    <text x="104" y="324" fill="#dfdfd6" font-size="16" font-weight="600" font-family="Inter,sans-serif">Implement ready work</text>
+    <text x="104" y="344" fill="#98989f" font-size="9" font-family="'Geist Mono',monospace">one unit or an explicitly selected batch</text>
+    <text x="104" y="396" fill="#98989f" font-size="8" font-family="'Geist Mono',monospace" letter-spacing=".14em">04 · OPERATIONS</text>
+    <text x="104" y="420" fill="#dfdfd6" font-size="16" font-weight="600" font-family="Inter,sans-serif">Set up, route, and learn</text>
+    <text x="104" y="440" fill="#98989f" font-size="9" font-family="'Geist Mono',monospace">support the loop without replacing it</text>
+    <text x="104" y="492" fill="#98989f" font-size="8" font-family="'Geist Mono',monospace" letter-spacing=".14em">05 · SIMPLIFICATION</text>
+    <text x="104" y="516" fill="#dfdfd6" font-size="16" font-weight="600" font-family="Inter,sans-serif">Remove unnecessary complexity</text>
+    <text x="104" y="536" fill="#98989f" font-size="9" font-family="'Geist Mono',monospace">alongside the main work loop</text>
+    <!-- Workflow cards -->
+    <g font-family="Inter,sans-serif">
+      <rect x="448" y="100" width="216" height="56" rx="8" fill="#1b1b1f" stroke="#8b75ff"/><text x="464" y="124" fill="#dfdfd6" font-size="12" font-weight="600">guide-me</text><text x="464" y="144" fill="#98989f" font-size="9">orchestrates the on-ramp</text>
+      <rect x="680" y="100" width="216" height="56" rx="8" fill="#1b1b1f" stroke="rgba(223,223,214,.30)"/><text x="696" y="124" fill="#dfdfd6" font-size="12" font-weight="600">understand-work</text><text x="696" y="144" fill="#98989f" font-size="9">questions out the real need</text>
+      <rect x="912" y="100" width="216" height="56" rx="8" fill="#1b1b1f" stroke="rgba(223,223,214,.30)"/><text x="928" y="124" fill="#dfdfd6" font-size="12" font-weight="600">explain-work</text><text x="928" y="144" fill="#98989f" font-size="9">plain-language approval gate</text>
+      <rect x="564" y="196" width="240" height="56" rx="8" fill="#1b1b1f" stroke="rgba(223,223,214,.30)"/><text x="580" y="220" fill="#dfdfd6" font-size="12" font-weight="600">chart-work</text><text x="580" y="240" fill="#98989f" font-size="9">maps independent decision threads</text>
+      <rect x="820" y="196" width="240" height="56" rx="8" fill="#1b1b1f" stroke="rgba(223,223,214,.30)"/><text x="836" y="220" fill="#dfdfd6" font-size="12" font-weight="600">shape-work</text><text x="836" y="240" fill="#98989f" font-size="9">turns choices into ready issues</text>
+      <rect x="564" y="292" width="240" height="56" rx="8" fill="#1b1b1f" stroke="rgba(223,223,214,.30)"/><text x="580" y="316" fill="#dfdfd6" font-size="12" font-weight="600">deliver-work</text><text x="580" y="336" fill="#98989f" font-size="9">delivers one selected change</text>
+      <rect x="820" y="292" width="240" height="56" rx="8" fill="#1b1b1f" stroke="rgba(223,223,214,.30)"/><text x="836" y="316" fill="#dfdfd6" font-size="12" font-weight="600">batch-work</text><text x="836" y="336" fill="#98989f" font-size="9">runs several ready units together</text>
+      <rect x="448" y="388" width="216" height="56" rx="8" fill="#1b1b1f" stroke="rgba(223,223,214,.30)"/><text x="464" y="412" fill="#dfdfd6" font-size="12" font-weight="600">init-agent-os</text><text x="464" y="432" fill="#98989f" font-size="9">installs policy or onboards a repo</text>
+      <rect x="680" y="388" width="216" height="56" rx="8" fill="#1b1b1f" stroke="rgba(223,223,214,.30)"/><text x="696" y="412" fill="#dfdfd6" font-size="12" font-weight="600">dispatch-next</text><text x="696" y="432" fill="#98989f" font-size="9">selects one live next action</text>
+      <rect x="912" y="388" width="216" height="56" rx="8" fill="#1b1b1f" stroke="rgba(223,223,214,.30)"/><text x="928" y="412" fill="#dfdfd6" font-size="12" font-weight="600">record-lesson</text><text x="928" y="432" fill="#98989f" font-size="9">persists one durable lesson</text>
+      <rect x="564" y="484" width="240" height="56" rx="8" fill="#1b1b1f" stroke="rgba(223,223,214,.30)"/><text x="580" y="508" fill="#dfdfd6" font-size="12" font-weight="600">simplifier-audit</text><text x="580" y="528" fill="#98989f" font-size="9">reports repository-wide candidates</text>
+      <rect x="820" y="484" width="240" height="56" rx="8" fill="#1b1b1f" stroke="rgba(223,223,214,.30)"/><text x="836" y="508" fill="#dfdfd6" font-size="12" font-weight="600">simplifier</text><text x="836" y="528" fill="#98989f" font-size="9">applies focused simplification</text>
+    </g>
+    <!-- Legend -->
+    <line x1="80" y1="608" x2="1200" y2="608" stroke="rgba(223,223,214,.14)" stroke-width=".8"/>
+    <text x="80" y="632" fill="#98989f" font-size="8" font-family="'Geist Mono',monospace" letter-spacing=".16em">READING RULE</text>
+    <text x="80" y="656" fill="#dfdfd6" font-size="11" font-family="Inter,sans-serif">Enter at the first layer that still has unresolved work. Skip layers whose output already exists.</text>
+  </svg>
