@@ -9,6 +9,45 @@ Skills are prompts, and prompts regress silently. The suite measures observable 
 skill activates in the intended situation, stays dormant next to it, and produces the required
 artifact or boundary. It does not grade approval ceremony or hidden reasoning traces.
 
+## Behavior scorecard
+
+Trigger accuracy is only the first layer. The versioned baseline in `evals/behavior/suite.json`
+grades normalized traces of actual behavior: workflow selection, exact live-action count, lane
+ownership, safe no-op behavior, evidence-backed claims, unnecessary escalation, read-only
+integrity, sufficient but minimal verification, asynchronous completion, before/after state
+evidence, complete filesystem observation scope, and trusted tool-event provenance.
+
+Deterministic graders own facts available from the trace. Human or model judgments can grade the
+remaining qualitative behavior, but must include a score, rationale, and non-empty grader identity.
+Missing or incomplete judgments produce an incomplete scorecard, and critical failures cannot be
+hidden by a high average.
+
+Agent OS owns this JSON contract and its Node scorecard. Promptfoo and Inspect AI adapters under
+`evals/runners/` execute a host-provided harness and delegate scoring back to that core. The harness
+must observe tool events and state directly rather than trusting the evaluated agent's self-report,
+declare a complete filesystem scope, and provide trusted action provenance. Missing observation scope
+is incomplete; a read-only case with any state change fails. Agent OS does not ship a live
+credential-bearing harness: live execution requires a caller-supplied harness with genuine
+credential isolation, while replay remains supported.
+See [`evals/behavior/README.md`](https://github.com/sockulags/agent-os/blob/main/evals/behavior/README.md)
+for the run contract and commands.
+
+The historical behavior baseline ran on 2026-08-13 with Codex CLI package 0.146.0 on the tested
+Windows x64 host, using isolated Docker fixtures: six synthetic contracts, three independent
+sessions each, and 18 accepted records. It covers one-action dispatch, blocked no-op, a
+higher-priority out-of-lane trap, reversible-detail escalation, an unsupported production-health
+claim, and a 15-second asynchronous completion gate. Every contract passed 3/3; the lowest
+accepted score was 0.9983. Replaying the same records produced Promptfoo 18/18 and Inspect AI
+18/18 with displayed mean 1.000. This is historical evidence only; the credential-bearing live
+harness used for that capture is not shipped. See
+[`evals/RESULTS.md`](https://github.com/sockulags/agent-os/blob/main/evals/RESULTS.md) for evidence
+boundaries and excluded harness attempts.
+
+The calibration run also caught a false green: three agents avoided escalation but failed to apply
+the reversible label, and a non-critical model-grader failure was averaged away. Those runs are not
+in the baseline. The requirement is now critical and observable, and three replacement runs passed.
+This is why critical scorecard rows cannot be compensated by unrelated successes.
+
 ## Case design
 
 `evals/cases/manifest.json` indexes every distributed skill. Each skill has at least two positive and
