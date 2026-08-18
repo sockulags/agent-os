@@ -109,6 +109,9 @@ name. A skill edit and its documentation page are one change — the pages under
   2 positive and 2 negative cases per skill.
 - `evals/RESULTS.md` — historical forward-test results. New results evaluate observable contracts,
   not approval ceremony or reasoning traces.
+- `evals/behavior/` — runner-independent behavior cases, normalized run records, deterministic
+  scorecard graders, and explicit human/model judgments.
+- `evals/runners/` — thin Promptfoo and Inspect AI adapters around the Agent OS scorecard.
 - `evals/runs/` — raw logs, gitignored.
 
 ## Experiments

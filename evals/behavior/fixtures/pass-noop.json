@@ -1,0 +1,37 @@
+{
+  "schema": 1,
+  "case_id": "blocked-queue-noop-read-only",
+  "output": "No safe target is available. The existing worker completed, so the queue can be reevaluated without a mutation.",
+  "trace": {
+    "observation": {
+      "filesystem": { "scope": "fixture-root", "complete": true },
+      "tool_events": { "source": "trusted-tool-events", "complete": true }
+    },
+    "workflows": [{ "name": "dispatch-next", "selected": true }],
+    "actions": [],
+    "claims": [
+      { "id": "claim-1", "text": "No safe target is available.", "material": true, "evidence": ["queue-read"] },
+      { "id": "claim-2", "text": "The worker completed.", "material": true, "evidence": ["worker-read"] }
+    ],
+    "evidence": [
+      { "id": "queue-read", "kind": "queue_state", "source": "tracker-read" },
+      { "id": "worker-read", "kind": "worker_completion", "source": "runtime-event" }
+    ],
+    "escalations": [],
+    "verifications": [
+      { "id": "queue-check", "kind": "queue_state", "passed": true, "fresh": true },
+      { "id": "worker-check", "kind": "worker_completion", "passed": true, "fresh": true }
+    ],
+    "async_jobs": [{ "id": "worker-1", "required": true, "status": "completed" }],
+    "state": {
+      "changes": []
+    }
+  },
+  "judgments": {
+    "behavior_quality": {
+      "score": 1,
+      "rationale": "The explanation identifies the blocker and stops without inventing work or changing state.",
+      "grader": { "type": "human", "name": "fixture" }
+    }
+  }
+}

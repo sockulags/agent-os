@@ -25,7 +25,7 @@ users as global policy; do not put repository-only release rules there.
 ## Verification
 
 - Repository checks: `node scripts/validate-agent-os.mjs`,
-  `node scripts/test-validate-agent-os.mjs`, `npm test`,
+  `node scripts/test-validate-agent-os.mjs`, `npm test`, `npm run test:evals`,
   `node skills/batch-work/scripts/test-manifest-hash.mjs`,
   `npm --prefix docs-site run build`, and `git diff --check`.
 - Before publishing, inspect `npm pack --dry-run --json` and install the packed artifact in isolated
