@@ -31,6 +31,7 @@ workflows compose (`understand-work`, `explain-work`), the disciplines, and the 
 | `scope-guard` | discipline | automatic | Keep work inside the task; flag drift |
 | `simplifier-review` | discipline | automatic | Review a diff for unnecessary complexity |
 | `notice-lesson` | discipline | automatic | Treat interruptions as misunderstanding signals |
+| `plain-voice` | discipline | automatic | Cut generated-prose tells from what a person reads |
 | `list-skills` | meta | manual | List installed skills and how to invoke them |
 | `writing-skills` | meta | manual | Doctrine and definition of done for agent-os skills |
 

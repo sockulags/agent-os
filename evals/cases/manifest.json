@@ -133,6 +133,17 @@
         "init-agent-os.md#IA-N2"
       ]
     },
+    "plain-voice": {
+      "positive": [
+        "plain-voice.md#PV-P1 Generated draft",
+        "plain-voice.md#PV-P2 Swedish technical terms",
+        "plain-voice.md#PV-P3 Ordinary reply"
+      ],
+      "negative": [
+        "plain-voice.md#PV-N1 Developer's own text",
+        "plain-voice.md#PV-N2 Quoted source"
+      ]
+    },
     "scope-guard": {
       "positive": [
         "scope-guard.md#Positive 1",
