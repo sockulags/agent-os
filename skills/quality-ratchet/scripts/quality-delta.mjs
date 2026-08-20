@@ -23,6 +23,7 @@ const DEPENDENCY_SECTIONS = [
   'peerDependencies'
 ]
 const OPTIONAL_ANALYZERS = ['lizard', 'jscpd']
+const EMPTY_TREE = '4b825dc642cb6eb9a060e54bf8d69288fbee4904'
 
 export class QualityRatchetError extends Error {
   constructor(message, code = 'QUALITY_RATCHET') {
@@ -43,6 +44,22 @@ function digest(value) {
 function normalizePath(value) {
   const resolved = path.resolve(value)
   return process.platform === 'win32' ? resolved.toLowerCase() : resolved
+}
+
+function isSafeGitRelativePath(value) {
+  return typeof value === 'string' && value.length > 0 &&
+    value === value.replaceAll('\\', '/') && !value.includes('\0') &&
+    !path.posix.isAbsolute(value) && !path.win32.isAbsolute(value) && !/^[A-Za-z]:/.test(value) &&
+    value.split('/').every((part) => part !== '' && part !== '.' && part !== '..')
+}
+
+function canonicalGitPaths(value) {
+  return Array.isArray(value) && value.every(isSafeGitRelativePath) &&
+    value.every((relativePath, index) => index === 0 || value[index - 1] < relativePath)
+}
+
+function validHead(value) {
+  return value === null || (typeof value === 'string' && /^(?:[0-9a-f]{40}|[0-9a-f]{64})$/.test(value))
 }
 
 function runGit(root, args, { allowFailure = false } = {}) {
@@ -80,6 +97,47 @@ function trackedPaths(root) {
 
 function untrackedPaths(root) {
   return splitGitPaths(runGit(root, ['ls-files', '--others', '--exclude-standard', '-z']))
+}
+
+function gitStatusEntries(root) {
+  const tokens = runGit(root, ['status', '--porcelain=v1', '-z', '--untracked-files=all'])
+    .split('\0')
+    .filter(Boolean)
+  const entries = []
+  for (let index = 0; index < tokens.length; index += 1) {
+    const token = tokens[index]
+    const status = token.slice(0, 2)
+    const relativePath = token.slice(3).replaceAll('\\', '/')
+    entries.push({ status, path: relativePath })
+    if (status.includes('R') || status.includes('C')) {
+      const previousPath = tokens[index + 1]
+      if (previousPath !== undefined) {
+        entries.push({ status, path: previousPath.replaceAll('\\', '/') })
+        index += 1
+      }
+    }
+  }
+  return entries.sort((left, right) => {
+    const leftKey = `${left.status}\0${left.path}`
+    const rightKey = `${right.status}\0${right.path}`
+    return leftKey < rightKey ? -1 : leftKey > rightKey ? 1 : 0
+  })
+}
+
+function gitState(root) {
+  const status = gitStatusEntries(root)
+  return {
+    head: runGit(root, ['rev-parse', 'HEAD'], { allowFailure: true })?.trim() || null,
+    status,
+    dirtyPaths: [...new Set(status.map((entry) => entry.path))].sort()
+  }
+}
+
+function changedHeadPaths(root, beforeHead, afterHead) {
+  if (!afterHead || beforeHead === afterHead) return []
+  return splitGitPaths(runGit(root, [
+    'diff', '--name-only', '--no-renames', '-z', beforeHead || EMPTY_TREE, afterHead
+  ]))
 }
 
 function isWithinRoot(root, target) {
@@ -176,14 +234,54 @@ function fileFingerprintRecord(record) {
   return [record.path, record.kind, record.hash, record.bytes, record.source, record.nloc]
 }
 
+function entryFingerprint(files, dirtyPaths, head) {
+  return digest(JSON.stringify({
+    files: files.map(fileFingerprintRecord),
+    dirtyPaths,
+    head
+  }))
+}
+
 function snapshot(root) {
+  const git = gitState(root)
   const paths = [...new Set([...trackedPaths(root), ...untrackedPaths(root)])].sort()
   const files = paths.map((relativePath) => fileRecord(root, relativePath))
   return {
     files,
-    fingerprint: digest(JSON.stringify(files.map(fileFingerprintRecord))),
+    fingerprint: entryFingerprint(files, git.dirtyPaths, git.head),
     sourceNloc: files.reduce((total, file) => total + (file.source ? file.nloc : 0), 0),
-    head: runGit(root, ['rev-parse', 'HEAD'], { allowFailure: true })?.trim() || null
+    head: git.head,
+    dirtyPaths: git.dirtyPaths
+  }
+}
+
+function mergeCandidateFiles(baselineFiles, inspected) {
+  const files = baselineFiles.map((file) => inspected.get(file.path) || file)
+  const knownPaths = new Set(files.map((file) => file.path))
+  for (const file of inspected.values()) {
+    if (!knownPaths.has(file.path) && file.kind !== 'missing') files.push(file)
+  }
+  return files.sort((left, right) => left.path < right.path ? -1 : left.path > right.path ? 1 : 0)
+}
+
+function candidateSnapshot(root, entry, { includeFiles = true } = {}) {
+  const git = gitState(root)
+  const headPaths = changedHeadPaths(root, entry.head, git.head)
+  const relevantPaths = [...new Set([
+    ...entry.dirtyPaths,
+    ...git.dirtyPaths,
+    ...headPaths
+  ])].sort()
+  const inspected = new Map(relevantPaths.map((relativePath) => [relativePath, fileRecord(root, relativePath)]))
+  const files = includeFiles ? mergeCandidateFiles(entry.files, inspected) : null
+  return {
+    files,
+    fingerprint: digest(JSON.stringify({
+      head: git.head,
+      status: git.status,
+      files: relevantPaths.map((relativePath) => fileFingerprintRecord(inspected.get(relativePath)))
+    })),
+    head: git.head
   }
 }
 
@@ -317,6 +415,8 @@ function changedPaths(beforeFiles, afterFiles) {
       if (current.source) added.push(relativePath)
     } else if (!current) {
       if (previous.source) deleted.push(relativePath)
+    } else if (current.kind === 'missing' && previous.kind !== 'missing') {
+      if (previous.source) deleted.push(relativePath)
     } else if (JSON.stringify(fileFingerprintRecord(previous)) !== JSON.stringify(fileFingerprintRecord(current))) {
       if (previous.source || current.source) changed.push(relativePath)
     }
@@ -328,7 +428,8 @@ function touchedLegacy(beforeFiles, afterFiles, touchedPaths) {
   const before = fileMap(beforeFiles)
   const after = fileMap(afterFiles)
   const beforeFilesTouched = touchedPaths.filter((relativePath) => before.get(relativePath)?.source)
-  const afterFilesTouched = touchedPaths.filter((relativePath) => before.get(relativePath)?.source && after.get(relativePath)?.source)
+  const afterFilesTouched = touchedPaths.filter((relativePath) => before.get(relativePath)?.source &&
+    after.get(relativePath)?.kind !== 'missing' && after.get(relativePath)?.source)
   return {
     before: {
       status: beforeFilesTouched.length ? 'touched' : 'none',
@@ -384,13 +485,16 @@ function readState(context) {
   }
   const filesValid = Array.isArray(state?.entry?.files) && state.entry.files.every((file) =>
     file && typeof file.path === 'string' && typeof file.source === 'boolean' && Number.isInteger(file.nloc))
+  const dirtyPathsValid = canonicalGitPaths(state?.entry?.dirtyPaths)
+  const headValid = validHead(state?.entry?.head)
   const pathsValid = typeof state?.repositoryRoot === 'string' && typeof state?.gitDir === 'string'
-  const fingerprintValid = filesValid && state.entry.fingerprint ===
-    digest(JSON.stringify(state.entry.files.map(fileFingerprintRecord)))
+  const fingerprintValid = filesValid && dirtyPathsValid && headValid && state.entry.fingerprint ===
+    entryFingerprint(state.entry.files, state.entry.dirtyPaths, state.entry.head)
   if (!state || state.schema !== STATE_SCHEMA || state.state !== 'active' || !pathsValid ||
       normalizePath(state.repositoryRoot) !== normalizePath(context.root) ||
       normalizePath(state.gitDir) !== normalizePath(context.gitDir) ||
-      !state.entry || typeof state.entry.fingerprint !== 'string' || !filesValid || !fingerprintValid ||
+      !state.entry || typeof state.entry.fingerprint !== 'string' || !filesValid || !dirtyPathsValid || !headValid ||
+      !fingerprintValid ||
       !state.entry.packageDependencies || typeof state.entry.packageDependencies.status !== 'string' ||
       !state.entry.optionalAnalyzers || typeof state.entry.optionalAnalyzers !== 'object') {
     error(`Quality ratchet state is invalid or belongs to another worktree at ${context.statePath}. Run clear, then begin again.`, 'STATE_INVALID')
@@ -422,6 +526,7 @@ function baselineState(context, candidate, dependencies, analyzers) {
     entry: {
       fingerprint: candidate.fingerprint,
       head: candidate.head,
+      dirtyPaths: candidate.dirtyPaths,
       sourceNloc: candidate.sourceNloc,
       fileCount: candidate.files.length,
       files: candidate.files,
@@ -455,7 +560,7 @@ export function check(cwd = process.cwd(), { detect = detectOptionalAnalyzers } 
   const context = repositoryContext(cwd)
   const state = readState(context)
   if (!state) error(`No active quality ratchet baseline exists for ${context.root}. Run begin before the first mutation.`, 'BASELINE_MISSING')
-  const candidate = snapshot(context.root)
+  const candidate = candidateSnapshot(context.root, state.entry)
   const dependencies = packageDependencies(context.root)
   const analyzers = safeAnalyzerDetection(detect)
   const evidence = evidenceFor(state, candidate, dependencies, analyzers)
@@ -500,7 +605,7 @@ export function hook(cwd = process.cwd(), payload = {}) {
     if (!state) return allowResult()
     let candidate
     try {
-      candidate = snapshot(context.root)
+      candidate = candidateSnapshot(context.root, state.entry, { includeFiles: false })
     } catch (cause) {
       const reason = `Quality ratchet could not inspect the candidate: ${cause.message}. Run the quality-ratchet check and retry.`
       return stopHookActive ? allowResult() : blockResult(reason)
@@ -602,7 +707,6 @@ function main() {
     const payload = readHookPayload()
     const result = hook(payload.cwd || options.root, payload)
     console.log(JSON.stringify(result))
-    if (result.decision === 'block') process.exitCode = 2
   } catch (cause) {
     console.error(`quality-ratchet: ${cause.message}`)
     process.exitCode = cause instanceof QualityRatchetError && cause.code === 'ARGUMENTS' ? 2 : 1

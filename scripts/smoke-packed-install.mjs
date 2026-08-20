@@ -70,7 +70,7 @@ function verifyInstalledLifecycle() {
       input: JSON.stringify({ cwd: repository, stop_hook_active: false })
     })
     const activeOutput = JSON.parse(active.stdout || '{}')
-    if (active.status !== 2 || activeOutput.decision !== 'block' || !activeOutput.reason?.includes(runner)) {
+    if (active.status !== 0 || activeOutput.decision !== 'block' || !activeOutput.reason?.includes(runner)) {
       throw new Error(`${platformRoot} installed runner did not activate its Stop lifecycle.`)
     }
 
