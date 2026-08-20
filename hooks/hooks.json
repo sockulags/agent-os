@@ -1,0 +1,16 @@
+{
+  "description": "Agent OS quality-ratchet lifecycle hook.",
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/skills/quality-ratchet/scripts/quality-delta.mjs\" hook --agent-os-hook=quality-ratchet",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
+}

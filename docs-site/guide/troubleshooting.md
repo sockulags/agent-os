@@ -31,6 +31,44 @@ loop is `claude --plugin-dir .` plus `/reload-plugins`.
 Compare the agent's skill list against the [skills overview](/skills/) — if they differ, fix the
 cache before debugging anything else.
 
+## The quality-ratchet Stop hook blocks
+
+**Symptom:** the host asks for another turn instead of stopping.
+
+The hook blocks only an active lifecycle problem. In the implementation worktree, inspect the
+candidate with:
+
+```text
+node "<installed quality-ratchet runner>" check
+```
+
+For direct installs, the runner is under `~/.claude/skills/quality-ratchet/scripts/quality-delta.mjs`
+or `~/.codex/skills/quality-ratchet/scripts/quality-delta.mjs` at user scope, and
+`<project>/.claude/skills/quality-ratchet/scripts/quality-delta.mjs` or
+`<project>/.agents/skills/quality-ratchet/scripts/quality-delta.mjs` at project scope. Resolve it
+relative to the loaded `quality-ratchet/SKILL.md` rather than assume a checkout.
+
+It compares the exact entry baseline with the candidate and reports source-file, touched NLOC,
+legacy-before/after, package dependency, and optional-analyzer evidence. Counts are signals for
+semantic review, not score or threshold gates. Missing Lizard or jscpd is explicitly unavailable,
+not clean. A worktree with no active baseline is a no-op.
+
+If the attempt was abandoned, clear only its active lifecycle state:
+
+```text
+node "<installed quality-ratchet runner>" clear
+```
+
+The checkout-relative `node skills/quality-ratchet/scripts/quality-delta.mjs ...` command applies
+only during repository or native-plugin development where that file exists.
+
+Restart the host after a direct update. For Claude plugin development use `/reload-plugins` where
+supported; Codex needs a new session. Direct hooks live in `~/.claude/settings.json` or
+`<project>/.claude/settings.json`, and `~/.codex/hooks.json` or `<project>/.codex/hooks.json`.
+The installer preserves unrelated hook groups and replaces only the stable Agent OS marker. There
+is no uninstall command yet; disable safely by removing only that managed entry and keeping the
+rest of the host configuration. Native plugin hooks require Node on PATH.
+
 ## Plugin mode cannot find a host CLI
 
 Direct installation does not require Codex or Claude Code. If you selected `--method plugin`, install

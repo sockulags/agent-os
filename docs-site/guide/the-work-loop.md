@@ -37,6 +37,8 @@ The automatic disciplines run underneath:
 
 - `diagnose-before-fix` establishes a supported cause for unknown failures;
 - `scope-guard` contains required, adjacent, and conflicting discoveries;
+- `quality-ratchet` records exact entry/candidate evidence, allowing bounded touched-surface
+  improvement without turning raw counts into gates;
 - `simplifier-review` checks the candidate diff for unnecessary code and solution layers;
 - `verify-before-done` matches material completion claims to fresh evidence;
 - `notice-lesson` treats developer interruptions and corrections as misunderstanding signals and

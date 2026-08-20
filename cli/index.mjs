@@ -7,6 +7,10 @@ import os from 'node:os'
 import path from 'node:path'
 import { createInterface } from 'node:readline'
 import { fileURLToPath, pathToFileURL } from 'node:url'
+import {
+  HOOK_TIMEOUT_SECONDS,
+  QUALITY_HOOK_MARKER
+} from '../skills/quality-ratchet/scripts/quality-delta.mjs'
 
 const packageRoot = fileURLToPath(new URL('../', import.meta.url))
 const packagePath = path.join(packageRoot, 'package.json')
@@ -16,6 +20,7 @@ export const VERSION = packageJson.version
 export const PACKAGE_NAME = packageJson.name
 export const MARKETPLACE_SOURCE = 'sockulags/agent-os'
 export const INSTALL_MANIFEST = '.agent-os-install.json'
+export const QUALITY_HOOK_EVENT = 'Stop'
 
 const BEGIN_MARKER = '<!-- BEGIN AGENT OS -->'
 const END_MARKER = '<!-- END AGENT OS -->'
@@ -75,6 +80,14 @@ function normalizeScope(value) {
     throw new CliError('Scope must be user, project, or local.')
   }
   return normalized
+}
+
+function quoteCommandArg(value) {
+  return '"' + String(value).replaceAll('"', '\\"') + '"'
+}
+
+export function buildManagedHookCommand(scriptPath, nodePath = process.execPath) {
+  return [quoteCommandArg(nodePath), quoteCommandArg(scriptPath), 'hook', QUALITY_HOOK_MARKER].join(' ')
 }
 
 export function parseArgs(argv) {
@@ -163,6 +176,23 @@ export function targetSkillRoot(platform, scope, {
   throw new CliError('Local scope is available only with --method plugin.')
 }
 
+export function hookConfigPath(platform, scope, {
+  homeDir = os.homedir(),
+  cwd = process.cwd()
+} = {}) {
+  if (scope === 'user') {
+    return platform === 'codex'
+      ? path.join(homeDir, '.codex', 'hooks.json')
+      : path.join(homeDir, '.claude', 'settings.json')
+  }
+  if (scope === 'project') {
+    return platform === 'codex'
+      ? path.join(cwd, '.codex', 'hooks.json')
+      : path.join(cwd, '.claude', 'settings.json')
+  }
+  throw new CliError('Local scope is available only with --method plugin.')
+}
+
 export function buildPlan(options, pathOptions = {}) {
   const { command, platform, method = 'direct', scope = 'user', policy = true } = options
   const steps = []
@@ -177,6 +207,13 @@ export function buildPlan(options, pathOptions = {}) {
         args: [root],
         description: (command === 'update' ? 'Update' : 'Install') +
           ' Agent OS managed skills for ' + config.label + '.'
+      })
+      steps.push({
+        platform: name,
+        kind: 'install-hooks',
+        command: 'filesystem',
+        args: [hookConfigPath(name, scope, pathOptions)],
+        description: 'Merge the Agent OS Stop hook into the ' + config.label + ' configuration.'
       })
       continue
     }
@@ -391,6 +428,95 @@ function listPackagedSkills(sourceRoot, fsImpl = fs) {
   return entries
 }
 
+function containsHookMarker(value) {
+  if (typeof value === 'string') return value.includes(QUALITY_HOOK_MARKER)
+  if (Array.isArray(value)) return value.some(containsHookMarker)
+  if (value && typeof value === 'object') return Object.values(value).some(containsHookMarker)
+  return false
+}
+
+function managedCommandHooks(value, matches = []) {
+  if (Array.isArray(value)) {
+    value.forEach((item) => managedCommandHooks(item, matches))
+    return matches
+  }
+  if (!value || typeof value !== 'object') return matches
+  if (typeof value.command === 'string' && value.command.includes(QUALITY_HOOK_MARKER)) {
+    matches.push(value)
+  }
+  Object.entries(value).forEach(([key, item]) => {
+    if (key !== 'command') managedCommandHooks(item, matches)
+  })
+  return matches
+}
+
+export function planManagedHookConfig(content, command, target = 'Agent OS hook configuration') {
+  let config
+  if (!content.trim()) {
+    config = {}
+  } else {
+    try {
+      config = JSON.parse(content)
+    } catch (cause) {
+      throw new CliError('Cannot read ' + target + ': ' + cause.message + '; no files were changed.')
+    }
+  }
+  if (!config || typeof config !== 'object' || Array.isArray(config)) {
+    throw new CliError('Refusing to merge the Agent OS hook into malformed ' + target + '; no files were changed.')
+  }
+  if (config.hooks === undefined) config.hooks = {}
+  if (!config.hooks || typeof config.hooks !== 'object' || Array.isArray(config.hooks)) {
+    throw new CliError('Refusing to merge the Agent OS hook into malformed ' + target + '.hooks; no files were changed.')
+  }
+  if (config.hooks[QUALITY_HOOK_EVENT] === undefined) config.hooks[QUALITY_HOOK_EVENT] = []
+  if (!Array.isArray(config.hooks[QUALITY_HOOK_EVENT])) {
+    throw new CliError('Refusing to merge the Agent OS hook into malformed ' + target + '.hooks.Stop; no files were changed.')
+  }
+
+  const managed = []
+  for (const [event, value] of Object.entries(config.hooks)) {
+    const matches = managedCommandHooks(value)
+    if (matches.length && event !== QUALITY_HOOK_EVENT) {
+      throw new CliError('Refusing to update an Agent OS hook outside hooks.Stop in ' + target + '; no files were changed.')
+    }
+    managed.push(...matches)
+  }
+  if (containsHookMarker(config) && managed.length === 0) {
+    throw new CliError('Refusing to update an ambiguous Agent OS hook marker in ' + target + '; no files were changed.')
+  }
+  if (managed.length > 1) {
+    throw new CliError('Refusing to update multiple Agent OS hook entries in ' + target + '; no files were changed.')
+  }
+
+  if (managed.length === 1) {
+    const entry = managed[0]
+    if (entry.type !== 'command') {
+      throw new CliError('Refusing to update a malformed Agent OS command hook in ' + target + '; no files were changed.')
+    }
+    const changed = entry.command !== command || entry.timeout !== HOOK_TIMEOUT_SECONDS
+    entry.command = command
+    entry.timeout = HOOK_TIMEOUT_SECONDS
+    return {
+      changed,
+      status: changed ? 'UPDATED' : 'OK',
+      content: changed ? JSON.stringify(config, null, 2) + '\n' : content
+    }
+  }
+
+  config.hooks[QUALITY_HOOK_EVENT].push({
+    hooks: [{
+      type: 'command',
+      command,
+      timeout: HOOK_TIMEOUT_SECONDS
+    }]
+  })
+  return {
+    changed: true,
+    status: 'ADDED',
+    content: JSON.stringify(config, null, 2) + '\n'
+  }
+}
+
 function readInstallManifest(root, fsImpl = fs) {
   const manifestPath = path.join(root, INSTALL_MANIFEST)
   if (!fsImpl.existsSync(manifestPath)) return null
@@ -400,7 +526,8 @@ function readInstallManifest(root, fsImpl = fs) {
   } catch (error) {
     throw new CliError('Cannot read Agent OS install manifest at ' + manifestPath + ': ' + error.message)
   }
-  if (manifest.package !== PACKAGE_NAME || !Array.isArray(manifest.skills)) {
+  if (manifest.package !== PACKAGE_NAME || !Array.isArray(manifest.skills) ||
+      ![1, 2].includes(manifest.schemaVersion ?? 1)) {
     throw new CliError('Refusing to use an unrecognized install manifest at ' + manifestPath)
   }
   return manifest
@@ -410,8 +537,67 @@ function directTargets(options, { homeDir, cwd }) {
   return selectedPlatforms(options.platform).map((platform) => ({
     platform,
     scope: options.scope,
-    root: targetSkillRoot(platform, options.scope, { homeDir, cwd })
+    root: targetSkillRoot(platform, options.scope, { homeDir, cwd }),
+    hookPath: hookConfigPath(platform, options.scope, { homeDir, cwd })
   }))
+}
+
+function prepareHookPlans(options, { homeDir, cwd, fsImpl = fs }) {
+  return directTargets(options, { homeDir, cwd }).map((target) => {
+    const scriptPath = path.join(target.root, 'quality-ratchet', 'scripts', 'quality-delta.mjs')
+    const command = buildManagedHookCommand(scriptPath)
+    const current = fsImpl.existsSync(target.hookPath)
+      ? fsImpl.readFileSync(target.hookPath, 'utf8')
+      : ''
+    return {
+      ...target,
+      command,
+      ...planManagedHookConfig(current, command, target.hookPath)
+    }
+  })
+}
+
+function writeFileAtomic(target, content, fsImpl = fs) {
+  const directory = path.dirname(target)
+  const temporary = path.join(
+    directory,
+    '.' + path.basename(target) + '.agent-os-' + randomUUID() + '.tmp'
+  )
+  fsImpl.mkdirSync(directory, { recursive: true })
+  try {
+    fsImpl.writeFileSync(temporary, content)
+    fsImpl.renameSync(temporary, target)
+  } finally {
+    if (fsImpl.existsSync(temporary)) fsImpl.rmSync(temporary, { force: true })
+  }
+}
+
+function applyHookPlans(plans, { output, fsImpl = fs }) {
+  const applied = []
+  try {
+    for (const plan of plans) {
+      if (plan.changed) {
+        const previous = fsImpl.existsSync(plan.hookPath)
+          ? fsImpl.readFileSync(plan.hookPath, 'utf8')
+          : null
+        applied.push({ ...plan, previous })
+        writeFileAtomic(plan.hookPath, plan.content, fsImpl)
+      }
+      output.write(plan.status.padEnd(7) + plan.hookPath + '\n')
+    }
+  } catch (cause) {
+    let rollbackFailure = null
+    for (const plan of applied.reverse()) {
+      try {
+        if (plan.previous === null) fsImpl.rmSync(plan.hookPath, { force: true })
+        else writeFileAtomic(plan.hookPath, plan.previous, fsImpl)
+      } catch (rollbackCause) {
+        rollbackFailure ??= rollbackCause
+      }
+    }
+    throw new CliError('Failed to update Agent OS hook configuration: ' + cause.message +
+      (rollbackFailure ? '; rollback also failed: ' + rollbackFailure.message : ''))
+  }
 }
 
 function preflightDirectTarget(target, skillNames, fsImpl = fs) {
@@ -463,14 +649,21 @@ function replaceManagedSkills(target, sourceRoot, skillNames, previousManifest, 
     }
 
     const manifest = {
-      schemaVersion: 1,
+      schemaVersion: 2,
       package: PACKAGE_NAME,
       version: VERSION,
       platform: target.platform,
       scope: target.scope,
-      skills: skillNames
+      skills: skillNames,
+      integrations: {
+        hooks: {
+          configPath: target.hookPath,
+          event: QUALITY_HOOK_EVENT,
+          marker: QUALITY_HOOK_MARKER
+        }
+      }
     }
-    fsImpl.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2) + '\n')
+    writeFileAtomic(manifestPath, JSON.stringify(manifest, null, 2) + '\n', fsImpl)
   } catch (error) {
     for (const name of installed.reverse()) {
       const destination = path.join(target.root, name)
@@ -483,7 +676,7 @@ function replaceManagedSkills(target, sourceRoot, skillNames, previousManifest, 
     if (previousManifestText === null) {
       if (fsImpl.existsSync(manifestPath)) fsImpl.rmSync(manifestPath, { force: true })
     } else {
-      fsImpl.writeFileSync(manifestPath, previousManifestText)
+      writeFileAtomic(manifestPath, previousManifestText, fsImpl)
     }
     throw new CliError('Failed to update managed skills in ' + target.root + ': ' + error.message)
   } finally {
@@ -492,8 +685,7 @@ function replaceManagedSkills(target, sourceRoot, skillNames, previousManifest, 
   }
 }
 
-function executeDirect(options, {
-  output,
+function prepareDirectInstall(options, {
   fsImpl,
   homeDir,
   cwd,
@@ -502,13 +694,83 @@ function executeDirect(options, {
   const skillNames = listPackagedSkills(sourceRoot, fsImpl)
   const targets = directTargets(options, { homeDir, cwd })
   const manifests = targets.map((target) => preflightDirectTarget(target, skillNames, fsImpl))
+  return { skillNames, targets, manifests, sourceRoot }
+}
 
-  targets.forEach((target, index) => {
+function prepareManagedSkillRollback(plan, fsImpl = fs) {
+  const snapshots = []
+  try {
+    plan.targets.forEach((target, index) => {
+      const previousNames = plan.manifests[index]?.skills || []
+      const backupRoot = path.join(target.root, '.agent-os-transaction-' + randomUUID())
+      const backedUpNames = previousNames.filter((name) =>
+        fsImpl.existsSync(path.join(target.root, name)))
+      const manifestPath = path.join(target.root, INSTALL_MANIFEST)
+      const previousManifestText = fsImpl.existsSync(manifestPath)
+        ? fsImpl.readFileSync(manifestPath, 'utf8')
+        : null
+      const snapshot = { target, backupRoot, previousNames, backedUpNames, previousManifestText }
+      snapshots.push(snapshot)
+      if (backedUpNames.length > 0) {
+        fsImpl.mkdirSync(backupRoot, { recursive: true })
+        for (const name of backedUpNames) {
+          fsImpl.cpSync(path.join(target.root, name), path.join(backupRoot, name), { recursive: true })
+        }
+      }
+    })
+    return snapshots
+  } catch (cause) {
+    for (const snapshot of snapshots) {
+      if (fsImpl.existsSync(snapshot.backupRoot)) {
+        fsImpl.rmSync(snapshot.backupRoot, { recursive: true, force: true })
+      }
+    }
+    throw new CliError('Failed to prepare managed skill rollback: ' + cause.message)
+  }
+}
+
+function cleanupManagedSkillRollback(snapshots, fsImpl = fs) {
+  for (const snapshot of snapshots) {
+    if (fsImpl.existsSync(snapshot.backupRoot)) {
+      fsImpl.rmSync(snapshot.backupRoot, { recursive: true, force: true })
+    }
+  }
+}
+
+function rollbackManagedSkills(plan, snapshots, fsImpl = fs) {
+  let failure = null
+  snapshots.slice().reverse().forEach((snapshot) => {
+    try {
+      const names = [...new Set([...plan.skillNames, ...snapshot.previousNames])]
+      for (const name of names) {
+        const destination = path.join(snapshot.target.root, name)
+        if (fsImpl.existsSync(destination)) fsImpl.rmSync(destination, { recursive: true, force: true })
+      }
+      for (const name of snapshot.backedUpNames) {
+        const backup = path.join(snapshot.backupRoot, name)
+        if (fsImpl.existsSync(backup)) fsImpl.renameSync(backup, path.join(snapshot.target.root, name))
+      }
+      const manifestPath = path.join(snapshot.target.root, INSTALL_MANIFEST)
+      if (snapshot.previousManifestText === null) fsImpl.rmSync(manifestPath, { force: true })
+      else writeFileAtomic(manifestPath, snapshot.previousManifestText, fsImpl)
+    } catch (cause) {
+      failure ??= cause
+    }
+  })
+  if (failure) throw new CliError('Failed to restore managed skills: ' + failure.message)
+  cleanupManagedSkillRollback(snapshots, fsImpl)
+}
+
+function applyDirectInstall(options, plan, {
+  output,
+  fsImpl
+}) {
+  plan.targets.forEach((target, index) => {
     const config = PLATFORM_CONFIG[target.platform]
     output.write('\n[' + config.label + ']\n')
     output.write((options.command === 'update' ? 'Updating' : 'Installing') +
-      ' ' + skillNames.length + ' managed skills in ' + target.root + '...\n')
-    replaceManagedSkills(target, sourceRoot, skillNames, manifests[index], fsImpl)
+      ' ' + plan.skillNames.length + ' managed skills in ' + target.root + '...\n')
+    replaceManagedSkills(target, plan.sourceRoot, plan.skillNames, plan.manifests[index], fsImpl)
     output.write('Done. Start a new ' + config.label + ' session to load the skills.\n')
   })
 }
@@ -653,11 +915,35 @@ export async function executeInstall(options, {
   const policyPlans = options.policy
     ? preparePolicyPlans({ fsImpl, homeDir, policyFile })
     : null
+  const directPlan = options.method === 'plugin'
+    ? null
+    : prepareDirectInstall(options, { fsImpl, homeDir, cwd, sourceRoot })
+  const hookPlans = options.method === 'plugin'
+    ? null
+    : prepareHookPlans(options, { fsImpl, homeDir, cwd })
 
   if (options.method === 'plugin') {
     executePlugin(options, { output, execute, exists })
   } else {
-    executeDirect(options, { output, fsImpl, homeDir, cwd, sourceRoot })
+    const rollback = prepareManagedSkillRollback(directPlan, fsImpl)
+    try {
+      applyDirectInstall(options, directPlan, { output, fsImpl })
+      output.write('\n[Quality ratchet hooks]\n')
+      applyHookPlans(hookPlans, { output, fsImpl })
+    } catch (cause) {
+      try {
+        rollbackManagedSkills(directPlan, rollback, fsImpl)
+      } catch (rollbackCause) {
+        throw new CliError(cause.message + '; ' + rollbackCause.message)
+      }
+      throw cause
+    }
+    try {
+      cleanupManagedSkillRollback(rollback, fsImpl)
+    } catch (cause) {
+      throw new CliError('Agent OS direct install committed, but failed to clean transaction backups: ' +
+        cause.message + '. Installed skills and hooks were not rolled back.')
+    }
   }
 
   if (options.policy) {
@@ -673,6 +959,7 @@ export function printHelp(output = process.stdout) {
     '  npx ' + PACKAGE_NAME + ' install\n' +
     '  npx ' + PACKAGE_NAME + ' update\n\n' +
     'Direct installation is the default and does not require Codex or Claude Code CLI.\n\n' +
+    'Direct installation also merges the Agent OS quality-ratchet Stop hook without replacing unrelated hooks.\n\n' +
     'Options:\n' +
     '  -p, --platform <name>  claude, codex, or both\n' +
     '  -m, --method <name>    direct (default) or plugin\n' +

@@ -83,6 +83,7 @@ Always on; no invocation.
 | [`proportional-testing`](/skills/proportional-testing) | discipline | automatic | Minimum meaningful regression coverage |
 | [`scope-guard`](/skills/scope-guard) | discipline | automatic | Keep work inside the task; flag drift |
 | [`simplifier-review`](/skills/simplifier-review) | discipline | automatic | Review a diff for unnecessary complexity |
+| [`quality-ratchet`](/skills/quality-ratchet) | discipline | automatic | Compare exact entry and candidate evidence without score gates |
 | [`notice-lesson`](/skills/notice-lesson) | discipline | automatic | Treat interruptions as misunderstanding signals |
 | [`plain-voice`](/skills/plain-voice) | discipline | automatic | Cut generated-prose tells from what a person reads |
 

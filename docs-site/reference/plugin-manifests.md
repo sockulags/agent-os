@@ -25,6 +25,8 @@ The Claude Code plugin manifest.
 ```
 
 Claude discovers skills from the `skills/` directory by convention, so no path field is needed.
+The packaged `hooks/hooks.json` adds one shared `Stop` hook for the quality-ratchet lifecycle; it
+does not install PostToolUse or SessionStart hooks.
 
 ## `.claude-plugin/marketplace.json`
 
@@ -106,13 +108,16 @@ choose native marketplace installation.
   "bin": {
     "agent-os": "./cli/index.mjs"
   },
-  "files": ["cli/", "policy.md", "skills/"]
+  "files": ["cli/", "hooks/", "policy.md", "skills/"]
 }
 ~~~
 
 This makes `npx @sockulags/agent-os install` and `npx @sockulags/agent-os update` self-contained.
-The installer records its owned skill directories in `.agent-os-install.json`, updates only those
-directories, and preserves unrelated host skills.
+The installer records its owned skill directories and managed hook integration in
+`.agent-os-install.json`, updates only those directories and the exact Agent OS hook entry, and
+preserves unrelated host skills and hook groups. Direct hook commands use an absolute Node path and
+the runner copied into that host's managed skill root;
+native plugin hooks use `CLAUDE_PLUGIN_ROOT`, so Node on PATH is required for the native path.
 
 ## Per-skill invocation gating
 

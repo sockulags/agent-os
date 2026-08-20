@@ -21,6 +21,13 @@ Do not recommend code golf. Do not remove required behavior, public contracts, t
 validation, security, accessibility, data-loss protection, justified performance, or tests that
 protect real behavior.
 
+When [`quality-ratchet`](../quality-ratchet/SKILL.md) evidence is available, consume it before
+forming findings. Read the diff and implementation yourself: added/changed/deleted files, NLOC,
+legacy-before/after, dependency deltas, and unavailable optional analyzers are evidence, not an
+oracle or threshold. Preserve machinery justified by real provider, runtime-selection,
+compatibility, or trust-boundary requirements. Report at most one materially constraining adjacent
+opportunity and leave unrelated debt to `scope-guard`.
+
 Report only supported, actionable findings. For each, name the location, unnecessary complexity,
 and simpler replacement. Rank material deletions and dependency removals first. Do not invent a
 line-savings total. If there is nothing worth changing, report `No simplification findings.`

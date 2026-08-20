@@ -30,6 +30,7 @@ workflows compose (`understand-work`, `explain-work`), the disciplines, and the 
 | `proportional-testing` | discipline | automatic | Minimum meaningful regression coverage |
 | `scope-guard` | discipline | automatic | Keep work inside the task; flag drift |
 | `simplifier-review` | discipline | automatic | Review a diff for unnecessary complexity |
+| `quality-ratchet` | discipline | automatic | Compare exact entry and candidate evidence without score gates |
 | `notice-lesson` | discipline | automatic | Treat interruptions as misunderstanding signals |
 | `plain-voice` | discipline | automatic | Cut generated-prose tells from what a person reads |
 | `list-skills` | meta | manual | List installed skills and how to invoke them |
@@ -70,7 +71,20 @@ skills. Use `--scope project` to install into the current project's skill direct
 command always downloads the current npm CLI; use `npx @sockulags/agent-os@latest update` to force
 the newest published installer.
 
-Direct Claude skills appear as `/<skill>` and direct Codex skills as `$<skill>`.
+Direct Claude skills appear as `/<skill>` and direct Codex skills as `$<skill>`. Direct installation
+also merges the managed quality-ratchet `Stop` hook into the selected host configuration without
+replacing unrelated hooks. The user and project paths are `~/.claude/settings.json` or
+`<project>/.claude/settings.json` for Claude Code, and `~/.codex/hooks.json` or
+`<project>/.codex/hooks.json` for Codex. Node must be available to native plugin hooks.
+
+The ratchet begins an exact worktree-local baseline before the first mutation when `deliver-work`
+can run it, checks the candidate before `simplifier-review`, and reports source-file/NLOC,
+legacy-before/after, dependency, and optional-analyzer evidence. These are signals for semantic
+judgment, not score or raw-count thresholds. Missing Lizard or jscpd is reported as unavailable,
+never clean. A Stop hook blocks only a missing, corrupt, or stale active lifecycle check; without a
+baseline it is a no-op, and re-entry does not loop. Resolve
+`scripts/quality-delta.mjs` relative to the installed `quality-ratchet/SKILL.md` and run its `clear`
+command to abandon an active attempt. There is no uninstall command yet.
 
 Native marketplace installation remains available with `--method plugin`. It requires the selected
 host CLI. Claude plugin skills appear as `/agent-os:<skill>`; Codex plugin skills remain

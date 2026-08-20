@@ -15,3 +15,8 @@ variation.
 
 It is read-only and reports only actionable findings with a concrete simpler replacement. It does
 not reward code golf and does not replace correctness, security, or scope review.
+
+When [quality-ratchet](/skills/quality-ratchet) has produced evidence, use it as context before
+forming findings. Read the diff and code yourself: file, NLOC, legacy, dependency, and analyzer
+signals are not threshold gates. Preserve abstractions justified by multiple providers, runtime
+selection, compatibility, or trust boundaries, and leave unrelated debt to `scope-guard`.
