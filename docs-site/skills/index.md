@@ -84,6 +84,7 @@ Always on; no invocation.
 | [`scope-guard`](/skills/scope-guard) | discipline | automatic | Keep work inside the task; flag drift |
 | [`simplifier-review`](/skills/simplifier-review) | discipline | automatic | Review a diff for unnecessary complexity |
 | [`notice-lesson`](/skills/notice-lesson) | discipline | automatic | Treat interruptions as misunderstanding signals |
+| [`plain-voice`](/skills/plain-voice) | discipline | automatic | Cut generated-prose tells from what a person reads |
 
 ## Meta
 

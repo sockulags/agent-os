@@ -107,7 +107,8 @@ export default withMermaid(defineConfig({
             { text: 'proportional-testing', link: '/skills/proportional-testing' },
             { text: 'scope-guard', link: '/skills/scope-guard' },
             { text: 'simplifier-review', link: '/skills/simplifier-review' },
-            { text: 'notice-lesson', link: '/skills/notice-lesson' }
+            { text: 'notice-lesson', link: '/skills/notice-lesson' },
+            { text: 'plain-voice', link: '/skills/plain-voice' }
           ]
         },
         {

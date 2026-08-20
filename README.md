@@ -31,6 +31,7 @@ workflows compose (`understand-work`, `explain-work`), the disciplines, and the 
 | `scope-guard` | discipline | automatic | Keep work inside the task; flag drift |
 | `simplifier-review` | discipline | automatic | Review a diff for unnecessary complexity |
 | `notice-lesson` | discipline | automatic | Treat interruptions as misunderstanding signals |
+| `plain-voice` | discipline | automatic | Cut generated-prose tells from what a person reads |
 | `list-skills` | meta | manual | List installed skills and how to invoke them |
 | `writing-skills` | meta | manual | Doctrine and definition of done for agent-os skills |
 
@@ -109,6 +110,9 @@ name. A skill edit and its documentation page are one change — the pages under
   2 positive and 2 negative cases per skill.
 - `evals/RESULTS.md` — historical forward-test results. New results evaluate observable contracts,
   not approval ceremony or reasoning traces.
+- `evals/behavior/` — runner-independent behavior cases, normalized run records, deterministic
+  scorecard graders, and explicit human/model judgments.
+- `evals/runners/` — thin Promptfoo and Inspect AI adapters around the Agent OS scorecard.
 - `evals/runs/` — raw logs, gitignored.
 
 ## Experiments

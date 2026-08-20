@@ -121,11 +121,27 @@
     "init-agent-os": {
       "positive": [
         "init-agent-os.md#IA-P1",
-        "init-agent-os.md#IA-P2"
+        "init-agent-os.md#IA-P2",
+        "init-agent-os.md#IA-P3",
+        "init-agent-os.md#IA-P4",
+        "init-agent-os.md#IA-P5",
+        "init-agent-os.md#IA-P6",
+        "init-agent-os.md#IA-P7"
       ],
       "negative": [
         "init-agent-os.md#IA-N1",
         "init-agent-os.md#IA-N2"
+      ]
+    },
+    "plain-voice": {
+      "positive": [
+        "plain-voice.md#PV-P1 Generated draft",
+        "plain-voice.md#PV-P2 Swedish technical terms",
+        "plain-voice.md#PV-P3 Ordinary reply"
+      ],
+      "negative": [
+        "plain-voice.md#PV-N1 Developer's own text",
+        "plain-voice.md#PV-N2 Quoted source"
       ]
     },
     "scope-guard": {

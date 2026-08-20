@@ -16,6 +16,7 @@
   },
   "scripts": {
     "test": "node --test cli/*.test.mjs",
+    "test:evals": "node scripts/test-eval-agent-behavior.mjs",
     "validate": "node scripts/validate-agent-os.mjs",
     "verify:release": "node scripts/verify-release.mjs"
   },
