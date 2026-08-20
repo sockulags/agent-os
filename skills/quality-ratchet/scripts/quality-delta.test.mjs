@@ -90,7 +90,7 @@ test('begin refuses to overwrite an active baseline and check requires a baselin
   const root = repository()
   assert.throws(() => check(root), /No active quality ratchet baseline/)
   const started = begin(root, { detect: unavailableAnalyzers })
-  assert.throws(() => begin(root, { detect: unavailableAnalyzers }), /already exists/) 
+  assert.throws(() => begin(root, { detect: unavailableAnalyzers }), /already exists/)
   clear(root)
   assert.equal(fs.existsSync(started.statePath), false)
 })
