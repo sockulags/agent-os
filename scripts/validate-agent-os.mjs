@@ -318,6 +318,29 @@ export function validate(root = path.resolve(scriptDir, '..')) {
           !serializedHooks.includes('quality-delta.mjs')) {
         fail('HOOKS_QUALITY_RATCHET', 'hooks/hooks.json must call the packaged quality-ratchet runner.')
       }
+      const managedCommand = hookEvents.Stop
+        .flatMap((group) => Array.isArray(group?.hooks) ? group.hooks : [])
+        .find((entry) => entry?.type === 'command' &&
+          typeof entry.command === 'string' && entry.command.includes('--agent-os-hook=quality-ratchet'))
+      const windowsMatch = typeof managedCommand?.commandWindows === 'string'
+        ? /^powershell\.exe -NoProfile -NonInteractive -EncodedCommand ([A-Za-z0-9+/]+={0,2})$/.exec(
+            managedCommand.commandWindows
+          )
+        : null
+      let decodedWindowsCommand = null
+      if (windowsMatch) {
+        const encoded = windowsMatch[1]
+        const bytes = Buffer.from(encoded, 'base64')
+        if (bytes.toString('base64') === encoded) decodedWindowsCommand = bytes.toString('utf16le')
+      }
+      const expectedWindowsCommand =
+        "$runner = Join-Path $env:PLUGIN_ROOT 'skills\\quality-ratchet\\scripts\\quality-delta.mjs'; " +
+        'node $runner hook --agent-os-hook=quality-ratchet'
+      if (!managedCommand || !managedCommand.command.includes('${CLAUDE_PLUGIN_ROOT}') ||
+          typeof managedCommand.commandWindows !== 'string' ||
+          managedCommand.commandWindows.includes('"') || decodedWindowsCommand !== expectedWindowsCommand) {
+        fail('HOOKS_WINDOWS_COMMAND', 'hooks/hooks.json must define a Windows-safe Codex commandWindows hook.')
+      }
     }
   }
 

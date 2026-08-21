@@ -116,8 +116,10 @@ This makes `npx @sockulags/agent-os install` and `npx @sockulags/agent-os update
 The installer records its owned skill directories and managed hook integration in
 `.agent-os-install.json`, updates only those directories and the exact Agent OS hook entry, and
 preserves unrelated host skills and hook groups. Direct hook commands use an absolute Node path and
-the runner copied into that host's managed skill root;
-native plugin hooks use `CLAUDE_PLUGIN_ROOT`, so Node on PATH is required for the native path.
+the runner copied into that host's managed skill root. The packaged native hook keeps one logical
+source: Claude and Unix-like Codex use `CLAUDE_PLUGIN_ROOT`, while Windows Codex uses a quote-free
+`commandWindows` with a UTF-16LE PowerShell `-EncodedCommand` payload that resolves
+`$env:PLUGIN_ROOT`; Node and PowerShell on PATH are required for the native path.
 
 ## Per-skill invocation gating
 

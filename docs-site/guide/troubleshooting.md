@@ -42,6 +42,12 @@ candidate with:
 node "<installed quality-ratchet runner>" check
 ```
 
+Run `check` or `clear` from the same host session that owns the blocked lifecycle. Those commands
+bind state through `CODEX_THREAD_ID` or `CLAUDE_CODE_SESSION_ID`, with Codex taking precedence when
+both exist; native Stop uses its `session_id` payload and distinguishes Codex by non-empty `turn_id`.
+A manual invocation with neither identity uses the deterministic standalone fallback instead of
+another host session's state.
+
 For direct installs, the runner is under `~/.claude/skills/quality-ratchet/scripts/quality-delta.mjs`
 or `~/.codex/skills/quality-ratchet/scripts/quality-delta.mjs` at user scope, and
 `<project>/.claude/skills/quality-ratchet/scripts/quality-delta.mjs` or

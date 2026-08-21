@@ -78,7 +78,9 @@ npx @sockulags/agent-os install --platform claude --method plugin --scope user
 
 Plugin mode requires the selected host CLI. Claude plugin skills use the namespace
 `/agent-os:<skill>`; Codex plugin skills remain `$<skill>`. Native plugin mode loads the packaged
-shared `Stop` hook through `CLAUDE_PLUGIN_ROOT` and therefore requires Node on PATH.
+shared `Stop` hook through `CLAUDE_PLUGIN_ROOT` on Unix-like hosts and Codex's quote-free
+`commandWindows` with a UTF-16LE PowerShell `-EncodedCommand` payload on Windows. The decoded script
+resolves `$env:PLUGIN_ROOT` at runtime. Node and PowerShell must be on PATH.
 
 For development against a clone, Claude can run `claude --plugin-dir .`. Codex can register the
 working copy with `codex plugin marketplace add /path/to/agent-os`. A local Codex marketplace is

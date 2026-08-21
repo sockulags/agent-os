@@ -53,13 +53,20 @@ function unavailableAnalyzers() {
   }
 }
 
-function parseStopHookResult(result, host) {
-  // Claude Code and Codex parse structured stdout on exit 0; exit 2 ignores stdout and uses stderr.
+function parseClaudeCodeStopResult(result) {
   if (result.status === 0) return JSON.parse(result.stdout || '{}')
   if (result.status === 2 && result.stderr.trim()) {
     return { decision: 'block', reason: result.stderr.trim() }
   }
-  throw new Error(`${host} rejected the command hook result.`)
+  throw new Error('Claude Code rejected the command hook result.')
+}
+
+function parseCodexStopResult(result) {
+  if (result.status === 0) return JSON.parse(result.stdout || '{}')
+  if (result.status === 2 && result.stderr.trim()) {
+    return { decision: 'block', reason: result.stderr.trim() }
+  }
+  throw new Error('Codex rejected the command hook result.')
 }
 
 after(() => {
@@ -171,14 +178,14 @@ test('optional analyzer crashes remain explicit advisory unavailability', () => 
   assert.match(evidence.optionalAnalyzers.candidate.jscpd.reason, /Capability detection failed/)
 })
 
-test('corrupt active state is a lifecycle violation without a reentry loop', () => {
+test('corrupt active state remains a lifecycle violation on reentry', () => {
   const root = repository()
   const started = begin(root, { detect: unavailableAnalyzers })
   const state = JSON.parse(fs.readFileSync(started.statePath, 'utf8'))
   state.entry.fingerprint = 'corrupt'
   fs.writeFileSync(started.statePath, JSON.stringify(state))
   assert.equal(hook(root, { stop_hook_active: false }).decision, 'block')
-  assert.deepEqual(hook(root, { stop_hook_active: true }), {})
+  assert.equal(hook(root, { stop_hook_active: true }).decision, 'block')
 })
 
 test('rejects unbound or noncanonical dirty paths before Stop inspection', () => {
@@ -248,25 +255,87 @@ test('rejects corrupted entry heads before Stop inspection', () => {
   }
 })
 
-test('Stop hook blocks stale work, does not loop on reentry, and clears fresh state', () => {
+test('Stop hook remains fail-closed until a fresh check, then clears state', () => {
   const root = repository()
   const started = begin(root, { detect: unavailableAnalyzers })
   const blocked = hook(root, { stop_hook_active: false })
   assert.equal(blocked.decision, 'block')
   assert.match(blocked.reason, /no check/)
-  assert.deepEqual(hook(root, { stop_hook_active: true }), {})
+  const reentered = hook(root, { stop_hook_active: true })
+  assert.equal(reentered.decision, 'block')
+  assert.match(reentered.reason, /no check/)
   assert.equal(fs.existsSync(started.statePath), true)
 
   check(root, { detect: unavailableAnalyzers })
   fs.writeFileSync(path.join(root, 'src', 'new.js'), 'export const changed_after_check = true\n')
   assert.equal(hook(root, { stop_hook_active: false }).decision, 'block')
-  assert.deepEqual(hook(root, { stop_hook_active: true }), {})
+  assert.equal(hook(root, { stop_hook_active: true }).decision, 'block')
   assert.equal(fs.existsSync(started.statePath), true)
 
   check(root, { detect: unavailableAnalyzers })
-  assert.deepEqual(hook(root, { stop_hook_active: false }), {})
+  assert.deepEqual(hook(root, { stop_hook_active: true }), {})
   assert.equal(fs.existsSync(started.statePath), false)
   assert.deepEqual(hook(root, { stop_hook_active: false }), {})
+})
+
+test('Stop hook resolves current Codex and Claude payload session identities', () => {
+  const scenarios = [
+    {
+      name: 'Codex',
+      env: { CODEX_THREAD_ID: 'codex-payload-session' },
+      payload: { session_id: 'codex-payload-session', turn_id: 'codex-payload-turn' }
+    },
+    {
+      name: 'Claude',
+      env: { CLAUDE_CODE_SESSION_ID: 'claude-payload-session' },
+      payload: { session_id: 'claude-payload-session' }
+    }
+  ]
+
+  for (const scenario of scenarios) {
+    const root = repository()
+    const started = begin(root, { detect: unavailableAnalyzers, env: scenario.env })
+    const first = hook(root, { ...scenario.payload, stop_hook_active: false }, { env: {} })
+    assert.equal(first.decision, 'block', scenario.name)
+    assert.match(first.reason, /no check/, scenario.name)
+    const reentered = hook(root, { ...scenario.payload, stop_hook_active: true }, { env: {} })
+    assert.equal(reentered.decision, 'block', scenario.name)
+    assert.equal(fs.existsSync(started.statePath), true, scenario.name)
+
+    check(root, { detect: unavailableAnalyzers, env: scenario.env })
+    assert.deepEqual(
+      hook(root, { ...scenario.payload, stop_hook_active: true }, { env: {} }),
+      {},
+      scenario.name
+    )
+    assert.equal(fs.existsSync(started.statePath), false, scenario.name)
+  }
+})
+
+test('Codex takes precedence when both host environment IDs are present', () => {
+  const root = repository()
+  const env = {
+    CLAUDE_CODE_SESSION_ID: 'inherited-claude-session',
+    CODEX_THREAD_ID: 'active-codex-session'
+  }
+  const payload = {
+    session_id: 'active-codex-session',
+    turn_id: 'active-codex-turn'
+  }
+  const started = begin(root, { detect: unavailableAnalyzers, env })
+  const state = JSON.parse(fs.readFileSync(started.statePath, 'utf8'))
+  assert.equal(state.session.source, 'codex')
+  assert.match(path.basename(started.statePath), /\.codex-[0-9a-f]{32}$/)
+
+  const blocked = hook(root, { ...payload, stop_hook_active: false }, {
+    env: { CLAUDE_CODE_SESSION_ID: 'inherited-claude-session' }
+  })
+  assert.equal(blocked.decision, 'block')
+  assert.equal(fs.existsSync(started.statePath), true)
+
+  check(root, { detect: unavailableAnalyzers, env })
+  assert.deepEqual(hook(root, { ...payload, stop_hook_active: false }, { env: {} }), {})
+  assert.equal(fs.existsSync(started.statePath), false)
 })
 
 test('state files are isolated between linked worktrees', () => {
@@ -281,6 +350,54 @@ test('state files are isolated between linked worktrees', () => {
   clear(root)
   clear(worktree)
   git(root, 'worktree', 'remove', '-f', worktree)
+})
+
+test('state files are isolated between host sessions in the same worktree', () => {
+  const root = repository()
+  const claudeSession = { CLAUDE_CODE_SESSION_ID: 'claude-session' }
+  const codexSession = { CODEX_THREAD_ID: 'codex-session' }
+  const first = begin(root, { detect: unavailableAnalyzers, env: claudeSession })
+
+  assert.deepEqual(hook(root, { stop_hook_active: false }, { env: codexSession }), {})
+  assert.equal(fs.existsSync(first.statePath), true)
+  clear(root, { env: codexSession })
+  assert.equal(fs.existsSync(first.statePath), true)
+
+  const second = begin(root, { detect: unavailableAnalyzers, env: codexSession })
+  assert.notEqual(first.statePath, second.statePath)
+  assert.equal(hook(root, { stop_hook_active: false }, { env: claudeSession }).decision, 'block')
+  assert.equal(hook(root, { stop_hook_active: false }, { env: codexSession }).decision, 'block')
+
+  check(root, { detect: unavailableAnalyzers, env: claudeSession })
+  assert.deepEqual(hook(root, { stop_hook_active: false }, { env: claudeSession }), {})
+  assert.equal(fs.existsSync(first.statePath), false)
+  assert.equal(fs.existsSync(second.statePath), true)
+
+  clear(root, { env: codexSession })
+  assert.equal(fs.existsSync(second.statePath), false)
+})
+
+test('uses a deterministic standalone state and bounds untrusted session path input', () => {
+  const root = repository()
+  const standalone = {}
+  const first = begin(root, { detect: unavailableAnalyzers, env: standalone })
+  clear(root, { env: standalone })
+  const second = begin(root, { detect: unavailableAnalyzers, env: standalone })
+  assert.equal(first.statePath, second.statePath)
+  clear(root, { env: standalone })
+
+  const hostile = { CODEX_THREAD_ID: '../..\\session with spaces/and separators' }
+  const started = begin(root, { detect: unavailableAnalyzers, env: hostile })
+  assert.equal(path.dirname(started.statePath), path.resolve(root, '.git'))
+  assert.match(path.basename(started.statePath), /^\.agent-os-quality-ratchet\.json\.codex-[0-9a-f]{32}$/)
+  const state = JSON.parse(fs.readFileSync(started.statePath, 'utf8'))
+  assert.deepEqual(state.session, {
+    source: 'codex',
+    key: path.basename(started.statePath).slice('.agent-os-quality-ratchet.json.'.length)
+  })
+  state.session.key = 'codex-' + '0'.repeat(32)
+  fs.writeFileSync(started.statePath, JSON.stringify(state))
+  assert.equal(hook(root, { stop_hook_active: false }, { env: hostile }).decision, 'block')
 })
 
 test('hook is a cheap no-op without an active baseline', () => {
@@ -342,7 +459,7 @@ test('reports both sides of a committed source rename after begin', () => {
   assert.equal(fs.existsSync(started.statePath), false)
 })
 
-test('hook CLI emits exit-0 Stop JSON accepted by Claude Code and Codex', () => {
+test('Claude Code Stop contract accepts structured exit 0 and uses stderr on exit 2', () => {
   const root = repository()
   begin(root, { detect: unavailableAnalyzers })
   const result = spawnSync(process.execPath, [
@@ -355,21 +472,43 @@ test('hook CLI emits exit-0 Stop JSON accepted by Claude Code and Codex', () => 
   assert.equal(result.stderr, '')
   const output = JSON.parse(result.stdout)
   assert.equal(output.decision, 'block')
-  for (const host of ['Claude Code', 'Codex']) {
-    assert.deepEqual(parseStopHookResult(result, host), output,
-      `${host} did not parse structured Stop JSON`)
-  }
+  assert.deepEqual(parseClaudeCodeStopResult(result), output)
 
-  const legacyError = {
+  const exitTwo = {
     status: 2,
-    stdout: JSON.stringify({ decision: 'block', reason: 'stdout is ignored on exit 2' }),
-    stderr: 'continue with the hook reason'
+    stdout: JSON.stringify({ decision: 'block', reason: 'Claude Code ignores this stdout on exit 2' }),
+    stderr: 'Claude Code stop feedback'
   }
-  for (const host of ['Claude Code', 'Codex']) {
-    assert.deepEqual(parseStopHookResult(legacyError, host), {
-      decision: 'block',
-      reason: legacyError.stderr
-    }, `${host} did not use stderr for exit 2`)
-    assert.throws(() => parseStopHookResult({ ...legacyError, stderr: '' }, host), /rejected/)
+  assert.deepEqual(parseClaudeCodeStopResult(exitTwo), {
+    decision: 'block',
+    reason: exitTwo.stderr
+  })
+  assert.throws(() => parseClaudeCodeStopResult({ ...exitTwo, stderr: '' }), /Claude Code rejected/)
+})
+
+test('Codex Stop contract accepts structured exit 0 and uses stderr on exit 2', () => {
+  const root = repository()
+  begin(root, { detect: unavailableAnalyzers })
+  const result = spawnSync(process.execPath, [
+    path.join(path.dirname(fileURLToPath(import.meta.url)), 'quality-delta.mjs'),
+    'hook',
+    '--root',
+    root
+  ], { encoding: 'utf8', input: JSON.stringify({ stop_hook_active: false }) })
+  assert.equal(result.status, 0)
+  assert.equal(result.stderr, '')
+  const output = JSON.parse(result.stdout)
+  assert.equal(output.decision, 'block')
+  assert.deepEqual(parseCodexStopResult(result), output)
+
+  const exitTwo = {
+    status: 2,
+    stdout: JSON.stringify({ decision: 'block', reason: 'Codex ignores this stdout on exit 2' }),
+    stderr: 'Codex stop feedback'
   }
+  assert.deepEqual(parseCodexStopResult(exitTwo), {
+    decision: 'block',
+    reason: exitTwo.stderr
+  })
+  assert.throws(() => parseCodexStopResult({ ...exitTwo, stderr: '' }), /Codex rejected/)
 })

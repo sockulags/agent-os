@@ -6,7 +6,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 
-export const STATE_SCHEMA = 1
+export const STATE_SCHEMA = 2
 export const STATE_FILE_NAME = '.agent-os-quality-ratchet.json'
 export const QUALITY_HOOK_MARKER = '--agent-os-hook=quality-ratchet'
 export const HOOK_TIMEOUT_SECONDS = 10
@@ -24,6 +24,10 @@ const DEPENDENCY_SECTIONS = [
 ]
 const OPTIONAL_ANALYZERS = ['lizard', 'jscpd']
 const EMPTY_TREE = '4b825dc642cb6eb9a060e54bf8d69288fbee4904'
+const SESSION_ENVIRONMENT = [
+  ['codex', 'CODEX_THREAD_ID'],
+  ['claude', 'CLAUDE_CODE_SESSION_ID']
+]
 
 export class QualityRatchetError extends Error {
   constructor(message, code = 'QUALITY_RATCHET') {
@@ -39,6 +43,28 @@ function error(message, code) {
 
 function digest(value) {
   return createHash('sha256').update(value).digest('hex')
+}
+
+function sessionIdentity(env = process.env) {
+  for (const [source, variable] of SESSION_ENVIRONMENT) {
+    const value = env?.[variable]
+    if (typeof value === 'string' && value.trim()) {
+      return {
+        source,
+        key: `${source}-${digest(`${source}\0${value.trim()}`).slice(0, 32)}`
+      }
+    }
+  }
+  return { source: 'standalone', key: 'standalone' }
+}
+
+function hookSessionEnvironment(payload, env) {
+  const sessionId = typeof payload?.session_id === 'string' ? payload.session_id.trim() : ''
+  if (!sessionId) return env
+  const codex = typeof payload?.turn_id === 'string' && payload.turn_id.trim()
+  return codex
+    ? { CODEX_THREAD_ID: sessionId }
+    : { CLAUDE_CODE_SESSION_ID: sessionId }
 }
 
 function normalizePath(value) {
@@ -73,7 +99,7 @@ function runGit(root, args, { allowFailure = false } = {}) {
   error(`Git command failed: git -C "${root}" ${args.join(' ')}\n${detail}`, 'GIT_FAILURE')
 }
 
-function repositoryContext(cwd) {
+function repositoryContext(cwd, env = process.env) {
   const requested = path.resolve(cwd)
   const rootText = runGit(requested, ['rev-parse', '--show-toplevel']).trim()
   const root = path.resolve(rootText)
@@ -81,7 +107,13 @@ function repositoryContext(cwd) {
   const gitDir = path.isAbsolute(gitDirText)
     ? path.normalize(gitDirText)
     : path.resolve(root, gitDirText)
-  return { root, gitDir, statePath: path.join(gitDir, STATE_FILE_NAME) }
+  const session = sessionIdentity(env)
+  return {
+    root,
+    gitDir,
+    session,
+    statePath: path.join(gitDir, `${STATE_FILE_NAME}.${session.key}`)
+  }
 }
 
 function splitGitPaths(value) {
@@ -487,17 +519,21 @@ function readState(context) {
     file && typeof file.path === 'string' && typeof file.source === 'boolean' && Number.isInteger(file.nloc))
   const dirtyPathsValid = canonicalGitPaths(state?.entry?.dirtyPaths)
   const headValid = validHead(state?.entry?.head)
+  const sessionValid = state?.session && typeof state.session.source === 'string' &&
+    typeof state.session.key === 'string' && state.session.source === context.session.source &&
+    state.session.key === context.session.key
   const pathsValid = typeof state?.repositoryRoot === 'string' && typeof state?.gitDir === 'string'
   const fingerprintValid = filesValid && dirtyPathsValid && headValid && state.entry.fingerprint ===
     entryFingerprint(state.entry.files, state.entry.dirtyPaths, state.entry.head)
   if (!state || state.schema !== STATE_SCHEMA || state.state !== 'active' || !pathsValid ||
       normalizePath(state.repositoryRoot) !== normalizePath(context.root) ||
       normalizePath(state.gitDir) !== normalizePath(context.gitDir) ||
+      !sessionValid ||
       !state.entry || typeof state.entry.fingerprint !== 'string' || !filesValid || !dirtyPathsValid || !headValid ||
       !fingerprintValid ||
       !state.entry.packageDependencies || typeof state.entry.packageDependencies.status !== 'string' ||
       !state.entry.optionalAnalyzers || typeof state.entry.optionalAnalyzers !== 'object') {
-    error(`Quality ratchet state is invalid or belongs to another worktree at ${context.statePath}. Run clear, then begin again.`, 'STATE_INVALID')
+    error(`Quality ratchet state is invalid or belongs to another session or worktree at ${context.statePath}. Run clear, then begin again.`, 'STATE_INVALID')
   }
   if (state.lastCheck !== null &&
       (!state.lastCheck || typeof state.lastCheck.candidateFingerprint !== 'string')) {
@@ -523,6 +559,7 @@ function baselineState(context, candidate, dependencies, analyzers) {
     state: 'active',
     repositoryRoot: path.resolve(context.root),
     gitDir: path.resolve(context.gitDir),
+    session: context.session,
     entry: {
       fingerprint: candidate.fingerprint,
       head: candidate.head,
@@ -537,11 +574,11 @@ function baselineState(context, candidate, dependencies, analyzers) {
   }
 }
 
-export function begin(cwd = process.cwd(), { detect = detectOptionalAnalyzers } = {}) {
-  const context = repositoryContext(cwd)
+export function begin(cwd = process.cwd(), { detect = detectOptionalAnalyzers, env = process.env } = {}) {
+  const context = repositoryContext(cwd, env)
   if (fs.existsSync(context.statePath)) {
     readState(context)
-    error(`An active quality ratchet baseline already exists for this worktree at ${context.statePath}. Run clear before beginning a new delivery.`, 'BASELINE_ACTIVE')
+    error(`An active quality ratchet baseline already exists for this session and worktree at ${context.statePath}. Run clear before beginning a new delivery.`, 'BASELINE_ACTIVE')
   }
   const candidate = snapshot(context.root)
   const dependencies = packageDependencies(context.root)
@@ -556,8 +593,8 @@ export function begin(cwd = process.cwd(), { detect = detectOptionalAnalyzers } 
   }
 }
 
-export function check(cwd = process.cwd(), { detect = detectOptionalAnalyzers } = {}) {
-  const context = repositoryContext(cwd)
+export function check(cwd = process.cwd(), { detect = detectOptionalAnalyzers, env = process.env } = {}) {
+  const context = repositoryContext(cwd, env)
   const state = readState(context)
   if (!state) error(`No active quality ratchet baseline exists for ${context.root}. Run begin before the first mutation.`, 'BASELINE_MISSING')
   const candidate = candidateSnapshot(context.root, state.entry)
@@ -572,8 +609,8 @@ export function check(cwd = process.cwd(), { detect = detectOptionalAnalyzers } 
   return evidence
 }
 
-export function clear(cwd = process.cwd()) {
-  const context = repositoryContext(cwd)
+export function clear(cwd = process.cwd(), { env = process.env } = {}) {
+  const context = repositoryContext(cwd, env)
   if (fs.existsSync(context.statePath)) fs.rmSync(context.statePath, { force: true })
   return { statePath: context.statePath, cleared: true }
 }
@@ -590,11 +627,10 @@ function lifecycleCommand(command) {
   return `"${process.execPath}" "${fileURLToPath(import.meta.url)}" ${command}`
 }
 
-export function hook(cwd = process.cwd(), payload = {}) {
-  const stopHookActive = payload?.stop_hook_active === true
+export function hook(cwd = process.cwd(), payload = {}, { env = process.env } = {}) {
   let context
   try {
-    context = repositoryContext(cwd)
+    context = repositoryContext(cwd, hookSessionEnvironment(payload, env))
   } catch {
     return allowResult()
   }
@@ -608,7 +644,7 @@ export function hook(cwd = process.cwd(), payload = {}) {
       candidate = candidateSnapshot(context.root, state.entry, { includeFiles: false })
     } catch (cause) {
       const reason = `Quality ratchet could not inspect the candidate: ${cause.message}. Run the quality-ratchet check and retry.`
-      return stopHookActive ? allowResult() : blockResult(reason)
+      return blockResult(reason)
     }
     const fresh = state.lastCheck?.candidateFingerprint === candidate.fingerprint
     if (fresh) {
@@ -618,12 +654,12 @@ export function hook(cwd = process.cwd(), payload = {}) {
     const reason = state.lastCheck
       ? `Quality ratchet check is stale for the current candidate. Run \`${lifecycleCommand('check')}\` before stopping.`
       : `Quality ratchet has an active baseline but no check for this candidate. Run \`${lifecycleCommand('check')}\` before stopping.`
-    return stopHookActive ? allowResult() : blockResult(reason)
+    return blockResult(reason)
   } catch (cause) {
     const reason = cause instanceof QualityRatchetError
       ? cause.message
       : `Quality ratchet lifecycle error: ${cause.message}`
-    return stopHookActive ? allowResult() : blockResult(reason)
+    return blockResult(reason)
   }
 }
 

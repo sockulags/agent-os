@@ -38,20 +38,31 @@ removals, and optional analyzer capability. Lizard and jscpd are optional capabi
 or not integrated, the output says `unavailable` or `detected-not-integrated`; it never says clean.
 Reliable Lizard/jscpd parsing remains a follow-up rather than an install-time prerequisite.
 
-The baseline lives in a worktree-specific file under `git rev-parse --git-dir`. It includes tracked
-dirty files and nonignored untracked files without stashing or editing them. `begin` refuses to
-overwrite an active baseline. `check` records the candidate fingerprint. `clear` removes an abandoned
-active baseline.
+The baseline lives in a worktree- and host-session-specific file under `git rev-parse --git-dir`. It
+includes tracked dirty files and nonignored untracked files without stashing or editing them. Claude
+binds the state to `CLAUDE_CODE_SESSION_ID`, Codex binds it to `CODEX_THREAD_ID`, and standalone/manual
+use has a deterministic fallback. Session IDs are reduced to bounded safe path keys and the derived
+identity is validated when state is read. `begin` refuses to overwrite an active baseline for the
+current session. `check` records the candidate fingerprint. `clear` removes only the current session's
+abandoned active baseline.
+
+`begin`, `check`, and `clear` read the host ID from their command environment, preferring
+`CODEX_THREAD_ID` when both host variables exist. Native Stop reads `session_id` from its payload,
+identifies Codex by its required non-empty `turn_id`, and otherwise uses the Claude identity. If
+`session_id` is absent, direct/manual hook calls retain their injected or process environment.
 
 The Stop hook blocks only a corrupt or active lifecycle violation: no fresh check for the current
-candidate. Without an active baseline it is a cheap no-op. Re-entry via `stop_hook_active` is
-allowed without another block, so the hook cannot loop. Structural signals never block completion.
+candidate. Without an active baseline for the current session it is a cheap no-op. Re-entry via
+`stop_hook_active` remains blocked until a fresh check; a fresh Stop then clears that session's state.
+Structural signals never block completion.
 
 ## Installation
 
-Native plugin installs use the packaged root `hooks/hooks.json` Stop hook. The same asset is loaded by
-Claude Code and current Codex plugin discovery through `CLAUDE_PLUGIN_ROOT`; Node must be on PATH
-for native plugin hooks. Direct installs merge an Agent OS-owned Stop entry into:
+Native plugin installs use the packaged root `hooks/hooks.json` Stop hook. The same logical hook asset
+is loaded by Claude Code and current Codex plugin discovery. Claude and Unix-like Codex use
+`${CLAUDE_PLUGIN_ROOT}`; Windows Codex uses a quote-free `commandWindows` with a UTF-16LE PowerShell
+`-EncodedCommand` payload that resolves `$env:PLUGIN_ROOT` at runtime. Node and PowerShell must be on
+PATH for native plugin hooks. Direct installs merge an Agent OS-owned Stop entry into:
 
 | Scope | Claude Code | Codex |
 |---|---|---|

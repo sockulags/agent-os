@@ -32,10 +32,17 @@ aggregate score and no threshold gate. Missing Lizard or jscpd is reported as un
 than clean; the core Node evidence remains usable. Their parsing integration is an explicit
 follow-up, not an install-time prerequisite.
 
-The Stop hook blocks only an active lifecycle violation: no baseline, a corrupt baseline, or a
-missing/stale check for the current candidate. A worktree without an active baseline is a cheap
-no-op. A re-entered Stop hook never loops by blocking again. Run `clear` deliberately when abandoning
-an implementation attempt; uninstall is not currently a command.
+The Stop hook blocks only an active lifecycle violation: a corrupt baseline, or a missing/stale check
+for the current candidate. State is bound to the current Git worktree and host session: Claude uses
+`CLAUDE_CODE_SESSION_ID`, Codex uses `CODEX_THREAD_ID`, and standalone/manual use has a deterministic
+fallback. `begin`, `check`, and `clear` use those command environments, preferring Codex when both
+IDs exist. Stop uses payload
+`session_id`, treating a non-empty `turn_id` as Codex and otherwise as Claude; without `session_id`,
+it retains the command environment for direct/manual use. A worktree without an active baseline for
+the current session is a cheap no-op. A re-entered Stop hook remains blocked until that same session
+records a fresh `check`; the `stop_hook_active` payload does not bypass the lifecycle requirement. A fresh Stop clears only the
+current session state. Run `clear` deliberately from the same host session when abandoning an
+implementation attempt; uninstall is not currently a command.
 
 Exit with the smallest complete implementation, the quality evidence, semantic review findings,
 and fresh verification. Do not remove a legitimate abstraction merely because it increases a raw

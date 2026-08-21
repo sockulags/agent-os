@@ -23,7 +23,8 @@ function runResult(command, args, options = {}) {
     encoding: 'utf8',
     input: options.input,
     stdio: options.capture === false ? 'inherit' : 'pipe',
-    shell: usesWindowsShim
+    shell: usesWindowsShim,
+    windowsVerbatimArguments: options.windowsVerbatimArguments
   })
 }
 
@@ -87,6 +88,101 @@ function verifyInstalledLifecycle() {
     run(process.execPath, [runner, 'begin'], { cwd: repository })
     run(process.execPath, [runner, 'clear'], { cwd: repository })
   }
+
+  return repository
+}
+
+function verifyStopLifecycle(label, runner, repository, environment, runStop) {
+  run(process.execPath, [runner, 'begin'], { cwd: repository, env: environment })
+
+  const first = runStop(false)
+  const firstOutput = JSON.parse(first.stdout || '{}')
+  if (first.status !== 0 || firstOutput.decision !== 'block') {
+    throw new Error(`${label} did not block an unchecked baseline.`)
+  }
+  const reentered = runStop(true)
+  const reenteredOutput = JSON.parse(reentered.stdout || '{}')
+  if (reentered.status !== 0 || reenteredOutput.decision !== 'block') {
+    throw new Error(`${label} bypassed an unchecked re-entry.`)
+  }
+
+  run(process.execPath, [runner, 'check'], { cwd: repository, env: environment })
+  const fresh = runStop(false)
+  if (fresh.status !== 0 || JSON.stringify(JSON.parse(fresh.stdout || '{}')) !== '{}') {
+    throw new Error(`${label} did not accept and clear a fresh check.`)
+  }
+}
+
+function verifyNativeCodexWindowsHook(packedRoot, repository) {
+  const hooks = JSON.parse(fs.readFileSync(path.join(packedRoot, 'hooks', 'hooks.json'), 'utf8'))
+  const nativeHook = hooks.hooks?.Stop?.flatMap((group) => group.hooks || [])
+    .find((entry) => entry.type === 'command' && entry.command?.includes('--agent-os-hook=quality-ratchet'))
+  const windowsMatch = typeof nativeHook?.commandWindows === 'string'
+    ? /^powershell\.exe -NoProfile -NonInteractive -EncodedCommand ([A-Za-z0-9+/]+={0,2})$/.exec(
+        nativeHook.commandWindows
+      )
+    : null
+  const decodedWindowsCommand = windowsMatch
+    ? Buffer.from(windowsMatch[1], 'base64').toString('utf16le')
+    : null
+  const expectedWindowsCommand =
+    "$runner = Join-Path $env:PLUGIN_ROOT 'skills\\quality-ratchet\\scripts\\quality-delta.mjs'; " +
+    'node $runner hook --agent-os-hook=quality-ratchet'
+  if (!nativeHook?.command?.includes('${CLAUDE_PLUGIN_ROOT}') ||
+      nativeHook.commandWindows?.includes('"') || decodedWindowsCommand !== expectedWindowsCommand) {
+    throw new Error('Packed native hook is missing its Unix or Windows plugin-root command.')
+  }
+  if (process.platform !== 'win32') return
+
+  const runner = path.join(packedRoot, 'skills', 'quality-ratchet', 'scripts', 'quality-delta.mjs')
+  const baseEnvironment = {
+    ...process.env,
+    PLUGIN_ROOT: packedRoot,
+    CLAUDE_PLUGIN_ROOT: packedRoot
+  }
+  delete baseEnvironment.CODEX_THREAD_ID
+  delete baseEnvironment.CLAUDE_CODE_SESSION_ID
+
+  const cmdSessionId = 'codex-packed-native-cmd-smoke'
+  const cmdEnvironment = { ...baseEnvironment, CODEX_THREAD_ID: cmdSessionId }
+  const codexCommandArgument = `"${nativeHook.commandWindows}"`
+  const runCmdStop = (stopHookActive) => runResult('cmd.exe', ['/c', codexCommandArgument], {
+    cwd: repository,
+    env: baseEnvironment,
+    windowsVerbatimArguments: true,
+    input: JSON.stringify({
+      cwd: repository,
+      session_id: cmdSessionId,
+      turn_id: 'codex-packed-native-cmd-turn',
+      stop_hook_active: stopHookActive
+    })
+  })
+  verifyStopLifecycle('Codex cmd.exe native Windows Stop hook', runner, repository, cmdEnvironment, runCmdStop)
+
+  const powershellSessionId = 'codex-packed-native-powershell-smoke'
+  const powershellEnvironment = {
+    ...baseEnvironment,
+    CODEX_THREAD_ID: powershellSessionId
+  }
+  const runPowerShellStop = (stopHookActive) => runResult('powershell.exe', [
+    '-NoProfile', '-NonInteractive', '-Command', nativeHook.commandWindows
+  ], {
+    cwd: repository,
+    env: baseEnvironment,
+    input: JSON.stringify({
+      cwd: repository,
+      session_id: powershellSessionId,
+      turn_id: 'codex-packed-native-powershell-turn',
+      stop_hook_active: stopHookActive
+    })
+  })
+  verifyStopLifecycle(
+    'Codex PowerShell native Windows Stop hook',
+    runner,
+    repository,
+    powershellEnvironment,
+    runPowerShellStop
+  )
 }
 
 fs.mkdirSync(packRoot, { recursive: true })
@@ -112,6 +208,8 @@ try {
       !fs.existsSync(path.join(packedRoot, 'skills', 'quality-ratchet', 'scripts', 'quality-delta.mjs'))) {
     throw new Error('Packed artifact omitted the native hook or quality-ratchet runner.')
   }
+  const spacedPluginRoot = path.join(temporaryRoot, 'packed plugin & root^')
+  fs.cpSync(packedRoot, spacedPluginRoot, { recursive: true })
 
   for (const command of ['install', 'update']) {
     run(process.execPath, [
@@ -124,7 +222,8 @@ try {
     verifyInstall()
   }
 
-  verifyInstalledLifecycle()
+  const lifecycleRepository = verifyInstalledLifecycle()
+  verifyNativeCodexWindowsHook(spacedPluginRoot, lifecycleRepository)
 
   console.log(`Packed ${packageJson.name}@${packageJson.version} install and update smoke test passed.`)
 } finally {

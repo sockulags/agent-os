@@ -420,9 +420,21 @@ test('packaged hook asset and direct command use the stable runner marker', () =
   const hooks = JSON.parse(fs.readFileSync(path.join(packageRootForTest(), 'hooks', 'hooks.json'), 'utf8'))
   const durableScript = path.join(temporaryRoot(), '.claude', 'skills', 'quality-ratchet', 'scripts', 'quality-delta.mjs')
   const command = buildManagedHookCommand(durableScript)
+  const nativeHook = hooks.hooks.Stop[0].hooks[0]
   assert.ok(packageJson.files.includes('hooks/'))
   assert.equal(hooks.description.includes('quality-ratchet'), true)
-  assert.match(hooks.hooks.Stop[0].hooks[0].command, /CLAUDE_PLUGIN_ROOT/)
+  assert.match(nativeHook.command, /\$\{CLAUDE_PLUGIN_ROOT\}/)
+  assert.equal(typeof nativeHook.commandWindows, 'string')
+  assert.equal(nativeHook.commandWindows.includes('"'), false)
+  const windowsMatch =
+    /^powershell\.exe -NoProfile -NonInteractive -EncodedCommand ([A-Za-z0-9+/]+={0,2})$/.exec(
+      nativeHook.commandWindows
+    )
+  assert.ok(windowsMatch)
+  const decodedWindowsCommand = Buffer.from(windowsMatch[1], 'base64').toString('utf16le')
+  assert.equal(decodedWindowsCommand,
+    "$runner = Join-Path $env:PLUGIN_ROOT 'skills\\quality-ratchet\\scripts\\quality-delta.mjs'; " +
+    'node $runner hook --agent-os-hook=quality-ratchet')
   assert.equal(command.startsWith('"' + process.execPath + '"'), true)
   assert.equal(path.isAbsolute(durableScript), true)
   assert.match(command, /--agent-os-hook=quality-ratchet/)

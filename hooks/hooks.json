@@ -7,6 +7,7 @@
           {
             "type": "command",
             "command": "node \"${CLAUDE_PLUGIN_ROOT}/skills/quality-ratchet/scripts/quality-delta.mjs\" hook --agent-os-hook=quality-ratchet",
+            "commandWindows": "powershell.exe -NoProfile -NonInteractive -EncodedCommand JAByAHUAbgBuAGUAcgAgAD0AIABKAG8AaQBuAC0AUABhAHQAaAAgACQAZQBuAHYAOgBQAEwAVQBHAEkATgBfAFIATwBPAFQAIAAnAHMAawBpAGwAbABzAFwAcQB1AGEAbABpAHQAeQAtAHIAYQB0AGMAaABlAHQAXABzAGMAcgBpAHAAdABzAFwAcQB1AGEAbABpAHQAeQAtAGQAZQBsAHQAYQAuAG0AagBzACcAOwAgAG4AbwBkAGUAIAAkAHIAdQBuAG4AZQByACAAaABvAG8AawAgAC0ALQBhAGcAZQBuAHQALQBvAHMALQBoAG8AbwBrAD0AcQB1AGEAbABpAHQAeQAtAHIAYQB0AGMAaABlAHQA",
             "timeout": 10
           }
         ]
