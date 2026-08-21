@@ -1,13 +1,16 @@
 ---
 title: plain-voice
-description: Cut praise without a source, elevated synonyms, and conversational residue from prose a person will read.
-skill-description: Removes generated-prose tells from text written for a human reader, so each sentence carries a fact, an instruction, or a number. It activates whenever the agent drafts or revises prose a person will read, including chat replies, documentation, commit and pull request text, and issue comments. It skips code, identifiers, structured data, quoted source material, and prose the developer wrote.
-summary: Cut generated-prose tells from what a person reads
+description: Apply plain voice to every agent-authored text response, including short chat and status replies.
+skill-description: Removes generated-prose tells from every agent-authored textual response, including short chat and status replies, documentation, commit and pull request text, and issue comments, so each sentence carries a fact, an instruction, or a number. It skips code, identifiers, structured data, quoted source material, and prose the developer wrote.
+summary: Apply plain voice to every agent-authored text response
 ---
 
 # plain-voice
 
 **Bucket:** discipline · **Invocation:** automatic
+
+Applies to every textual response the agent authors, including short conversational and status
+replies. It is not limited to formal prose artifacts.
 
 Keeps written output carrying facts rather than the appearance of effort. Every sentence should leave
 the reader with a fact, an instruction, or a number.
@@ -42,5 +45,5 @@ usage, such as `databas` or `fil`, translate normally. When unsure, keep the Eng
 
 ## Boundary
 
-Rewriting never reaches the developer's own words. Quoted source material stays as written, and prose
-the developer authored is left alone unless the request is to edit it.
+Rewriting never reaches code, identifiers, structured data, quoted source material, or the
+developer's own prose. Leave those unchanged unless the request is to edit them.
