@@ -85,7 +85,7 @@ Always on; no invocation.
 | [`simplifier-review`](/skills/simplifier-review) | discipline | automatic | Review a diff for unnecessary complexity |
 | [`quality-ratchet`](/skills/quality-ratchet) | discipline | automatic | Compare exact entry and candidate evidence without score gates |
 | [`notice-lesson`](/skills/notice-lesson) | discipline | automatic | Treat interruptions as misunderstanding signals |
-| [`plain-voice`](/skills/plain-voice) | discipline | automatic | Cut generated-prose tells from what a person reads |
+| [`plain-voice`](/skills/plain-voice) | discipline | automatic | Apply plain voice to every agent-authored text response |
 
 ## Meta
 

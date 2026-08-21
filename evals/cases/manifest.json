@@ -137,7 +137,8 @@
       "positive": [
         "plain-voice.md#PV-P1 Generated draft",
         "plain-voice.md#PV-P2 Swedish technical terms",
-        "plain-voice.md#PV-P3 Ordinary reply"
+        "plain-voice.md#PV-P3 Ordinary reply",
+        "plain-voice.md#PV-P4 Short status reply"
       ],
       "negative": [
         "plain-voice.md#PV-N1 Developer's own text",

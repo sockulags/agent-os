@@ -1,9 +1,12 @@
 ---
 name: plain-voice
-description: Removes generated-prose tells from text written for a human reader, so each sentence carries a fact, an instruction, or a number. It activates whenever the agent drafts or revises prose a person will read, including chat replies, documentation, commit and pull request text, and issue comments. It skips code, identifiers, structured data, quoted source material, and prose the developer wrote.
+description: Removes generated-prose tells from every agent-authored textual response, including short chat and status replies, documentation, commit and pull request text, and issue comments, so each sentence carries a fact, an instruction, or a number. It skips code, identifiers, structured data, quoted source material, and prose the developer wrote.
 ---
 
 # Plain voice
+
+Apply this discipline to every textual response the agent authors, including short conversational
+and status replies. It is not limited to formal prose artifacts.
 
 Write so every sentence leaves the reader with a fact, an instruction, or a number. Cut the rest.
 
@@ -32,5 +35,5 @@ apply [the tells reference](references/tells.md) to English prose. Established t
 the opposite way and stay in English whatever language surrounds them: a reader who has to turn
 `kantfall` back into `edge case` cannot act on the sentence until they do.
 
-Rewriting never reaches the developer's own words. Quote source material as written, and leave prose
-the developer authored alone unless the request is to edit it.
+Rewriting never reaches code, identifiers, structured data, quoted source material, or the
+developer's own prose. Leave those unchanged unless the request is to edit them.
