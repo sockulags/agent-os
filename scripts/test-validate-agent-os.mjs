@@ -14,7 +14,7 @@ function fixture() {
   const target = fs.mkdtempSync(path.join(os.tmpdir(), 'agent-os-validator-'))
   temporaryRoots.push(target)
   for (const item of [
-    '.agents', '.claude-plugin', '.codex-plugin', '.github', 'cli', 'docs-site', 'evals', 'scripts',
+    '.agents', '.claude-plugin', '.codex-plugin', '.github', 'cli', 'docs-site', 'evals', 'hooks', 'scripts',
     'skills', 'AGENTS.md', 'CLAUDE.md', 'README.md', 'package.json', 'policy.md'
   ]) {
     fs.cpSync(path.join(root, item), path.join(target, item), {
@@ -85,6 +85,43 @@ try {
     manifest.files = manifest.files.filter((entry) => entry !== 'skills/')
     fs.writeFileSync(file, JSON.stringify(manifest, null, 2) + '\n')
   }, 'MANIFEST_NPM_SKILLS')
+
+  expectFailure('npm package omits native hooks', (target) => {
+    const file = path.join(target, 'package.json')
+    const manifest = JSON.parse(fs.readFileSync(file, 'utf8'))
+    manifest.files = manifest.files.filter((entry) => entry !== 'hooks/')
+    fs.writeFileSync(file, JSON.stringify(manifest, null, 2) + '\n')
+  }, 'MANIFEST_NPM_HOOKS')
+
+  expectFailure('native hook adds an unsupported lifecycle event', (target) => {
+    const file = path.join(target, 'hooks/hooks.json')
+    const hooks = JSON.parse(fs.readFileSync(file, 'utf8'))
+    hooks.hooks.SessionStart = []
+    fs.writeFileSync(file, JSON.stringify(hooks, null, 2) + '\n')
+  }, 'HOOKS_STOP_ONLY')
+
+  expectFailure('native Windows hook embeds a command quote', (target) => {
+    const file = path.join(target, 'hooks/hooks.json')
+    const hooks = JSON.parse(fs.readFileSync(file, 'utf8'))
+    hooks.hooks.Stop[0].hooks[0].commandWindows += '"'
+    fs.writeFileSync(file, JSON.stringify(hooks, null, 2) + '\n')
+  }, 'HOOKS_WINDOWS_COMMAND')
+
+  expectFailure('native Windows hook command is missing', (target) => {
+    const file = path.join(target, 'hooks/hooks.json')
+    const hooks = JSON.parse(fs.readFileSync(file, 'utf8'))
+    delete hooks.hooks.Stop[0].hooks[0].commandWindows
+    fs.writeFileSync(file, JSON.stringify(hooks, null, 2) + '\n')
+  }, 'HOOKS_WINDOWS_COMMAND')
+
+  expectFailure('native Windows hook encoded payload drifts', (target) => {
+    const file = path.join(target, 'hooks/hooks.json')
+    const hooks = JSON.parse(fs.readFileSync(file, 'utf8'))
+    const encoded = Buffer.from("Write-Output 'wrong runner'", 'utf16le').toString('base64')
+    hooks.hooks.Stop[0].hooks[0].commandWindows =
+      `powershell.exe -NoProfile -NonInteractive -EncodedCommand ${encoded}`
+    fs.writeFileSync(file, JSON.stringify(hooks, null, 2) + '\n')
+  }, 'HOOKS_WINDOWS_COMMAND')
 
   expectFailure('project policy surfaces drift', (target) => {
     fs.appendFileSync(path.join(target, 'CLAUDE.md'), '\nClaude-only release rule.\n')

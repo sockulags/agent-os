@@ -164,6 +164,16 @@
         "proportional-testing.md#Negative 2"
       ]
     },
+    "quality-ratchet": {
+      "positive": [
+        "quality-ratchet.md#Positive 1 — health endpoint direct shape",
+        "quality-ratchet.md#Positive 2 — touched legacy improvement"
+      ],
+      "negative": [
+        "quality-ratchet.md#Negative 1 — legitimate runtime selection",
+        "quality-ratchet.md#Negative 2 — unrelated debt"
+      ]
+    },
     "simplifier": {
       "positive": [
         "simplifier.md#SIM-P1",

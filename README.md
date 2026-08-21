@@ -30,6 +30,7 @@ workflows compose (`understand-work`, `explain-work`), the disciplines, and the 
 | `proportional-testing` | discipline | automatic | Minimum meaningful regression coverage |
 | `scope-guard` | discipline | automatic | Keep work inside the task; flag drift |
 | `simplifier-review` | discipline | automatic | Review a diff for unnecessary complexity |
+| `quality-ratchet` | discipline | automatic | Compare exact entry and candidate evidence without score gates |
 | `notice-lesson` | discipline | automatic | Treat interruptions as misunderstanding signals |
 | `plain-voice` | discipline | automatic | Cut generated-prose tells from what a person reads |
 | `list-skills` | meta | manual | List installed skills and how to invoke them |
@@ -70,7 +71,28 @@ skills. Use `--scope project` to install into the current project's skill direct
 command always downloads the current npm CLI; use `npx @sockulags/agent-os@latest update` to force
 the newest published installer.
 
-Direct Claude skills appear as `/<skill>` and direct Codex skills as `$<skill>`.
+Direct Claude skills appear as `/<skill>` and direct Codex skills as `$<skill>`. Direct installation
+also merges the managed quality-ratchet `Stop` hook into the selected host configuration without
+replacing unrelated hooks. The user and project paths are `~/.claude/settings.json` or
+`<project>/.claude/settings.json` for Claude Code, and `~/.codex/hooks.json` or
+`<project>/.codex/hooks.json` for Codex. Node must be available to native plugin hooks. The
+packaged hook keeps one logical command source: Claude and Unix-like Codex use
+`${CLAUDE_PLUGIN_ROOT}`, while Windows Codex uses a quote-free `commandWindows` with a UTF-16LE
+PowerShell `-EncodedCommand` payload that resolves `$env:PLUGIN_ROOT` at runtime.
+
+The ratchet begins an exact worktree- and host-session-local baseline before the first mutation when `deliver-work`
+can run it, checks the candidate before `simplifier-review`, and reports source-file/NLOC,
+legacy-before/after, dependency, and optional-analyzer evidence. These are signals for semantic
+judgment, not score or raw-count thresholds. Missing Lizard or jscpd is reported as unavailable,
+never clean. A Stop hook blocks a missing, corrupt, or stale active lifecycle check until the same
+host session records a fresh check; `stop_hook_active` does not bypass that requirement. Without a
+baseline for the current host session it is a no-op. Resolve
+`scripts/quality-delta.mjs` relative to the installed `quality-ratchet/SKILL.md` and run its `clear`
+command from that same host session to abandon an active attempt. Standalone/manual use without a
+host session ID uses a deterministic fallback state. `begin`, `check`, and `clear` read the host ID
+from `CODEX_THREAD_ID` or `CLAUDE_CODE_SESSION_ID`, with Codex taking precedence when both exist;
+native Stop resolves the same identity from its `session_id` payload, using non-empty `turn_id` to
+identify Codex. There is no uninstall command yet.
 
 Native marketplace installation remains available with `--method plugin`. It requires the selected
 host CLI. Claude plugin skills appear as `/agent-os:<skill>`; Codex plugin skills remain

@@ -40,7 +40,20 @@ both discovery and update behavior have been verified as one migration.
 
 It records the Agent OS-owned directories in `.agent-os-install.json`. An update replaces only
 those directories, removes managed skills that disappeared from the release, and leaves unrelated
-skills alone. It refuses to overwrite a same-name directory that it did not install.
+skills alone. Schema 1 manifests remain readable; new installs record the managed quality-ratchet
+hook integration in schema 2. It refuses to overwrite a same-name directory that it did not install.
+
+Direct installs also merge one Agent OS-owned `Stop` hook without replacing unrelated host hooks:
+
+| Scope | Claude Code | Codex |
+|---|---|---|
+| User | `~/.claude/settings.json` | `~/.codex/hooks.json` |
+| Project | `<project>/.claude/settings.json` | `<project>/.codex/hooks.json` |
+
+Malformed or ambiguous managed hook configuration aborts before skill or hook mutation. The direct
+command uses absolute paths to the Node executable and the runner copied into the selected skill
+root. Start a new session after updating;
+there is no uninstall command yet.
 
 Use `npx @sockulags/agent-os@latest update` to force the latest published installer. A global CLI
 install is optional:
@@ -64,7 +77,10 @@ npx @sockulags/agent-os install --platform claude --method plugin --scope user
 ~~~
 
 Plugin mode requires the selected host CLI. Claude plugin skills use the namespace
-`/agent-os:<skill>`; Codex plugin skills remain `$<skill>`.
+`/agent-os:<skill>`; Codex plugin skills remain `$<skill>`. Native plugin mode loads the packaged
+shared `Stop` hook through `CLAUDE_PLUGIN_ROOT` on Unix-like hosts and Codex's quote-free
+`commandWindows` with a UTF-16LE PowerShell `-EncodedCommand` payload on Windows. The decoded script
+resolves `$env:PLUGIN_ROOT` at runtime. Node and PowerShell must be on PATH.
 
 For development against a clone, Claude can run `claude --plugin-dir .`. Codex can register the
 working copy with `codex plugin marketplace add /path/to/agent-os`. A local Codex marketplace is

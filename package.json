@@ -8,6 +8,7 @@
   },
   "files": [
     "cli/",
+    "hooks/",
     "policy.md",
     "skills/"
   ],
@@ -15,7 +16,7 @@
     "node": ">=18.18"
   },
   "scripts": {
-    "test": "node --test cli/*.test.mjs",
+    "test": "node --test cli/index.test.mjs skills/quality-ratchet/scripts/quality-delta.test.mjs",
     "test:evals": "node scripts/test-eval-agent-behavior.mjs",
     "validate": "node scripts/validate-agent-os.mjs",
     "verify:release": "node scripts/verify-release.mjs"

@@ -44,10 +44,13 @@ observable outcome, one reviewable change boundary, explicit ground truth, and s
 dependencies. A target with several separately closable outcomes or delivery boundaries returns to
 shaping before mutation. Deliver-work never chooses batch execution for the developer.
 
-Then inspect, classify review, implement, check, adapt, review the diff, and verify the final
-candidate. Diff review automatically applies the [simplifier-review](/skills/simplifier-review)
-lens before the candidate is frozen, so supported unnecessary code and solution layers are removed
-rather than carried into delivery. Test selection applies
+Then inspect, start the available [quality-ratchet](/skills/quality-ratchet) baseline before the
+first mutation, classify review, implement, check the candidate, adapt, review the diff, and verify
+the final candidate. The ratchet allows bounded behavior-preserving improvement on the touched
+surface, but its raw counts are evidence rather than gates. Run its candidate check before the
+semantic review and pass the evidence to that review. Diff review automatically applies the
+[simplifier-review](/skills/simplifier-review) lens before the candidate is frozen, so supported
+unnecessary code and solution layers are removed rather than carried into delivery. Test selection applies
 [proportional-testing](/skills/proportional-testing): protect the changed behavior and plausible
 regressions with the minimum meaningful test surface, while retaining required delivery checks. The
 agent chooses the local method.

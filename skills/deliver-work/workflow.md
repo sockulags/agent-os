@@ -26,18 +26,24 @@ the developer.
 ## Work loop
 
 1. Inspect enough of the affected system to choose a coherent change.
-2. Classify the review gate before editing. If review is required, confirm the current tool list
+2. If available, run [`quality-ratchet`](../quality-ratchet/SKILL.md)'s `begin` before the first
+   mutation. It captures the exact worktree entry state without stashing or editing user files; an
+   unavailable capability is reported rather than turned into a substitute gate.
+3. Classify the review gate before editing. If review is required, confirm the current tool list
    contains a real reviewer launch tool before mutation. Re-evaluate the gate against the completed
    diff.
-3. Make the smallest complete implementation. Use `diagnose-before-fix` when the cause is unknown and
-   `scope-guard` when discoveries threaten the boundary.
-4. Apply [`proportional-testing`](../proportional-testing/SKILL.md) when selecting or creating tests.
+4. Make the smallest complete implementation. Allow only the quality-ratchet's bounded,
+   behavior-preserving improvement on the touched surface. Use `diagnose-before-fix` when the
+   cause is unknown and `scope-guard` when discoveries threaten the boundary.
+5. Apply [`proportional-testing`](../proportional-testing/SKILL.md) when selecting or creating tests.
    Run fast, relevant checks while working and adapt from their results.
-5. Review the resulting diff for correctness, unnecessary complexity, and scope. Apply the
-   [`simplifier-review`](../simplifier-review/SKILL.md) lens and fix supported simplification
-   findings before freezing the candidate.
-6. Complete the review gate below.
-7. Apply `verify-before-done` to the final candidate and deliver only to the requested boundary.
+6. Before [`simplifier-review`](../simplifier-review/SKILL.md), run quality-ratchet's `check` when
+   its baseline is active and pass the evidence to the semantic review. Treat file, NLOC, legacy,
+   dependency, and analyzer values as signals, never as an aggregate score or threshold gate.
+7. Review the resulting diff for correctness, unnecessary complexity, and scope. Apply the
+   simplifier-review lens and fix supported simplification findings before freezing the candidate.
+8. Complete the review gate below.
+9. Apply `verify-before-done` to the final candidate and deliver only to the requested boundary.
 
 Ground truth governs the loop; no prescribed implementation sequence substitutes for it.
 
