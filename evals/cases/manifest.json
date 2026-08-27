@@ -14,6 +14,20 @@
         "batch-work.md#BW-N5 Multiple issues only"
       ]
     },
+    "check-work": {
+      "positive": [
+        "check-work.md#CW-P1 Implicit diff review",
+        "check-work.md#CW-P2 Explicit fix review",
+        "check-work.md#CW-P3 Bare mode choice",
+        "check-work.md#CW-P4 Reviewer unavailable"
+      ],
+      "negative": [
+        "check-work.md#CW-N1 Test-only request",
+        "check-work.md#CW-N2 Status-only request",
+        "check-work.md#CW-N3 Initial design",
+        "check-work.md#CW-N4 Repository audit"
+      ]
+    },
     "chart-work": {
       "positive": [
         "chart-work.md#CW-P1 Chart",

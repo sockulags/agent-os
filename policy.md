@@ -34,7 +34,9 @@ Rules:
   planned work; invoke them through the name exposed by the host (`/guide-me` for direct Claude
   skills, `/agent-os:guide-me` for the Claude plugin, or `$guide-me` for Codex). Never self-invoke
   them. One exception: a workflow may continue into the workflow its exit contract names once the
-  developer approves that exit, as `guide-me` does after its approved plain-language gate.
+  developer approves that exit, as `guide-me` does after its approved plain-language gate. The
+  automatic `check-work` review workflow is also available from supported implicit review requests;
+  its report mode is read-only and its fix mode requires explicit authority.
 
 ## Preferences (seed defaults — project policy overrides)
 

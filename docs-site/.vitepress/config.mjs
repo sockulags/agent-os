@@ -32,7 +32,7 @@ export default withMermaid(defineConfig({
       { text: 'Evals', link: '/reference/evals' },
       { text: 'Reference', link: '/reference/plugin-manifests', activeMatch: '/reference/' },
       {
-        text: 'v0.11.0',
+        text: 'v0.12.0',
         items: [
           { text: 'Changelog', link: '/changelog' },
           { text: 'Releases', link: 'https://github.com/sockulags/agent-os/releases' },
@@ -89,7 +89,8 @@ export default withMermaid(defineConfig({
             { text: 'init-agent-os', link: '/skills/init-agent-os' },
             { text: 'record-lesson', link: '/skills/record-lesson' },
             { text: 'simplifier', link: '/skills/simplifier' },
-            { text: 'simplifier-audit', link: '/skills/simplifier-audit' }
+            { text: 'simplifier-audit', link: '/skills/simplifier-audit' },
+            { text: 'check-work', link: '/skills/check-work' }
           ]
         },
         {

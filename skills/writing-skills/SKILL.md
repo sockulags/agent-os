@@ -61,7 +61,7 @@ infrastructure or leave a deterministic invariant as a reminder.
 
 ## Definition of done — a skill is not finished until
 
-1. Structural validation passes: folder name equals `name`, frontmatter has `name` + `description`, manual skills (all workflows and this meta-skill) have `disable-model-invocation: true` and `agents/openai.yaml` with `policy.allow_implicit_invocation: false`.
+1. Structural validation passes: folder name equals `name`, frontmatter has `name` + `description`, and manual skills (including manual workflows and this meta-skill) have `disable-model-invocation: true` and `agents/openai.yaml` with `policy.allow_implicit_invocation: false`. Automatic skills carry neither gate.
 2. At least two positive and two negative trigger cases describe the intended boundary.
 3. Risky or complex behavior has a blind forward test against the observable contract, not the
    preferred reasoning trace.

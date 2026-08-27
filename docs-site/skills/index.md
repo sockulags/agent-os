@@ -5,8 +5,8 @@ description: The agent-os workflows, automatic disciplines, and meta-skill with 
 
 # Skills overview
 
-agent-os ships its skills in three buckets. Workflows are invoked by hand, disciplines trigger
-themselves from the situation, and the meta-skill governs how the others are written. Read this
+agent-os ships its skills in three buckets. Most workflows are invoked by hand; `check-work` is an
+automatic review workflow. Disciplines trigger themselves from the situation, and the meta-skill governs how the others are written. Read this
 page top to bottom: the planning foundation, the on-ramp in front of it, the remaining workflows,
 and finally the component skills the workflows compose.
 
@@ -52,6 +52,7 @@ The workflows that run, pick, set up, and remember work.
 | [`record-lesson`](/skills/record-lesson) | workflow | manual | Record a durable lesson in repo or global policy |
 | [`simplifier`](/skills/simplifier) | workflow | manual | Remove unnecessary code and solution layers |
 | [`simplifier-audit`](/skills/simplifier-audit) | workflow | manual | Audit a repository for simplification opportunities |
+| [`check-work`](/skills/check-work) | workflow | automatic | Independently review a candidate and report or fix supported findings |
 
 ## Component skills
 
@@ -103,7 +104,8 @@ they carry an `agents/openai.yaml` with `policy.allow_implicit_invocation: false
 `$<skill>`.
 
 Automatic skills carry neither switch. Their descriptions name the situation and boundary clearly
-enough to trigger only when useful.
+enough to trigger only when useful; `check-work` may also be explicitly named with `report` or
+`fix`.
 
 ## Retirement
 

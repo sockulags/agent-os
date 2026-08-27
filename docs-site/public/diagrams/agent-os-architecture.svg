@@ -90,7 +90,7 @@
         <text x="424" y="368" fill="#3c3c43" font-size="12" font-weight="600" font-family="'Inter', sans-serif">Policy</text>
         <text x="500" y="368" fill="#67676c" font-size="8" font-family="'Geist Mono', monospace">global + project boundaries</text>
         <text x="424" y="392" fill="#3c3c43" font-size="12" font-weight="600" font-family="'Inter', sans-serif">Workflows</text>
-        <text x="500" y="392" fill="#67676c" font-size="8" font-family="'Geist Mono', monospace">manual, explicit orchestration</text>
+        <text x="500" y="392" fill="#67676c" font-size="8" font-family="'Geist Mono', monospace">mostly manual; check-work may trigger implicitly</text>
         <text x="424" y="416" fill="#3c3c43" font-size="12" font-weight="600" font-family="'Inter', sans-serif">Disciplines</text>
         <text x="500" y="416" fill="#67676c" font-size="8" font-family="'Geist Mono', monospace">automatic quality controls</text>
 

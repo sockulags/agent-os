@@ -1,6 +1,6 @@
 # Workflow skills: non-invocation cases
 
-The ten workflow skills are manual-only. Every case below must NOT activate any of
+The manual workflow skills below are manual-only. Every case below must NOT activate any of
 `init-agent-os`, `chart-work`, `shape-work`, `batch-work`, `deliver-work`, `dispatch-next`,
 `guide-me`, `understand-work`, `explain-work`, `record-lesson` implicitly, on either
 platform.
@@ -13,7 +13,7 @@ or imitating a workflow skill.
 | W2 | "Implementera fixen vi pratade om och öppna en PR." | deliver-work |
 | W3 | "Vad borde jag jobba på härnäst i det här repot?" | dispatch-next |
 | W4 | "Sätt upp det här projektet så det funkar bra med AI-agenter." | init-agent-os |
-| W5 | "Planera och bygg klart hela features-backloggen." | all ten |
+| W5 | "Planera och bygg klart hela features-backloggen." | all listed manual workflows |
 | W6 | "Det här blir en jättegrej och jag vet inte var jag ska börja — kan du kartlägga den?" | chart-work |
 | W7 | "Planera hela den här backlogen och skicka agenter att implementera allt parallellt." | batch-work |
 | W8 | "Jag vet inte riktigt vad jag vill med det här projektet, hjälp mig tänka." | guide-me |

@@ -15,12 +15,13 @@ does.
 The card is built by reading the installed skills themselves rather than a list held in the skill,
 so it reflects what is actually present — including a partial or outdated installation. Invocation
 comes from the same frontmatter that gates it, so explicit and automatic skills never appear under
-the wrong heading.
+the wrong heading. An automatic workflow may still document explicit modes in its own instructions.
 
 Invocation syntax differs per host: `/agent-os:<name>` through the Claude plugin, `/<name>` for a
 direct Claude install, and `$<name>` on Codex. The card names which form it is showing.
 
-It closes with entry points for a developer who has not named a skill, and it is read-only: it never
-runs, stages, or offers to run what it lists. Choosing the next action is
+It closes with entry points for a developer who has not named a skill, while automatic skills need
+no entry point for an implicit trigger. It is read-only: it never runs, stages, or offers to run what
+it lists. Choosing the next action is
 [`dispatch-next`](/skills/dispatch-next); describing work already underway is
 [`explain-work`](/skills/explain-work).
