@@ -132,8 +132,29 @@ export function validate(root = path.resolve(scriptDir, '..')) {
     }
   }
 
-  if (!fs.existsSync(path.join(root, 'scripts/verify-release.mjs'))) {
+  const releaseVerifierFile = path.join(root, 'scripts/verify-release.mjs')
+  if (!fs.existsSync(releaseVerifierFile)) {
     fail('RELEASE_VERIFY_SCRIPT', 'scripts/verify-release.mjs is required by the release policy.')
+  } else {
+    const releaseVerifier = read(releaseVerifierFile)
+    const publicInstall = releaseVerifier.match(/function checkPublicInstall\(\) \{([\s\S]*?)\n\}/)?.[1]
+      ?.replace(/\s+/g, ' ').trim() ?? ''
+    const expectedPublicInstall =
+      "const publicInstallArgs = [ 'exec', '--yes', `--package=${packageSpec}`, '--', 'agent-os', 'install', " +
+      "'--platform', 'both', '--scope', 'user', '--no-policy', '--yes' ] run('npm', publicInstallArgs, { cwd,"
+    const packageSpecDeclarations = releaseVerifier.match(/\b(?:const|let|var)\s+packageSpec\b/g) ?? []
+    const cwdDeclarations = publicInstall.match(/\b(?:const|let|var)\s+cwd\b/g) ?? []
+    const hasPinnedPackageSpec = packageSpecDeclarations.length === 1 && releaseVerifier.includes(
+      'const packageSpec = `${packageJson.name}@${version}`'
+    )
+    const hasTemporaryCwd = cwdDeclarations.length === 1 &&
+      publicInstall.includes("const cwd = path.join(temporaryRoot, 'run')") &&
+      publicInstall.includes('fs.mkdirSync(cwd, { recursive: true })')
+    if (!hasPinnedPackageSpec || !hasTemporaryCwd || !publicInstall.includes(expectedPublicInstall) ||
+        /run\('npx'/.test(publicInstall)) {
+      fail('RELEASE_PUBLIC_INSTALL',
+        'checkPublicInstall must pin the package version and run npm exec from its temporary cwd.')
+    }
   }
 
   if (!fs.existsSync(path.join(root, 'scripts/smoke-packed-install.mjs'))) {
