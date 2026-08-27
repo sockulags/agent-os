@@ -158,9 +158,11 @@ function checkPublicInstall() {
   fs.mkdirSync(home, { recursive: true })
   fs.mkdirSync(cwd, { recursive: true })
   try {
-    run('npx', [
-      '--yes', packageSpec, 'install', '--platform', 'both', '--scope', 'user', '--no-policy', '--yes'
-    ], {
+    const publicInstallArgs = [
+      'exec', '--yes', `--package=${packageSpec}`, '--', 'agent-os', 'install',
+      '--platform', 'both', '--scope', 'user', '--no-policy', '--yes'
+    ]
+    run('npm', publicInstallArgs, {
       cwd,
       env: { ...process.env, HOME: home, USERPROFILE: home },
       capture: false

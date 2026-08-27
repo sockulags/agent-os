@@ -147,6 +147,40 @@ try {
     fs.rmSync(path.join(target, 'scripts/verify-release.mjs'))
   }, 'RELEASE_VERIFY_SCRIPT')
 
+  expectFailure('public install uses ambiguous npx syntax', (target) => {
+    rewrite(path.join(target, 'scripts/verify-release.mjs'), (text) =>
+      text.replace("run('npm', publicInstallArgs", "run('npx', publicInstallArgs"))
+  }, 'RELEASE_PUBLIC_INSTALL')
+
+  expectFailure('public install omits npm command separator', (target) => {
+    rewrite(path.join(target, 'scripts/verify-release.mjs'), (text) =>
+      text.replace("'--', 'agent-os'", "'agent-os'"))
+  }, 'RELEASE_PUBLIC_INSTALL')
+
+  expectFailure('public install package is not version-pinned', (target) => {
+    rewrite(path.join(target, 'scripts/verify-release.mjs'), (text) =>
+      text.replace('const packageSpec = `${packageJson.name}@${version}`',
+        'const packageSpec = `${packageJson.name}@latest`'))
+  }, 'RELEASE_PUBLIC_INSTALL')
+
+  expectFailure('public install runs from repository root', (target) => {
+    rewrite(path.join(target, 'scripts/verify-release.mjs'), (text) =>
+      text.replace("run('npm', publicInstallArgs, {\n      cwd,",
+        "run('npm', publicInstallArgs, {\n      cwd: root,"))
+  }, 'RELEASE_PUBLIC_INSTALL')
+
+  expectFailure('public install shadows the pinned package spec', (target) => {
+    rewrite(path.join(target, 'scripts/verify-release.mjs'), (text) =>
+      text.replace("    run('npm', publicInstallArgs, {",
+        "    const packageSpec = `${packageJson.name}@latest`\n    run('npm', publicInstallArgs, {"))
+  }, 'RELEASE_PUBLIC_INSTALL')
+
+  expectFailure('public install shadows the temporary cwd', (target) => {
+    rewrite(path.join(target, 'scripts/verify-release.mjs'), (text) =>
+      text.replace("    run('npm', publicInstallArgs, {",
+        "    const cwd = root\n    run('npm', publicInstallArgs, {"))
+  }, 'RELEASE_PUBLIC_INSTALL')
+
   expectFailure('npm publish workflow loses OIDC permission', (target) => {
     rewrite(path.join(target, '.github/workflows/publish.yml'), (text) =>
       text.replace('id-token: write', 'id-token: read'))

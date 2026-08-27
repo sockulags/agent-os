@@ -8,6 +8,11 @@ description: What changed in each agent-os release, in plain terms.
 One entry per release: what changed, and what it means for how you work. Full commit-level history
 lives on [GitHub](https://github.com/sockulags/agent-os/commits/main).
 
+## 0.12.1 — 2026-08-27
+
+Public release verification now uses explicit npm package and command selection, compatible with
+npm 11.
+
 ## 0.12.0 — 2026-08-27
 
 The check-work release: review completed work independently without confusing review, testing, or
