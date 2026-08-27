@@ -53,7 +53,7 @@ This is why critical scorecard rows cannot be compensated by unrelated successes
 `evals/cases/manifest.json` indexes every distributed skill. Each skill has at least two positive and
 two negative cases:
 
-- **Positive cases** exercise an automatic trigger or an explicit manual invocation.
+- **Positive cases** exercise an automatic trigger or an explicit invocation.
 - **Negative cases** are adjacent requests where that skill must stay dormant.
 - **Forward tests** give a fresh agent the raw request and available artifacts, then grade only the
   resulting behavior.

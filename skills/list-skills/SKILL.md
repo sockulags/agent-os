@@ -19,7 +19,8 @@ omitting it.
 
 Each skill's own frontmatter also carries its invocation: `disable-model-invocation: true` plus
 `agents/openai.yaml` means the developer invokes it explicitly; neither switch means it is automatic
-and needs no invocation.
+and needs no invocation. An automatic workflow may still document explicit modes in its own
+instructions.
 
 ## Report
 
@@ -32,7 +33,7 @@ differently per host.
 Close with the entry points for a developer who has not named a skill: an unclear desire starts at
 `guide-me`, bounded choices at `shape-work`, broad or coupled work at `chart-work`, and a
 decision-complete unit at `deliver-work`. Say plainly that automatic skills need no entry point
-instead of listing them as choices.
+for an implicit trigger; mention an automatic workflow's explicit modes only when useful.
 
 ## Boundaries
 

@@ -16,7 +16,7 @@ The Claude Code plugin manifest.
 {
   "name": "agent-os",
   "description": "A lightweight agent operating system with explicit workflows and automatic disciplines, shared between Claude Code and Codex.",
-  "version": "0.11.0",
+  "version": "0.12.0",
   "author": { "name": "Lucas Skog" },
   "homepage": "https://sockulags.github.io/agent-os/",
   "repository": "https://github.com/sockulags/agent-os",
@@ -55,7 +55,7 @@ site.
 ```json
 {
   "name": "agent-os",
-  "version": "0.11.0",
+  "version": "0.12.0",
   "homepage": "https://sockulags.github.io/agent-os/",
   "repository": "https://github.com/sockulags/agent-os",
   "skills": "./skills/",
@@ -103,7 +103,7 @@ choose native marketplace installation.
 ~~~json
 {
   "name": "@sockulags/agent-os",
-  "version": "0.11.0",
+  "version": "0.12.0",
   "type": "module",
   "bin": {
     "agent-os": "./cli/index.mjs"
@@ -124,7 +124,8 @@ source: Claude and Unix-like Codex use `CLAUDE_PLUGIN_ROOT`, while Windows Codex
 ## Per-skill invocation gating
 
 Manual invocation is expressed differently on each platform, and both files must exist for every
-manual skill.
+manual skill. Automatic skills carry neither gate; an automatic workflow may still be explicitly
+named when the developer wants its documented mode.
 
 Claude reads frontmatter in `SKILL.md`:
 
@@ -143,8 +144,8 @@ policy:
   allow_implicit_invocation: false
 ```
 
-A skill missing one of these is invocable by the model on that platform, which is exactly the failure
-mode the [workflow non-invocation eval cases](/reference/evals) exist to catch.
+A manual skill missing one of these is invocable by the model on that platform, which is exactly the
+failure mode the [workflow non-invocation eval cases](/reference/evals) exist to catch.
 
 ## Version bumps
 

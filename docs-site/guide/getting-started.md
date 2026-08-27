@@ -128,7 +128,10 @@ The result is the repository's [project policy](/guide/project-policy), a living
 ## Your first run
 
 For a bounded change with open product questions, invoke `shape-work` with the task. For work whose
-decisions are already made, use `deliver-work`. Use `batch-work` only when you explicitly want
+decisions are already made, use `deliver-work`. For a completed implementation or diff, use
+`/check-work report|fix` in direct Claude, `/agent-os:check-work report|fix` in the Claude plugin, or
+`$check-work report|fix` in Codex; report is read-only, while fix authorizes supported fixes. Use
+`batch-work` only when you explicitly want
 several implementation-ready, dependency-mapped issues executed and integrated as one batch.
 
 When you cannot yet say what you want, invoke `guide-me`. For example:

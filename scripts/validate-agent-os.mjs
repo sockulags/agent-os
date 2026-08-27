@@ -201,9 +201,11 @@ export function validate(root = path.resolve(scriptDir, '..')) {
     }
     const [, bucket, invocation] = contract
     documentedSkills.set(name, { bucket, invocation, summary: docMeta?.summary })
-    const shouldBeManual = bucket === 'workflow' || bucket === 'meta'
-    if ((invocation === 'manual') !== shouldBeManual) {
-      fail('SKILL_INVOCATION_CLASS', `${name}: ${bucket} must use ${shouldBeManual ? 'manual' : 'automatic'} invocation.`)
+    const expectedInvocation = bucket === 'discipline' || name === 'check-work'
+      ? 'automatic'
+      : 'manual'
+    if (invocation !== expectedInvocation) {
+      fail('SKILL_INVOCATION_CLASS', `${name}: ${bucket} must use ${expectedInvocation} invocation.`)
     }
 
     const claudeManual = meta['disable-model-invocation'] === 'true'
@@ -215,7 +217,8 @@ export function validate(root = path.resolve(scriptDir, '..')) {
     if (invocation === 'manual' && (!claudeManual || !codexManual)) {
       fail('SKILL_MANUAL_GATE', `${name}: both Claude and Codex manual invocation gates are required.`)
     }
-    if (invocation === 'automatic' && (claudeManual || fs.existsSync(codexGate))) {
+    const hasClaudeInvocationGate = Object.hasOwn(meta, 'disable-model-invocation')
+    if (invocation === 'automatic' && (hasClaudeInvocationGate || fs.existsSync(codexGate))) {
       fail('SKILL_AUTOMATIC_GATE', `${name}: automatic skills must not carry manual invocation gates.`)
     }
   }
@@ -411,6 +414,26 @@ export function validate(root = path.resolve(scriptDir, '..')) {
     'Self-review never',
     'substitutes for required independent review.'
   ], 'DELIVER_CONTRACT')
+
+  checkContains(diagnostics, path.join(root, 'skills/check-work/SKILL.md'), [
+    'before reading repository code or the diff',
+    'check-work report',
+    'check-work fix',
+    'fresh-context, read-only reviewer',
+    'real host reviewer launch tool',
+    'report `BLOCKED`',
+    'Priority and title',
+    'Exact location',
+    'Evidence and impact',
+    'Required change',
+    'Omit speculative and cosmetic findings.',
+    'scope-guard',
+    'simplifier-review',
+    'proportional-testing',
+    'diagnose-before-fix',
+    'verify-before-done',
+    '`APPROVED`, `CHANGES_REQUESTED`, or `BLOCKED`'
+  ], 'CHECK_WORK_CONTRACT')
 
   checkContains(diagnostics, path.join(root, 'skills/chart-work/references/map.md'),
     [

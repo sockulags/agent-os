@@ -58,6 +58,22 @@ try {
     fs.appendFileSync(path.join(target, 'skills/shape-work/agents/openai.yaml'), '\nallow_implicit_invocation: true\n')
   }, 'SKILL_MANUAL_GATE')
 
+  expectFailure('non-check-work workflow becomes automatic', (target) => {
+    rewrite(path.join(target, 'docs-site/skills/shape-work.md'), (text) =>
+      text.replace('**Invocation:** manual', '**Invocation:** automatic'))
+  }, 'SKILL_INVOCATION_CLASS')
+
+  expectFailure('automatic skill carries false Claude gate', (target) => {
+    rewrite(path.join(target, 'skills/check-work/SKILL.md'), (text) =>
+      text.replace('name: check-work', 'name: check-work\ndisable-model-invocation: false'))
+  }, 'SKILL_AUTOMATIC_GATE')
+
+  expectFailure('automatic check-work carries Codex gate', (target) => {
+    const file = path.join(target, 'skills/check-work/agents/openai.yaml')
+    fs.mkdirSync(path.dirname(file), { recursive: true })
+    fs.writeFileSync(file, 'policy:\n  allow_implicit_invocation: false\n')
+  }, 'SKILL_AUTOMATIC_GATE')
+
   expectFailure('manifest version mismatch', (target) => {
     const file = path.join(target, '.codex-plugin/plugin.json')
     const manifest = JSON.parse(fs.readFileSync(file, 'utf8'))
@@ -185,6 +201,11 @@ try {
     rewrite(path.join(target, 'skills/deliver-work/workflow.md'), (text) =>
       text.replace('**Ground truth:**', '**Checks:**'))
   }, 'DELIVER_CONTRACT')
+
+  expectFailure('missing check-work independent review contract', (target) => {
+    rewrite(path.join(target, 'skills/check-work/SKILL.md'), (text) =>
+      text.replace('fresh-context, read-only reviewer', 'reviewer'))
+  }, 'CHECK_WORK_CONTRACT')
 
   expectFailure('missing independent review default', (target) => {
     rewrite(path.join(target, 'skills/deliver-work/workflow.md'), (text) =>

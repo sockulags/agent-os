@@ -111,8 +111,10 @@ managed-block rules, and hand edits are overwritten on the next sync.
 **Symptom:** you described exactly what a workflow does, and the agent handled the request directly
 instead of running the workflow.
 
-This is the design, not a failure. Every workflow carries `disable-model-invocation: true` (Claude)
-and `allow_implicit_invocation: false` (Codex), so resembling a workflow never activates it. Invoke
+This is the design for manual workflows, not a failure. Manual workflows carry
+`disable-model-invocation: true` (Claude) and `allow_implicit_invocation: false` (Codex), so
+resembling one never activates it. `check-work` is the automatic review-workflow exception and
+triggers for supported candidate-review requests. Invoke
 explicitly: `/<skill>` for direct Claude skills, `/agent-os:<skill>` for the Claude plugin, or
 `$<skill>` on Codex. The
 [non-invocation eval cases](/reference/evals) exist precisely to keep naive phrasings from

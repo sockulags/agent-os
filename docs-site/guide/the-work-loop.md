@@ -24,6 +24,11 @@ Two workflows sit beside the loop rather than inside it, invoked when the develo
 `simplifier` removes unnecessary code and solution layers from existing work, and
 `simplifier-audit` reports the same opportunities across a repository without changing files.
 
+For a diff, commit, branch, pull request, or completed implementation, `check-work` independently
+reviews the candidate. It reports findings by default for an implicit “review this” request;
+“review and fix this” authorizes its fix mode. A bare explicit invocation asks which mode to use
+before inspecting the candidate.
+
 In front of the foundation sits an optional on-ramp: when the developer cannot yet state what they
 want, `guide-me` shows the way — questioning through `understand-work`, a plain-language summary
 through `explain-work`, and, once that summary is approved, straight into `chart-work` or

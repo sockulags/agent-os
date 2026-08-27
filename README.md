@@ -23,6 +23,7 @@ workflows compose (`understand-work`, `explain-work`), the disciplines, and the 
 | `record-lesson` | workflow | manual | Record a durable lesson in repo or global policy |
 | `simplifier` | workflow | manual | Remove unnecessary code and solution layers |
 | `simplifier-audit` | workflow | manual | Audit a repository for simplification opportunities |
+| `check-work` | workflow | automatic | Independently review a candidate and report or fix supported findings |
 | `understand-work` | workflow | manual | Question out the need behind a stated wish |
 | `explain-work` | workflow | manual | Explain the task in plain language for approval |
 | `verify-before-done` | discipline | automatic | Fresh evidence before any completion claim |
@@ -37,7 +38,8 @@ workflows compose (`understand-work`, `explain-work`), the disciplines, and the 
 | `writing-skills` | meta | manual | Doctrine and definition of done for agent-os skills |
 
 Manual skills carry `disable-model-invocation: true` (Claude) and `agents/openai.yaml` with
-`policy.allow_implicit_invocation: false` (Codex). Retired skills move to root `deprecated/`
+`policy.allow_implicit_invocation: false` (Codex). Automatic skills carry neither gate; their
+descriptions define when they trigger, and they may still be explicitly named. Retired skills move to root `deprecated/`
 (outside the plugin's `skills/`, so they are never distributed).
 
 ## Install

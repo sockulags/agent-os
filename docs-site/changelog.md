@@ -8,6 +8,19 @@ description: What changed in each agent-os release, in plain terms.
 One entry per release: what changed, and what it means for how you work. Full commit-level history
 lives on [GitHub](https://github.com/sockulags/agent-os/commits/main).
 
+## 0.12.0 — 2026-08-27
+
+The check-work release: review completed work independently without confusing review, testing, or
+delivery authority.
+
+- **New workflow `check-work`** — triggers for diffs, commits, branches, pull requests, and
+  completed implementations, while excluding test-only, status-only, initial-design, and
+  repository-wide audit requests.
+- **Report and fix modes** — report mode is read-only; fix mode applies only supported in-scope
+  findings, verifies the result, and obtains targeted independent re-review.
+- **Findings-first contract** — findings include priority, exact location, evidence and impact, and
+  required change, with explicit `APPROVED`, `CHANGES_REQUESTED`, or `BLOCKED` outcomes.
+
 ## 0.11.0 — 2026-08-07
 
 The proportional-testing release: protect changed behavior without turning every small fix into a

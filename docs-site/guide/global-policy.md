@@ -46,8 +46,9 @@ cross-reference a label invented earlier in the same text. Explanations belong i
 for short enumerable facts. Tone tracks the topic, and when it is unclear whether a topic is serious,
 it is.
 
-The last core rule is the invocation rule: orchestration is opt-in, and the workflow skills are never
-self-invoked.
+The last core rule is the invocation rule: orchestration is opt-in, except that the automatic
+`check-work` review workflow may activate for a supported implicit code-review request. Its report
+mode is read-only and its fix mode requires explicit authority.
 
 ## Preferences
 

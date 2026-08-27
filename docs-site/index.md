@@ -36,7 +36,7 @@ features:
     details: Skills lock outcomes, boundaries and ground truth while leaving local tactics to the implementer. Material delivery gets independent review; a fully qualified small fix may skip it.
   - icon: 🤝
     title: Two platforms, one source
-    details: Every skill ships once and loads in both Claude Code and Codex. Manual workflows are opted into explicitly on both; disciplines trigger themselves from the situation.
+    details: Every skill ships once and loads in both Claude Code and Codex. Manual skills are opted into explicitly on both; automatic skills trigger themselves from the situation.
   - icon: 📐
     title: Policy you can edit
     details: A single policy.md is installed as a managed block in your global instruction files, and every repo grows its own living project policy through an interview instead of a template.
