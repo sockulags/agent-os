@@ -40,3 +40,12 @@ Agent:
 fix and record it as a separate follow-up without changing architecture,
 dependencies, or unrelated code."
 ```
+
+## Local improvement and follow-ups
+
+Cohesive behavior-preserving extraction on the touched surface is allowed. The implementer can reject
+unsupported review requests with evidence. For worthwhile adjacent work, search for an existing
+issue and draft the problem, impact, and acceptance condition. Create or update it only under
+existing request or project-policy authority that does not conflict with an explicit read-only
+instruction; otherwise ask one consolidated follow-up question.
+An optional backlog decision does not delay authorized delivery. Rejected preferences need no ticket.

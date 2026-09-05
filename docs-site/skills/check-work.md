@@ -38,3 +38,12 @@ The workflow reuses [scope-guard](/skills/scope-guard), [simplifier-review](/ski
 [proportional-testing](/skills/proportional-testing), [diagnose-before-fix](/skills/diagnose-before-fix),
 and [verify-before-done](/skills/verify-before-done) only when their questions arise. Every result
 ends with exactly `APPROVED`, `CHANGES_REQUESTED`, or `BLOCKED`.
+
+## Finding disposition
+
+The shared [finding contract](https://github.com/sockulags/agent-os/blob/main/skills/check-work/references/findings.md)
+requires a triggering condition, concrete consequence, and supporting evidence for blocking findings.
+Material maintenance costs can qualify; line counts and equivalent designs do not. Implementers may
+reject unsupported findings with a reason, but cannot dismiss an introduced defect or failed required
+check as scope creep. Re-review covers fixes and plausible regressions. Optional follow-ups alone
+do not prevent `APPROVED`; missing necessary evidence or decisions means `BLOCKED`.

@@ -41,6 +41,18 @@ and run it at the appropriate broader level rather than disguising it as a unit 
 Balance regression protection against execution time, maintenance, flakiness, setup complexity, and
 duplication. A broader test is justified by broader risk, not by the amount of code generated.
 
+For a changed user journey across a frontend and services, identify what proves the boundaries
+together: serialization, validation, authentication, transport, and the resulting observable state.
+Thousands of isolated tests do not prove that journey. Add or use a narrow integration or end-to-end
+check when those boundaries are the risk; do not create an end-to-end suite for every local change.
+An unrelated existing journey gap is a follow-up through `scope-guard`, not an automatic suite rewrite.
+
+Reuse the production contract or schema where appropriate, but verify acceptance examples and
+invalid external inputs independently. Computing the expected value with the same transformation
+as production can make a test agree with the bug. Do not multiply equivalent cases at every layer
+unless a distinct failure can occur there. Large test counts alone justify neither deletion nor
+confidence; remove or consolidate tests only when their unique regression protection is preserved.
+
 ## Fix bugs with one regression story
 
 For a confirmed bug, when practical:

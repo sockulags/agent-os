@@ -14,3 +14,6 @@ and fewer solution layers. Each finding includes evidence, a simpler replacement
 that must be preserved.
 
 The audit is read-only. Use `simplifier` separately when the developer wants findings applied.
+
+A cohesive named responsibility or protected invariant can justify an abstraction with one caller.
+Do not use caller count alone as evidence for removal.

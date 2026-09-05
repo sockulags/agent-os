@@ -34,9 +34,17 @@ Rules:
   planned work; invoke them through the name exposed by the host (`/guide-me` for direct Claude
   skills, `/agent-os:guide-me` for the Claude plugin, or `$guide-me` for Codex). Never self-invoke
   them. One exception: a workflow may continue into the workflow its exit contract names once the
-  developer approves that exit, as `guide-me` does after its approved plain-language gate. The
+  developer approves that exit or the existing request already authorizes that continuation, as
+  `guide-me` does after its approved plain-language gate. The
   automatic `check-work` review workflow is also available from supported implicit review requests;
   its report mode is read-only and its fix mode requires explicit authority.
+
+- Always recommend one concrete next action when planning or a delivery unit ends, with the reason
+  it wins and any blocker. Continuing sequentially through already shaped issues is allowed when
+  the active implementation request covers that bounded set. Planning alone never starts delivery;
+  parallel batch execution still requires explicit selection. Existing authority persists across
+  unit boundaries, but never expands to unrelated backlog work. If the goal is complete and no
+  useful next action remains, say so instead of manufacturing work.
 
 ## Preferences (seed defaults — project policy overrides)
 

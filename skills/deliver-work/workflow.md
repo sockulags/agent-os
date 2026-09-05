@@ -16,16 +16,26 @@ belong to the implementer.
 
 ## Confirm one delivery unit
 
-Before editing, verify that the target is one coherent implementation issue or an equivalently
+Before editing each unit, verify that it is one coherent implementation issue or an equivalently
 bounded direct request: one observable outcome, one reviewable change boundary, explicit ground
-truth, and satisfied dependencies. If the target contains several separately closable outcomes,
+truth, and satisfied dependencies. If an unshaped target contains several separately closable outcomes,
 different delivery targets, or unresolved product choices, stop before mutation and return it for
 shaping into implementation-ready issues. Do not choose `batch-work`; execution strategy belongs to
 the developer.
 
+When the request explicitly covers a bounded set of already shaped issues, deliver one ready unit
+at a time and continue sequentially within that authority. Re-read dependencies and project state
+after each unit; stop for a material unresolved decision or an exhausted ready frontier. This repeats
+the active delivery contract, not `dispatch-next` or an implicit batch. An undecomposed epic still
+needs shaping; a one-issue request does not authorize the rest of its epic. Keep one active quality
+baseline for the authorized sequence and refresh its check per candidate; do not call `begin` again
+for each unit while that baseline is active.
+
 ## Work loop
 
-1. Inspect enough of the affected system to choose a coherent change.
+1. Inspect enough of the affected system to choose a coherent change. Apply quality-ratchet's
+   reuse and responsibility guidance before writing. If a solution-changing uncertainty remains,
+   use the [experiment decision](../chart-work/references/prototypes.md); clear tasks need no prototype.
 2. If available, run [`quality-ratchet`](../quality-ratchet/SKILL.md)'s `begin` before the first
    mutation. It captures the exact worktree entry state without stashing or editing user files; an
    unavailable capability is reported rather than turned into a substitute gate.
@@ -41,7 +51,8 @@ the developer.
    its baseline is active and pass the evidence to the semantic review. Treat file, NLOC, legacy,
    dependency, and analyzer values as signals, never as an aggregate score or threshold gate.
 7. Review the resulting diff for correctness, unnecessary complexity, and scope. Apply the
-   simplifier-review lens and fix supported simplification findings before freezing the candidate.
+   simplifier-review lens and resolve findings using the
+   [finding contract](../check-work/references/findings.md) before freezing the candidate.
 8. Complete the review gate below.
 9. Apply `verify-before-done` to the final candidate and deliver only to the requested boundary.
 
@@ -67,18 +78,23 @@ waive required review; do not solicit a waiver. When review is required:
    changed-file set.
 3. Launch at least one read-only reviewer in a context that has not inherited the implementation
    conversation. On Codex, the next review tool action after freezing the candidate must be
-   `spawn_agent`; copy its returned ID, then call `wait_agent` with that ID. If `spawn_agent` is not
+   `spawn_agent`; copy its returned ID, then use the host wait mechanism and correlate the returned
+   result to that identity. Follow the actual wait-tool schema; not every host accepts an ID argument.
+   If `spawn_agent` is not
    callable or returns no ID, stop without calling a wait tool. Never call a wait tool with empty
    receiver IDs or construct a `/root/...` reviewer label yourself. Use the host's equivalent launch
    receipt elsewhere. Give the reviewer the outcome, boundaries, ground truth, candidate diff, and
    verification evidence — not the implementer's reasoning.
-4. Use one general adversarial reviewer by default. Add a focused security or compatibility reviewer
+4. Use one general evidence-based reviewer by default, briefed with the finding contract above.
+   Add a focused security or compatibility reviewer
    only when a distinct risk needs that lens; do not create a panel by default.
 5. Accept review only when that launched identity returns a result. Record the reviewer identity and
    role, candidate identity, reviewed scope, findings, and disposition. This is completion evidence,
    not an approval ledger.
-6. Fix supported in-scope findings. If the candidate changes, run targeted re-review before final
-   verification.
+6. Adjudicate findings using that contract and `scope-guard`; fix supported in-scope problems and
+   explain rejected requests. If the candidate changes, run targeted re-review before final
+   verification. Refresh active quality-ratchet evidence after the last correction so Stop need
+   not request an extra turn merely to update stale evidence.
 
 A reviewer label written by the implementer, a wait call with no launched receiver, a self-review,
 or an unreturned reviewer is not independent review. If the host exposes no launch tool, launch

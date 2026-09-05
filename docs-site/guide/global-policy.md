@@ -83,3 +83,10 @@ release update, and let check mode settle any doubt.
 
 Deterministic block handling is the reason a script exists here at all. Marker surgery is exactly the
 kind of fragile operation that a prose instruction performs slightly differently every time.
+
+## Continuation
+
+Planning and delivery exits recommend one concrete next action and why it wins. An already
+authorized bounded set of shaped issues may continue sequentially; a planning-only request does
+not launch delivery. Workflow exit transitions can use existing explicit authority without another
+approval ceremony. Parallel batch execution remains explicitly selected by the developer.

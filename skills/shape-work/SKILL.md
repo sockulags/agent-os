@@ -21,6 +21,10 @@ Use a diagram or mockup when it makes behavior, layout, states, or boundaries ma
 judge. Frontend proposals follow [references/mockups.md](references/mockups.md). Do not create a
 visualization merely to satisfy the workflow.
 
+When a solution-changing assumption needs observation, apply the
+[experiment decision](../chart-work/references/prototypes.md), including small technical experiments
+and comparable UI alternatives. Do not turn a question with sufficient evidence into a prototype.
+
 Deliver the coherent product shape: outcome, boundaries, acceptance examples, affected seams,
 ground truth, settled decisions, and open risks. Then create or reuse its implementation issues on
 the configured planning surface. With no configured tracker, use the local-file fallback in the
@@ -34,6 +38,11 @@ the request includes implementation.
 When shaping started from a chart-work handoff, reconcile the issue links and readiness back into
 the origin handoff and map. A handoff alone is not delivery-ready. Shape-work is complete only when
 every selected branch points to implementation-ready issues or is explicitly parked or rejected.
+
+Recommend one concrete next action with its reason and blocker, weighing uncertainty and downstream
+work unlocked as well as project priority. A ready frontier alone is not enough guidance. Continue
+into authorized sequential delivery only when the request includes that bounded implementation;
+otherwise finish with the recommendation.
 
 The invocation authorizes planning artifacts, not product code. A deferred product choice remains
 explicit; a reversible implementation choice does not need to become a question.

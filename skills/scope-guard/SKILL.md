@@ -17,5 +17,16 @@ classify it:
 - **Conflicting:** it changes product behavior, architecture, dependencies, a public interface, or
   delivery risk. Ask the developer before crossing that boundary.
 
+Behavior-preserving extraction within the touched surface is allowed when it clarifies responsibility
+or reuses an existing contract. Do not classify every new helper as an architecture change.
+
+The implementer may reject unsupported review requests with evidence. For actionable adjacent work,
+search for an existing issue before proposing another. If the request or project policy authorizes
+follow-up issue creation, and no explicit read-only instruction forbids it, create or update it
+with the concrete problem, impact, and acceptance
+condition. Otherwise collect worthwhile follow-ups into one question with a recommended disposition
+and draft content. Do not create tickets for rejected preferences or delay authorized delivery while
+waiting on an optional backlog decision. Report any unresolved delivery blocker separately.
+
 Before delivery, inspect the diff for unrelated edits. Preserve pre-existing developer work; scope
 control never grants permission to revert it.
