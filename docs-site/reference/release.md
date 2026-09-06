@@ -28,8 +28,8 @@ description: Validate, version, publish, and verify an agent-os release.
 6. **Close every public release surface.** The publish workflow reruns the repository and docs
    checks, publishes npm, and retries `node scripts/verify-release.mjs <version>` while the registry
    propagates. The verifier compares the tagged package with npm, checks GitHub and Pages, and
-   performs a public isolated `npm exec` install with explicit package and command selection. The
-   release is not complete until the workflow and the
+   performs a public install into an isolated npm prefix before invoking the installed CLI directly
+   through Node with isolated home and cwd. The release is not complete until the workflow and the
    Validate and Docs/Pages runs on current `main` all pass. Smoke-test `--method plugin` separately
    when marketplace behavior changed.
 

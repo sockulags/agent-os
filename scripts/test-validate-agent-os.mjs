@@ -31,7 +31,10 @@ function fixture() {
 }
 
 function rewrite(file, transform) {
-  fs.writeFileSync(file, transform(fs.readFileSync(file, 'utf8')))
+  const original = fs.readFileSync(file, 'utf8')
+  const lineEnding = original.includes('\r\n') ? '\r\n' : '\n'
+  const transformed = transform(original.replace(/\r\n/g, '\n'))
+  fs.writeFileSync(file, transformed.replace(/\r\n/g, '\n').replace(/\n/g, lineEnding))
 }
 
 function expectFailure(name, mutate, expectedCode) {
@@ -42,9 +45,22 @@ function expectFailure(name, mutate, expectedCode) {
   console.log(`PASS red case: ${name} -> ${expectedCode}`)
 }
 
+function expectPass(name, mutate) {
+  const target = fixture()
+  mutate(target)
+  const diagnostics = validate(target)
+  assert.deepEqual(diagnostics, [], `${name}: expected no diagnostics, got ${diagnostics.map((item) => item.code).join(', ')}`)
+  console.log(`PASS non-regression: ${name}`)
+}
+
 try {
   assert.deepEqual(validate(root), [], 'repository baseline must pass before red cases')
   console.log('PASS baseline')
+
+  expectPass('unrelated later npm helper does not affect public install validation', (target) => {
+    fs.appendFileSync(path.join(target, 'scripts/verify-release.mjs'),
+      "\nfunction unrelatedLaterHelper() {\n  run('npm', ['unrelated'], { cwd: root })\n}\n")
+  })
 
   expectFailure('frontmatter name mismatch', (target) => {
     rewrite(path.join(target, 'skills/scope-guard/SKILL.md'), (text) => text.replace('name: scope-guard', 'name: wrong-name'))
@@ -147,14 +163,14 @@ try {
     fs.rmSync(path.join(target, 'scripts/verify-release.mjs'))
   }, 'RELEASE_VERIFY_SCRIPT')
 
-  expectFailure('public install uses ambiguous npx syntax', (target) => {
+  expectFailure('public install is not an npm install', (target) => {
     rewrite(path.join(target, 'scripts/verify-release.mjs'), (text) =>
-      text.replace("run('npm', publicInstallArgs", "run('npx', publicInstallArgs"))
+      text.replace("'install', packageSpec", "'add', packageSpec"))
   }, 'RELEASE_PUBLIC_INSTALL')
 
-  expectFailure('public install omits npm command separator', (target) => {
+  expectFailure('public install omits the isolated npm prefix', (target) => {
     rewrite(path.join(target, 'scripts/verify-release.mjs'), (text) =>
-      text.replace("'--', 'agent-os'", "'agent-os'"))
+      text.replace("'--prefix', toolRoot", "'--global', toolRoot"))
   }, 'RELEASE_PUBLIC_INSTALL')
 
   expectFailure('public install package is not version-pinned', (target) => {
@@ -163,22 +179,58 @@ try {
         'const packageSpec = `${packageJson.name}@latest`'))
   }, 'RELEASE_PUBLIC_INSTALL')
 
-  expectFailure('public install runs from repository root', (target) => {
+  expectFailure('public install rewrites the pinned npm package spec', (target) => {
     rewrite(path.join(target, 'scripts/verify-release.mjs'), (text) =>
-      text.replace("run('npm', publicInstallArgs, {\n      cwd,",
-        "run('npm', publicInstallArgs, {\n      cwd: root,"))
+      text.replace("packageSpec, '--prefix'", "packageSpec.replace(version, 'latest'), '--prefix'"))
+  }, 'RELEASE_PUBLIC_INSTALL')
+
+  expectFailure('public install omits npm safety flags', (target) => {
+    rewrite(path.join(target, 'scripts/verify-release.mjs'), (text) =>
+      text.replace("'--ignore-scripts'", "'--ignore-scripts-disabled'"))
   }, 'RELEASE_PUBLIC_INSTALL')
 
   expectFailure('public install shadows the pinned package spec', (target) => {
     rewrite(path.join(target, 'scripts/verify-release.mjs'), (text) =>
-      text.replace("    run('npm', publicInstallArgs, {",
-        "    const packageSpec = `${packageJson.name}@latest`\n    run('npm', publicInstallArgs, {"))
+      text.replace("    const npmInstallArgs = [",
+        "    const packageSpec = `${packageJson.name}@latest`\n    const npmInstallArgs = ["))
   }, 'RELEASE_PUBLIC_INSTALL')
 
   expectFailure('public install shadows the temporary cwd', (target) => {
     rewrite(path.join(target, 'scripts/verify-release.mjs'), (text) =>
-      text.replace("    run('npm', publicInstallArgs, {",
-        "    const cwd = root\n    run('npm', publicInstallArgs, {"))
+      text.replace("    const npmInstallArgs = [",
+        "    const cwd = root\n    const npmInstallArgs = ["))
+  }, 'RELEASE_PUBLIC_INSTALL')
+
+  expectFailure('public install shadows the temporary tool root', (target) => {
+    rewrite(path.join(target, 'scripts/verify-release.mjs'), (text) =>
+      text.replace("    const npmInstallArgs = [",
+        "    const toolRoot = root\n    const npmInstallArgs = ["))
+  }, 'RELEASE_PUBLIC_INSTALL')
+
+  expectFailure('public install does not isolate the CLI cwd', (target) => {
+    rewrite(path.join(target, 'scripts/verify-release.mjs'), (text) =>
+      text.replace("run(process.execPath, [installedCli, ...installArgs], {\n      cwd,",
+        "run(process.execPath, [installedCli, ...installArgs], {\n      cwd: root,"))
+  }, 'RELEASE_PUBLIC_INSTALL')
+
+  expectFailure('public install does not isolate the home', (target) => {
+    rewrite(path.join(target, 'scripts/verify-release.mjs'), (text) =>
+      text.replace('HOME: home', 'HOME: process.env.HOME'))
+  }, 'RELEASE_PUBLIC_INSTALL')
+
+  expectFailure('public install invokes a bin instead of the installed CLI', (target) => {
+    rewrite(path.join(target, 'scripts/verify-release.mjs'), (text) =>
+      text.replace('run(process.execPath, [installedCli, ...installArgs],', "run('agent-os', installArgs,"))
+  }, 'RELEASE_PUBLIC_INSTALL')
+
+  expectFailure('public install changes its CLI install arguments', (target) => {
+    rewrite(path.join(target, 'scripts/verify-release.mjs'), (text) =>
+      text.replace("'--platform', 'both'", "'--platform', 'codex'"))
+  }, 'RELEASE_PUBLIC_INSTALL')
+
+  expectFailure('public install CLI path escapes the tool root', (target) => {
+    rewrite(path.join(target, 'scripts/verify-release.mjs'), (text) =>
+      text.replace("      toolRoot, 'node_modules'", "      cwd, 'node_modules'"))
   }, 'RELEASE_PUBLIC_INSTALL')
 
   expectFailure('npm publish workflow loses OIDC permission', (target) => {

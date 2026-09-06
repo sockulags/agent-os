@@ -155,16 +155,31 @@ function checkPublicInstall() {
   const temporaryRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'agent-os-release-'))
   const home = path.join(temporaryRoot, 'home')
   const cwd = path.join(temporaryRoot, 'run')
+  const toolRoot = path.join(temporaryRoot, 'tool')
   fs.mkdirSync(home, { recursive: true })
   fs.mkdirSync(cwd, { recursive: true })
+  fs.mkdirSync(toolRoot, { recursive: true })
+  const isolatedEnvironment = { ...process.env, HOME: home, USERPROFILE: home }
   try {
-    const publicInstallArgs = [
-      'exec', '--yes', `--package=${packageSpec}`, '--', 'agent-os', 'install',
+    const npmInstallArgs = [
+      'install', packageSpec, '--prefix', toolRoot,
+      '--no-save', '--ignore-scripts', '--no-audit', '--no-fund'
+    ]
+    const installArgs = [
+      'install',
       '--platform', 'both', '--scope', 'user', '--no-policy', '--yes'
     ]
-    run('npm', publicInstallArgs, {
+    const installedCli = path.join(
+      toolRoot, 'node_modules', '@sockulags', 'agent-os', 'cli', 'index.mjs'
+    )
+    run('npm', npmInstallArgs, {
       cwd,
-      env: { ...process.env, HOME: home, USERPROFILE: home },
+      env: isolatedEnvironment,
+      capture: false
+    })
+    run(process.execPath, [installedCli, ...installArgs], {
+      cwd,
+      env: isolatedEnvironment,
       capture: false
     })
     for (const platformRoot of ['.claude', '.codex']) {
