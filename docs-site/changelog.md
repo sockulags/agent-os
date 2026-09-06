@@ -8,6 +8,22 @@ description: What changed in each agent-os release, in plain terms.
 One entry per release: what changed, and what it means for how you work. Full commit-level history
 lives on [GitHub](https://github.com/sockulags/agent-os/commits/main).
 
+## 0.14.0 — 2026-09-06
+
+The project-controls release: quality-ratchet can run explicit repository-owned quality commands
+and reuse successful static evidence only when its declared inputs remain unchanged.
+
+- **Repository-owned controls** — configure existing architecture, lint, type, or test commands in
+  `.agent-os/quality.json`; Agent OS does not install or infer analyzers.
+- **Explicit delivery gates** — controls remain advisory by default, while project-selected required
+  checks block on failures, unavailable tools, and timeouts.
+- **Conservative evidence reuse** — opt-in static caching fingerprints repository state, declared
+  tool inputs, configuration, runtime, executable, and environment before reusing a pass.
+- **Auditable policy changes** — changed quality policy must be restored or acknowledged with a
+  task-grounded reason before checks continue.
+- **Exception deltas** — new type escapes, lint suppressions, and skipped or focused tests are
+  reported relative to the entry state and gate only when the project explicitly requires them.
+
 ## 0.13.1 — 2026-09-06
 
 Public release verification now installs the exact npm package into a temporary isolated prefix and
