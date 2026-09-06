@@ -8,6 +8,21 @@ description: What changed in each agent-os release, in plain terms.
 One entry per release: what changed, and what it means for how you work. Full commit-level history
 lives on [GitHub](https://github.com/sockulags/agent-os/commits/main).
 
+## 0.13.0 — 2026-09-06
+
+The proportional-delivery release: make implementation structure, review, continuation, prototyping,
+and validation decisions explicit and evidence-calibrated.
+
+- **Structure and contract ownership** — guidance before implementation across TypeScript/Zod, React,
+  and Java, keeping contracts and ownership explicit.
+- **Review and continuation** — evidence-calibrated findings, targeted re-review, and next-action
+  recommendations; sequential continuation only under existing explicit authority, with batch-work
+  still opt-in.
+- **Prototype decisions** — bounded prototype and experiment guidance for deciding when to learn
+  before committing to implementation.
+- **Cross-boundary verification** — proportional testing across boundaries and clarified quality-ratchet
+  evidence limits.
+
 ## 0.12.1 — 2026-08-27
 
 Public release verification now uses explicit npm package and command selection, compatible with
