@@ -194,13 +194,17 @@
         "quality-ratchet.md#Positive 1 \u2014 health endpoint direct shape",
         "quality-ratchet.md#Positive 2 \u2014 touched legacy improvement",
         "quality-ratchet.md#Positive 3 \u2014 contract ownership",
-        "quality-ratchet.md#Positive 4 \u2014 cohesive React boundary"
+        "quality-ratchet.md#Positive 4 \u2014 cohesive React boundary",
+        "quality-ratchet.md#Positive 5 \u2014 required command failure",
+        "quality-ratchet.md#Positive 6 \u2014 authorized policy update"
       ],
       "negative": [
         "quality-ratchet.md#Negative 1 \u2014 legitimate runtime selection",
         "quality-ratchet.md#Negative 2 \u2014 unrelated debt",
         "quality-ratchet.md#Negative 3 \u2014 different contracts",
-        "quality-ratchet.md#Negative 4 \u2014 missing analyzers"
+        "quality-ratchet.md#Negative 4 \u2014 missing analyzers",
+        "quality-ratchet.md#Negative 5 \u2014 advisory exception signal",
+        "quality-ratchet.md#Negative 6 \u2014 dynamic test cache"
       ]
     },
     "simplifier": {

@@ -5,6 +5,7 @@ import { createHash, randomUUID } from 'node:crypto'
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
+import { prepareControls, runControls, scanSignals, signalDelta, blockingControls, POLICY_PATH } from './project-controls.mjs'
 
 export const STATE_SCHEMA = 2
 export const STATE_FILE_NAME = '.agent-os-quality-ratchet.json'
@@ -63,8 +64,8 @@ function hookSessionEnvironment(payload, env) {
   if (!sessionId) return env
   const codex = typeof payload?.turn_id === 'string' && payload.turn_id.trim()
   return codex
-    ? { CODEX_THREAD_ID: sessionId }
-    : { CLAUDE_CODE_SESSION_ID: sessionId }
+    ? { ...env, CLAUDE_CODE_SESSION_ID: '', CODEX_THREAD_ID: sessionId }
+    : { ...env, CODEX_THREAD_ID: '', CLAUDE_CODE_SESSION_ID: sessionId }
 }
 
 function normalizePath(value) {
@@ -258,7 +259,9 @@ function fileRecord(root, relativePath) {
     hash: digest(content),
     bytes: content.byteLength,
     source,
-    nloc: source ? countNloc(content) : 0
+    nloc: source ? countNloc(content) : 0,
+    mode: stats.mode,
+    signals: source ? scanSignals(content) : []
   }
 }
 
@@ -584,6 +587,8 @@ export function begin(cwd = process.cwd(), { detect = detectOptionalAnalyzers, e
   const dependencies = packageDependencies(context.root)
   const analyzers = safeAnalyzerDetection(detect)
   const state = baselineState(context, candidate, dependencies, analyzers)
+  state.entry.hasControlPolicy = fs.existsSync(path.join(context.root, POLICY_PATH))
+  state.entry.controlSignature = prepareControls(context.root, candidate.files, env).signature
   writeState(context, state)
   return {
     statePath: context.statePath,
@@ -593,7 +598,7 @@ export function begin(cwd = process.cwd(), { detect = detectOptionalAnalyzers, e
   }
 }
 
-export function check(cwd = process.cwd(), { detect = detectOptionalAnalyzers, env = process.env } = {}) {
+export function check(cwd = process.cwd(), { detect = detectOptionalAnalyzers, env = process.env, acceptPolicyChange = '' } = {}) {
   const context = repositoryContext(cwd, env)
   const state = readState(context)
   if (!state) error(`No active quality ratchet baseline exists for ${context.root}. Run begin before the first mutation.`, 'BASELINE_MISSING')
@@ -601,16 +606,45 @@ export function check(cwd = process.cwd(), { detect = detectOptionalAnalyzers, e
   const dependencies = packageDependencies(context.root)
   const analyzers = safeAnalyzerDetection(detect)
   const evidence = evidenceFor(state, candidate, dependencies, analyzers)
+  const configured = state.entry.hasControlPolicy || fs.existsSync(path.join(context.root, POLICY_PATH))
+  const files = configured ? snapshot(context.root).files : candidate.files
+  const prepared = prepareControls(context.root, files, env)
+  // Old evidence-only baselines can continue without opting into project commands mid-flight.
+  const oldSignature = state.entry.controlSignature
+  const policyChanged = oldSignature ? oldSignature !== prepared.signature : fs.existsSync(path.join(context.root, POLICY_PATH))
+  if (acceptPolicyChange && !acceptPolicyChange.trim()) error('Policy acknowledgement requires a reason.', 'ARGUMENTS')
+  const accepted = policyChanged && Boolean(acceptPolicyChange.trim())
+  const signals = signalDelta(state.entry.files, files).map(signal => ({
+    ...signal, required: prepared.policy.blockSignals.includes(signal.rule)
+  }))
+  const results = policyChanged && !accepted ? [] : runControls(context.root, prepared, state.lastCheck?.evidence?.controls, env)
+  const after = configured ? prepareControls(context.root, snapshot(context.root).files, env) : prepared
+  evidence.controls = {
+    fingerprint: prepared.fingerprint, policyChanged: policyChanged && !accepted,
+    policyAcknowledgement: accepted ? { before: oldSignature || null, after: prepared.signature, reason: acceptPolicyChange.trim() } : state.policyAcknowledgement || null,
+    stale: after.fingerprint !== prepared.fingerprint, results, signals
+  }
+  if (accepted && !evidence.controls.stale) {
+    state.entry.controlSignature = prepared.signature
+    state.policyAcknowledgement = evidence.controls.policyAcknowledgement
+  }
+  evidence.status = blockingControls(evidence.controls).length ? 'blocked' : 'ok'
+  evidence.reportPath = context.statePath + '.report.json'
   state.lastCheck = {
     candidateFingerprint: candidate.fingerprint,
     evidence
   }
   writeState(context, state)
+  fs.writeFileSync(evidence.reportPath, JSON.stringify(evidence, null, 2) + '\n')
   return evidence
 }
 
 export function clear(cwd = process.cwd(), { env = process.env } = {}) {
   const context = repositoryContext(cwd, env)
+  const state = readState(context)
+  if (state?.entry.controlSignature && prepareControls(context.root, snapshot(context.root).files, env).signature !== state.entry.controlSignature) {
+    error('Quality policy changed. Restore it or acknowledge the authorized change with check --accept-policy-change <reason> before abandoning this baseline.', 'POLICY_CHANGED')
+  }
   if (fs.existsSync(context.statePath)) fs.rmSync(context.statePath, { force: true })
   return { statePath: context.statePath, cleared: true }
 }
@@ -648,6 +682,14 @@ export function hook(cwd = process.cwd(), payload = {}, { env = process.env } = 
     }
     const fresh = state.lastCheck?.candidateFingerprint === candidate.fingerprint
     if (fresh) {
+      const controls = state.lastCheck.evidence?.controls
+      const configured = fs.existsSync(path.join(context.root, POLICY_PATH)) || controls?.results?.length || controls?.policyChanged
+      if (configured) {
+        const prepared = prepareControls(context.root, snapshot(context.root).files, env)
+        if (!controls || prepared.fingerprint !== controls.fingerprint) return blockResult('Project control evidence is stale; run quality-ratchet check.')
+      }
+      const blockers = blockingControls(controls)
+      if (blockers.length) return blockResult(`Project controls block delivery: ${blockers.slice(0, 5).join('; ')}. Fix the reported problem; do not rerun unchanged failing checks.`)
       fs.rmSync(context.statePath, { force: true })
       return allowResult()
     }
@@ -680,7 +722,13 @@ export function formatEvidence(evidence) {
     `Package dependencies: +${evidence.packageDependencies.added.length} -${evidence.packageDependencies.removed.length} ~${evidence.packageDependencies.updated.length} (${evidence.packageDependencies.status})`,
     ...OPTIONAL_ANALYZERS.map((name) => `Optional analyzer ${name}: ${evidence.optionalAnalyzers.candidate[name].status} — ${evidence.optionalAnalyzers.candidate[name].reason}`),
     `Candidate fingerprint: ${evidence.candidateFingerprint}`,
-    `Machine-readable evidence: ${JSON.stringify(evidence)}`
+    ...(evidence.controls ? [
+      `Project controls: ${evidence.status}; ${evidence.controls.results.length} checks; ${evidence.controls.signals.length} new advisory/required signals`,
+      ...evidence.controls.results.filter(result => result.status !== 'passed').map(result => `  ${result.id}: ${result.status} ${result.detail || result.output?.slice(0, 500) || ''}`),
+      ...evidence.controls.signals.filter(signal => !signal.required).slice(0, 5).map(signal => `  advisory: ${signal.path}:${signal.line} ${signal.rule}: ${signal.text}`),
+      ...blockingControls(evidence.controls).slice(0, 5).map(reason => `  blocked: ${reason}`),
+      `Full report: ${evidence.reportPath}; use --json for structured output.`
+    ] : [])
   ]
   return lines.join('\n')
 }
@@ -692,6 +740,10 @@ function parseArguments(args) {
     const argument = args[index]
     if (argument === '--json') {
       result.json = true
+    } else if (argument === '--accept-policy-change') {
+      const reason = args[++index]
+      if (result.command !== 'check' || !reason?.trim() || reason.startsWith('--')) error('--accept-policy-change requires check and a reason.', 'ARGUMENTS')
+      result.acceptPolicyChange = reason
     } else if (argument === '--root') {
       const root = args[index + 1]
       if (!root || root.startsWith('-')) error('--root requires a path.', 'ARGUMENTS')
@@ -727,12 +779,13 @@ function main() {
     const options = parseArguments(process.argv.slice(2))
     if (options.command === 'begin') {
       const result = begin(options.root)
-      console.log(`Quality ratchet baseline started for ${result.fileCount} files (${result.fingerprint}).`)
+      console.log(`Quality ratchet baseline started for ${result.fileCount} files (${result.fingerprint}). State: ${result.statePath}`)
       return
     }
     if (options.command === 'check') {
-      const evidence = check(options.root)
+      const evidence = check(options.root, { acceptPolicyChange: options.acceptPolicyChange })
       console.log(options.json ? JSON.stringify(evidence) : formatEvidence(evidence))
+      if (evidence.status !== 'ok') process.exitCode = 1
       return
     }
     if (options.command === 'clear') {
