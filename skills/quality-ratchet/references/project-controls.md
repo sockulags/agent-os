@@ -16,7 +16,7 @@ already has dependency-cruiser installed (verify its executable path in your ins
   "checks": [
     {
       "id": "architecture",
-      "command": ["node", "node_modules/dependency-cruiser/bin/dependency-cruise.mjs", "--config", ".dependency-cruiser.cjs", "src"],
+      "command": ["node", "node_modules/dependency-cruiser/bin/dependency-cruise.mjs", "--config", ".dependency-cruiser.cjs", "src/**/*.ts"],
       "required": true,
       "timeoutMs": 60000
     }

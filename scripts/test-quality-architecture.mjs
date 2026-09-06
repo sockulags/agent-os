@@ -1,5 +1,6 @@
 // Optional integration smoke: node scripts/test-quality-architecture.mjs /absolute/path/to/dependency-cruise.mjs
-// Install dependency-cruiser 18.2.0 separately; ordinary npm test is offline and dependency-free.
+// Install dependency-cruiser 18.2.0 with a supported TypeScript version separately;
+// ordinary npm test is offline and dependency-free.
 import assert from 'node:assert/strict'
 import fs from 'node:fs'
 import os from 'node:os'
@@ -18,7 +19,7 @@ try {
   for (const dir of ['.agent-os', 'src/domain', 'src/ui']) fs.mkdirSync(path.join(root, dir), { recursive: true })
   fs.writeFileSync(path.join(root, '.agent-os/quality.json'), JSON.stringify({
     schema: 1, protectedFiles: ['.dependency-cruiser.cjs'], checks: [{
-      id: 'architecture', command: ['node', tool, '--config', '.dependency-cruiser.cjs', 'src'], required: true
+      id: 'architecture', command: ['node', tool, '--config', '.dependency-cruiser.cjs', 'src/**/*.ts'], required: true
     }]
   }))
   fs.writeFileSync(path.join(root, '.dependency-cruiser.cjs'), `module.exports = {
