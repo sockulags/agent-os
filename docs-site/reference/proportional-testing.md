@@ -51,3 +51,12 @@ During development, start with a reliable affected set. Expand when the blast ra
 shared infrastructure changed, affected-test selection is unreliable, or project policy requires a
 broader gate. Narrow selection must not ignore plausible regressions, and proportional development
 checks never remove required CI or delivery checks.
+
+## Coverage across boundaries
+
+For changed journeys crossing frontend and services, identify a narrow integration or end-to-end
+check that proves the relevant boundaries together. Isolated test counts cannot establish this.
+Do not require end-to-end tests for every local change or delete tests because a suite is large.
+Consolidation must preserve unique regression protection. Avoid expected values calculated with
+the same transformation under test. An unrelated coverage gap is an actionable follow-up, not a
+reason to rewrite the suite during delivery.

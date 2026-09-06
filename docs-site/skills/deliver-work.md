@@ -41,8 +41,10 @@ Before editing, establish:
 
 The target must be one coherent implementation issue or equivalently bounded request: one
 observable outcome, one reviewable change boundary, explicit ground truth, and satisfied
-dependencies. A target with several separately closable outcomes or delivery boundaries returns to
-shaping before mutation. Deliver-work never chooses batch execution for the developer.
+dependencies. An unshaped target with several separately closable outcomes or delivery boundaries returns to
+shaping before mutation. An explicitly authorized set of already shaped issues can proceed
+sequentially, applying the delivery contract and rechecking readiness for each unit. Reuse the active
+quality baseline across the sequence and refresh candidate checks instead of starting it again. Deliver-work never chooses batch execution for the developer.
 
 Then inspect, start the available [quality-ratchet](/skills/quality-ratchet) baseline before the
 first mutation, classify review, implement, check the candidate, adapt, review the diff, and verify
@@ -66,14 +68,17 @@ mutation with a review-required handoff.
 
 Required review uses at least one read-only reviewer in a separate context against a frozen
 candidate. Its scope includes correctness, unnecessary solution complexity, scope, and material
-risk. One general adversarial reviewer is enough by default. Add a focused security or compatibility
+risk. One general evidence-based reviewer is enough by default. Add a focused security or compatibility
 reviewer only when a distinct risk needs it.
 
 The reviewer identity must come from a successful launch-tool result in the current run. On Codex,
-`spawn_agent` returns the ID before `wait_agent` may name it. Empty receiver IDs and
+`spawn_agent` returns the identity used to correlate the reviewer result. Follow the host wait-tool
+schema; some hosts wait on a mailbox without an ID parameter. Empty receiver IDs and
 implementer-written `/root/...` labels are not review. The result records reviewer identity and role,
-candidate identity, scope, findings, and disposition. Supported findings are fixed and re-reviewed
-before final verification. If no independent reviewer can run, delivery stops with a review handoff;
+candidate identity, scope, findings, and disposition. Supported required findings are fixed and re-reviewed
+before final verification. Implementers may reject unsupported preferences with evidence; optional
+follow-ups do not block approval. Re-review targets fixes and their plausible regressions, not a
+new round of unrelated preferences. Refresh active quality evidence after the final correction. If no independent reviewer can run, delivery stops with a review handoff;
 self-review is not presented as independent review.
 
 Ask only when an unresolved product decision would materially change the outcome. Reversible
@@ -85,3 +90,8 @@ Ordinary work creates no state artifact. Work expected to span sessions may use 
 Batch workers stay in their assigned task workspace and return a commit SHA, changed files, checks,
 and remaining uncertainty. The coordinator owns integration, aggregate review, and aggregate
 verification.
+
+Before implementation, look for existing behavior and contract owners through quality-ratchet.
+Use a bounded experiment only for a solution-changing uncertainty that observation can settle.
+At each unit boundary, recommend the next action and continue only while the original request
+covers the remaining ready work. One authorized issue never grants authority for its whole epic.

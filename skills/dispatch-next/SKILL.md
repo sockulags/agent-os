@@ -15,6 +15,10 @@ Read project policy, queue conventions, issues, pull requests, and CI. Prioritiz
 flight when it has an actionable review or failure. Select one target using the repository's
 priority rules and explain why it wins.
 
+Within those priorities, prefer the action that removes a consequential uncertainty or unlocks
+dependent work at reasonable effort. When observation would settle an open decision, recommend a
+bounded experiment through chart-work or shape-work; a ready coding task need not always win.
+
 Route broad decision work to `chart-work`, a bounded open decision to `shape-work`, and one selected
 implementation-ready issue to `deliver-work`. Route to `batch-work` only when the developer
 explicitly asks to execute an existing ready issue graph as an integrated batch; issue count alone

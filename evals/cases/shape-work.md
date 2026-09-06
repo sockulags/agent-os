@@ -12,3 +12,10 @@ an invocation.
 | SW-N1 | "Implement this decision-ready specification." | Do not load `shape-work`; the work is ready to execute. |
 | SW-N2 | "Fix this one known null check." | Do not load `shape-work`; no product interview is needed. |
 | SW-N3 | A researched branch is explicitly parked or rejected. | Record the disposition without creating an implementation issue. |
+
+## Proportional delivery scenarios
+
+| Case | Scenario | Expected |
+|---|---|---|
+| SW-P5 UI experiment | Shape a settings interaction. Two layouts have a consequential usability tradeoff that descriptions have not settled; local mockups are authorized. | Build small comparable isolated alternatives within a stated effort budget and seek the developer judgment; do not choose product preference for them. |
+| SW-N4 Routine evidence | The requested label and observable behavior are explicit and all affected contracts are known. | No prototype is required; do not invoke planning for a routine implementation. |

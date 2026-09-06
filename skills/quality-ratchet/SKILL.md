@@ -8,6 +8,11 @@ description: Keeps implementation quality from regressing by comparing a candida
 Keep the smallest set of concepts and machinery needed for the current change. The ratchet is an
 evidence layer, not a score, gate, or replacement for semantic review.
 
+Before choosing the implementation, find the nearest existing behavior, contract, and tests. Reuse
+or extend their owner before adding a parallel implementation. For TypeScript, React, or Java
+changes, read [references/structure.md](references/structure.md) for contract ownership and cohesive
+boundaries. Make this a code decision, not a mandatory planning artifact.
+
 Resolve `scripts/quality-delta.mjs` relative to this loaded `SKILL.md`; do not assume the current
 worktree contains an Agent OS checkout. Before the first mutation in a Git worktree, run that
 installed runner with `begin` when it is available. It records the exact tracked and nonignored
@@ -25,12 +30,23 @@ Use three zones:
 3. Ignore unrelated debt. `scope-guard` owns drift; do not turn a ratchet signal into a cleanup
    project.
 
+Extract a named responsibility when it makes the touched code easier to understand or protects an
+invariant, even with one caller. This is allowed local improvement, not automatic scope expansion.
+Do not force inheritance, shared utils, or extra layers merely to reduce file size.
+
 The check reports added, changed, and deleted source files, touched-source NLOC before/after, the
 before/after status of source paths that were already present at entry, package dependency deltas,
 and optional analyzer capability. Raw file, function, or line counts are signals only. There is no
 aggregate score and no threshold gate. Missing Lizard or jscpd is reported as unavailable rather
 than clean; the core Node evidence remains usable. Their parsing integration is an explicit
 follow-up, not an install-time prerequisite.
+
+Use existing project checks for enforceable rules and report structural signals as advisory. A
+fresh `check` proves evidence freshness, not code quality, passing tests, or completed review. The
+runner currently inspects dependencies only in the root `package.json`; do not infer Java or
+workspace-package coverage from it. Run relevant configured analyzers outside the model, pass short
+actionable deltas to review, and reuse results only while their inputs, configuration, and tool
+versions remain unchanged. Do not install analyzers or invent thresholds for an ordinary task.
 
 The Stop hook blocks only an active lifecycle violation: a corrupt baseline, or a missing/stale check
 for the current candidate. State is bound to the current Git worktree and host session: Claude uses

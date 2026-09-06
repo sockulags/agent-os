@@ -76,3 +76,11 @@ Issues created on the planning surface:
 Delivery frontier: EXPORT-API, EXPORT-UI. Execution is your choice —
 deliver-work per issue, or batch-work if you ask for an integrated batch.
 ```
+
+## Experiments and continuation
+
+Use the [experiment decision](/reference/prototypes) for technical uncertainty or UI alternatives
+that need observation. Routine choices with sufficient evidence need no prototype. Recommend one
+concrete next action with a reason, not only the ready frontier. When the original request also
+covers the bounded implementation, continue into sequential delivery; planning alone stops with
+the recommendation.

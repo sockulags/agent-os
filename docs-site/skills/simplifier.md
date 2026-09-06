@@ -18,3 +18,6 @@ lines are useful when they reflect fewer concepts to maintain, not when they mak
 The skill preserves public contracts, trust-boundary validation, security, accessibility, data-loss
 protection, justified performance, and useful behavioral tests. If the existing solution is already
 simple, it leaves it alone.
+
+A named responsibility or protected invariant may justify an abstraction with only one caller.
+Simplification removes unnecessary indirection while preserving those useful boundaries.

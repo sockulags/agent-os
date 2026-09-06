@@ -20,3 +20,7 @@ When [quality-ratchet](/skills/quality-ratchet) has produced evidence, use it as
 forming findings. Read the diff and code yourself: file, NLOC, legacy, dependency, and analyzer
 signals are not threshold gates. Preserve abstractions justified by multiple providers, runtime
 selection, compatibility, or trust boundaries, and leave unrelated debt to `scope-guard`.
+
+Preserve cohesive responsibilities even with one caller. Apply the shared finding calibration in
+[check-work](/skills/check-work#finding-disposition): a simpler replacement must have a concrete
+benefit. An equally valid design preference is not a required correction.

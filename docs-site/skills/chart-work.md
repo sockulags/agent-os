@@ -67,3 +67,10 @@ Fog: retention rules for exported files — too immature for a ticket.
 Open frontier: EXP-1, EXP-2, EXP-3 are independent and can run in
 parallel. Written to planning/report-export/. No product code changed.
 ```
+
+## Recommend the next action
+
+Recommend one frontier action using project priorities, consequential uncertainty reduced, and
+work unlocked relative to effort. Propose [a bounded experiment](/reference/prototypes) when it
+can settle a solution-changing assumption. Local isolated prototype artifacts can be created inside
+the planning mandate; production changes and external effects need their own authority.

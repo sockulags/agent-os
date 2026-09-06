@@ -14,12 +14,16 @@ Read the request, diff, affected code, project conventions, and relevant checks.
 - duplicated behavior already provided by the project;
 - custom machinery covered by the standard library, native platform behavior, or an installed
   dependency;
-- wrappers, layers, factories, and abstractions without a second real use;
+- wrappers, layers, factories, and abstractions without a current responsibility or requirement;
 - indirect or dense code that has a more direct, readable form.
 
 Do not recommend code golf. Do not remove required behavior, public contracts, trust-boundary
 validation, security, accessibility, data-loss protection, justified performance, or tests that
 protect real behavior.
+
+Preserve a cohesive named responsibility even with one caller. Apply
+[finding calibration](../check-work/references/findings.md): require a concrete benefit from a
+replacement, and do not turn a reasonable alternative into a required correction.
 
 When [`quality-ratchet`](../quality-ratchet/SKILL.md) evidence is available, consume it before
 forming findings. Read the diff and implementation yourself: added/changed/deleted files, NLOC,

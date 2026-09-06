@@ -19,7 +19,9 @@
         "check-work.md#CW-P1 Implicit diff review",
         "check-work.md#CW-P2 Explicit fix review",
         "check-work.md#CW-P3 Bare mode choice",
-        "check-work.md#CW-P4 Reviewer unavailable"
+        "check-work.md#CW-P4 Reviewer unavailable",
+        "check-work.md#CW-P5 Evidence disposition",
+        "check-work.md#CW-P6 Targeted re-review"
       ],
       "negative": [
         "check-work.md#CW-N1 Test-only request",
@@ -33,27 +35,31 @@
         "chart-work.md#CW-P1 Chart",
         "chart-work.md#CW-P2 Clean chart",
         "chart-work.md#CW-P8 Shaping handoff",
-        "chart-work.md#CW-P11 Delivery reconciliation"
+        "chart-work.md#CW-P11 Delivery reconciliation",
+        "chart-work.md#CW-P12 Experiment frontier"
       ],
       "negative": [
         "chart-work.md#CW-N1 Small bounded",
         "chart-work.md#CW-N2 Blocked",
-        "chart-work.md#CW-N5 Premature closure"
+        "chart-work.md#CW-N5 Premature closure",
+        "chart-work.md#CW-N6 Settled assumption"
       ]
     },
     "deliver-work": {
       "positive": [
-        "deliver-work-sequence.md#Positive 1 — implementation authority",
-        "deliver-work-sequence.md#Positive 2 — material decision",
-        "deliver-work-sequence.md#Positive 3 — material review",
-        "deliver-work-sequence.md#Positive 4 — risk-focused review",
-        "deliver-work-sequence.md#Positive 6 — no review mechanism",
-        "deliver-work-sequence.md#Positive 7 — ready implementation issue"
+        "deliver-work-sequence.md#Positive 1 \u2014 implementation authority",
+        "deliver-work-sequence.md#Positive 2 \u2014 material decision",
+        "deliver-work-sequence.md#Positive 3 \u2014 material review",
+        "deliver-work-sequence.md#Positive 4 \u2014 risk-focused review",
+        "deliver-work-sequence.md#Positive 6 \u2014 no review mechanism",
+        "deliver-work-sequence.md#Positive 7 \u2014 ready implementation issue",
+        "deliver-work-sequence.md#Positive 8 \u2014 authorized sequence"
       ],
       "negative": [
-        "deliver-work-sequence.md#Negative 1 — planning only",
-        "deliver-work-sequence.md#Negative 2 — external boundary",
-        "deliver-work-sequence.md#Negative 5 — undecomposed target"
+        "deliver-work-sequence.md#Negative 1 \u2014 planning only",
+        "deliver-work-sequence.md#Negative 2 \u2014 external boundary",
+        "deliver-work-sequence.md#Negative 5 \u2014 undecomposed target",
+        "deliver-work-sequence.md#Negative 6 \u2014 epic membership"
       ]
     },
     "explain-work": {
@@ -162,31 +168,39 @@
     "scope-guard": {
       "positive": [
         "scope-guard.md#Positive 1",
-        "scope-guard.md#Positive 2"
+        "scope-guard.md#Positive 2",
+        "scope-guard.md#Positive 3 \u2014 follow-up authority"
       ],
       "negative": [
         "scope-guard.md#Negative 1",
-        "scope-guard.md#Negative 2"
+        "scope-guard.md#Negative 2",
+        "scope-guard.md#Negative 3 \u2014 preference ticket"
       ]
     },
     "proportional-testing": {
       "positive": [
         "proportional-testing.md#Positive 1",
-        "proportional-testing.md#Positive 2"
+        "proportional-testing.md#Positive 2",
+        "proportional-testing.md#Positive 3 \u2014 cross-service journey"
       ],
       "negative": [
         "proportional-testing.md#Negative 1",
-        "proportional-testing.md#Negative 2"
+        "proportional-testing.md#Negative 2",
+        "proportional-testing.md#Negative 3 \u2014 count-driven deletion"
       ]
     },
     "quality-ratchet": {
       "positive": [
-        "quality-ratchet.md#Positive 1 — health endpoint direct shape",
-        "quality-ratchet.md#Positive 2 — touched legacy improvement"
+        "quality-ratchet.md#Positive 1 \u2014 health endpoint direct shape",
+        "quality-ratchet.md#Positive 2 \u2014 touched legacy improvement",
+        "quality-ratchet.md#Positive 3 \u2014 contract ownership",
+        "quality-ratchet.md#Positive 4 \u2014 cohesive React boundary"
       ],
       "negative": [
-        "quality-ratchet.md#Negative 1 — legitimate runtime selection",
-        "quality-ratchet.md#Negative 2 — unrelated debt"
+        "quality-ratchet.md#Negative 1 \u2014 legitimate runtime selection",
+        "quality-ratchet.md#Negative 2 \u2014 unrelated debt",
+        "quality-ratchet.md#Negative 3 \u2014 different contracts",
+        "quality-ratchet.md#Negative 4 \u2014 missing analyzers"
       ]
     },
     "simplifier": {
@@ -224,12 +238,14 @@
         "shape-work.md#SW-P1",
         "shape-work.md#SW-P2",
         "shape-work.md#SW-P3",
-        "shape-work.md#SW-P4"
+        "shape-work.md#SW-P4",
+        "shape-work.md#SW-P5 UI experiment"
       ],
       "negative": [
         "shape-work.md#SW-N1",
         "shape-work.md#SW-N2",
-        "shape-work.md#SW-N3"
+        "shape-work.md#SW-N3",
+        "shape-work.md#SW-N4 Routine evidence"
       ]
     },
     "verify-before-done": {

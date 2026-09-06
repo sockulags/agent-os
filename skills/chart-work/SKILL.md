@@ -11,13 +11,17 @@ index that can be repaired from its children.
 
 Read project policy and [references/map.md](references/map.md). Use
 [references/elicitation.md](references/elicitation.md) for developer decisions and
-[references/prototypes.md](references/prototypes.md) when a prototype supplies evidence.
+[references/prototypes.md](references/prototypes.md) when a solution-changing uncertainty may be
+settled by an experiment. Choose that evidence path proactively; do not make prototypes mandatory.
 
 ## Chart
 
 Name the destination and boundaries. Create tickets for precise questions, leave immature unknowns
 in Fog, connect dependencies, and expose the open unblocked frontier. The invocation authorizes
 writes to the configured planning surface. Report the resulting parallel starts.
+
+Recommend one frontier action using project priorities, uncertainty reduced, and downstream work
+unlocked relative to effort. Explain why it wins; a list of unblocked tickets is not a recommendation.
 
 ## Resolve
 
@@ -35,3 +39,4 @@ Fog remains.
 
 Planning writes do not imply product implementation. Side discoveries become child decisions,
 ordinary backlog items, shaping handoffs, or parked paths rather than hidden scope expansion.
+Isolated prototype artifacts follow the authority and stop conditions in the prototype reference.

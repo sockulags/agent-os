@@ -16,13 +16,15 @@ candidate before reporting it. Look for:
 - duplicate helpers and parallel implementations;
 - custom code replaced by the standard library, native platform behavior, or an installed
   dependency;
-- wrappers, factories, layers, configuration, and abstractions without real variation;
+- wrappers, factories, layers, configuration, and abstractions without a current responsibility or requirement;
 - dependencies used for behavior the project or platform already provides.
 
 Prefer a short ranked list of high-confidence findings over a large speculative inventory. For each
 finding, name the location, evidence that the complexity is unnecessary, the simpler replacement,
 and any behavior or migration constraint that must be preserved. Do not estimate saved lines unless
 the deletion is directly countable.
+
+Preserve cohesive responsibilities and protected invariants even with one caller.
 
 Do not apply fixes. Do not treat required validation, security, accessibility, data-loss protection,
 justified performance, or useful tests as bloat. If the repository is already simple, say so.

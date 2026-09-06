@@ -89,3 +89,17 @@ If a host does not show the hook after installation, update the same scope, star
 reload the plugin where the host supports it. To inspect a blocked lifecycle, run `check`; to abandon
 the attempt, run `clear`. There is no uninstall command yet, so remove only the exact managed entry
 manually if the integration must be disabled, preserving unrelated hooks.
+
+## Structure before implementation
+
+Find existing behavior, contracts, schemas, and tests before creating parallel code. The canonical
+[structure guidance](https://github.com/sockulags/agent-os/blob/main/skills/quality-ratchet/references/structure.md)
+covers TypeScript schema/type ownership, React responsibilities, and Java object/module boundaries.
+Cohesive single-caller extractions are allowed; arbitrary file-size limits and mandatory classes are
+not. Local helpers stay near their domain until the responsibility is genuinely shared.
+
+A fresh hook check proves evidence freshness only. Dependency evidence currently covers the root
+`package.json`, not Java manifests or workspace packages. Existing project analyzers can supply
+short advisory deltas outside the model. Reuse their results only when inputs, configuration, and
+tool versions are unchanged. Established project rules may gate delivery; duplication and complexity
+signals remain advisory. This revision adds no analyzer integration or new hook event.

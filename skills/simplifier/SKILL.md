@@ -15,7 +15,8 @@ the required behavior before editing. Then simplify in this order:
 2. Reuse an existing project helper or pattern instead of maintaining a duplicate.
 3. Prefer the standard library, native platform behavior, or an already-installed dependency over
    custom machinery.
-4. Collapse wrappers, layers, and abstractions that add indirection without a second real use.
+4. Collapse wrappers, layers, and abstractions that add indirection without a current responsibility
+   or requirement. Preserve cohesive boundaries even with one caller.
 5. Express the remaining behavior directly and readably.
 
 Reduce lines when deletion reflects a simpler solution. Do not compress readable code into dense

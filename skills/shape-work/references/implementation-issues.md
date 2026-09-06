@@ -59,7 +59,7 @@ Expose the frontier without choosing an execution workflow:
 - the existence of several issues never invokes or recommends batch-work by itself.
 
 Issue creation is a planning write, not implementation authority. Do not edit product code, start a
-batch, merge, deploy, or perform external delivery effects under a shape-work invocation.
+batch, merge, deploy, or perform external delivery effects under a planning-only shape-work invocation.
 
 ## Chart-work reconciliation
 

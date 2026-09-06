@@ -44,3 +44,7 @@ review beats starting new work.
 Dispatched: one worker on the review comment. The ready issues stay
 untouched, and nothing is merged or closed under this invocation.
 ```
+
+Within project priorities, weigh consequential uncertainty removed and dependent work unlocked
+against effort. A small experiment may be a better next action than an available coding task;
+recommend the appropriate planning workflow without silently starting unrequested work.

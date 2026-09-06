@@ -35,6 +35,8 @@ merge, deploy, publication, approval, comment, or other external effect.
 3. Give the reviewer the outcome, boundaries, ground truth, candidate identity, and available
    verification evidence. Synthesize only findings supported by the code, diff, tests, policy, or
    returned review evidence. Omit speculative and cosmetic findings.
+   Apply [references/findings.md](references/findings.md) when reporting and resolving findings;
+   include that contract in the independent review brief.
 4. Apply the relevant existing disciplines only when the question needs them: use
    [`scope-guard`](../scope-guard/SKILL.md) for drift, [`simplifier-review`](../simplifier-review/SKILL.md)
    for unnecessary complexity, [`proportional-testing`](../proportional-testing/SKILL.md) when
@@ -53,7 +55,7 @@ Start with actionable findings, each containing:
 - **Priority and title**;
 - **Exact location** (file and line, symbol, or other precise anchor);
 - **Evidence and impact**;
-- **Required change**.
+- **Required change** (or clearly nonblocking follow-up).
 
 Then report “No actionable findings” when none are supported. Fix mode additionally reports applied
 fixes, fresh verification, and targeted re-review. State the candidate identity, reviewer identity

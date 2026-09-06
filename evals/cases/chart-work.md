@@ -25,3 +25,10 @@ Pass criteria: decision tickets remain canonical; evidence matches each decision
 follow the invocation; retries are idempotent; concurrent results survive reconciliation; developer
 preferences are never fabricated; a shaping handoff is not mistaken for delivery readiness; product
 implementation requires a later implementation request.
+
+## Proportional delivery scenarios
+
+| Case | Scenario | Expected |
+|---|---|---|
+| CW-P12 Experiment frontier | Chart a queue integration. Concurrent duplicate handling is uncertain and affects two downstream branches; a cosmetic task is also ready. A local fake provider is available. | Recommend a bounded experiment when it can resolve the implementation question; distinguish fake-provider observations from unknown production guarantees. |
+| CW-N6 Settled assumption | The relevant transaction semantics have already been measured and the result answers the active question. Continue planning. | Reuse sufficient evidence without another prototype ritual. |
