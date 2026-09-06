@@ -33,7 +33,7 @@ users as global policy; do not put repository-only release rules there.
 - After publishing and merging, run `node scripts/verify-release.mjs <version>`. Do not call the
   release complete until it confirms the tag, GitHub Release, npm package integrity and `latest`
   tag, successful Validate and Docs runs on current `main`, live documentation, and a public
-  isolated `npx` install.
+  isolated npm-prefix install and direct Node CLI invocation.
 - Green CI alone does not prove a release: verify the public npm and HTTP surfaces directly.
 
 ## Documentation and versioning

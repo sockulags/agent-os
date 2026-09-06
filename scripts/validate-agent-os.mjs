@@ -78,6 +78,63 @@ function checkContains(diagnostics, file, required, code) {
   }
 }
 
+function extractBalancedBody(source, marker) {
+  const markerStart = source.indexOf(marker)
+  if (markerStart < 0) return ''
+  const openBrace = source.indexOf('{', markerStart + marker.length)
+  if (openBrace < 0) return ''
+
+  let depth = 1
+  let state = 'code'
+  let escaped = false
+  for (let index = openBrace + 1; index < source.length; index += 1) {
+    const current = source[index]
+    const next = source[index + 1]
+    if (state === 'line-comment') {
+      if (current === '\n') state = 'code'
+      continue
+    }
+    if (state === 'block-comment') {
+      if (current === '*' && next === '/') {
+        state = 'code'
+        index += 1
+      }
+      continue
+    }
+    if (state !== 'code') {
+      if (escaped) {
+        escaped = false
+      } else if (current === '\\') {
+        escaped = true
+      } else if ((state === 'single-quote' && current === "'") ||
+                 (state === 'double-quote' && current === '"') ||
+                 (state === 'template' && current === '`')) {
+        state = 'code'
+      }
+      continue
+    }
+    if (current === '/' && next === '/') {
+      state = 'line-comment'
+      index += 1
+    } else if (current === '/' && next === '*') {
+      state = 'block-comment'
+      index += 1
+    } else if (current === "'") {
+      state = 'single-quote'
+    } else if (current === '"') {
+      state = 'double-quote'
+    } else if (current === '`') {
+      state = 'template'
+    } else if (current === '{') {
+      depth += 1
+    } else if (current === '}') {
+      depth -= 1
+      if (depth === 0) return source.slice(openBrace + 1, index)
+    }
+  }
+  return ''
+}
+
 function skillTable(content) {
   const rows = new Map()
   const pattern = /^\| (?:\[`([^`]+)`\]\([^)]*\)|`([^`]+)`) \| (workflow|discipline|meta) \| (manual|automatic) \| ([^|]+?) \|$/gm
@@ -136,24 +193,60 @@ export function validate(root = path.resolve(scriptDir, '..')) {
   if (!fs.existsSync(releaseVerifierFile)) {
     fail('RELEASE_VERIFY_SCRIPT', 'scripts/verify-release.mjs is required by the release policy.')
   } else {
-    const releaseVerifier = read(releaseVerifierFile)
-    const publicInstall = releaseVerifier.match(/function checkPublicInstall\(\) \{([\s\S]*?)\n\}/)?.[1]
-      ?.replace(/\s+/g, ' ').trim() ?? ''
-    const expectedPublicInstall =
-      "const publicInstallArgs = [ 'exec', '--yes', `--package=${packageSpec}`, '--', 'agent-os', 'install', " +
-      "'--platform', 'both', '--scope', 'user', '--no-policy', '--yes' ] run('npm', publicInstallArgs, { cwd,"
-    const packageSpecDeclarations = releaseVerifier.match(/\b(?:const|let|var)\s+packageSpec\b/g) ?? []
-    const cwdDeclarations = publicInstall.match(/\b(?:const|let|var)\s+cwd\b/g) ?? []
-    const hasPinnedPackageSpec = packageSpecDeclarations.length === 1 && releaseVerifier.includes(
-      'const packageSpec = `${packageJson.name}@${version}`'
+    const releaseVerifier = read(releaseVerifierFile).replace(/\r\n/g, '\n')
+    const publicInstall = extractBalancedBody(releaseVerifier, 'function checkPublicInstall()')
+    const compact = (content) => content.replace(/\s+/g, ' ').trim()
+    const compactPublicInstall = compact(publicInstall)
+    const npmInstallArgs = publicInstall.match(/const npmInstallArgs\s*=\s*\[([\s\S]*?)\]/)?.[1] ?? ''
+    const normalizedNpmInstallArgs = compact(npmInstallArgs).replace(/\s*,\s*/g, ', ')
+    const installArgs = publicInstall.match(/const installArgs\s*=\s*\[([\s\S]*?)\]/)?.[1] ?? ''
+    const compactInstallArgs = compact(installArgs)
+    const declarationCount = (content, name) =>
+      content.match(new RegExp(`\\b(?:const|let|var)\\s+${name}\\b`, 'g'))?.length ?? 0
+    const hasPinnedPackageSpec = declarationCount(releaseVerifier, 'packageSpec') === 1 &&
+      /\bconst packageSpec\s*=\s*`\$\{packageJson\.name\}@\$\{version\}`/.test(releaseVerifier)
+    const hasTemporaryRoot = publicInstall.includes(
+      "const temporaryRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'agent-os-release-'))"
     )
-    const hasTemporaryCwd = cwdDeclarations.length === 1 &&
-      publicInstall.includes("const cwd = path.join(temporaryRoot, 'run')") &&
+    const hasTemporaryHome = publicInstall.includes("const home = path.join(temporaryRoot, 'home')") &&
+      publicInstall.includes('fs.mkdirSync(home, { recursive: true })')
+    const hasTemporaryCwd = publicInstall.includes("const cwd = path.join(temporaryRoot, 'run')") &&
       publicInstall.includes('fs.mkdirSync(cwd, { recursive: true })')
-    if (!hasPinnedPackageSpec || !hasTemporaryCwd || !publicInstall.includes(expectedPublicInstall) ||
-        /run\('npx'/.test(publicInstall)) {
+    const hasTemporaryToolRoot = publicInstall.includes("const toolRoot = path.join(temporaryRoot, 'tool')") &&
+      publicInstall.includes('fs.mkdirSync(toolRoot, { recursive: true })')
+    const hasIsolatedEnvironment =
+      /const isolatedEnvironment\s*=\s*\{\s*\.\.\.process\.env,\s*HOME:\s*home,\s*USERPROFILE:\s*home\s*\}/.test(
+        publicInstall
+      )
+    const expectedNpmInstallArgs = [
+      "'install'", 'packageSpec', "'--prefix'", 'toolRoot', "'--no-save'", "'--ignore-scripts'",
+      "'--no-audit'", "'--no-fund'"
+    ].join(', ')
+    const hasNpmInstall = normalizedNpmInstallArgs === expectedNpmInstallArgs &&
+      compactPublicInstall.includes("run('npm', npmInstallArgs, { cwd, env: isolatedEnvironment, capture: false })")
+    const hasInstallArgs = [
+      "'install'", "'--platform'", "'both'", "'--scope'", "'user'", "'--no-policy'", "'--yes'"
+    ].every((token) => compactInstallArgs.includes(token))
+    const hasInstalledCli = /const installedCli\s*=\s*path\.join\(\s*toolRoot,\s*'node_modules',\s*'@sockulags',\s*'agent-os',\s*'cli',\s*'index\.mjs'\s*\)/.test(
+      publicInstall
+    )
+    const hasDirectCliInvocation = compactPublicInstall.includes(
+      "run(process.execPath, [installedCli, ...installArgs], { cwd, env: isolatedEnvironment, capture: false })"
+    )
+    const hasSingleDeclarations = [
+      'temporaryRoot', 'home', 'cwd', 'toolRoot', 'isolatedEnvironment', 'npmInstallArgs', 'installArgs',
+      'installedCli'
+    ].every((name) => declarationCount(publicInstall, name) === 1)
+    const npmRunCalls = publicInstall.match(/\brun\(\s*['"]npm['"]\s*,/g) ?? []
+    const directRunCalls = publicInstall.match(/\brun\(\s*process\.execPath\s*,/g) ?? []
+    const hasNoLegacyInvocation = !/\brun\(\s*['"](?:npx|agent-os)['"]/.test(publicInstall) &&
+      !compactPublicInstall.includes("'exec'")
+    if (!hasPinnedPackageSpec || !hasTemporaryRoot || !hasTemporaryHome || !hasTemporaryCwd ||
+        !hasTemporaryToolRoot || !hasIsolatedEnvironment || !hasNpmInstall || !hasInstalledCli ||
+        !hasInstallArgs || !hasDirectCliInvocation || !hasSingleDeclarations || npmRunCalls.length !== 1 ||
+        directRunCalls.length !== 1 || !hasNoLegacyInvocation) {
       fail('RELEASE_PUBLIC_INSTALL',
-        'checkPublicInstall must pin the package version and run npm exec from its temporary cwd.')
+        'checkPublicInstall must install the pinned package into an isolated npm prefix and invoke its CLI through process.execPath.')
     }
   }
 

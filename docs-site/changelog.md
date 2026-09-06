@@ -8,6 +8,11 @@ description: What changed in each agent-os release, in plain terms.
 One entry per release: what changed, and what it means for how you work. Full commit-level history
 lives on [GitHub](https://github.com/sockulags/agent-os/commits/main).
 
+## 0.13.1 — 2026-09-06
+
+Public release verification now installs the exact npm package into a temporary isolated prefix and
+invokes its installed CLI directly through Node, avoiding npm 11's silent `npm exec` no-op.
+
 ## 0.13.0 — 2026-09-06
 
 The proportional-delivery release: make implementation structure, review, continuation, prototyping,
