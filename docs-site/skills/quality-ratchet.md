@@ -51,10 +51,11 @@ abandoned active baseline.
 identifies Codex by its required non-empty `turn_id`, and otherwise uses the Claude identity. If
 `session_id` is absent, direct/manual hook calls retain their injected or process environment.
 
-The Stop hook blocks only a corrupt or active lifecycle violation: no fresh check for the current
-candidate. Without an active baseline for the current session it is a cheap no-op. Re-entry via
+The Stop hook blocks corrupt or stale active evidence, unacknowledged control-policy changes,
+and failed explicit project requirements. It validates recorded results without rerunning commands. Without an active baseline for the current session it is a cheap no-op. Re-entry via
 `stop_hook_active` remains blocked until a fresh check; a fresh Stop then clears that session's state.
-Structural signals never block completion.
+Raw structural counts never block completion. New exception signals are advisory unless the project
+explicitly selects them as requirements.
 
 ## Installation
 
@@ -102,4 +103,29 @@ A fresh hook check proves evidence freshness only. Dependency evidence currently
 `package.json`, not Java manifests or workspace packages. Existing project analyzers can supply
 short advisory deltas outside the model. Reuse their results only when inputs, configuration, and
 tool versions are unchanged. Established project rules may gate delivery; duplication and complexity
-signals remain advisory. This revision adds no analyzer integration or new hook event.
+signals remain advisory. Project commands now use the same runner in manual, agent, and CI workflows; the existing Stop event
+checks their evidence. No additional hook event is needed.
+
+
+## Project controls
+
+Configure `.agent-os/quality.json` to run existing architecture, lint, type, or test commands.
+Checks are advisory by default; `required: true` makes nonzero exits, unavailable tools, and timeouts
+block delivery. New type escapes, lint suppressions, and skipped tests are reported relative to
+the entry state. No analyzer is installed automatically.
+
+See the [configuration and examples](https://github.com/sockulags/agent-os/blob/main/skills/quality-ratchet/references/project-controls.md)
+for dependency-cruiser and ArchUnit commands, policy-change acknowledgement, and CI usage.
+
+Caching is opt-in for static checks with explicitly declared tool inputs. The first implementation
+fingerprints the whole tracked/nonignored repository, declared ignored tool files, command, tool
+executable, runner, configuration, runtime, and environment. It reuses only successful results
+within the active session. Integration and E2E commands should remain uncached. This conservative
+scope may invalidate more often than necessary and input hashing adds work to Stop. Measure it on
+the target repository before enabling large tool directories; the hook has a ten-second timeout.
+
+`check --json` prints full structured evidence. The concise default prints failures and an evidence
+summary. The last full report remains beside the session state in Git's metadata directory after
+successful Stop. Policy changes are held until restored or acknowledged with
+`check --accept-policy-change "reason grounded in the authorized task"`. This is an audit trail,
+not an independent authorization or tamper-proof enforcement boundary; use CI for protected gates.

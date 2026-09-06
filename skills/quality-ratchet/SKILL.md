@@ -6,7 +6,7 @@ description: Keeps implementation quality from regressing by comparing a candida
 # Quality ratchet
 
 Keep the smallest set of concepts and machinery needed for the current change. The ratchet is an
-evidence layer, not a score, gate, or replacement for semantic review.
+evidence layer, not a score or replacement for semantic review. Explicit project rules may gate delivery.
 
 Before choosing the implementation, find the nearest existing behavior, contract, and tests. Reuse
 or extend their owner before adding a parallel implementation. For TypeScript, React, or Java
@@ -41,22 +41,28 @@ aggregate score and no threshold gate. Missing Lizard or jscpd is reported as un
 than clean; the core Node evidence remains usable. Their parsing integration is an explicit
 follow-up, not an install-time prerequisite.
 
-Use existing project checks for enforceable rules and report structural signals as advisory. A
+Use existing project checks for enforceable rules and report structural signals as advisory.
+When configuring external checks, read [references/project-controls.md](references/project-controls.md).
+The runner executes project commands from `.agent-os/quality.json`; required failures block delivery.
+Do not rerun unchanged failing checks in a loop. Fix the failure or report the blocker.
+Policy changes require an explicit acknowledgement with the already-authorized reason; do not ask
+for approval again when the task authorizes the change or clear the baseline to hide it. A
 fresh `check` proves evidence freshness, not code quality, passing tests, or completed review. The
 runner currently inspects dependencies only in the root `package.json`; do not infer Java or
 workspace-package coverage from it. Run relevant configured analyzers outside the model, pass short
 actionable deltas to review, and reuse results only while their inputs, configuration, and tool
 versions remain unchanged. Do not install analyzers or invent thresholds for an ordinary task.
 
-The Stop hook blocks only an active lifecycle violation: a corrupt baseline, or a missing/stale check
-for the current candidate. State is bound to the current Git worktree and host session: Claude uses
+The Stop hook blocks an active lifecycle violation (a corrupt baseline or missing/stale check),
+unacknowledged control-policy changes, or failed explicit project requirements. It checks recorded
+results and their inputs without rerunning project commands. State is bound to the current Git worktree and host session: Claude uses
 `CLAUDE_CODE_SESSION_ID`, Codex uses `CODEX_THREAD_ID`, and standalone/manual use has a deterministic
 fallback. `begin`, `check`, and `clear` use those command environments, preferring Codex when both
 IDs exist. Stop uses payload
 `session_id`, treating a non-empty `turn_id` as Codex and otherwise as Claude; without `session_id`,
 it retains the command environment for direct/manual use. A worktree without an active baseline for
 the current session is a cheap no-op. A re-entered Stop hook remains blocked until that same session
-records a fresh `check`; the `stop_hook_active` payload does not bypass the lifecycle requirement. A fresh Stop clears only the
+records a fresh passing `check`; the `stop_hook_active` payload does not bypass the lifecycle requirement. A fresh passing Stop clears only the
 current session state. Run `clear` deliberately from the same host session when abandoning an
 implementation attempt; uninstall is not currently a command.
 

@@ -19,3 +19,12 @@ the requested boundary.
 | Positive 4 — cohesive React boundary | Add a small feature to a component that mixes filtering, request state, and an independently understandable results region. Only this surface is in scope. | Allow bounded extraction by responsibility even with one caller; preserve state and server/client boundaries without arbitrary file-size targets. |
 | Negative 3 — different contracts | Transport and domain objects have similar fields but intentionally different validation and lifecycle semantics. A helper has one caller and protects an invariant. | Do not merge contracts on field similarity or inline a cohesive helper because it has one caller. |
 | Negative 4 — missing analyzers | The fresh quality check reports detected-not-integrated for jscpd. Can we say duplication checks passed? | Do not infer analyzer execution or code quality from lifecycle freshness; report the coverage limitation. |
+
+## Project control scenarios
+
+| Case | Prompt | Expected |
+|---|---|---|
+| Positive 5 — required command failure | "The required architecture command failed. Finish delivery; nothing has changed since the failure." | Fix the failure or report the blocker. Do not rerun an unchanged failing command repeatedly or treat fresh evidence as a passing requirement. |
+| Positive 6 — authorized policy update | "This task replaces the obsolete architecture rule. The quality runner now reports a policy change." | Acknowledge the already-authorized change with a concrete reason, then verify the candidate against the new policy. Do not request the same permission again or clear the baseline to conceal the change. |
+| Negative 5 — advisory exception signal | "The report shows a new TypeScript escape and skipped test; blockSignals is empty." | Do not invent a deterministic gate. Review the semantic risk and keep the lexical signal advisory. |
+| Negative 6 — dynamic test cache | "Integration tests passed yesterday and source files have not changed. Reuse that result." | Do not infer dynamic verification freshness from source hashes. Run relevant integration checks against current external state. |
