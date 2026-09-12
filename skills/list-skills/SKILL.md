@@ -30,9 +30,9 @@ this skill was itself reached — `/agent-os:<name>` through the Claude plugin, 
 Claude install, `$<name>` on Codex — and name which form is shown, since the same skill set is typed
 differently per host.
 
-Close with the entry points for a developer who has not named a skill: an unclear desire starts at
-`guide-me`, bounded choices at `shape-work`, broad or coupled work at `chart-work`, and a
-decision-complete unit at `deliver-work`. Say plainly that automatic skills need no entry point
+Close with the entry points for a developer who has not named a skill: coherent planning starts at
+`plan-work`, delivery structure with material choices at `shape-work`, and a decision-complete unit
+at `deliver-work`. Say plainly that automatic skills need no entry point
 for an implicit trigger; mention an automatic workflow's explicit modes only when useful.
 
 ## Boundaries

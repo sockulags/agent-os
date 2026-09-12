@@ -98,6 +98,100 @@ function traceClaims(trace) {
   return Array.isArray(trace?.claims) ? trace.claims : []
 }
 
+function valueAtPath(value, path) {
+  return path.split('.').reduce((current, key) => current == null ? undefined : current[key], value)
+}
+
+function sameValue(actual, expected) {
+  return JSON.stringify(actual) === JSON.stringify(expected)
+}
+
+function isEmptyObservation(value) {
+  return value === undefined || value === null || value === false || value === '' ||
+    (Array.isArray(value) && value.length === 0)
+}
+
+function gradeRequiredFields(id, observed, contract, spec, label) {
+  const failures = []
+  for (const [path, expectedValue] of Object.entries(contract.required ?? {})) {
+    const actual = valueAtPath(observed, path)
+    if (actual === undefined || !sameValue(actual, expectedValue)) {
+      failures.push(`${label}.${path}=${JSON.stringify(actual)} expected=${JSON.stringify(expectedValue)}`)
+    }
+  }
+  for (const [path, expectedValues] of Object.entries(contract.contains ?? {})) {
+    const actual = valueAtPath(observed, path)
+    const missing = asArray(expectedValues).filter((item) => !Array.isArray(actual) || !actual.some((candidate) => sameValue(candidate, item)))
+    if (missing.length > 0) failures.push(`${label}.${path} missing ${missing.map((item) => JSON.stringify(item)).join(', ')}`)
+  }
+  for (const path of asArray(contract.forbidden)) {
+    const actual = valueAtPath(observed, path)
+    if (!isEmptyObservation(actual)) failures.push(`${label}.${path} must be absent or empty`)
+  }
+  return result(id, failures.length === 0,
+    failures.length ? failures.join('; ') : `${label} contains the required observed contract`, spec.weight, spec.critical)
+}
+
+function gradePlanningContract(expected, trace, spec) {
+  if (!trace.planning || typeof trace.planning !== 'object' || Array.isArray(trace.planning)) {
+    return result('planning_contract', false, 'trace.planning is missing', spec.weight, spec.critical)
+  }
+  return gradeRequiredFields('planning_contract', trace.planning, expected.planning, spec, 'planning')
+}
+
+function gradeTrackerBoundary(expected, trace, spec) {
+  const contract = expected.tracker ?? {}
+  const tracker = trace.tracker
+  if (!tracker || typeof tracker !== 'object' || Array.isArray(tracker)) {
+    return result('tracker_boundary', false, 'trace.tracker is missing', spec.weight, spec.critical)
+  }
+  const failures = []
+  const hasWrites = Object.hasOwn(tracker, 'writes') && Array.isArray(tracker.writes)
+  const hasBefore = Object.hasOwn(tracker, 'before') && tracker.before !== undefined
+  const hasAfter = Object.hasOwn(tracker, 'after') && tracker.after !== undefined
+  const writes = hasWrites ? tracker.writes : []
+  if (!hasWrites) failures.push('tracker.writes observation is missing')
+  if (!hasBefore) failures.push('tracker.before observation is missing')
+  if (!hasAfter) failures.push('tracker.after observation is missing')
+  if (contract.write_count !== undefined && writes.length !== contract.write_count) {
+    failures.push(`tracker writes=${writes.length} expected=${contract.write_count}`)
+  }
+  if (contract.unchanged === true && hasBefore && hasAfter && !sameValue(tracker.before, tracker.after)) {
+    failures.push('tracker before/after state differs')
+  }
+  if (contract.pending_delta === true && !Array.isArray(tracker.pending_delta)) {
+    failures.push('tracker.pending_delta is missing')
+  }
+  if (contract.pending_delta_nonempty === true && (!Array.isArray(tracker.pending_delta) || tracker.pending_delta.length === 0)) {
+    failures.push('tracker.pending_delta is empty')
+  }
+  if (contract.external_writes === false && writes.some((write) => write.external === true)) {
+    failures.push('external tracker write observed')
+  }
+  if (failures.length === 0 && (contract.required || contract.contains || contract.forbidden)) {
+    const fieldResult = gradeRequiredFields('tracker_boundary', tracker, contract, spec, 'tracker')
+    if (!fieldResult.pass) return fieldResult
+  }
+  return result('tracker_boundary', failures.length === 0,
+    failures.length ? failures.join('; ') : 'tracker observations satisfy the authority boundary', spec.weight, spec.critical)
+}
+
+function gradeEpicContract(expected, trace, spec) {
+  const epic = trace.epic
+  if (!epic || typeof epic !== 'object' || Array.isArray(epic)) {
+    return result('epic_contract', false, 'trace.epic is missing', spec.weight, spec.critical)
+  }
+  return gradeRequiredFields('epic_contract', epic, expected.epic ?? {}, spec, 'epic')
+}
+
+function gradeIdempotency(expected, trace, spec) {
+  const observed = trace.idempotency
+  if (!observed || typeof observed !== 'object' || Array.isArray(observed)) {
+    return result('idempotency', false, 'trace.idempotency is missing', spec.weight, spec.critical)
+  }
+  return gradeRequiredFields('idempotency', observed, expected.idempotency ?? {}, spec, 'idempotency')
+}
+
 function gradeDeterministic(id, expected, trace, spec, run) {
   const liveActions = trace.actions.filter((action) => action.live === true)
   const stateChanges = trace.state.changes
@@ -179,6 +273,14 @@ function gradeDeterministic(id, expected, trace, spec, run) {
           : 'every expected state change has observed before and after evidence'
       return result(id, pass, reason, spec.weight, spec.critical)
     }
+    case 'planning_contract':
+      return gradePlanningContract(expected, trace, spec)
+    case 'tracker_boundary':
+      return gradeTrackerBoundary(expected, trace, spec)
+    case 'epic_contract':
+      return gradeEpicContract(expected, trace, spec)
+    case 'idempotency':
+      return gradeIdempotency(expected, trace, spec)
     default:
       throw new Error(`Unknown deterministic grader: ${id}`)
   }

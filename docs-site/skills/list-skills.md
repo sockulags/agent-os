@@ -20,8 +20,9 @@ the wrong heading. An automatic workflow may still document explicit modes in it
 Invocation syntax differs per host: `/agent-os:<name>` through the Claude plugin, `/<name>` for a
 direct Claude install, and `$<name>` on Codex. The card names which form it is showing.
 
-It closes with entry points for a developer who has not named a skill, while automatic skills need
-no entry point for an implicit trigger. It is read-only: it never runs, stages, or offers to run what
-it lists. Choosing the next action is
+It closes with entry points for a developer who has not named a skill: coherent planning starts at
+`plan-work`, delivery structure with material choices at `shape-work`, and a decision-complete unit
+at `deliver-work`. Automatic skills need no entry point for an implicit trigger. It is read-only: it
+never runs, stages, or offers to run what it lists. Choosing the next action is
 [`dispatch-next`](/skills/dispatch-next); describing work already underway is
 [`explain-work`](/skills/explain-work).

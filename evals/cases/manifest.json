@@ -30,19 +30,29 @@
         "check-work.md#CW-N4 Repository audit"
       ]
     },
-    "chart-work": {
+    "plan-work": {
       "positive": [
-        "chart-work.md#CW-P1 Chart",
-        "chart-work.md#CW-P2 Clean chart",
-        "chart-work.md#CW-P8 Shaping handoff",
-        "chart-work.md#CW-P11 Delivery reconciliation",
-        "chart-work.md#CW-P12 Experiment frontier"
+        "plan-work.md#PW-P1",
+        "plan-work.md#PW-P2",
+        "plan-work.md#PW-P3",
+        "plan-work.md#PW-P4",
+        "plan-work.md#PW-P5",
+        "plan-work.md#PW-P6",
+        "plan-work.md#PW-P7",
+        "plan-work.md#PW-P8",
+        "plan-work.md#PW-P9",
+        "plan-work.md#PW-P10",
+        "plan-work.md#PW-P11",
+        "plan-work.md#PW-P12",
+        "plan-work.md#PW-P13",
+        "plan-work.md#PW-P14",
+        "plan-work.md#PW-P15",
+        "plan-work.md#PW-P16"
       ],
       "negative": [
-        "chart-work.md#CW-N1 Small bounded",
-        "chart-work.md#CW-N2 Blocked",
-        "chart-work.md#CW-N5 Premature closure",
-        "chart-work.md#CW-N6 Settled assumption"
+        "plan-work.md#PW-N1",
+        "plan-work.md#PW-N2",
+        "plan-work.md#PW-N3"
       ]
     },
     "deliver-work": {
@@ -71,18 +81,6 @@
       "negative": [
         "explain-work.md#EW-N1 Technical review",
         "explain-work.md#EW-N2 Documentation"
-      ]
-    },
-    "guide-me": {
-      "positive": [
-        "guide-me.md#GM-P1 Vague desire",
-        "guide-me.md#GM-P2 Gate before route",
-        "guide-me.md#GM-P3 Challenge reopens",
-        "guide-me.md#GM-P4 Approved continuation"
-      ],
-      "negative": [
-        "guide-me.md#GM-N1 Clear request",
-        "guide-me.md#GM-N2 Bounded choice"
       ]
     },
     "notice-lesson": {

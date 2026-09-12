@@ -23,8 +23,8 @@ hero:
 
 features:
   - icon: 🧭
-    title: Chart, shape, batch, deliver
-    details: A foggy effort becomes decision tickets, a bounded branch becomes implementation-ready issues, and the developer chooses individual delivery or an explicit integrated batch. When you cannot state the goal yet, guide-me questions it out first.
+    title: Plan, shape, batch, deliver
+    details: A coherent mission gets the planning depth it needs, a bounded branch becomes implementation-ready delivery units, and the developer chooses individual delivery or an explicit integrated batch.
   - icon: 🧾
     title: Evidence before claims
     details: The verify-before-done discipline turns "it works" into a command, an exit status and a result. A check that ran proves only what that check exercised — and unverified claims get named as unverified.
@@ -44,30 +44,25 @@ features:
 
 ## What it looks like
 
-The optional on-ramp in action — a vague desire becomes an approved plain-language goal, planning
-takes over, and evidence lands before any completion claim:
+One planning entry adapts to the work — a vague desire can be clarified, a known feature can be
+covered against the repository, and evidence lands before any completion claim:
 
 ```text
 User:
-/guide-me Reports feel useless for our big customers and I
+/plan-work Reports feel useless for our big customers and I
 don't know what to do about it.
 
 Agent:
-Is the pain seeing the data, or taking it with them?
+Is the pain seeing the data, or taking it with them? I will first
+resolve what the repository already tells us.
 
 User:
 Taking it with them. They paste screenshots into slides today.
 
 Agent:
-Plain-language summary: "This work gives large customers a proper way
-to take a filtered result with them. It will not change what they can
-see, only what they can carry away." Approve, or challenge it?
-
-User:
-Approved.
-
-Agent:
-Continuing into chart-work with that summary as the TLDR of the map.
+The goal is now clear. I will inspect authorization, result limits,
+and the existing report flow. If independent choices remain, I will
+open a decision map; otherwise the plan can go straight to shaping.
 
     ...later, after shaping and delivery...
 

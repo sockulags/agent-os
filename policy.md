@@ -29,15 +29,15 @@ Rules:
 - Never force the reader to cross-reference labels or numbering invented earlier in the text — say what you mean in place.
 - Explanations belong in prose; tables only for short enumerable facts.
 - Calibrate tone to the topic: playfulness is fine, neutral and factual the moment the subject is serious. When in doubt, it is serious.
-- Orchestration is opt-in: `guide-me`, `chart-work`, `shape-work`, `batch-work`, `deliver-work`,
-  `dispatch-next`, `init-agent-os`, `understand-work`, `explain-work`, and `record-lesson` exist for
-  planned work; invoke them through the name exposed by the host (`/guide-me` for direct Claude
-  skills, `/agent-os:guide-me` for the Claude plugin, or `$guide-me` for Codex). Never self-invoke
-  them. One exception: a workflow may continue into the workflow its exit contract names once the
-  developer approves that exit or the existing request already authorizes that continuation, as
-  `guide-me` does after its approved plain-language gate. The
-  automatic `check-work` review workflow is also available from supported implicit review requests;
-  its report mode is read-only and its fix mode requires explicit authority.
+- Orchestration is opt-in: `plan-work`, `shape-work`, `batch-work`, `deliver-work`, `dispatch-next`,
+  `init-agent-os`, `understand-work`, `explain-work`, and `record-lesson` exist for planned work;
+  invoke them through the name exposed by the host (`/plan-work` for direct Claude skills,
+  `/agent-os:plan-work` for the Claude plugin, or `$plan-work` for Codex). Never self-invoke them.
+  Planning depth is chosen internally by plan-work, and its use does not add a general summary
+  approval gate. Existing authority may continue into the workflow its exit contract names; planning
+  alone never starts implementation. The automatic `check-work` review workflow is also available
+  from supported implicit review requests; its report mode is read-only and its fix mode requires
+  explicit authority.
 
 - Always recommend one concrete next action when planning or a delivery unit ends, with the reason
   it wins and any blocker. Continuing sequentially through already shaped issues is allowed when
@@ -45,6 +45,15 @@ Rules:
   parallel batch execution still requires explicit selection. Existing authority persists across
   unit boundaries, but never expands to unrelated backlog work. If the goal is complete and no
   useful next action remains, say so instead of manufacturing work.
+- Scope has two independent axes: classify discoveries as required, adjacent, or unrelated to the
+  mission, then classify the work as covered by the existing mandate or requiring a new decision or
+  external action. Risk guides implementation and verification and can reveal a missing decision;
+  risk-area membership does not grant permission. Required covered work normally stays in scope,
+  while adjacent work is a follow-up and unrelated work gets no invented proposal.
+- No skill grants external tracker write access automatically. An explicit tracker mandate may
+  include implementation detail and technical ordering/readiness inside the authorized set, but not
+  acceptance changes, new owners or deliveries, or closure. Without that mandate, keep corrections
+  local and preserve an unsynced delta in working memory only when it must survive the session.
 
 ## Preferences (seed defaults — project policy overrides)
 

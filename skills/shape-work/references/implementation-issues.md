@@ -10,18 +10,20 @@ With no project convention, use:
 planning/<shape-slug>/implementation/<unit-key>.md
 ```
 
-When the shape originates from `guide-me`, place the approved plain-language summary as a `## TLDR`
-at the top of the shape's origin document, so the shape opens with what it solves before any
-technical detail.
+When a plan-work run supplied a plain-language summary for an actual decision, link it from the
+shape's origin document. Do not turn summary approval into a second gate or copy the plan into a
+competing specification.
 
 ## Completion invariant
 
 A selected product branch is not `delivery-ready`, and shape-work is not complete, until one or
 more implementation issues have been created or reused. A parked or rejected branch needs no issue.
 
-Each issue represents one coherent delivery unit: one observable outcome with a reviewable change
-boundary and ground truth that can verify it. The unit may depend on earlier units, but it must not
-contain an unresolved product decision or several separately closable delivery targets.
+Each issue represents one coherent delivery unit: an independently useful or assessable result with
+a reviewable change boundary and ground truth that can verify it. The unit may depend on earlier
+units, but technical layers that support the same behavior stay together. Split only for a concrete
+delivery, ownership, migration, risk, or verification boundary; separate commits, sessions, files,
+or technical layers are not sufficient reasons.
 
 ## Issue contract
 
@@ -49,6 +51,25 @@ decisions are settled and its dependencies are satisfied; otherwise record the e
 delivery frontier is the set of ready, unblocked implementation issues. Use the planning surface's
 existing status and label conventions rather than inventing a parallel queue vocabulary.
 
+## Epic contract
+
+When one shared end result needs an owner, shape an epic with this contract instead of splitting
+every technical layer into a child:
+
+```text
+## Epic contract
+Epic outcome: <shared observable result>
+Acceptance: <aggregate acceptance examples>
+Children or delivery units: <links and why each boundary exists>
+Aggregate verification: <checks for the complete result>
+Final verification owner: <person or delivery role>
+```
+
+The contract belongs to shape-work and is consumed by delivery. A child issue contributes to the
+epic but does not authorize its siblings, change its acceptance, or close the parent. Green child
+checks are not aggregate verification. `deliver-work` owns the whole-result check when the request
+covers the epic, and `batch-work` reuses this same contract for an explicitly selected batch.
+
 ## Routing belongs to the developer
 
 Expose the frontier without choosing an execution workflow:
@@ -61,9 +82,9 @@ Expose the frontier without choosing an execution workflow:
 Issue creation is a planning write, not implementation authority. Do not edit product code, start a
 batch, merge, deploy, or perform external delivery effects under a planning-only shape-work invocation.
 
-## Chart-work reconciliation
+## Plan-work reconciliation
 
-When the origin is a chart-work handoff, update the handoff and map idempotently after materializing
+When the origin is a plan-work handoff, update the handoff and map idempotently after materializing
 the issues. Link every implementation issue, record the ready or blocked frontier, and move the
 branch from shaping to `delivery-ready` only when the completion invariant holds. Preserve
 concurrent map entries and keep decision tickets canonical for their evidence.

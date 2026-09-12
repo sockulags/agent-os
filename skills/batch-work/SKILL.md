@@ -25,7 +25,8 @@ invoke it. Use this workflow only when the developer explicitly requests an inte
 ## Loop
 
 1. Confirm every source issue has a stable identity, outcome, scope, dependencies, and checks. Route
-   unresolved product decisions or missing decomposition to `shape-work` or `chart-work`.
+   unresolved product decisions or missing coherent delivery structure to `plan-work` or
+   `shape-work`.
 2. Create or update `.agent-os/batches/<batch-slug>.md`. Validate its graph and definition hashes.
    A planning-only request stops here; an execution request continues.
 3. Reconcile the manifest with live Git and worktree state before every dispatch wave.
@@ -33,7 +34,8 @@ invoke it. Use this workflow only when the developer explicitly requests an inte
    one current task definition and returns a commit SHA, changed files, checks, and uncertainty.
 5. Integrate completed tasks in dependency order. Detect already-contained commits, rerun relevant
    checks on the integrated head, and stop on conflicts rather than guessing.
-6. After all tasks integrate, run fresh aggregate checks.
+6. After all tasks integrate, run the epic or feature's aggregate verification contract when one
+   exists, then run fresh aggregate checks. Child checks never prove the shared result.
 7. Treat the integrated batch as material. Apply the
    [deliver-work review gate](../deliver-work/workflow.md#review-gate) to the complete candidate,
    resolve supported findings, and rerun affected aggregate checks.

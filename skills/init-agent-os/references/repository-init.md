@@ -43,8 +43,9 @@ is insufficient:
    whether external writes, publication, or other effects require a separate explicit request.
 3. **Verification:** exact useful commands and the ground truth they establish; record what must be
    inspected manually or otherwise checked when commands are insufficient.
-4. **Planning:** the planning surface, stable identities, readiness states or labels, and dependency
-   conventions for implementation work.
+4. **Planning:** the coherent planning surface, stable plan and decision-ticket identities, claims
+   and handoff conventions, readiness states or labels, epic ownership, and dependency conventions
+   for implementation work.
 5. **Maintenance:** where durable lessons, recurring gotchas, and policy changes are recorded.
 
 ## Evidence-gated modules

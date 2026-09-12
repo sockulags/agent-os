@@ -62,6 +62,20 @@ two negative cases:
 polarized manifest entries. Static validation proves the case set is structurally complete. Only a
 live session can measure activation and behavior.
 
+The plan-work migration adds sixteen positive mission-planning scenarios plus negative boundary
+cases. The validator proves their ownership, polarity, and structural contract tokens; it does not
+prove that an external epic was created correctly, that a tracker stayed unchanged, or that an
+agent actually reused a canonical handoff. Those claims require an isolated behavior run whose
+harness observes filesystem and tracker state directly.
+
+The behavior suite now contains executable scorecard contracts `PW-P1` through `PW-P16`. The
+deterministic fixture run checks observable planning state, mission coverage, decision-map and
+frontier state, tracker boundaries, epic readiness, and idempotent identities; it does not grade
+ritual wording. `npm run test:evals` scores all sixteen positive contracts and includes red
+mutations for the highest-risk boundaries. This is deterministic structural/scorecard execution,
+not live-agent evidence. No live plan-work agent behavior has been executed in the current
+checkout; trustworthy live results still require a caller-supplied isolated harness.
+
 ## Current measured results
 
 Run 2026-07-30 · agent-os 0.6.2 · Codex CLI 0.146.0-alpha.3.1 · fresh ephemeral
@@ -72,7 +86,7 @@ Activation required an observed read of the installed skill's `SKILL.md`. A ment
 | Skill | Positive | Negative | Measured accuracy |
 |---|---:|---:|---:|
 | `batch-work` | not measured | 2/2 | 2/2 |
-| `chart-work` | not measured | 2/2 | 2/2 |
+| `plan-work` | not measured | not measured | not measured |
 | `deliver-work` | not measured | 2/2 | 2/2 |
 | `diagnose-before-fix` | 2/2 | 2/2 | 4/4 |
 | `dispatch-next` | not measured | 2/2 | 2/2 |

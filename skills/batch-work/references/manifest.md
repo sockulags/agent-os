@@ -98,3 +98,11 @@ Worker-local checks are useful context but are not proof of the integrated syste
 
 The original request and project policy define whether delivery stops at local changes, a commit, a
 pull request, merge, or deployment. Destructive cleanup requires the request or policy to include it.
+
+## Shared verification contract
+
+When the source issue graph belongs to an epic or planned feature, keep the canonical epic contract
+linked from the manifest rather than copying it into a competing specification. The manifest's
+`aggregate_checks` must cover the shared outcome and acceptance, and its final verification step
+must name the owner from that contract. Worker-local green checks never close the parent; the
+coordinator follows the same aggregate verification direction as `deliver-work`.

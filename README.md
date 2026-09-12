@@ -7,15 +7,14 @@ Claude Code and Codex. One skill source, two platforms, ceremony proportional to
 
 ## Skills
 
-Reading order: the planning foundation (`shape-work`, then `chart-work`, which hands off into it),
-the on-ramp in front of both (`guide-me`), the remaining workflows, then the component skills the
-workflows compose (`understand-work`, `explain-work`), the disciplines, and the meta skills.
+Reading order: the planning foundation (`plan-work`, then `shape-work`), the remaining workflows,
+then the component skills the workflows compose (`understand-work`, `explain-work`), the disciplines,
+and the meta skills.
 
 | Skill | Bucket | Invocation | Purpose |
 |---|---|---|---|
-| `shape-work` | workflow | manual | Turn bounded choices into implementation-ready issues |
-| `chart-work` | workflow | manual | Chart broad work as a parallel graph of decision tickets |
-| `guide-me` | workflow | manual | Guide a vague desire to an approved goal and into planning |
+| `plan-work` | workflow | manual | Plan a coherent mission with adaptive depth and canonical decisions |
+| `shape-work` | workflow | manual | Shape coherent delivery units and implementation-ready issues |
 | `deliver-work` | workflow | manual | Implement one change against boundaries and ground truth |
 | `batch-work` | workflow | manual | Run isolated ready units and verify the integrated result |
 | `dispatch-next` | workflow | manual | Pick or dispatch one action according to the request |

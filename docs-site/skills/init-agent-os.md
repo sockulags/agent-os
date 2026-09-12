@@ -22,8 +22,9 @@ rules elsewhere is forbidden. If target ownership cannot be resolved, it asks on
 question and blocks the write. A transient completeness ledger ensures every applicable material
 field reaches evidenced or confirmed, `N/A`, explicitly deferred/open, or conflicting. It asks only
 unresolved material questions, one at a time, with a recommendation and consequence. The mandatory
-core is policy ownership, delivery and external-effect boundaries, verification and ground truth, planning
-identities/readiness/dependencies, and durable lesson maintenance. Frontend/rendered QA,
+core is policy ownership, delivery and external-effect boundaries, verification and ground truth,
+coherent planning identities/claims/handoffs/readiness/dependencies, epic ownership, and durable
+lesson maintenance. Frontend/rendered QA,
 package/release/docs, CI/deploy, auth/security/billing, database/migration/concurrency,
 batch/monorepo, and native/desktop sections activate only when repository evidence supports them.
 

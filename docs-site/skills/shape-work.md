@@ -1,19 +1,20 @@
 ---
 title: shape-work
-description: Turn one bounded idea with open product choices into implementation-ready issues.
-skill-description: Shapes a bounded idea into implementation-ready issues backed by settled product decisions. User-invoked while material product choices remain. Not for small fixes or work whose outcome is already clear.
-summary: Turn bounded choices into implementation-ready issues
+description: Turn a bounded mission into coherent delivery units, dependencies, and implementation-ready issues.
+skill-description: Shapes a bounded mission into coherent delivery units, dependencies, and implementation-ready issues backed by settled product decisions. User-invoked when delivery structure or an epic contract still needs shaping. Not for small fixes or work whose outcome and delivery unit are already clear.
+summary: Shape coherent delivery units and implementation-ready issues
 ---
 
 # shape-work
 
 **Bucket:** workflow · **Invocation:** manual · `/shape-work` (direct Claude), `/agent-os:shape-work` (Claude plugin), or `$shape-work` (Codex)
 
-Shapes a bounded idea into implementation-ready issues backed by settled product decisions.
+Shapes a bounded mission into coherent delivery units and implementation-ready issues backed by
+settled product decisions.
 
 ```mermaid
 flowchart TD
-    A[Bounded idea] --> B[Read repo, policy, linked decisions]
+    A[Bounded mission or existing specification] --> B[Read repo, policy, linked plan decisions]
     B --> C{Material product choice left?}
     C -->|recommend + one question| D[Developer decides]
     D --> C
@@ -32,16 +33,26 @@ Use a diagram or mockup only when it makes behavior, layout, states, or boundari
 Frontend proposals follow [Frontend mockups](/reference/mockups).
 
 Deliver the coherent product shape: outcome, boundaries, acceptance examples, affected seams,
-ground truth, settled decisions, and open risks. Then create or reuse implementation issues on the
-configured planning surface, link their dependencies, and expose the first claimable frontier.
+ground truth, settled decisions, and open risks. Start from one coherent delivery unit and split
+only for an independent result, ownership, migration, delivery, or material risk and verification
+boundary. Separate commits, sessions, files, or technical layers are not enough. Keep schema, API,
+UI, configuration, errors, and verification with the behavior they support. Then create or reuse
+implementation issues on the configured planning surface, link real dependencies, and expose the
+first claimable frontier.
 
-One shape may produce one or several sequential or parallel issues. Issue count does not select an
-execution workflow. The developer may run any ready issue with `deliver-work`, or explicitly choose
-`batch-work` for integrated parallel execution.
+One shape may produce one issue, several independent issues without an epic, or an epic with
+children when one shared result needs an owner. Issue count does not select an execution workflow.
+The developer may run any ready issue with `deliver-work`, or explicitly choose `batch-work` for
+integrated parallel execution.
 
-When shaping started from `chart-work`, reconcile issue links and readiness into the origin handoff
+When shaping started from `plan-work`, reconcile issue links and readiness into the origin handoff
 and map. A shaping handoff alone is not delivery-ready. Shape-work completes only when every selected
 branch points to implementation-ready issues or is explicitly parked or rejected.
+
+An epic contract records the shared outcome, acceptance, children or delivery units, aggregate
+verification, and the owner of final verification. A child does not authorize siblings or close the
+parent; green child checks are not aggregate verification. Deliver-work checks the whole result when
+the request covers the epic, and batch-work reuses the same contract.
 
 The invocation authorizes planning artifacts, not product code.
 

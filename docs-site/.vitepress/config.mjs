@@ -68,16 +68,10 @@ export default withMermaid(defineConfig({
           ]
         },
         {
-          text: 'Foundation',
+          text: 'Planning foundation',
           items: [
-            { text: 'shape-work', link: '/skills/shape-work' },
-            { text: 'chart-work', link: '/skills/chart-work' }
-          ]
-        },
-        {
-          text: 'On-ramp',
-          items: [
-            { text: 'guide-me', link: '/skills/guide-me' }
+            { text: 'plan-work', link: '/skills/plan-work' },
+            { text: 'shape-work', link: '/skills/shape-work' }
           ]
         },
         {
