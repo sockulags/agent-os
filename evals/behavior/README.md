@@ -43,6 +43,11 @@ action count, lanes, verification surface, threshold, and grader mix. Critical f
 averaged away. A missing subjective judgment makes the result incomplete rather than silently
 passing it.
 
+The suite also contains the sixteen `PW-P1` through `PW-P16` plan-work contracts. Their
+deterministic observations cover planning depth and mission coverage, decision-map/frontier state,
+technical ordering, authority boundaries, tracker non-mutation, epic readiness, and stable
+idempotency identities. The checked-in fixtures are scorecard fixtures, not live agent sessions.
+
 ## Local scoring
 
 ```sh
@@ -51,7 +56,15 @@ node scripts/test-eval-agent-behavior.mjs
 ```
 
 The checked-in pass and fail records test the scorecard itself. They are not evidence that a live
-agent passed the cases. Real run records belong under the gitignored `evals/runs/` directory.
+agent passed the cases. `npm run test:evals` additionally scores all sixteen plan-work fixture
+records and runs red mutations for planning depth, corrected-order continuation, impact-based
+pausing, missing tracker observations, tracker writes, epic readiness, and idempotency. Real run
+records belong under the gitignored `evals/runs/` directory.
+
+The local execution evidence is intentionally split: deterministic structural and scorecard
+execution is covered by the command above; live agent behavior executed in the current checkout is
+**none**. A live result requires a caller-supplied harness with trustworthy tool-event and
+before/after state observation, as described below.
 
 The historical 2026-08-13 baseline used three independent repetitions of six synthetic contracts
 with Codex CLI package 0.146.0 on the tested Windows x64 host, isolated in Docker. Its

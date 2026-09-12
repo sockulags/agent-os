@@ -120,13 +120,13 @@ repository checkout.
 
 ## 0.8.0 — 2026-07-31
 
-The guide-me release: agent-os now has an entry point for work you cannot articulate yet.
+The planning-entry release: agent-os gained an entry point for work whose outcome is not yet clear.
 
-- **New workflow `guide-me`** — from a vague desire, through questioning, to a plain-language
-  summary you approve or challenge. On approval it continues straight into `chart-work` or
-  `shape-work`, carrying the summary as a `## TLDR` at the top of the artifact it creates.
+- **Earlier planning entry** — from a vague desire, through questioning, to a plain-language
+  summary that could guide the next planning step. The historical entry continued into decision
+  mapping or shaping, carrying the summary as a `## TLDR` at the top of the artifact it created.
 - **New workflows `understand-work` and `explain-work`** — the questioning loop and the
-  plain-language gate as standalone skills, composable by guide-me and invocable on their own
+  plain-language gate as standalone skills, composable by the planning entry and invocable on their own
   against any decision, plan, diff, or pull request.
 - **New discipline `notice-lesson`** — a developer interruption or correction is treated as a
   misunderstanding signal: named in one sentence, course-corrected, and offered to `record-lesson`
@@ -137,7 +137,7 @@ The guide-me release: agent-os now has an entry point for work you cannot articu
   contract names once the developer approves that exit.
 - **Docs:** verified Codex install commands (`codex plugin marketplace add`, `codex plugin add`),
   this changelog, a [troubleshooting page](/guide/troubleshooting), a landing-page session
-  transcript, transcripts on more skill pages, and a guide-me prologue in the worked example.
+  transcript, transcripts on more skill pages, and a planning prologue in the worked example.
 - **Validation:** documentation prose may no longer hardcode skill counts — a validator check with
   a red case replaces the reminder that failed.
 
@@ -176,7 +176,7 @@ evidence records, and the structural validator with its red-case suite (0.4.2).
 
 ## 0.3.0 — 2026-07-28
 
-The `chart-work` workflow — broad efforts become parallel graphs of evidence-backed decision
+The earlier decision-map workflow — broad efforts became parallel graphs of evidence-backed decision
 tickets — and this documentation site.
 
 ## 0.2.0 — 2026-07-22

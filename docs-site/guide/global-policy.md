@@ -35,6 +35,12 @@ Evidence comes before claims. Scope and diffs stay narrow. Only unresolved produ
 materially change the outcome are escalated; reversible implementation choices stay with the
 implementer.
 
+Scope control uses two axes: relation to the mission (required, adjacent, or unrelated) and mandate
+(covered by the request and policy, or requiring a new decision or external action). Risk guides
+implementation and verification and can reveal a missing decision, but risk-area membership does
+not grant permission. Required covered work normally stays in scope; adjacent work is a follow-up,
+and unrelated work gets no invented proposal. No skill grants tracker write access automatically.
+
 Commits use the Git identity configured by the repository or the current session, and never carry AI
 attribution or `Co-Authored-By` trailers. Responses follow the language the user is writing in, while
 code, commits and technical artifacts stay English unless the project says otherwise.

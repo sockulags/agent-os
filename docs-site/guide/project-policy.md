@@ -24,7 +24,8 @@ Record only durable behavior-changing defaults:
 - canonical policy ownership and instruction surfaces;
 - delivery boundary, stopping point, and external-effect conventions;
 - verification commands and ground truth, including manual checks when commands are insufficient;
-- planning surface, stable identities, dependencies, and readiness states or labels;
+- coherent planning surface, stable plan and decision-ticket identities, claims and canonical
+  handoffs, dependencies, readiness states or labels, and epic ownership;
 - maintenance location for durable lessons and gotchas;
 - only conditional sections supported by repository evidence: frontend/rendered QA,
   package/release/docs, CI/deploy, auth/security/billing/external writes,
@@ -32,7 +33,8 @@ Record only durable behavior-changing defaults:
 
 The direct request has higher authority than defaults. A policy can grant standing delivery
 behavior; absence does not imply permission for merge, deploy, destructive cleanup, or external
-effects.
+effects. Tracker readiness is not authorization: tracker maintenance needs an explicit mandate and
+does not silently change acceptance, owners, delivery scope, or closure.
 
 `init-agent-os` asks one unresolved material question at a time, with a recommendation and
 consequence, and records explicit deferrals under **Open setup questions**. It does not write

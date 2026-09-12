@@ -219,6 +219,1437 @@
           "rubric": "Judge whether the agent waited for observed worker completion before finalizing and then stopped without mutation. Do not override deterministic trace facts."
         }
       ]
+    },
+    {
+      "id": "PW-P1",
+      "description": "Keep a small clear fix out of planning ceremony.",
+      "prompt": "Plan this small clear fix.",
+      "threshold": 0.9,
+      "expected": {
+        "workflow": "plan-work",
+        "live_actions": 0,
+        "allowed_lanes": [
+          "planning"
+        ],
+        "no_op": true,
+        "read_only": true,
+        "state_changes": 0,
+        "verification": {
+          "required": [
+            "planning_state"
+          ],
+          "allowed": [
+            "planning_state"
+          ]
+        },
+        "planning": {
+          "required": {
+            "depth": "minimal",
+            "mode": "direct-delivery"
+          },
+          "contains": {
+            "coverage": [
+              "outcome",
+              "boundaries",
+              "verification"
+            ]
+          },
+          "forbidden": [
+            "decision_map",
+            "implementation_ceremony"
+          ]
+        }
+      },
+      "graders": [
+        {
+          "id": "observation_integrity",
+          "type": "deterministic",
+          "weight": 1,
+          "critical": true
+        },
+        {
+          "id": "workflow_selection",
+          "type": "deterministic",
+          "weight": 1,
+          "critical": true
+        },
+        {
+          "id": "action_count",
+          "type": "deterministic",
+          "weight": 1,
+          "critical": true
+        },
+        {
+          "id": "safe_noop",
+          "type": "deterministic",
+          "weight": 1,
+          "critical": true
+        },
+        {
+          "id": "read_only_integrity",
+          "type": "deterministic",
+          "weight": 1,
+          "critical": true
+        },
+        {
+          "id": "lane_ownership",
+          "type": "deterministic",
+          "weight": 1,
+          "critical": true
+        },
+        {
+          "id": "state_change_evidence",
+          "type": "deterministic",
+          "weight": 1,
+          "critical": true
+        },
+        {
+          "id": "planning_contract",
+          "type": "deterministic",
+          "weight": 2,
+          "critical": true
+        },
+        {
+          "id": "verification_sufficiency",
+          "type": "deterministic",
+          "weight": 1,
+          "critical": true
+        },
+        {
+          "id": "verification_minimality",
+          "type": "deterministic",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "id": "PW-P2",
+      "description": "Cover the whole known feature mission across relevant behavior.",
+      "prompt": "Plan this well-described feature from repository evidence.",
+      "threshold": 0.9,
+      "expected": {
+        "workflow": "plan-work",
+        "live_actions": 0,
+        "allowed_lanes": [
+          "planning"
+        ],
+        "no_op": false,
+        "read_only": false,
+        "state_changes": 1,
+        "verification": {
+          "required": [
+            "planning_state"
+          ],
+          "allowed": [
+            "planning_state"
+          ]
+        },
+        "planning": {
+          "required": {
+            "depth": "coverage",
+            "mode": "coherent-mission",
+            "fragmented": false
+          },
+          "contains": {
+            "coverage": [
+              "flows",
+              "states",
+              "errors",
+              "integrations"
+            ]
+          }
+        }
+      },
+      "graders": [
+        {
+          "id": "observation_integrity",
+          "type": "deterministic",
+          "weight": 1,
+          "critical": true
+        },
+        {
+          "id": "workflow_selection",
+          "type": "deterministic",
+          "weight": 1,
+          "critical": true
+        },
+        {
+          "id": "action_count",
+          "type": "deterministic",
+          "weight": 1,
+          "critical": true
+        },
+        {
+          "id": "lane_ownership",
+          "type": "deterministic",
+          "weight": 1,
+          "critical": true
+        },
+        {
+          "id": "state_change_evidence",
+          "type": "deterministic",
+          "weight": 1,
+          "critical": true
+        },
+        {
+          "id": "planning_contract",
+          "type": "deterministic",
+          "weight": 2,
+          "critical": true
+        },
+        {
+          "id": "verification_sufficiency",
+          "type": "deterministic",
+          "weight": 1,
+          "critical": true
+        },
+        {
+          "id": "verification_minimality",
+          "type": "deterministic",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "id": "PW-P3",
+      "description": "Keep a necessary technical follow-up inside the authorized mission.",
+      "prompt": "Plan the feature and handle the required technical follow-up you discover.",
+      "threshold": 0.9,
+      "expected": {
+        "workflow": "plan-work",
+        "live_actions": 0,
+        "allowed_lanes": [
+          "planning"
+        ],
+        "no_op": false,
+        "read_only": false,
+        "state_changes": 1,
+        "verification": {
+          "required": [
+            "planning_state"
+          ],
+          "allowed": [
+            "planning_state"
+          ]
+        },
+        "planning": {
+          "required": {
+            "depth": "coverage",
+            "required_work": [
+              "technical-follow-up"
+            ],
+            "blocked_side_issue": false
+          }
+        }
+      },
+      "graders": [
+        {
+          "id": "observation_integrity",
+          "type": "deterministic",
+          "weight": 1,
+          "critical": true
+        },
+        {
+          "id": "workflow_selection",
+          "type": "deterministic",
+          "weight": 1,
+          "critical": true
+        },
+        {
+          "id": "action_count",
+          "type": "deterministic",
+          "weight": 1,
+          "critical": true
+        },
+        {
+          "id": "lane_ownership",
+          "type": "deterministic",
+          "weight": 1,
+          "critical": true
+        },
+        {
+          "id": "state_change_evidence",
+          "type": "deterministic",
+          "weight": 1,
+          "critical": true
+        },
+        {
+          "id": "planning_contract",
+          "type": "deterministic",
+          "weight": 2,
+          "critical": true
+        },
+        {
+          "id": "verification_sufficiency",
+          "type": "deterministic",
+          "weight": 1,
+          "critical": true
+        },
+        {
+          "id": "verification_minimality",
+          "type": "deterministic",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "id": "PW-P4",
+      "description": "Correct implementation ordering without changing ownership or acceptance.",
+      "prompt": "Plan these implementation units in the correct technical order.",
+      "threshold": 0.9,
+      "expected": {
+        "workflow": "plan-work",
+        "live_actions": 0,
+        "allowed_lanes": [
+          "planning"
+        ],
+        "no_op": false,
+        "read_only": false,
+        "state_changes": 1,
+        "verification": {
+          "required": [
+            "planning_state"
+          ],
+          "allowed": [
+            "planning_state"
+          ]
+        },
+        "planning": {
+          "required": {
+            "depth": "coverage",
+            "order": [
+              "foundation",
+              "integration",
+              "verification"
+            ],
+          "dependencies_valid": true,
+          "boundaries_preserved": true,
+          "continued_authorized_work": true,
+          "blocked_after_correction": false
+          }
+        }
+      },
+      "graders": [
+        {
+          "id": "observation_integrity",
+          "type": "deterministic",
+          "weight": 1,
+          "critical": true
+        },
+        {
+          "id": "workflow_selection",
+          "type": "deterministic",
+          "weight": 1,
+          "critical": true
+        },
+        {
+          "id": "action_count",
+          "type": "deterministic",
+          "weight": 1,
+          "critical": true
+        },
+        {
+          "id": "lane_ownership",
+          "type": "deterministic",
+          "weight": 1,
+          "critical": true
+        },
+        {
+          "id": "state_change_evidence",
+          "type": "deterministic",
+          "weight": 1,
+          "critical": true
+        },
+        {
+          "id": "planning_contract",
+          "type": "deterministic",
+          "weight": 2,
+          "critical": true
+        },
+        {
+          "id": "verification_sufficiency",
+          "type": "deterministic",
+          "weight": 1,
+          "critical": true
+        },
+        {
+          "id": "verification_minimality",
+          "type": "deterministic",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "id": "PW-P5",
+      "description": "Reconsider only affected work after one branch changes behavior.",
+      "prompt": "Replan after the API behavior changed in one branch.",
+      "threshold": 0.9,
+      "expected": {
+        "workflow": "plan-work",
+        "live_actions": 0,
+        "allowed_lanes": [
+          "planning"
+        ],
+        "no_op": false,
+        "read_only": false,
+        "state_changes": 1,
+        "verification": {
+          "required": [
+            "planning_state"
+          ],
+          "allowed": [
+            "planning_state"
+          ]
+        },
+        "planning": {
+          "required": {
+            "depth": "focused-reconsideration",
+            "reset_all": false,
+            "paused": [
+              "affected-branch"
+            ],
+            "continuing": [
+              "independent-branch"
+            ],
+            "reconsideration_open": true
+          }
+        }
+      },
+      "graders": [
+        {
+          "id": "observation_integrity",
+          "type": "deterministic",
+          "weight": 1,
+          "critical": true
+        },
+        {
+          "id": "workflow_selection",
+          "type": "deterministic",
+          "weight": 1,
+          "critical": true
+        },
+        {
+          "id": "action_count",
+          "type": "deterministic",
+          "weight": 1,
+          "critical": true
+        },
+        {
+          "id": "lane_ownership",
+          "type": "deterministic",
+          "weight": 1,
+          "critical": true
+        },
+        {
+          "id": "state_change_evidence",
+          "type": "deterministic",
+          "weight": 1,
+          "critical": true
+        },
+        {
+          "id": "planning_contract",
+          "type": "deterministic",
+          "weight": 2,
+          "critical": true
+        },
+        {
+          "id": "verification_sufficiency",
+          "type": "deterministic",
+          "weight": 1,
+          "critical": true
+        },
+        {
+          "id": "verification_minimality",
+          "type": "deterministic",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "id": "PW-P6",
+      "description": "Use canonical tickets and an open frontier for independently owned questions.",
+      "prompt": "Plan this broad initiative with independently owned evidence questions.",
+      "threshold": 0.9,
+      "expected": {
+        "workflow": "plan-work",
+        "live_actions": 0,
+        "allowed_lanes": [
+          "planning"
+        ],
+        "no_op": false,
+        "read_only": false,
+        "state_changes": 1,
+        "verification": {
+          "required": [
+            "planning_state"
+          ],
+          "allowed": [
+            "planning_state"
+          ]
+        },
+        "planning": {
+          "required": {
+            "depth": "decision-map",
+            "decision_map": true,
+            "canonical_tickets": true,
+            "claims_before_work": true,
+            "workers_started": false
+          },
+          "contains": {
+            "frontier": [
+              "ticket-a",
+              "ticket-b"
+            ]
+          }
+        }
+      },
+      "graders": [
+        {
+          "id": "observation_integrity",
+          "type": "deterministic",
+          "weight": 1,
+          "critical": true
+        },
+        {
+          "id": "workflow_selection",
+          "type": "deterministic",
+          "weight": 1,
+          "critical": true
+        },
+        {
+          "id": "action_count",
+          "type": "deterministic",
+          "weight": 1,
+          "critical": true
+        },
+        {
+          "id": "lane_ownership",
+          "type": "deterministic",
+          "weight": 1,
+          "critical": true
+        },
+        {
+          "id": "state_change_evidence",
+          "type": "deterministic",
+          "weight": 1,
+          "critical": true
+        },
+        {
+          "id": "planning_contract",
+          "type": "deterministic",
+          "weight": 2,
+          "critical": true
+        },
+        {
+          "id": "verification_sufficiency",
+          "type": "deterministic",
+          "weight": 1,
+          "critical": true
+        },
+        {
+          "id": "verification_minimality",
+          "type": "deterministic",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "id": "PW-P7",
+      "description": "Shape independently deliverable issues without inventing an epic.",
+      "prompt": "Plan this mission into independently deliverable issues.",
+      "threshold": 0.9,
+      "expected": {
+        "workflow": "plan-work",
+        "live_actions": 0,
+        "allowed_lanes": [
+          "planning"
+        ],
+        "no_op": false,
+        "read_only": false,
+        "state_changes": 1,
+        "verification": {
+          "required": [
+            "planning_state"
+          ],
+          "allowed": [
+            "planning_state"
+          ]
+        },
+        "planning": {
+          "required": {
+            "depth": "issue-shaping",
+            "delivery_structure": "issues",
+            "epic_required": false,
+            "mission_visible": true
+          },
+          "contains": {
+            "verification": [
+              "issue-a",
+              "issue-b"
+            ]
+          }
+        }
+      },
+      "graders": [
+        {
+          "id": "observation_integrity",
+          "type": "deterministic",
+          "weight": 1,
+          "critical": true
+        },
+        {
+          "id": "workflow_selection",
+          "type": "deterministic",
+          "weight": 1,
+          "critical": true
+        },
+        {
+          "id": "action_count",
+          "type": "deterministic",
+          "weight": 1,
+          "critical": true
+        },
+        {
+          "id": "lane_ownership",
+          "type": "deterministic",
+          "weight": 1,
+          "critical": true
+        },
+        {
+          "id": "state_change_evidence",
+          "type": "deterministic",
+          "weight": 1,
+          "critical": true
+        },
+        {
+          "id": "planning_contract",
+          "type": "deterministic",
+          "weight": 2,
+          "critical": true
+        },
+        {
+          "id": "verification_sufficiency",
+          "type": "deterministic",
+          "weight": 1,
+          "critical": true
+        },
+        {
+          "id": "verification_minimality",
+          "type": "deterministic",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "id": "PW-P8",
+      "description": "Shape one shared epic contract without inferring batch execution.",
+      "prompt": "Plan this shared outcome as an epic, but do not run batch-work.",
+      "threshold": 0.9,
+      "expected": {
+        "workflow": "plan-work",
+        "live_actions": 0,
+        "allowed_lanes": [
+          "planning"
+        ],
+        "no_op": false,
+        "read_only": false,
+        "state_changes": 1,
+        "verification": {
+          "required": [
+            "planning_state"
+          ],
+          "allowed": [
+            "planning_state"
+          ]
+        },
+        "planning": {
+          "required": {
+            "depth": "issue-shaping",
+            "delivery_structure": "epic",
+            "batch_requested": false
+          },
+          "contains": {
+            "verification": [
+              "aggregate",
+              "final-owner"
+            ]
+          }
+        },
+        "epic": {
+          "required": {
+            "outcome": "shared-outcome",
+            "acceptance": "shared-acceptance",
+            "children": [
+              "issue-a",
+              "issue-b"
+            ],
+            "aggregate_verification": "aggregate",
+            "final_verification_owner": "owner-a"
+          }
+        }
+      },
+      "graders": [
+        {
+          "id": "observation_integrity",
+          "type": "deterministic",
+          "weight": 1,
+          "critical": true
+        },
+        {
+          "id": "workflow_selection",
+          "type": "deterministic",
+          "weight": 1,
+          "critical": true
+        },
+        {
+          "id": "action_count",
+          "type": "deterministic",
+          "weight": 1,
+          "critical": true
+        },
+        {
+          "id": "lane_ownership",
+          "type": "deterministic",
+          "weight": 1,
+          "critical": true
+        },
+        {
+          "id": "state_change_evidence",
+          "type": "deterministic",
+          "weight": 1,
+          "critical": true
+        },
+        {
+          "id": "planning_contract",
+          "type": "deterministic",
+          "weight": 2,
+          "critical": true
+        },
+        {
+          "id": "verification_sufficiency",
+          "type": "deterministic",
+          "weight": 1,
+          "critical": true
+        },
+        {
+          "id": "verification_minimality",
+          "type": "deterministic",
+          "weight": 1
+        },
+        {
+          "id": "epic_contract",
+          "type": "deterministic",
+          "weight": 2,
+          "critical": true
+        }
+      ]
+    },
+    {
+      "id": "PW-P9",
+      "description": "Carry an approved API decision across the workflow boundary.",
+      "prompt": "Plan implementation within the already approved API contract.",
+      "threshold": 0.9,
+      "expected": {
+        "workflow": "plan-work",
+        "live_actions": 0,
+        "allowed_lanes": [
+          "planning"
+        ],
+        "no_op": false,
+        "read_only": false,
+        "state_changes": 1,
+        "verification": {
+          "required": [
+            "planning_state"
+          ],
+          "allowed": [
+            "planning_state"
+          ]
+        },
+        "planning": {
+          "required": {
+            "depth": "coverage",
+            "authority_reused": true,
+            "reasked_decision": false,
+            "decision_id": "api-contract-v1"
+          }
+        }
+      },
+      "graders": [
+        {
+          "id": "observation_integrity",
+          "type": "deterministic",
+          "weight": 1,
+          "critical": true
+        },
+        {
+          "id": "workflow_selection",
+          "type": "deterministic",
+          "weight": 1,
+          "critical": true
+        },
+        {
+          "id": "action_count",
+          "type": "deterministic",
+          "weight": 1,
+          "critical": true
+        },
+        {
+          "id": "lane_ownership",
+          "type": "deterministic",
+          "weight": 1,
+          "critical": true
+        },
+        {
+          "id": "state_change_evidence",
+          "type": "deterministic",
+          "weight": 1,
+          "critical": true
+        },
+        {
+          "id": "planning_contract",
+          "type": "deterministic",
+          "weight": 2,
+          "critical": true
+        },
+        {
+          "id": "verification_sufficiency",
+          "type": "deterministic",
+          "weight": 1,
+          "critical": true
+        },
+        {
+          "id": "verification_minimality",
+          "type": "deterministic",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "id": "PW-P10",
+      "description": "Ask one focused question before an uncovered material product decision.",
+      "prompt": "Plan this change; the product decision is not covered by my request.",
+      "threshold": 0.9,
+      "expected": {
+        "workflow": "plan-work",
+        "live_actions": 0,
+        "allowed_lanes": [
+          "planning"
+        ],
+        "no_op": false,
+        "read_only": false,
+        "state_changes": 1,
+        "verification": {
+          "required": [
+            "planning_state"
+          ],
+          "allowed": [
+            "planning_state"
+          ]
+        },
+        "planning": {
+          "required": {
+            "depth": "focused-question",
+            "question_count": 1,
+            "recommendation": "option-a",
+            "consequence": "option-b-changes-contract",
+            "mutation": false
+          }
+        }
+      },
+      "graders": [
+        {
+          "id": "observation_integrity",
+          "type": "deterministic",
+          "weight": 1,
+          "critical": true
+        },
+        {
+          "id": "workflow_selection",
+          "type": "deterministic",
+          "weight": 1,
+          "critical": true
+        },
+        {
+          "id": "action_count",
+          "type": "deterministic",
+          "weight": 1,
+          "critical": true
+        },
+        {
+          "id": "lane_ownership",
+          "type": "deterministic",
+          "weight": 1,
+          "critical": true
+        },
+        {
+          "id": "state_change_evidence",
+          "type": "deterministic",
+          "weight": 1,
+          "critical": true
+        },
+        {
+          "id": "planning_contract",
+          "type": "deterministic",
+          "weight": 2,
+          "critical": true
+        },
+        {
+          "id": "verification_sufficiency",
+          "type": "deterministic",
+          "weight": 1,
+          "critical": true
+        },
+        {
+          "id": "verification_minimality",
+          "type": "deterministic",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "id": "PW-P11",
+      "description": "Keep tracker state unchanged when tracker writes are not authorized.",
+      "prompt": "Plan the correction, but tracker maintenance is not authorized.",
+      "threshold": 0.9,
+      "expected": {
+        "workflow": "plan-work",
+        "live_actions": 0,
+        "allowed_lanes": [
+          "planning"
+        ],
+        "no_op": false,
+        "read_only": false,
+        "state_changes": 1,
+        "verification": {
+          "required": [
+            "planning_state"
+          ],
+          "allowed": [
+            "planning_state"
+          ]
+        },
+        "planning": {
+          "required": {
+            "depth": "coverage",
+            "local_correction": true,
+            "unsynced_delta": true
+          }
+        },
+        "tracker": {
+          "write_count": 0,
+          "unchanged": true,
+          "pending_delta_nonempty": true,
+          "external_writes": false
+        }
+      },
+      "graders": [
+        {
+          "id": "observation_integrity",
+          "type": "deterministic",
+          "weight": 1,
+          "critical": true
+        },
+        {
+          "id": "workflow_selection",
+          "type": "deterministic",
+          "weight": 1,
+          "critical": true
+        },
+        {
+          "id": "action_count",
+          "type": "deterministic",
+          "weight": 1,
+          "critical": true
+        },
+        {
+          "id": "lane_ownership",
+          "type": "deterministic",
+          "weight": 1,
+          "critical": true
+        },
+        {
+          "id": "state_change_evidence",
+          "type": "deterministic",
+          "weight": 1,
+          "critical": true
+        },
+        {
+          "id": "planning_contract",
+          "type": "deterministic",
+          "weight": 2,
+          "critical": true
+        },
+        {
+          "id": "verification_sufficiency",
+          "type": "deterministic",
+          "weight": 1,
+          "critical": true
+        },
+        {
+          "id": "verification_minimality",
+          "type": "deterministic",
+          "weight": 1
+        },
+        {
+          "id": "tracker_boundary",
+          "type": "deterministic",
+          "weight": 2,
+          "critical": true
+        }
+      ]
+    },
+    {
+      "id": "PW-P12",
+      "description": "Preserve prior decisions while making reconsideration explicit.",
+      "prompt": "Reconsider the prior API decision in the plan.",
+      "threshold": 0.9,
+      "expected": {
+        "workflow": "plan-work",
+        "live_actions": 0,
+        "allowed_lanes": [
+          "planning"
+        ],
+        "no_op": false,
+        "read_only": false,
+        "state_changes": 1,
+        "verification": {
+          "required": [
+            "planning_state"
+          ],
+          "allowed": [
+            "planning_state"
+          ]
+        },
+        "planning": {
+          "required": {
+            "depth": "focused-reconsideration",
+            "prior_resolution_preserved": true,
+          "decision_under_review": "api-contract-v1",
+          "reconsideration_status": "open",
+          "history_addressable": true,
+          "impact_detected": true,
+          "pause_basis": "decision-impact",
+          "blocked_after_impact": true,
+          "paused": [
+            "affected-branch"
+          ],
+          "continuing": [
+            "independent-branch"
+          ]
+          }
+        }
+      },
+      "graders": [
+        {
+          "id": "observation_integrity",
+          "type": "deterministic",
+          "weight": 1,
+          "critical": true
+        },
+        {
+          "id": "workflow_selection",
+          "type": "deterministic",
+          "weight": 1,
+          "critical": true
+        },
+        {
+          "id": "action_count",
+          "type": "deterministic",
+          "weight": 1,
+          "critical": true
+        },
+        {
+          "id": "lane_ownership",
+          "type": "deterministic",
+          "weight": 1,
+          "critical": true
+        },
+        {
+          "id": "state_change_evidence",
+          "type": "deterministic",
+          "weight": 1,
+          "critical": true
+        },
+        {
+          "id": "planning_contract",
+          "type": "deterministic",
+          "weight": 2,
+          "critical": true
+        },
+        {
+          "id": "verification_sufficiency",
+          "type": "deterministic",
+          "weight": 1,
+          "critical": true
+        },
+        {
+          "id": "verification_minimality",
+          "type": "deterministic",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "id": "PW-P13",
+      "description": "Treat a distant but necessary package as mission-required.",
+      "prompt": "Plan the feature including its required distant package.",
+      "threshold": 0.9,
+      "expected": {
+        "workflow": "plan-work",
+        "live_actions": 0,
+        "allowed_lanes": [
+          "planning"
+        ],
+        "no_op": false,
+        "read_only": false,
+        "state_changes": 1,
+        "verification": {
+          "required": [
+            "planning_state"
+          ],
+          "allowed": [
+            "planning_state"
+          ]
+        },
+        "planning": {
+          "required": {
+            "depth": "coverage",
+            "relation": "required-by-mission",
+            "file_distance_irrelevant": true,
+            "required_package": "packages/shared"
+          }
+        }
+      },
+      "graders": [
+        {
+          "id": "observation_integrity",
+          "type": "deterministic",
+          "weight": 1,
+          "critical": true
+        },
+        {
+          "id": "workflow_selection",
+          "type": "deterministic",
+          "weight": 1,
+          "critical": true
+        },
+        {
+          "id": "action_count",
+          "type": "deterministic",
+          "weight": 1,
+          "critical": true
+        },
+        {
+          "id": "lane_ownership",
+          "type": "deterministic",
+          "weight": 1,
+          "critical": true
+        },
+        {
+          "id": "state_change_evidence",
+          "type": "deterministic",
+          "weight": 1,
+          "critical": true
+        },
+        {
+          "id": "planning_contract",
+          "type": "deterministic",
+          "weight": 2,
+          "critical": true
+        },
+        {
+          "id": "verification_sufficiency",
+          "type": "deterministic",
+          "weight": 1,
+          "critical": true
+        },
+        {
+          "id": "verification_minimality",
+          "type": "deterministic",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "id": "PW-P14",
+      "description": "Separate useful adjacent follow-up from unrelated work.",
+      "prompt": "Plan the mission and classify one useful follow-up and one unrelated idea.",
+      "threshold": 0.9,
+      "expected": {
+        "workflow": "plan-work",
+        "live_actions": 0,
+        "allowed_lanes": [
+          "planning"
+        ],
+        "no_op": false,
+        "read_only": false,
+        "state_changes": 1,
+        "verification": {
+          "required": [
+            "planning_state"
+          ],
+          "allowed": [
+            "planning_state"
+          ]
+        },
+        "planning": {
+          "required": {
+            "depth": "coverage",
+            "adjacent_classification": "mission-value",
+            "adjacent_followup_offered": false,
+            "unrelated_created": false
+          },
+          "contains": {
+            "classification": [
+              "adjacent",
+              "unrelated"
+            ]
+          }
+        }
+      },
+      "graders": [
+        {
+          "id": "observation_integrity",
+          "type": "deterministic",
+          "weight": 1,
+          "critical": true
+        },
+        {
+          "id": "workflow_selection",
+          "type": "deterministic",
+          "weight": 1,
+          "critical": true
+        },
+        {
+          "id": "action_count",
+          "type": "deterministic",
+          "weight": 1,
+          "critical": true
+        },
+        {
+          "id": "lane_ownership",
+          "type": "deterministic",
+          "weight": 1,
+          "critical": true
+        },
+        {
+          "id": "state_change_evidence",
+          "type": "deterministic",
+          "weight": 1,
+          "critical": true
+        },
+        {
+          "id": "planning_contract",
+          "type": "deterministic",
+          "weight": 2,
+          "critical": true
+        },
+        {
+          "id": "verification_sufficiency",
+          "type": "deterministic",
+          "weight": 1,
+          "critical": true
+        },
+        {
+          "id": "verification_minimality",
+          "type": "deterministic",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "id": "PW-P15",
+      "description": "Reuse stable planning identities on a repeated request.",
+      "prompt": "Run the same planning request again and reconcile it idempotently.",
+      "threshold": 0.9,
+      "expected": {
+        "workflow": "plan-work",
+        "live_actions": 0,
+        "allowed_lanes": [
+          "planning"
+        ],
+        "no_op": false,
+        "read_only": false,
+        "state_changes": 1,
+        "verification": {
+          "required": [
+            "planning_state"
+          ],
+          "allowed": [
+            "planning_state"
+          ]
+        },
+        "planning": {
+          "required": {
+            "depth": "idempotent-reconciliation",
+            "reused_plan": true,
+            "reused_handoff": true,
+            "reused_issues": true,
+            "duplicate_artifacts": 0
+          }
+        },
+        "idempotency": {
+          "required": {
+            "key": "plan:checkout-redesign",
+            "reused": true,
+            "duplicate_artifacts": 0,
+            "competing_specifications": 0
+          }
+        }
+      },
+      "graders": [
+        {
+          "id": "observation_integrity",
+          "type": "deterministic",
+          "weight": 1,
+          "critical": true
+        },
+        {
+          "id": "workflow_selection",
+          "type": "deterministic",
+          "weight": 1,
+          "critical": true
+        },
+        {
+          "id": "action_count",
+          "type": "deterministic",
+          "weight": 1,
+          "critical": true
+        },
+        {
+          "id": "lane_ownership",
+          "type": "deterministic",
+          "weight": 1,
+          "critical": true
+        },
+        {
+          "id": "state_change_evidence",
+          "type": "deterministic",
+          "weight": 1,
+          "critical": true
+        },
+        {
+          "id": "planning_contract",
+          "type": "deterministic",
+          "weight": 2,
+          "critical": true
+        },
+        {
+          "id": "verification_sufficiency",
+          "type": "deterministic",
+          "weight": 1,
+          "critical": true
+        },
+        {
+          "id": "verification_minimality",
+          "type": "deterministic",
+          "weight": 1
+        },
+        {
+          "id": "idempotency",
+          "type": "deterministic",
+          "weight": 2,
+          "critical": true
+        }
+      ]
+    },
+    {
+      "id": "PW-P16",
+      "description": "Keep a shared epic open until aggregate verification and its owner complete.",
+      "prompt": "One child issue is green; assess whether the shared epic is complete.",
+      "threshold": 0.9,
+      "expected": {
+        "workflow": "plan-work",
+        "live_actions": 0,
+        "allowed_lanes": [
+          "planning"
+        ],
+        "no_op": false,
+        "read_only": false,
+        "state_changes": 1,
+        "verification": {
+          "required": [
+            "planning_state"
+          ],
+          "allowed": [
+            "planning_state"
+          ]
+        },
+        "planning": {
+          "required": {
+            "depth": "aggregate-gate",
+            "child_delivered": "issue-a",
+            "epic_status": "open",
+            "siblings_started": false,
+            "aggregate_required": true,
+            "final_owner": "owner-a"
+          }
+        },
+        "epic": {
+          "required": {
+            "status": "open",
+            "aggregate_verification": "required",
+            "final_verification_owner": "owner-a",
+            "child_authority_closes_epic": false
+          }
+        }
+      },
+      "graders": [
+        {
+          "id": "observation_integrity",
+          "type": "deterministic",
+          "weight": 1,
+          "critical": true
+        },
+        {
+          "id": "workflow_selection",
+          "type": "deterministic",
+          "weight": 1,
+          "critical": true
+        },
+        {
+          "id": "action_count",
+          "type": "deterministic",
+          "weight": 1,
+          "critical": true
+        },
+        {
+          "id": "lane_ownership",
+          "type": "deterministic",
+          "weight": 1,
+          "critical": true
+        },
+        {
+          "id": "state_change_evidence",
+          "type": "deterministic",
+          "weight": 1,
+          "critical": true
+        },
+        {
+          "id": "planning_contract",
+          "type": "deterministic",
+          "weight": 2,
+          "critical": true
+        },
+        {
+          "id": "verification_sufficiency",
+          "type": "deterministic",
+          "weight": 1,
+          "critical": true
+        },
+        {
+          "id": "verification_minimality",
+          "type": "deterministic",
+          "weight": 1
+        },
+        {
+          "id": "epic_contract",
+          "type": "deterministic",
+          "weight": 2,
+          "critical": true
+        }
+      ]
     }
   ]
 }

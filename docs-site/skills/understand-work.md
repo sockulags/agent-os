@@ -1,7 +1,7 @@
 ---
 title: understand-work
 description: Question out the need behind a stated wish, one load-bearing question at a time.
-skill-description: Questions out what the developer actually needs behind a stated wish, one load-bearing question at a time. User-invoked directly or as the questioning stage of guide-me. Not for requests whose goal is already articulated or for facts the repository answers.
+skill-description: Questions out what the developer actually needs behind a stated wish, one load-bearing question at a time. User-invoked directly or as the questioning stage of plan-work. Not for requests whose goal is already articulated or for facts the repository answers.
 summary: Question out the need behind a stated wish
 ---
 
@@ -21,6 +21,6 @@ Silence, momentum, and approval of a larger bundle are never treated as answers,
 solution is proposed while the goal is still moving.
 
 Questioning ends when the developer says it is done or when further answers stop changing the goal.
-Under [guide-me](/skills/guide-me) the settled understanding feeds the plain-language gate in
-[explain-work](/skills/explain-work); standalone, it is reported directly. Chart-work's elicitation
-reference points here for developer-choice evidence.
+Under [plan-work](/skills/plan-work) the settled understanding informs the mission plan; a
+plain-language summary is used only when it supports an actual decision. Standalone, it is reported
+directly. Plan-work's elicitation reference points here for developer-choice evidence.

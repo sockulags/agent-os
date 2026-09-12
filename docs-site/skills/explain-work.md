@@ -1,7 +1,7 @@
 ---
 title: explain-work
 description: Explain the current task or plan in plain language so the developer can judge it beyond the jargon.
-skill-description: Explains the current task or plan in plain language with no technical vocabulary, so the developer can judge it beyond the jargon. User-invoked directly or as the closing gate of guide-me. Not a substitute for technical review or verification.
+skill-description: Explains the current task or plan in plain language with no technical vocabulary, so the developer can judge it beyond the jargon. User-invoked directly when a real decision needs a plain-language summary or as a plan-work aid. Not a substitute for technical review or verification.
 summary: Explain the task in plain language for approval
 ---
 
@@ -21,6 +21,7 @@ The developer approves or challenges the summary. A challenge means the understa
 somewhere: the misunderstood point is named and the questioning or plan reopens there, instead of
 the summary being defended.
 
-Under [guide-me](/skills/guide-me), approval closes the gate and the summary becomes the `## TLDR`
-at the top of the receiving planning artifact. Standalone, explain-work runs against any plan,
-diff, or pull request; the deliverable is the plain-language summary and the developer's verdict.
+Under [plan-work](/skills/plan-work), the summary can be linked from the canonical planning artifact
+when it supports an actual decision; it is not a general approval gate. Standalone, explain-work
+runs against any plan, diff, or pull request; the deliverable is the plain-language summary and the
+developer's verdict.

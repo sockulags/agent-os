@@ -45,9 +45,8 @@ extensions Agent OS uses.
 
 ## Two kinds of skill
 
-**Most workflows** are manually invoked. They structure broad decisions, bounded shaping, parallel
-batches, delivery, dispatch, durable lessons, and setup — with `guide-me` as an optional on-ramp
-that guides a vague desire to an approved goal in front of them. The automatic `check-work`
+**Most workflows** are manually invoked. They structure coherent planning, bounded shaping, parallel
+batches, delivery, dispatch, durable lessons, and setup. The automatic `check-work`
 workflow is the exception: it activates for supported code-review requests and can also be named
 explicitly.
 

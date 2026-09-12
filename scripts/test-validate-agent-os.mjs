@@ -314,10 +314,20 @@ try {
       text.replace('Never call a wait tool with empty', 'A wait tool may use empty'))
   }, 'DELIVER_CONTRACT')
 
-  expectFailure('missing handoff identity field', (target) => {
-    rewrite(path.join(target, 'skills/chart-work/references/map.md'), (text) =>
+  expectFailure('missing plan handoff identity field', (target) => {
+    rewrite(path.join(target, 'skills/plan-work/references/map.md'), (text) =>
       text.replace('Branch key:', 'Branch identity:'))
-  }, 'CHART_HANDOFF_CONTRACT')
+  }, 'PLAN_HANDOFF_CONTRACT')
+
+  expectFailure('plan-work loses adaptive depth contract', (target) => {
+    rewrite(path.join(target, 'skills/plan-work/SKILL.md'), (text) =>
+      text.replace('## Choose planning depth internally', '## Choose a fixed planning ceremony'))
+  }, 'PLAN_WORK_CONTRACT')
+
+  expectFailure('scope-guard loses mandate axis', (target) => {
+    rewrite(path.join(target, 'skills/scope-guard/SKILL.md'), (text) =>
+      text.replace('- **Mandate — covered:**', '- **Mandate — omitted:**'))
+  }, 'SCOPE_TWO_AXIS_CONTRACT')
 
   expectFailure('shape-work may complete without implementation issues', (target) => {
     rewrite(path.join(target, 'skills/shape-work/SKILL.md'), (text) =>

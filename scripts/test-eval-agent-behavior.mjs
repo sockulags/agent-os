@@ -7,6 +7,7 @@ import { fileURLToPath } from 'node:url'
 
 const require = createRequire(import.meta.url)
 const { findCase, gradeCase, loadRun, loadSuite } = require('../evals/behavior/lib/scorecard.cjs')
+const { runs: planWorkRuns } = require('../evals/behavior/lib/plan-work-fixtures.cjs')
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const suite = loadSuite(path.join(root, 'evals/behavior/suite.json'))
 const inspectAdapter = fs.readFileSync(path.join(root, 'evals/runners/inspect/agent_os_behavior.py'), 'utf8')
@@ -115,6 +116,90 @@ for (const id of [
   assert.equal(failScorecard.components.find((item) => item.id === id)?.pass, false, `${id} should fail`)
 }
 
+const planWorkIds = Array.from({ length: 16 }, (_, index) => `PW-P${index + 1}`)
+for (const caseId of planWorkIds) {
+  const planRun = planWorkRuns[caseId]
+  assert.ok(planRun, `${caseId} must have an executable behavior fixture`)
+  const planScorecard = gradeCase(findCase(suite, caseId), planRun)
+  assert.equal(planScorecard.pass, true, `${caseId} should pass its observable contract`)
+  assert.equal(planScorecard.incomplete, false, `${caseId} should be complete`)
+}
+
+const redPlanning = structuredClone(planWorkRuns['PW-P1'])
+redPlanning.trace.planning.depth = 'ceremonial'
+const redPlanningScorecard = gradeCase(findCase(suite, 'PW-P1'), redPlanning)
+assert.equal(redPlanningScorecard.pass, false)
+assert.equal(redPlanningScorecard.components.find((item) => item.id === 'planning_contract')?.pass, false)
+
+const redReconsideration = structuredClone(planWorkRuns['PW-P5'])
+redReconsideration.trace.planning.paused = ['all-branches']
+const redReconsiderationScorecard = gradeCase(findCase(suite, 'PW-P5'), redReconsideration)
+assert.equal(redReconsiderationScorecard.pass, false)
+assert.equal(redReconsiderationScorecard.components.find((item) => item.id === 'planning_contract')?.pass, false)
+
+const redTracker = structuredClone(planWorkRuns['PW-P11'])
+redTracker.trace.tracker.writes.push({ entity: 'issue-11', external: true })
+const redTrackerScorecard = gradeCase(findCase(suite, 'PW-P11'), redTracker)
+assert.equal(redTrackerScorecard.pass, false)
+assert.equal(redTrackerScorecard.components.find((item) => item.id === 'tracker_boundary')?.pass, false)
+
+for (const field of ['writes', 'before', 'after']) {
+  const missingTrackerObservation = structuredClone(planWorkRuns['PW-P11'])
+  delete missingTrackerObservation.trace.tracker[field]
+  const missingTrackerScorecard = gradeCase(findCase(suite, 'PW-P11'), missingTrackerObservation)
+  assert.equal(missingTrackerScorecard.pass, false, `PW-P11 must fail without tracker.${field}`)
+  assert.equal(missingTrackerScorecard.components.find((item) => item.id === 'tracker_boundary')?.pass, false)
+}
+
+const blockedAfterReorder = structuredClone(planWorkRuns['PW-P4'])
+blockedAfterReorder.trace.planning.blocked_after_correction = true
+const blockedAfterReorderScorecard = gradeCase(findCase(suite, 'PW-P4'), blockedAfterReorder)
+assert.equal(blockedAfterReorderScorecard.pass, false)
+assert.equal(blockedAfterReorderScorecard.components.find((item) => item.id === 'planning_contract')?.pass, false)
+
+const noContinuationAfterReorder = structuredClone(planWorkRuns['PW-P4'])
+noContinuationAfterReorder.trace.planning.continued_authorized_work = false
+const noContinuationAfterReorderScorecard = gradeCase(findCase(suite, 'PW-P4'), noContinuationAfterReorder)
+assert.equal(noContinuationAfterReorderScorecard.pass, false)
+assert.equal(noContinuationAfterReorderScorecard.components.find((item) => item.id === 'planning_contract')?.pass, false)
+
+const noImpactBlock = structuredClone(planWorkRuns['PW-P12'])
+noImpactBlock.trace.planning.blocked_after_impact = false
+const noImpactBlockScorecard = gradeCase(findCase(suite, 'PW-P12'), noImpactBlock)
+assert.equal(noImpactBlockScorecard.pass, false)
+assert.equal(noImpactBlockScorecard.components.find((item) => item.id === 'planning_contract')?.pass, false)
+
+const noAffectedPause = structuredClone(planWorkRuns['PW-P12'])
+noAffectedPause.trace.planning.paused = []
+const noAffectedPauseScorecard = gradeCase(findCase(suite, 'PW-P12'), noAffectedPause)
+assert.equal(noAffectedPauseScorecard.pass, false)
+assert.equal(noAffectedPauseScorecard.components.find((item) => item.id === 'planning_contract')?.pass, false)
+
+const noIndependentContinuation = structuredClone(planWorkRuns['PW-P12'])
+noIndependentContinuation.trace.planning.continuing = []
+const noIndependentContinuationScorecard = gradeCase(findCase(suite, 'PW-P12'), noIndependentContinuation)
+assert.equal(noIndependentContinuationScorecard.pass, false)
+assert.equal(noIndependentContinuationScorecard.components.find((item) => item.id === 'planning_contract')?.pass, false)
+
+const redEpic = structuredClone(planWorkRuns['PW-P8'])
+redEpic.trace.epic.aggregate_verification = 'missing'
+const redEpicScorecard = gradeCase(findCase(suite, 'PW-P8'), redEpic)
+assert.equal(redEpicScorecard.pass, false)
+assert.equal(redEpicScorecard.components.find((item) => item.id === 'epic_contract')?.pass, false)
+
+const redIdempotency = structuredClone(planWorkRuns['PW-P15'])
+redIdempotency.trace.idempotency.reused = false
+redIdempotency.trace.idempotency.duplicate_artifacts = 1
+const redIdempotencyScorecard = gradeCase(findCase(suite, 'PW-P15'), redIdempotency)
+assert.equal(redIdempotencyScorecard.pass, false)
+assert.equal(redIdempotencyScorecard.components.find((item) => item.id === 'idempotency')?.pass, false)
+
+const redEpicGate = structuredClone(planWorkRuns['PW-P16'])
+redEpicGate.trace.planning.epic_status = 'closed'
+const redEpicGateScorecard = gradeCase(findCase(suite, 'PW-P16'), redEpicGate)
+assert.equal(redEpicGateScorecard.pass, false)
+assert.equal(redEpicGateScorecard.components.find((item) => item.id === 'planning_contract')?.pass, false)
+
 const adapterRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'agent-os-eval-adapter-'))
 try {
   const harnessFile = path.join(adapterRoot, 'harness.cjs')
@@ -137,4 +222,4 @@ try {
   fs.rmSync(adapterRoot, { recursive: true, force: true })
 }
 
-console.log('behavior eval scorecard suite passed.')
+console.log(`behavior eval scorecard suite passed (${planWorkIds.length} plan-work contracts plus red boundary checks).`)

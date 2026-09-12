@@ -1,7 +1,7 @@
 ---
 title: scope-guard
-description: Classify required, adjacent, and conflicting discoveries before they expand an active change.
-skill-description: Detects and contains task drift while implementation or review is already in progress. It activates when unrelated work, opportunistic cleanup, extra dependencies, or broadened requirements appear beyond the agreed request or spec, before adding them to the diff. It skips initial scoping and planning, root-cause diagnosis, and verification of work already inside scope.
+description: Classify required, adjacent, and unrelated discoveries against both task relation and mandate before they expand an active change.
+skill-description: Detects and contains task drift while implementation or review is already in progress by classifying discoveries on relation and mandate axes. It activates when required, adjacent, or unrelated work or a new decision or external action appears beyond the agreed request or spec. It skips initial scoping and planning, root-cause diagnosis, and verification of work already inside scope.
 summary: Keep work inside the task; flag drift
 ---
 
@@ -9,16 +9,21 @@ summary: Keep work inside the task; flag drift
 
 **Bucket:** discipline · **Invocation:** automatic
 
-Keeps an active change aligned with the developer's requested outcome.
+Keeps an active change aligned with the developer's requested outcome by using two axes: relation
+to the mission and available mandate.
 
-Classify discoveries:
+Classify discoveries on both axes:
 
-- **Required:** needed for the outcome or its verification; include it.
-- **Adjacent:** useful but unnecessary now; leave it out.
-- **Conflicting:** changes product behavior, architecture, dependencies, a public interface, or
-  delivery risk; ask before crossing the boundary.
+- **Required / adjacent / unrelated:** whether the discovery is needed for correct delivery, useful
+  but unnecessary now, or not relevant to the mission.
+- **Covered / new decision or external action:** whether the existing request and policy already
+  authorize it. A ready issue is not authorization.
 
-Inspect the final diff for unrelated edits and preserve pre-existing developer work.
+Risk guides implementation and verification; it can expose a missing decision but does not itself
+grant new permission. Required work normally stays in the mission. A material product or boundary
+change returns to `plan-work`; adjacent work can be offered as a follow-up, and unrelated work gets
+no invented proposal. Inspect the final diff for unrelated edits and preserve pre-existing
+developer work.
 
 ## Transcript: useful, but not required
 
@@ -33,12 +38,12 @@ Agent:
 "I am using scope-guard because the refactor is outside the active fix."
 
 scope-guard:
-"Classify the discovery before adding it to the diff."
+"Classify the discovery by relation to the mission and by whether the current request covers it."
 
 Agent:
-"The old-module refactor is adjacent work. I will leave it outside the
-fix and record it as a separate follow-up without changing architecture,
-dependencies, or unrelated code."
+"The old-module refactor is adjacent work and not needed for this fix. I
+will leave it outside the patch and record it as a follow-up only if the
+current mandate allows that tracker write."
 ```
 
 ## Local improvement and follow-ups

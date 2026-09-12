@@ -24,7 +24,7 @@ function filesUnder(root, predicate = () => true) {
   if (!fs.existsSync(root)) return []
   return fs.readdirSync(root, { withFileTypes: true }).flatMap((entry) => {
     const target = path.join(root, entry.name)
-    if (entry.isDirectory() && ['node_modules', 'cache', 'dist'].includes(entry.name)) return []
+    if (entry.isDirectory() && ['.git', 'node_modules', 'cache', 'dist'].includes(entry.name)) return []
     return entry.isDirectory() ? filesUnder(target, predicate) : predicate(target) ? [target] : []
   })
 }
@@ -509,6 +509,28 @@ export function validate(root = path.resolve(scriptDir, '..')) {
     }
   }
 
+  const activeMigrationFiles = [
+    path.join(root, 'README.md'),
+    path.join(root, 'policy.md'),
+    path.join(root, 'package.json'),
+    path.join(root, '.claude-plugin/plugin.json'),
+    path.join(root, '.codex-plugin/plugin.json'),
+    ...filesUnder(path.join(root, 'skills'), (file) => !file.includes(`${path.sep}agents${path.sep}`) || file.endsWith('.yaml')),
+    ...filesUnder(path.join(root, 'docs-site'), (file) =>
+      !file.includes(`${path.sep}.vitepress${path.sep}`) && !file.includes(`${path.sep}node_modules${path.sep}`)),
+    ...filesUnder(path.join(root, 'evals/cases'), (file) => true),
+    ...filesUnder(path.join(root, 'scripts'), (file) => true)
+  ].filter((file, index, all) => all.indexOf(file) === index && fs.existsSync(file) &&
+    path.resolve(file) !== path.resolve(scriptDir, 'validate-agent-os.mjs'))
+  const retiredPlanningNames = ['guide' + '-me', 'chart' + '-work']
+  const legacyWorkflowPattern = new RegExp(`(?:${retiredPlanningNames.join('|')}|skills/(?:${retiredPlanningNames.join('|')}))`)
+  for (const file of activeMigrationFiles) {
+    const content = read(file)
+    if (legacyWorkflowPattern.test(content)) {
+      fail('LEGACY_WORKFLOW_REFERENCE', `${path.relative(root, file)} still references retired planning entry points.`)
+    }
+  }
+
   checkContains(diagnostics, path.join(root, 'skills/deliver-work/workflow.md'), [
     '**Outcome:**',
     '**Boundaries:**',
@@ -526,7 +548,19 @@ export function validate(root = path.resolve(scriptDir, '..')) {
     'do not create a panel by default',
     'A reviewer label written by the implementer',
     'Self-review never',
-    'substitutes for required independent review.'
+    'substitutes for required independent review.',
+    'Handle discoveries without fragmenting the mission',
+    'necessary technical detail is solved',
+    'missed technical prerequisite',
+    'incorrect order is corrected',
+    'targeted `shape-work`',
+    'reopening that decision through',
+    'Diagnose technical blockers before forwarding them',
+    'Continue independent authorized work',
+    'No workflow grants tracker write access automatically',
+    'Pending tracker updates',
+    'aggregate verification',
+    'Child success never closes'
   ], 'DELIVER_CONTRACT')
 
   checkContains(diagnostics, path.join(root, 'skills/check-work/SKILL.md'), [
@@ -549,27 +583,51 @@ export function validate(root = path.resolve(scriptDir, '..')) {
     '`APPROVED`, `CHANGES_REQUESTED`, or `BLOCKED`'
   ], 'CHECK_WORK_CONTRACT')
 
-  checkContains(diagnostics, path.join(root, 'skills/chart-work/references/map.md'),
-    [
-      'The map orients.',
-      'Identity is',
-      'Origin map:',
-      'Branch key:',
-      'Search before creating',
-      '## Shaping handoffs',
-      '## Delivery-ready branches',
-      'The handoff moves the branch to',
-      'not to `delivery-ready`',
-      'A selected branch in shaping keeps the map open.'
-    ],
-    'CHART_HANDOFF_CONTRACT')
+  checkContains(diagnostics, path.join(root, 'skills/plan-work/SKILL.md'), [
+    'Own the coherent mission',
+    'Choose planning depth internally',
+    'Use [understand-work]',
+    'Use [explain-work]',
+    'The plan is ready when delivery',
+    'the decision ticket is canonical',
+    'claim an open frontier ticket',
+    'never infer parallel workers',
+    'compare-and-swap',
+    'canonical handoff',
+    'Reconsideration',
+    'confirmed or replaced',
+    'No planning skill grants external write access',
+    'Pending tracker updates'
+  ], 'PLAN_WORK_CONTRACT')
+
+  checkContains(diagnostics, path.join(root, 'skills/plan-work/references/map.md'), [
+    'The map orients.',
+    'Identity is `(origin map, ticket key)`',
+    '## Claims',
+    '## Reconsiderations',
+    'Decision under review:',
+    'Why now:',
+    'Outcome: confirmed | replaced',
+    '## Shaping handoffs',
+    '## Delivery-ready branches',
+    'Branch key:',
+    'Canonical plan:',
+    'Search before creating',
+    'not to `delivery-ready`',
+    'A selected branch in shaping keeps the map open.'
+  ], 'PLAN_HANDOFF_CONTRACT')
 
   checkContains(diagnostics, path.join(root, 'skills/shape-work/SKILL.md'), [
     'references/implementation-issues.md',
     'create or reuse its implementation issues',
     'Multiple issues do not imply',
     'Shape-work is complete only when',
-    'reconcile the issue links and readiness back into'
+    'reconcile the issue links and readiness back into',
+    'coherent delivery unit',
+    'separate commit, session, file, or technical layer',
+    'epic contract',
+    'aggregate verification',
+    'A child issue does not authorize'
   ], 'SHAPE_IMPLEMENTATION_ISSUES')
   checkContains(diagnostics, path.join(root, 'skills/shape-work/references/implementation-issues.md'), [
     'A selected product branch is not `delivery-ready`',
@@ -582,7 +640,11 @@ export function validate(root = path.resolve(scriptDir, '..')) {
     '## Dependencies',
     '## Delivery target',
     'the existence of several issues never invokes or recommends batch-work by itself',
-    'branch from shaping to `delivery-ready` only when'
+    'branch from shaping to `delivery-ready` only when',
+    '## Epic contract',
+    'Children or delivery units:',
+    'Final verification owner:',
+    'Green child'
   ], 'IMPLEMENTATION_ISSUE_CONTRACT')
 
   checkContains(diagnostics, path.join(root, 'skills/batch-work/references/manifest.md'), [
@@ -594,7 +656,10 @@ export function validate(root = path.resolve(scriptDir, '..')) {
     '```json batch-runtime',
     'Identity is `(batch_id, task_key)`',
     'Hashes detect definition drift; they do not represent human approval.',
-    'Worker-local checks are useful context but are not proof'
+    'Worker-local checks are useful context but are not proof',
+    '## Shared verification contract',
+    'canonical epic contract',
+    'aggregate_checks'
   ], 'BATCH_MANIFEST_CONTRACT')
   checkContains(diagnostics, path.join(root, 'skills/batch-work/SKILL.md'), [
     'The request defines whether',
@@ -602,7 +667,9 @@ export function validate(root = path.resolve(scriptDir, '..')) {
     'Each worker gets',
     'Individual worker checks never substitute for aggregate verification.',
     'Batch-work consumes an existing set of implementation-ready',
-    'only when the developer explicitly requests an integrated batch'
+    'only when the developer explicitly requests an integrated batch',
+    'missing coherent delivery structure to `plan-work`',
+    'epic or feature\'s aggregate verification'
   ], 'BATCH_WORKFLOW_CONTRACT')
   checkContains(diagnostics, path.join(root, 'skills/deliver-work/workflow.md'), [
     '## Confirm one delivery unit',
@@ -614,8 +681,21 @@ export function validate(root = path.resolve(scriptDir, '..')) {
     'one selected',
     'implementation-ready issue to `deliver-work`',
     'only when the developer',
-    'issue count alone'
+    'issue count alone',
+    'broad or mission-level planning to `plan-work`'
   ], 'DISPATCH_ROUTE_CONTRACT')
+  checkContains(diagnostics, path.join(root, 'skills/scope-guard/SKILL.md'), [
+    'Relation — required',
+    'Relation — adjacent',
+    'Relation — unrelated',
+    'Mandate — covered',
+    'Mandate — new decision or external action',
+    'Risk controls how covered work',
+    'risk area does not automatically require new permission',
+    'returns to `plan-work`',
+    'A motivated split of required work goes',
+    'Tracker readiness or an existing issue does not grant mutation authority'
+  ], 'SCOPE_TWO_AXIS_CONTRACT')
   checkContains(diagnostics, path.join(root, 'skills/deliver-work/workflow.md'), [
     'The coordinator owns integration, aggregate review, and aggregate',
     'verification.'

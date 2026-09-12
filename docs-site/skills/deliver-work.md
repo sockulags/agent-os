@@ -95,3 +95,10 @@ Before implementation, look for existing behavior and contract owners through qu
 Use a bounded experiment only for a solution-changing uncertainty that observation can settle.
 At each unit boundary, recommend the next action and continue only while the original request
 covers the remaining ready work. One authorized issue never grants authority for its whole epic.
+
+Necessary technical discoveries are solved inside the current contract; missed prerequisites and
+incorrect technical order are corrected without blocking side issues when acceptance, ownership,
+and delivery boundaries stay the same. Splitting, combining, or moving responsibility goes through
+`shape-work`; a changed product contract or explicit boundary goes through `plan-work`. Continue
+independent authorized work during partial blocks. Tracker updates require explicit mandate, and
+`Pending tracker updates` is working-memory delta only when needed.

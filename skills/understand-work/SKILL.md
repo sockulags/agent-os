@@ -1,6 +1,6 @@
 ---
 name: understand-work
-description: Questions out what the developer actually needs behind a stated wish, one load-bearing question at a time. User-invoked directly or as the questioning stage of guide-me. Not for requests whose goal is already articulated or for facts the repository answers.
+description: Questions out what the developer actually needs behind a stated wish, one load-bearing question at a time. User-invoked directly or as the questioning stage of plan-work. Not for requests whose goal is already articulated or for facts the repository answers.
 disable-model-invocation: true
 ---
 
@@ -27,5 +27,6 @@ a specific question. Do not propose a technical solution while the goal is still
 
 Questioning ends when the developer says it is done or when further answers stop changing the goal.
 Deliver the settled understanding: the goal, its motivation, the choices made with their reasons,
-the ruled-out directions, and the questions that remain open. Under guide-me this feeds the
-plain-language gate in explain-work; standalone, report it directly.
+the ruled-out directions, and the questions that remain open. Under plan-work this informs the
+mission plan; it does not by itself require a plain-language approval gate. Standalone, report it
+directly.

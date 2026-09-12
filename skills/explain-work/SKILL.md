@@ -1,6 +1,6 @@
 ---
 name: explain-work
-description: Explains the current task or plan in plain language with no technical vocabulary, so the developer can judge it beyond the jargon. User-invoked directly or as the closing gate of guide-me. Not a substitute for technical review or verification.
+description: Explains the current task or plan in plain language with no technical vocabulary, so the developer can judge it beyond the jargon. User-invoked directly when a real decision needs a plain-language summary or as a plan-work aid. Not a substitute for technical review or verification.
 disable-model-invocation: true
 ---
 
@@ -18,10 +18,11 @@ understand before explaining. Keep it short enough to read in under a minute: a 
 
 ## The gate
 
-Present the summary and ask the developer to approve or challenge it. A challenge means the
-understanding was wrong somewhere: name what was misunderstood and reopen the questioning or the
-plan at that point rather than defending the summary. Under guide-me, approval closes the gate and
-the summary becomes the `## TLDR` at the top of the receiving planning artifact.
+Present the summary when it is needed for an actual decision and let the developer approve or
+challenge it. A challenge means the understanding was wrong somewhere: name what was misunderstood
+and reopen the questioning or the plan at that point rather than defending the summary. Under
+plan-work, the summary may be linked from the canonical planning artifact; it is not a general
+workflow gate.
 
 Standalone, explain-work can run against any plan, diff, or pull request; the deliverable is the
 plain-language summary itself and the developer's verdict on it.

@@ -31,11 +31,16 @@ needs shaping; a one-issue request does not authorize the rest of its epic. Keep
 baseline for the authorized sequence and refresh its check per candidate; do not call `begin` again
 for each unit while that baseline is active.
 
+The same rule applies when the request names a planned feature or epic: delivery owns the complete
+authorized result, not merely whichever child happens to be green. When the request covers an epic,
+run its aggregate verification and report the final verification owner. Child success never closes
+the parent or grants authority over its siblings.
+
 ## Work loop
 
 1. Inspect enough of the affected system to choose a coherent change. Apply quality-ratchet's
    reuse and responsibility guidance before writing. If a solution-changing uncertainty remains,
-   use the [experiment decision](../chart-work/references/prototypes.md); clear tasks need no prototype.
+   use the [experiment decision](../plan-work/references/prototypes.md); clear tasks need no prototype.
 2. If available, run [`quality-ratchet`](../quality-ratchet/SKILL.md)'s `begin` before the first
    mutation. It captures the exact worktree entry state without stashing or editing user files; an
    unavailable capability is reported rather than turned into a substitute gate.
@@ -57,6 +62,33 @@ for each unit while that baseline is active.
 9. Apply `verify-before-done` to the final candidate and deliver only to the requested boundary.
 
 Ground truth governs the loop; no prescribed implementation sequence substitutes for it.
+
+## Handle discoveries without fragmenting the mission
+
+During delivery, update the current work when the discovery is necessary and within the existing
+contract:
+
+- a necessary technical detail is solved and delivery continues;
+- a missed technical prerequisite is added to the work plan and delivery continues within mandate;
+- an incorrect order is corrected when acceptance, ownership, and delivery boundaries remain the
+  same;
+- a unit is split, combined, or has responsibility moved only through targeted `shape-work`;
+- a product contract or explicit boundary is changed only by reopening that decision through
+  `plan-work`;
+- an adjacent improvement stays out without separate authority.
+
+Diagnose technical blockers before forwarding them. Do not create a blocking side issue merely
+because a necessary detail was discovered late. Continue independent authorized work during a
+partial block. A context or session limit calls for a compact continuation record, not a new
+product issue. Changing workflow names is not itself a new approval step.
+
+No workflow grants tracker write access automatically. Tracker maintenance is allowed only when the
+request or project policy grants it, and then only for implementation detail and technical
+ordering/readiness inside the authorized set. It does not include changing acceptance, owners,
+delivery scope, adding unrequested work, or closing an issue. A ready issue is not authorization.
+Without tracker mandate, keep corrections local and report the delta. If it must survive a session,
+use the work record's existing sections and add `Pending tracker updates` only when needed; record
+the unsynced delta, never a copied plan.
 
 ## Review gate
 
@@ -118,8 +150,9 @@ next_action: <concrete continuation>
 ```
 
 Record only Outcome, Boundaries, Ground truth, Decisions, and Evidence. Use `blocked`, `verified`, or
-`delivered` when those words help the next session resume accurately. The record is working memory,
-not an approval ledger.
+`delivered` when those words help the next session resume accurately. Add `Pending tracker updates`
+only when an authorized or reported tracker delta needs to survive the session. The record is working memory,
+not an approval ledger, plan copy, or audit receipt.
 
 ## Batch workers
 

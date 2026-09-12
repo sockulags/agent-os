@@ -25,6 +25,7 @@ Keep five short sections:
 - Decisions
 - Evidence
 
-Statuses such as `blocked`, `verified`, and `delivered` are descriptive aids, not a mandatory state
-machine. The record is working memory, not an approval ledger or audit receipt. Resume by reconciling
-it with live repository state.
+Add **Pending tracker updates** only when an unsynced tracker delta must survive the session. Store
+the delta, not a copy of the plan. Statuses such as `blocked`, `verified`, and `delivered` are
+descriptive aids, not a mandatory state machine. The record is working memory, not an approval ledger
+or audit receipt. Resume by reconciling it with live repository state.

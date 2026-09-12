@@ -1,21 +1,23 @@
 ---
 title: Maps and decision tickets
-description: How chart-work separates orientation, canonical decisions, evidence, and stable handoffs.
+description: How plan-work uses a repairable map, canonical decisions, evidence, claims, reconsideration, and stable handoffs.
 ---
 
 # Maps and decision tickets
 
 > This page orients. The canonical contract agents load is
-> [`skills/chart-work/references/map.md`](https://github.com/sockulags/agent-os/blob/main/skills/chart-work/references/map.md).
+> [`skills/plan-work/references/map.md`](https://github.com/sockulags/agent-os/blob/main/skills/plan-work/references/map.md).
 
 The map gives low-resolution orientation; each ticket owns its question, evidence, and decision.
+Plan-work uses this depth only when independent ownership, separate evidence work, or parallel
+treatment makes it worthwhile.
 
 ## Map
 
-A useful map contains destination, boundaries, decisions, Fog, shaping handoffs, delivery-ready
-branches, and spawned work. It links to canonical tickets instead of repeating their evidence. When
-the map originates from [guide-me](/skills/guide-me), the approved plain-language summary sits at
-the top as a `## TLDR`, so the map opens with what the work solves before any planning vocabulary.
+A useful map contains the outcome, boundaries, decisions, open frontier, Fog, reconsiderations,
+shaping handoffs, delivery-ready branches, and spawned work. It links to canonical tickets instead
+of repeating their evidence. A plain-language summary is optional and supports an actual decision;
+it is not a general approval gate.
 
 ## Tickets
 
@@ -27,11 +29,15 @@ are:
 - a developer product decision;
 - a prerequisite task.
 
-Open, unblocked, unclaimed tickets form the frontier. Independent tickets can run in parallel, with
-each worker writing its own canonical ticket before the map is reconciled.
+Open, unblocked, unclaimed tickets form the frontier. Claim before independent work, re-read live
+state before writing, and protect concurrent updates with the planning surface's compare-and-swap or
+equivalent. Independent tickets may be worked in parallel only when workers are explicitly provided;
+the map never starts them automatically.
 
 A resolved ticket records decision, evidence, rejected alternatives, consequence, new work, and open
-risks. Developer preferences must come from the developer.
+risks. A reconsideration preserves the prior resolution, names the decision under review, why it is
+being revisited, and the open question; it ends as confirmed or replaced only after a new decision.
+Developer preferences must come from the developer.
 
 ## From decisions to delivery readiness
 
@@ -44,5 +50,5 @@ Shape-work later creates or reuses the implementation issues and reconciles thei
 blocked frontier into the map. Only then does the branch become delivery-ready. A selected branch
 that has only a shaping handoff keeps the map open.
 
-Planning writes are authorized by the charting request. Product implementation requires a later
-implementation request.
+Planning writes are authorized only by the request and project policy. Product implementation and
+external tracker writes require their own covered mandate. A ready issue is not authorization.

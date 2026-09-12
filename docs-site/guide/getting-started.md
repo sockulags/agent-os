@@ -119,7 +119,7 @@ changes `policy.md`. The installed blocks do not update themselves.
 
 In the repository you want to work in, invoke `init-agent-os` without `global`. It reads the repo
 first and asks only about missing material defaults: delivery, verification, design-system
-location, planning surface, batch execution, and durable conventions. Every question arrives with
+location, coherent planning surface, stable identities, batch execution, and durable conventions. Every question arrives with
 a recommendation. It writes the smallest useful policy and shows the resulting diff.
 
 The result is the repository's [project policy](/guide/project-policy), a living document that
@@ -127,6 +127,7 @@ The result is the repository's [project policy](/guide/project-policy), a living
 
 ## Your first run
 
+For a coherent mission whose planning depth or coverage is not yet settled, invoke `plan-work`.
 For a bounded change with open product questions, invoke `shape-work` with the task. For work whose
 decisions are already made, use `deliver-work`. For a completed implementation or diff, use
 `/check-work report|fix` in direct Claude, `/agent-os:check-work report|fix` in the Claude plugin, or
@@ -134,15 +135,15 @@ decisions are already made, use `deliver-work`. For a completed implementation o
 `batch-work` only when you explicitly want
 several implementation-ready, dependency-mapped issues executed and integrated as one batch.
 
-When you cannot yet say what you want, invoke `guide-me`. For example:
+When you want help planning a mission or cannot yet say what you want, invoke `plan-work`. For example:
 
 ```text
-/guide-me Something about this project feels off and I don't know where to start
+/plan-work Something about this project feels off and I don't know where to start
 ```
 
-That example uses a direct Claude install. Use `/agent-os:guide-me` in the Claude plugin or
-`$guide-me` in Codex. The workflow questions out the need, plays the goal back as a plain-language
-summary you approve or challenge, and only then continues into charting or shaping.
+That example uses a direct Claude install. Use `/agent-os:plan-work` in the Claude plugin or
+`$plan-work` in Codex. The workflow adapts its depth: it may question the need, inspect the
+repository, resolve a bounded choice, or open a decision map before continuing into shaping.
 
 Nothing forces you to use a workflow. The disciplines are active in every session: the agent
 reproduces before it patches, keeps unrelated cleanup out of your diff, and shows command output

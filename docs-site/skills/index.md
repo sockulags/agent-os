@@ -7,37 +7,28 @@ description: The agent-os workflows, automatic disciplines, and meta-skill with 
 
 agent-os ships its skills in three buckets. Most workflows are invoked by hand; `check-work` is an
 automatic review workflow. Disciplines trigger themselves from the situation, and the meta-skill governs how the others are written. Read this
-page top to bottom: the planning foundation, the on-ramp in front of it, the remaining workflows,
-and finally the component skills the workflows compose.
+page top to bottom: the planning foundation, the remaining workflows, and finally the component
+skills the workflows compose.
 
 <figure class="agent-os-diagram">
   <a href="/diagrams/agent-os-workflow-overview.svg" target="_blank" rel="noopener" aria-label="Open the Agent OS workflow overview at full size">
     <img class="diagram-light" src="/diagrams/agent-os-workflow-overview.svg" alt="">
     <img class="diagram-dark" src="/diagrams/agent-os-workflow-overview-dark.svg" alt="">
   </a>
-  <figcaption>The twelve manual workflows grouped by the uncertainty or operational need they resolve. Enter at the lowest layer that still has unresolved work. Select the diagram to open it at full size.</figcaption>
+  <figcaption>The manual workflows grouped by the uncertainty or operational need they resolve. Enter at the lowest layer that still has unresolved work. Select the diagram to open it at full size.</figcaption>
 </figure>
 
-## The foundation: shape and chart
+## The foundation: plan and shape
 
-Planning starts here, and each layer builds on the one before it. `shape-work` turns one bounded
-idea into implementation-ready issues. `chart-work` builds on it: a broad effort becomes decision
-tickets, and every bounded branch ends exactly where shape-work begins.
-
-| Skill | Bucket | Invocation | Purpose |
-|---|---|---|---|
-| [`shape-work`](/skills/shape-work) | workflow | manual | Turn bounded choices into implementation-ready issues |
-| [`chart-work`](/skills/chart-work) | workflow | manual | Chart broad work as a parallel graph of decision tickets |
-
-## The on-ramp: guide-me
-
-`guide-me` builds on both. When you cannot state the goal yet, it only shows the way: questioning
-through its component `understand-work`, the plain-language gate through `explain-work`, and — once
-you approve the summary — it ends where `chart-work` or `shape-work` begins.
+Planning starts here, and each layer builds on the one before it. `plan-work` owns the coherent
+mission and chooses whether a simple contract, repository coverage, focused questions, or a
+decision map is needed. `shape-work` materializes coherent delivery units and implementation-ready
+issues.
 
 | Skill | Bucket | Invocation | Purpose |
 |---|---|---|---|
-| [`guide-me`](/skills/guide-me) | workflow | manual | Guide a vague desire to an approved goal and into planning |
+| [`plan-work`](/skills/plan-work) | workflow | manual | Plan a coherent mission with adaptive depth and canonical decisions |
+| [`shape-work`](/skills/shape-work) | workflow | manual | Shape coherent delivery units and implementation-ready issues |
 
 ## Execution and operations
 
@@ -56,7 +47,7 @@ The workflows that run, pick, set up, and remember work.
 
 ## Component skills
 
-Standalone pieces that guide-me composes. Invoke them directly whenever the piece is useful on its
+Standalone pieces that plan-work composes when useful. Invoke them directly whenever the piece is useful on its
 own — a grilling without the routing, or a plain-language summary of any plan, diff, or pull
 request.
 

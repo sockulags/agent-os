@@ -24,8 +24,9 @@ flowchart TD
     G --> H([Delivery at the requested boundary])
 ```
 
-Batch-work consumes an existing set of implementation-ready, dependency-mapped issues. It does not
-discover or decompose the product shape, and several issues do not invoke it automatically. The
+Batch-work consumes an existing set of implementation-ready, dependency-mapped issues and the
+shared epic or feature verification contract when one exists. It does not discover or decompose the
+product shape, and several issues do not invoke it automatically. The
 developer explicitly chooses when the issue graph should run as an integrated batch.
 
 The request decides whether the workflow plans, executes, or does both. A planning-only request
@@ -35,9 +36,10 @@ Each task has a stable key, outcome, scope, dependencies, checks, and definition
 frontier tasks run in isolated branches and worktrees. Workers return concise results; the
 coordinator owns the manifest and integration branch.
 
-After each integration the coordinator reruns relevant checks. After all tasks integrate, fresh
-aggregate checks decide whether the complete candidate is ready. Worker-local success is never a
-substitute for integrated behavior.
+After each integration the coordinator reruns relevant checks. After all tasks integrate, the
+coordinator runs the shared aggregate verification and fresh aggregate checks before deciding
+whether the complete candidate is ready. Worker-local success is never a substitute for integrated
+behavior or parent-epic completion.
 
 An executed batch is material. The coordinator applies the
 [deliver-work review gate](/skills/deliver-work#review-without-a-review-panel) to the integrated

@@ -34,8 +34,9 @@ for the detailed contract.
 3. Before writing, each mandatory core field must reach one allowed terminal state: repository-
    evidenced or confirmed, `N/A`, explicitly deferred/open, or conflicting. The core covers policy
    ownership and canonical instruction surface; delivery boundary, stopping point, and external
-   effects; verification and ground truth, including when commands are insufficient; planning
-   identities, readiness, and dependencies; and maintenance of durable lessons and gotchas. Only
+    effects; verification and ground truth, including when commands are insufficient; coherent
+    planning identities, claims, handoffs, readiness, epic ownership, and dependencies; and
+    maintenance of durable lessons and gotchas. Only
    an unresolved policy ownership/write-target conflict blocks writing; other explicit deferrals
    may be written concisely under **Open setup questions**.
 4. Activate only conditional modules supported by repository evidence: frontend/design/rendered QA;

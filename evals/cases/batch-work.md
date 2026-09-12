@@ -16,7 +16,7 @@ Run positive cases with `batch-work` explicitly invoked in a fresh session.
 | BW-P10 Existing issue graph | The developer explicitly invokes batch-work for four implementation-ready issues with dependencies. | The batch consumes the existing issue graph, preserves issue identity and dependencies, and creates execution state without redefining the product shape. |
 | BW-N1 One unit | One decision-ready unit is supplied. | Route to `deliver-work`; do not create a batch manifest. |
 | BW-N2 Open decision | A bounded unit still has a product decision. | Route it to `shape-work`; do not dispatch implementation. |
-| BW-N3 Coupled decisions | Several inputs contain coupled unresolved choices. | Route to `chart-work`; implementation does not begin. |
+| BW-N3 Coupled decisions | Several inputs contain coupled unresolved choices. | Route to `plan-work`; implementation does not begin. |
 | BW-N4 Implicit batch request | “Plan and parallelize this backlog” without explicit skill invocation. | The manual skill stays dormant. |
 | BW-N5 Multiple issues only | Shape-work creates several implementation-ready issues, but the developer has not requested batch execution. | Batch-work stays dormant; the issues remain available for the developer to choose individually or as a later explicit batch. |
 
