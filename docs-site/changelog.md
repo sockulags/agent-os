@@ -8,6 +8,21 @@ description: What changed in each agent-os release, in plain terms.
 One entry per release: what changed, and what it means for how you work. Full commit-level history
 lives on [GitHub](https://github.com/sockulags/agent-os/commits/main).
 
+## 0.15.0 — 2026-09-12
+
+The plan-work release: replace separate planning entry points with one adaptive planner that owns a
+coherent mission from outcome through coverage, decisions, feasibility, and verification.
+
+- **Coherent delivery units and epics** — shape-work now turns a settled mission into independently
+  deliverable units or an explicit epic contract with shared acceptance, dependencies, aggregate
+  verification, and ownership.
+- **Continuation, tracker, and scope boundaries** — approved authority continues across workflow
+  boundaries without repeating settled decisions; tracker maintenance remains mandate-bound, and
+  scope handling pauses only affected branches while independent authorized work continues.
+- **Executable behavior contracts** — behavior fixtures and scorecards make planning depth,
+  continuation, tracker non-mutation, epic readiness, and aggregate completion observable and
+  testable.
+
 ## 0.14.0 — 2026-09-06
 
 The project-controls release: quality-ratchet can run explicit repository-owned quality commands
