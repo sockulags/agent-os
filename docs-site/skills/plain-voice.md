@@ -1,16 +1,19 @@
 ---
 title: plain-voice
-description: Apply plain voice to every agent-authored text response, including short chat and status replies.
-skill-description: Plain wording for every reply and every text the agent writes. Removes filler, restated questions, and stacked hedges so each sentence carries a fact, an instruction, or a number. Use when answering, explaining, summarizing, or giving a status update, and when writing documentation, a commit message, a pull request description, or an issue comment. Not for code, identifiers, structured data, quoted source material, or text the user wrote.
-summary: Apply plain voice to every agent-authored text response
+description: Apply the full plain-voice checklist to written artifacts; the global policy covers ordinary replies.
+skill-description: Plain wording for written artifacts such as documentation, README text, commit messages, pull request descriptions, issue comments, and release notes. Removes filler, restated requests, stacked hedges, and promotional wording so each sentence carries a fact, an instruction, or a number. Use when the user says things like write the PR description, draft the commit message, write the docs for this feature, or post a comment on the issue. Not for ordinary chat, explanations, summaries, or status replies, which the global policy covers, and not for code, identifiers, structured data, quoted source material, or text the user wrote.
+summary: Apply plain voice to documentation, commits, and pull request text
 ---
 
 # plain-voice
 
 **Bucket:** discipline · **Invocation:** automatic
 
-Applies to every textual response the agent authors, including short conversational and status
-replies. It is not limited to formal prose artifacts.
+The core rules live in the global policy block, so they apply to every reply, including short chat
+and status replies. A skill applies only when the model loads it, and the 2026-10-17 trigger eval
+showed that the model does not load plain-voice for ordinary replies. This skill is the full
+checklist for written artifacts: documentation, README text, commit messages, pull request
+descriptions, issue comments, and release notes.
 
 Keeps written output carrying facts rather than the appearance of effort. Every sentence should leave
 the reader with a fact, an instruction, or a number.

@@ -73,10 +73,11 @@ clearest gaps are notice-lesson (5/9 with, 2/9 without) and scope-guard after th
 
 - **plain-voice** fires only when the request asks for written prose, such as a pull request
   description. It does not fire for ordinary explanations, summaries, or status replies in either
-  language. A skill cannot cover every reply if the model does not load it for ordinary chat.
+  language. A skill cannot cover every reply if the model does not load it for ordinary chat. The
+  follow-up below moves its core rules into the policy block.
 - **quality-ratchet** rarely fires on implementation requests, before or after the rewrite. Its
-  existing "Positive 1" case still expects `simplifier-review` to fire, but that skill is manual
-  since the consolidation branch, so the case is stale.
+  existing "Positive 1" case still expected `simplifier-review` to fire, but that skill is manual
+  since the consolidation branch. The follow-up below fixes the case and the description.
 - **proportional-testing** does not fire when a request combines a bug fix with a regression test,
   as in "Fix the date parsing bug and add a regression test". The fix part of the request likely
   routes elsewhere, but the runs do not record which skill fired instead.
@@ -87,6 +88,61 @@ clearest gaps are notice-lesson (5/9 with, 2/9 without) and scope-guard after th
   trigger decision normally happens on the first turn.
 - Only one model and one host were measured. Raw `aggregate-result.json` files are kept in the
   gitignored `evals/runs/2026-10-17-trigger/` directory.
+
+### Follow-up: plain-voice scope and quality-ratchet description
+
+Same host, model, and method as above, measured later on 2026-10-17 with `--tag <skill> --runs 3`.
+These runs include the `HO` cases, so their totals are not directly comparable with the full-suite
+table.
+
+**plain-voice decision.** A skill applies only when the model loads it, and the model does not load
+plain-voice for ordinary replies. The core rules therefore moved into the policy block
+(`policy.md`), which `init-agent-os global` installs into `~/.claude/CLAUDE.md` and
+`~/.codex/AGENTS.md`, so they reach every reply. The skill stays as the full checklist for written
+artifacts: documentation, README text, commit messages, pull request descriptions, issue comments,
+and release notes. Its description now names those artifacts and excludes chat replies. The six
+ordinary-reply cases that were positive (PV-P2, PV-P3, PV-P4, PV-P6, PV-P7, PV-P8) became negative
+cases PV-N4 to PV-N9. Two artifact positives were added: PV-P9 (commit message) and PV-P10 (docs
+page).
+
+| plain-voice, new case set | Old description | New description |
+|---|---:|---:|
+| Artifact positives fired | 7/12 | 12/12 |
+| Negatives silent | 27/27 | 27/27 |
+| **Trigger accuracy** | **34/39** | **39/39** |
+
+The plugin eval runs with no project rules, so it cannot show whether the policy rules shape
+ordinary replies. That part of the decision is unmeasured.
+
+**quality-ratchet.** "Positive 1" now expects only `quality-ratchet`. The old description excluded
+"review-only requests", which also excluded the skill's own delivery-review cases. The new
+description names implementation and review of your own candidate before delivery, adds the
+developers' phrasings "keep it at least as clean as it is now", "check the candidate", and "this has
+too many layers", and narrows the exclusion to reviewing someone else's pull request.
+
+| quality-ratchet case | Baseline (fixed case, old description) | Candidate 1 | Candidate 2 (shipped) |
+|---|---:|---:|---:|
+| Positive 1, health endpoint direct shape | 0/3 | 0/3 | 0/3 |
+| Positive 2, touched legacy improvement | 0/3 | 0/3 | 3/3 |
+| Positive EN1 | 2/3 | 3/3 | 3/3 |
+| Positive EN2 | 0/3 | 0/3 | 0/3 |
+| Positive EN3 | 3/3 | 3/3 | 3/3 |
+| Positive EN4 HO | 0/3 | 3/3 | 3/3 |
+| Negative EN1 (silent) | 3/3 | 3/3 | 3/3 |
+| **Trigger accuracy** | **8/21** | **12/21** | **15/21** |
+
+Each arm cost about $1.50. Candidate 1 named implementation work but kept the review exclusion.
+Candidate 2 is the description now in `skills/quality-ratchet/SKILL.md`. Positive 1 still misses,
+and so does Positive EN2 ("tidy
+that function up if it helps, but keep it to what you touch") still misses.
+
+To check that the broader quality-ratchet description does not take triggers from its neighbors,
+check-work, proportional-testing, and scope-guard ran again under the new descriptions. Every
+non-`HO` case matched its result in the full-suite "after" run: check-work 27/27, proportional-testing
+18/24, scope-guard 21/24. check-work's two `HO` cases fired 6/6. proportional-testing's and
+scope-guard's `HO` positives each fired 2/3 here, after 5/5 in the held-out run. Five more runs gave
+4/5 and 5/5. Neither prompt uses quality-ratchet's phrasings, so this reads as run-to-run variance,
+but the runs do not record which skill fired instead.
 
 ## Plan-work scorecard contracts (2026-09-12)
 

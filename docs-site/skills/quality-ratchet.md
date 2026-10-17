@@ -1,7 +1,7 @@
 ---
 title: quality-ratchet
 description: Keep implementation quality from regressing without turning delivery into cleanup.
-skill-description: Code quality while implementing a change, so the code does not get worse than it was. Compares the change with the code before it and keeps any cleanup limited to the code the change touches. Use when the user adds or changes code and says things like don't make it worse, no quality regressions compared with main, or tidy it up but only what you touch. Not for review-only requests, repository-wide tech-debt hunts, or cutting line counts.
+skill-description: Quality ratchet for code you are implementing or about to deliver, so the touched code ends up no worse than it was. Records the entry state before the first edit, compares the candidate with it, and keeps cleanup bounded to the code the change touches. Use when adding a feature or changing existing code, when reviewing your own implementation or candidate before delivery, and when the user says things like don't make it worse, keep it at least as clean as it is now, no quality regressions compared with main, tidy it up while you're there but only what you touch, check the candidate, or this has too many layers. Not for repository-wide tech-debt hunts, reviewing someone else's pull request, or cutting line counts.
 summary: Compare exact entry and candidate evidence without score gates
 ---
 

@@ -32,7 +32,7 @@ and the meta skills.
 | `scope-guard` | discipline | automatic | Keep work inside the task; flag drift |
 | `quality-ratchet` | discipline | automatic | Compare exact entry and candidate evidence without score gates |
 | `notice-lesson` | discipline | automatic | Treat interruptions as misunderstanding signals |
-| `plain-voice` | discipline | automatic | Apply plain voice to every agent-authored text response |
+| `plain-voice` | discipline | automatic | Apply plain voice to documentation, commits, and pull request text |
 | `list-skills` | meta | manual | List installed skills and how to invoke them |
 | `writing-skills` | meta | manual | Doctrine and definition of done for agent-os skills |
 
