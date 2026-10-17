@@ -6,14 +6,15 @@ import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
 import { execFileSync } from 'node:child_process'
-import { begin, check, hook } from '../skills/quality-ratchet/scripts/quality-delta.mjs'
+import { begin, check, controlsTrustPlan, hook, trustControls } from '../skills/quality-ratchet/scripts/quality-delta.mjs'
 
 const tool = process.argv[2]
 if (!tool || !path.isAbsolute(tool) || !fs.existsSync(tool)) {
   throw new Error('Provide the absolute installed dependency-cruise.mjs path')
 }
 const root = fs.mkdtempSync(path.join(os.tmpdir(), 'agent-os-architecture-'))
-const options = { detect: () => ({}) }
+const trustStore = path.join(os.tmpdir(), `agent-os-architecture-trust-${process.pid}.json`)
+const options = { detect: () => ({}), trustStore }
 try {
   execFileSync('git', ['init', '-q', root])
   for (const dir of ['.agent-os', 'src/domain', 'src/ui']) fs.mkdirSync(path.join(root, dir), { recursive: true })
@@ -30,6 +31,7 @@ try {
   fs.writeFileSync(path.join(root, 'src/ui/view.ts'), 'export const view: string = "view"\n')
   const source = path.join(root, 'src/domain/model.ts')
   fs.writeFileSync(source, 'export const model: string = "model"\n')
+  trustControls(controlsTrustPlan(root), { trustStore })
   begin(root, options)
   const clean = check(root, options)
   assert.equal(clean.status, 'ok', JSON.stringify(clean.controls))
@@ -44,4 +46,5 @@ try {
   console.log('dependency-cruiser: clean passes; forbidden TypeScript import blocks; restored candidate passes')
 } finally {
   fs.rmSync(root, { recursive: true, force: true })
+  fs.rmSync(trustStore, { force: true })
 }

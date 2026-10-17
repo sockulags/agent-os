@@ -47,8 +47,23 @@ Use the actual project wrapper and supported command for its operating system.
 
 Commands are argument arrays, run at the Git root with inherited environment and no implicit shell.
 Use an explicit interpreter for scripts that need one; on Windows prefer Node entrypoints or the
-project's explicitly selected shell for `.cmd` wrappers. The repository configuration is trusted
-executable project code. Inspect it before running it, as with project build scripts.
+project's explicitly selected shell for `.cmd` wrappers. The repository configuration is executable
+project code, so `check` runs it only after the developer trusts it on that machine:
+
+```sh
+node "$QUALITY_RUNNER" trust
+```
+
+`trust` prints the declared commands and protected files and records trust only after a yes in an
+interactive terminal; it refuses without a TTY, so an agent's shell tool cannot complete it. Trust is
+stored in `~/.agent-os/trusted-controls.json`, keyed by the repository's common Git directory (shared
+by its linked worktrees) and the signature of the policy plus its protected files. Changing
+`.agent-os/quality.json` or a protected file, including through an acknowledged policy change, needs
+trust again. Until then `check` reports the commands as untrusted, runs none of them, and blocks
+delivery. Scripts the commands call but that are not listed in `protectedFiles` can change without
+re-trust. This is a visible prompt and a speed bump for agents, not a tamper-proof boundary.
+Environments with `CI=true` or `CI=1` run the declared controls without a trust record, because a CI
+checkout already runs the repository's own code and cannot answer a prompt.
 
 All checks default to advisory and run on every `check`. `required: true` blocks delivery unless the
 command exits zero. Missing tools, timeout, signal termination, and output overflow are distinct

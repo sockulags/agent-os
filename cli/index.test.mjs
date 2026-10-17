@@ -8,6 +8,7 @@ import { fileURLToPath } from 'node:url'
 import {
   buildManagedHookCommand,
   buildPlan,
+  CODEX_HOOK_TRUST_NOTICE,
   executeInstall,
   hookConfigPath,
   INSTALL_MANIFEST,
@@ -229,6 +230,21 @@ test('direct project install configures both hosts without replacing unrelated h
     assert.equal(command.includes(path.join(skillsRoot, 'quality-ratchet', 'scripts', 'quality-delta.mjs')), true)
     assert.equal(command.includes(packageRootForTest()), false)
   }
+})
+
+test('a changed Codex hook tells the developer to trust it in /hooks, and an unchanged one stays quiet', async () => {
+  const root = temporaryRoot()
+  const project = path.join(root, 'project')
+  fs.mkdirSync(project, { recursive: true })
+  const install = async () => {
+    let text = ''
+    await executeInstall({
+      command: 'install', platform: 'codex', method: 'direct', scope: 'project', policy: false
+    }, { output: { write(chunk) { text += chunk } }, homeDir: root, cwd: project })
+    return text
+  }
+  assert.equal((await install()).includes(CODEX_HOOK_TRUST_NOTICE), true)
+  assert.equal((await install()).includes(CODEX_HOOK_TRUST_NOTICE), false)
 })
 
 test('managed hook updates replace only the exact Agent OS entry', () => {

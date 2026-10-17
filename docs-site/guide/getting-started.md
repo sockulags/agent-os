@@ -55,6 +55,11 @@ command uses absolute paths to the Node executable and the runner copied into th
 root. Start a new session after updating;
 there is no uninstall command yet.
 
+Codex runs a non-managed hook only after you trust it, and it records that trust against the hook's
+hash. After a Codex install, or an update that changes the hook, open Codex, run `/hooks`, and trust
+the Agent OS quality-ratchet Stop hook. Until then Codex skips it. The installer prints this reminder
+whenever it changes the Codex hook.
+
 Use `npx @sockulags/agent-os@latest update` to force the latest published installer. A global CLI
 install is optional:
 
