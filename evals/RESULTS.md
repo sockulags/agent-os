@@ -1,5 +1,93 @@
 # Eval results
 
+## Claude trigger matrix for automatic skills (2026-10-17)
+
+Measured 2026-10-17 with `claude plugin eval` on Claude Code 2.1.296 (native Windows x64), model
+`claude-sonnet-5-5`, agent-os 0.15.0 plus the consolidation branch at `c50c3b9`. This is the first
+Claude-side trigger measurement. The previous matrix below dates from v0.6.2 and covered Codex only.
+
+`node scripts/trigger-eval.mjs build` turns every row in `evals/cases/<skill>.md` that has a literal
+quoted prompt and an Expected cell starting with "Trigger `<skill>`" or "Do not trigger" into one
+case. Scenario rows with no trigger verdict stay out of this suite. A `tool_used: Skill` grader
+counts a case as fired when the run calls `Skill` for that skill. Positive cases need at least one
+such call and negative cases need none. Each run starts in an empty workspace with read-only tools,
+a fresh config and home directory, and no project rules, and is capped at 4 turns. The suite needed
+no Bash, so it ran natively without WSL2. Accuracy counts correct runs out of total runs.
+
+New English cases were added next to the existing ones, three positive and one negative per skill.
+The rewritten descriptions follow one template: the keyword phrase a developer would say, what the
+skill does, "Use when the user says things like" with the developer's own phrasings, and "Not for"
+with adjacent requests.
+
+### Full suite, before and after the description rewrite
+
+The suite had 61 cases (29 existing, 32 new English), 3 runs per case, with and without the plugin.
+Each arm cost about $12.50.
+
+| Skill | Before | After | Existing cases before → after | New English cases before → after |
+|---|---:|---:|---:|---:|
+| check-work | 19/27 | 27/27 | 15/15 → 15/15 | 4/12 → 12/12 |
+| diagnose-before-fix | 24/24 | 24/24 | 12/12 → 12/12 | 12/12 → 12/12 |
+| notice-lesson | 8/12 | 12/12 | no quoted cases | 8/12 → 12/12 |
+| plain-voice | 15/30 | 15/30 | 9/18 → 9/18 | 6/12 → 6/12 |
+| proportional-testing | 15/24 | 18/24 | 9/12 → 9/12 | 6/12 → 9/12 |
+| quality-ratchet | 6/18 | 7/18 | 1/6 → 0/6 | 5/12 → 7/12 |
+| scope-guard | 13/24 | 21/24 | 9/12 → 9/12 | 4/12 → 12/12 |
+| verify-before-done | 21/24 | 24/24 | 12/12 → 12/12 | 9/12 → 12/12 |
+| **Total** | **121/183 (66%)** | **148/183 (81%)** | **67/87 → 66/87** | **54/96 → 82/96** |
+
+Negative controls stayed silent in every run before and after (66/66). Every miss was a skill that
+should have fired and did not. No skill's accuracy went down. The one-run drop on the existing cases
+is quality-ratchet "Positive 2", which fired 1/3 before and 0/3 after.
+
+### Held-out English cases
+
+The new English cases were written alongside the rewrite, so their gain could reflect overfitting.
+To check, 12 more English cases were written after the rewrite and marked `HO` (8 positive, 4
+negative). They ran 5 times each against the old and the new descriptions, with the plugin only.
+
+| Skill | Old descriptions | New descriptions |
+|---|---:|---:|
+| check-work | 5/10 | 10/10 |
+| diagnose-before-fix | 5/5 | 5/5 |
+| notice-lesson | 0/5 | 2/5 |
+| plain-voice | 0/5 | 0/5 |
+| proportional-testing | 6/10 | 10/10 |
+| quality-ratchet | 0/5 | 0/5 |
+| scope-guard | 5/10 | 10/10 |
+| verify-before-done | 10/10 | 10/10 |
+| **Total** | **31/60** | **47/60** |
+
+The held-out negatives stayed silent in all 20 runs under both versions.
+
+### With and without the plugin
+
+Each new English positive case also has an LLM-graded behavior rubric, judged by the default
+`haiku` grader. Behavior passed 47/72 with the plugin and 43/72 without it before the rewrite, and
+51/72 with and 46/72 without after it. That is 9 cases with 3 runs per skill. The sample is too small,
+and the empty workspace leaves too little to act on, to support a per-skill behavior claim. The
+clearest gaps are notice-lesson (5/9 with, 2/9 without) and scope-guard after the rewrite (7/9 with,
+4/9 without).
+
+### Remaining gaps and limits
+
+- **plain-voice** fires only when the request asks for written prose, such as a pull request
+  description. It does not fire for ordinary explanations, summaries, or status replies in either
+  language. A skill cannot cover every reply if the model does not load it for ordinary chat.
+- **quality-ratchet** rarely fires on implementation requests, before or after the rewrite. Its
+  existing "Positive 1" case still expects `simplifier-review` to fire, but that skill is manual
+  since the consolidation branch, so the case is stale.
+- **proportional-testing** does not fire when a request combines a bug fix with a regression test,
+  as in "Fix the date parsing bug and add a regression test". The fix part of the request likely
+  routes elsewhere, but the runs do not record which skill fired instead.
+- **notice-lesson** cases are single prompts with no prior agent turn, so they do not reproduce a
+  real interruption mid-task.
+- Seven of the 852 agent runs hit the 4-turn cap. They are graded as they stand. Three were plugin-arm runs of
+  negative cases that stayed silent through four turns. A fifth turn might have fired the skill, but the
+  trigger decision normally happens on the first turn.
+- Only one model and one host were measured. Raw `aggregate-result.json` files are kept in the
+  gitignored `evals/runs/2026-10-17-trigger/` directory.
+
 ## Plan-work scorecard contracts (2026-09-12)
 
 ### Deterministic structural and scorecard execution
@@ -75,7 +163,7 @@ between model graders and humans.
 > for the current request-defined authority and ground-truth-driven workflows. The versioned cases
 > under `evals/cases/` now define the current forward-test targets.
 
-## Current trigger matrix
+## Codex trigger matrix (v0.6.2)
 
 Run 2026-07-30 against agent-os 0.6.2 with Codex CLI 0.146.0-alpha.3.1. Each case used a
 fresh ephemeral session, a read-only empty fixture, no project rules, and the installed 0.6.2 plugin.

@@ -1,6 +1,6 @@
 ---
 name: verify-before-done
-description: Requires fresh execution evidence before an agent states that implemented work is complete, fixed, passing, or ready to ship. It activates at the completion-claim boundary after changes or validation, including requests to mark work done or to report whether tests pass. It skips diagnosis, planning, speculative review, and progress updates that claim nothing is complete or passing.
+description: Done, fixed, passing, or ready to merge. Runs fresh checks and shows their output before saying work is complete. Use when the user says things like is this ready to merge, did the tests pass, confirm it works, mark it done, or close it out, and before the agent itself claims that work is finished. Not for diagnosing a failure, planning tests, or progress updates that claim nothing is finished.
 ---
 
 # Verify before done

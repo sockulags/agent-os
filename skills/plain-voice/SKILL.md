@@ -1,6 +1,6 @@
 ---
 name: plain-voice
-description: Removes generated-prose tells from every agent-authored textual response, including short chat and status replies, documentation, commit and pull request text, and issue comments, so each sentence carries a fact, an instruction, or a number. It skips code, identifiers, structured data, quoted source material, and prose the developer wrote.
+description: Plain wording for every reply and every text the agent writes. Removes filler, restated questions, and stacked hedges so each sentence carries a fact, an instruction, or a number. Use when answering, explaining, summarizing, or giving a status update, and when writing documentation, a commit message, a pull request description, or an issue comment. Not for code, identifiers, structured data, quoted source material, or text the user wrote.
 ---
 
 # Plain voice

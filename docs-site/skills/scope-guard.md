@@ -1,7 +1,7 @@
 ---
 title: scope-guard
 description: Classify required, adjacent, and unrelated discoveries against both task relation and mandate before they expand an active change.
-skill-description: Detects and contains task drift while implementation or review is already in progress by classifying discoveries on relation and mandate axes. It activates when required, adjacent, or unrelated work or a new decision or external action appears beyond the agreed request or spec. It skips initial scoping and planning, root-cause diagnosis, and verification of work already inside scope.
+skill-description: Scope creep in a task already in progress, such as an extra cleanup, the same bug elsewhere, a new dependency, or a public API change. Sorts each discovery into required, adjacent, or unrelated, keeps unrelated work out of the change, and asks before anything that needs a new decision. Use when the user says things like I noticed this too, should I fix that as well, is this okay to include in this PR, or handle it however makes sense. Not for scoping a feature before work starts, finding a root cause, or checking work that is already in scope.
 summary: Keep work inside the task; flag drift
 ---
 
