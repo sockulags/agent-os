@@ -61,7 +61,7 @@ The Stop hook blocks an active lifecycle violation (a corrupt baseline or missin
 unacknowledged control-policy changes, or failed explicit project requirements. It checks recorded
 results and their inputs without rerunning project commands. State is bound to the current Git worktree and host session: Claude uses
 `CLAUDE_CODE_SESSION_ID`, Codex uses `CODEX_THREAD_ID`, and standalone/manual use has a deterministic
-fallback. `begin`, `check`, and `clear` use those command environments, preferring Codex when both
+fallback. `begin`, `check`, `finish`, and `clear` use those command environments, preferring Codex when both
 IDs exist. Stop uses payload
 `session_id`, treating a non-empty `turn_id` as Codex and otherwise as Claude; without `session_id`,
 it retains the command environment for direct/manual use. A worktree without an active baseline for

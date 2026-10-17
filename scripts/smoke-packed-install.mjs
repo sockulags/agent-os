@@ -82,8 +82,10 @@ function verifyInstalledLifecycle() {
       input: JSON.stringify({ cwd: repository, stop_hook_active: false })
     })
     if (fresh.status !== 0 || JSON.stringify(JSON.parse(fresh.stdout || '{}')) !== '{}') {
-      throw new Error(`${platformRoot} installed runner did not accept and clear a fresh check.`)
+      throw new Error(`${platformRoot} installed runner did not accept a fresh check.`)
     }
+    // A passing Stop keeps the baseline for the next turn; finish closes it.
+    run(process.execPath, [runner, 'finish'], { cwd: repository })
 
     run(process.execPath, [runner, 'begin'], { cwd: repository })
     run(process.execPath, [runner, 'clear'], { cwd: repository })
@@ -109,8 +111,9 @@ function verifyStopLifecycle(label, runner, repository, environment, runStop) {
   run(process.execPath, [runner, 'check'], { cwd: repository, env: environment })
   const fresh = runStop(false)
   if (fresh.status !== 0 || JSON.stringify(JSON.parse(fresh.stdout || '{}')) !== '{}') {
-    throw new Error(`${label} did not accept and clear a fresh check.`)
+    throw new Error(`${label} did not accept a fresh check.`)
   }
+  run(process.execPath, [runner, 'finish'], { cwd: repository, env: environment })
 }
 
 function verifyNativeCodexWindowsHook(packedRoot, repository) {

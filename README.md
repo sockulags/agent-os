@@ -86,13 +86,15 @@ can run it, checks the candidate before `simplifier-review`, and reports source-
 legacy-before/after, dependency, and optional-analyzer evidence. These are signals for semantic
 judgment, not score or raw-count thresholds. With lizard installed it adds cyclomatic complexity
 before and after for touched functions; missing lizard is reported as unavailable, never clean. A Stop hook blocks a missing, corrupt, or stale active lifecycle check until the same
-host session records a fresh check; `stop_hook_active` does not bypass that requirement. When a fresh
-check keeps failing required project controls, the hook releases the stop to the user after three
-re-entries on the unchanged candidate and keeps delivery blocked. Without a
+host session records a fresh check. A passing check lets the turn end and keeps the baseline, so a
+delivery that pauses to ask the developer still compares against the exact entry state; `finish`
+closes the baseline only after a passing check. Every block except corrupt state is bounded: after
+three re-entries on the unchanged candidate the hook releases the stop to the user and keeps delivery
+blocked. Without a
 baseline for the current host session it is a no-op. Resolve
 `scripts/quality-delta.mjs` relative to the installed `quality-ratchet/SKILL.md` and run its `clear`
 command from that same host session to abandon an active attempt. Standalone/manual use without a
-host session ID uses a deterministic fallback state. `begin`, `check`, and `clear` read the host ID
+host session ID uses a deterministic fallback state. `begin`, `check`, `finish`, and `clear` read the host ID
 from `CODEX_THREAD_ID` or `CLAUDE_CODE_SESSION_ID`, with Codex taking precedence when both exist;
 native Stop resolves the same identity from its `session_id` payload, using non-empty `turn_id` to
 identify Codex. There is no uninstall command yet.

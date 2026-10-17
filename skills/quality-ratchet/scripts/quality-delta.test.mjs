@@ -581,3 +581,42 @@ test('Codex Stop contract accepts structured exit 0 and uses stderr on exit 2', 
   })
   assert.throws(() => parseCodexStopResult({ ...exitTwo, stderr: '' }), /Codex rejected/)
 })
+
+test('an uninspectable candidate is bounded and its release resets once inspection works', () => {
+  const root = repository()
+  begin(root, { detect: unavailableAnalyzers })
+  const index = path.join(root, '.git', 'index')
+  const saved = fs.readFileSync(index)
+  fs.writeFileSync(index, 'not an index')
+
+  assert.match(hook(root, { stop_hook_active: false }).reason, /could not inspect the candidate/)
+  assert.equal(hook(root, { stop_hook_active: true }).decision, 'block')
+  assert.equal(hook(root, { stop_hook_active: true }).decision, 'block')
+  assert.match(hook(root, { stop_hook_active: true }).systemMessage, /still cannot inspect/)
+
+  fs.writeFileSync(index, saved)
+  assert.match(hook(root, { stop_hook_active: false }).reason, /has not run/)
+  fs.writeFileSync(index, 'broken again')
+  assert.equal(hook(root, { stop_hook_active: false }).decision, 'block')
+  fs.writeFileSync(index, saved)
+})
+
+test('finish command reports JSON, accepts a policy reason, and exits 1 when the baseline stays', () => {
+  const runner = path.join(path.dirname(fileURLToPath(import.meta.url)), 'quality-delta.mjs')
+  const root = repository()
+  const env = { ...process.env, CLAUDE_CODE_SESSION_ID: 'finish-cli', CODEX_THREAD_ID: '' }
+  const run = (...args) => spawnSync(process.execPath, [runner, ...args, '--root', root], { encoding: 'utf8', env })
+
+  assert.equal(run('begin').status, 0)
+  const closed = run('finish', '--json')
+  assert.equal(closed.status, 0)
+  const result = JSON.parse(closed.stdout)
+  assert.equal(result.closed, true)
+  assert.equal(result.evidence.status, 'ok')
+  assert.equal(fs.existsSync(result.statePath), false)
+
+  assert.equal(run('finish').status, 1)
+  assert.equal(run('begin', '--accept-policy-change', 'reason').status, 2)
+  assert.equal(run('begin').status, 0)
+  assert.equal(run('finish', '--accept-policy-change', 'authorized reason').status, 0)
+})

@@ -813,6 +813,12 @@ export function hook(cwd = process.cwd(), payload = {}, { env = process.env } = 
         `Quality ratchet could not inspect the candidate: ${cause.message}. Run the quality-ratchet check and retry.`,
         `Quality ratchet still cannot inspect the candidate: ${cause.message}.`, payload)
     }
+    // An inspection failure has no candidate fingerprint, so its bound resets once inspection works.
+    if ([state.stopRelease?.key, state.stopBlocks?.key].some((key) => key?.startsWith('inspect:'))) {
+      if (state.stopRelease?.key?.startsWith('inspect:')) delete state.stopRelease
+      if (state.stopBlocks?.key?.startsWith('inspect:')) delete state.stopBlocks
+      writeState(context, state)
+    }
     const fresh = state.lastCheck?.candidateFingerprint === candidate.fingerprint
     if (fresh) {
       const controls = state.lastCheck.evidence?.controls

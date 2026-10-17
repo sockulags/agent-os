@@ -207,3 +207,26 @@ test('external executable permission changes invalidate a cached pass', { skip: 
   assert.equal(hook(f.root).decision, 'block')
   assert.equal(check(f.root, options).status, 'blocked')
 })
+
+test('stale control evidence is bounded at Stop', t => {
+  const f = fixture(t, [required])
+  begin(f.root, options)
+  assert.equal(check(f.root, options).status, 'ok')
+  const env = { ...process.env, CONTROL_FIXTURE: 'changed after check' }
+  assert.match(hook(f.root, { stop_hook_active: false }, { env }).reason, /control evidence is stale/)
+  assert.equal(hook(f.root, { stop_hook_active: true }, { env }).decision, 'block')
+  assert.equal(hook(f.root, { stop_hook_active: true }, { env }).decision, 'block')
+  assert.match(hook(f.root, { stop_hook_active: true }, { env }).systemMessage, /still stale/)
+})
+
+test('a released stale-check block does not use up the failing-controls budget', t => {
+  const f = fixture(t, [required])
+  begin(f.root, options)
+  f.write('source.ts', 'BROKEN')
+  assert.equal(hook(f.root, { stop_hook_active: false }).decision, 'block')
+  assert.equal(hook(f.root, { stop_hook_active: true }).decision, 'block')
+  assert.equal(hook(f.root, { stop_hook_active: true }).decision, 'block')
+  assert.match(hook(f.root, { stop_hook_active: true }).systemMessage, /has not run/)
+  assert.equal(check(f.root, options).status, 'blocked')
+  assert.match(hook(f.root, { stop_hook_active: false }).reason, /Project controls block delivery/)
+})

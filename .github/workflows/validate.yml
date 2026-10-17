@@ -26,6 +26,9 @@ jobs:
       - name: Check npm package contents
         run: npm pack --dry-run
 
+      - name: Smoke-test the packed install
+        run: node scripts/smoke-packed-install.mjs
+
       - name: Validate repository
         run: node scripts/validate-agent-os.mjs
 
