@@ -28,8 +28,9 @@ replacement, and do not turn a reasonable alternative into a required correction
 
 When [`quality-ratchet`](../quality-ratchet/SKILL.md) evidence is available, consume it before
 forming findings. Read the diff and implementation yourself: added/changed/deleted files, NLOC,
-legacy-before/after, dependency deltas, and unavailable optional analyzers are evidence, not an
-oracle or threshold. Preserve machinery justified by real provider, runtime-selection,
+legacy-before/after, dependency deltas, complexity deltas, and unavailable optional analyzers are
+evidence, not an oracle or threshold. Start with the functions whose complexity rose most, and
+judge whether the added paths are required behavior. Preserve machinery justified by real provider, runtime-selection,
 compatibility, or trust-boundary requirements. Report at most one materially constraining adjacent
 opportunity and leave unrelated debt to `scope-guard`.
 

@@ -69,6 +69,19 @@ line movement. These lexical signals can match comments or strings and can reapp
 they do not establish a semantic defect. Review them or delegate exact rules to the project's linter.
 Only rules explicitly listed in `blockSignals` block delivery. Raw LOC and structural counts never do.
 
+## Complexity threshold
+
+With lizard installed, a project can flag touched functions whose cyclomatic complexity rises above a
+threshold, or new functions above it:
+
+```json
+{ "schema": 1, "checks": [], "complexity": { "threshold": 15 }, "blockSignals": ["complexity"] }
+```
+
+Without `"complexity"` in `blockSignals` the result is an advisory `complexity` signal. Functions
+that were already above the threshold and did not grow are never flagged. Without lizard the
+evidence says `unavailable` and nothing is flagged or blocked.
+
 The policy itself and repository-relative `protectedFiles` are fingerprinted at entry. Include the
 lint, type, test, architecture, and CI configurations whose weakening should require attention.
 A protected missing file is represented as absent; later creation or deletion changes the signature.

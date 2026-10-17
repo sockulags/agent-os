@@ -6,6 +6,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import { prepareControls, runControls, scanSignals, signalDelta, blockingControls, POLICY_PATH } from './project-controls.mjs'
+import { complexityDelta, findLizard, lizardFunctions, withTemporaryFiles } from './analyzers.mjs'
 
 export const STATE_SCHEMA = 2
 export const STATE_FILE_NAME = '.agent-os-quality-ratchet.json'
@@ -185,7 +186,7 @@ function absolutePath(root, relativePath) {
   return target
 }
 
-function isSourcePath(relativePath) {
+export function isSourcePath(relativePath) {
   const normalized = relativePath.replaceAll('\\', '/')
   if (normalized.split('/').some((part) => ['.git', 'node_modules', 'dist', 'build', 'coverage'].includes(part))) {
     return false
@@ -349,9 +350,17 @@ function normalizeAnalyzer(value, name) {
 }
 
 export function detectOptionalAnalyzers({ spawn = spawnSync } = {}) {
+  const lizard = findLizard({ spawn })
+    ? {
+        status: 'integrated',
+        available: true,
+        integrated: true,
+        reason: 'lizard computes cyclomatic complexity deltas for touched source files.'
+      }
+    : unavailableAnalyzer('lizard is not installed; complexity deltas are unavailable and core Node evidence is used.')
   return Object.fromEntries(OPTIONAL_ANALYZERS.map((name) => [
     name,
-    commandDetected(name, spawn)
+    name === 'lizard' ? lizard : commandDetected(name, spawn)
       ? {
           status: 'detected-not-integrated',
           available: true,
@@ -511,6 +520,56 @@ function evidenceFor(state, candidate, dependencies, analyzers) {
   }
 }
 
+// Entry content is recoverable only for paths that were clean at begin: the baseline stores
+// hashes, not file contents. The working tree may hold either the filtered (line-ending converted)
+// or the raw blob form, so the one matching the recorded hash is used.
+function entryContent(root, entry, relativePath) {
+  const record = entry.files.find((file) => file.path === relativePath)
+  if (!record || record.kind !== 'file' || !entry.head || entry.dirtyPaths.includes(relativePath)) return null
+  const spec = `${entry.head}:${relativePath}`
+  for (const args of [['cat-file', '--filters', spec], ['cat-file', 'blob', spec]]) {
+    const content = runGit(root, args, { allowFailure: true })
+    if (content !== null && digest(content) === record.hash) return content
+  }
+  return null
+}
+
+function complexityEvidence(root, entry, sourceFiles, analyze) {
+  const touched = [...sourceFiles.added, ...sourceFiles.changed].sort()
+  if (!touched.length) return { status: 'available', reason: 'No touched source files remain.', ...complexityDelta([], []), beforeUnavailable: [] }
+  try {
+    const after = analyze(root, touched)
+    if (after === null) {
+      return { status: 'unavailable', reason: 'lizard is not installed; complexity deltas were not computed.' }
+    }
+    const beforeFiles = sourceFiles.changed.map((relativePath) => [relativePath, entryContent(root, entry, relativePath)])
+    const known = beforeFiles.filter(([, content]) => content !== null)
+    const beforeUnavailable = beforeFiles.filter(([, content]) => content === null).map(([relativePath]) => relativePath)
+    const before = known.length ? withTemporaryFiles(known, (directory) => analyze(directory, known.map(([file]) => file))) : []
+    const comparable = after.filter((fn) => !beforeUnavailable.includes(fn.file))
+    return {
+      status: 'available',
+      reason: 'lizard cyclomatic complexity for touched source files.',
+      ...complexityDelta(before, comparable),
+      beforeUnavailable
+    }
+  } catch (cause) {
+    return { status: 'unavailable', reason: `Complexity analysis failed: ${cause.message}` }
+  }
+}
+
+function complexitySignals(complexity, policy) {
+  const threshold = policy.complexity?.threshold
+  if (!threshold || complexity.status !== 'available') return []
+  return complexity.functions.filter((fn) => fn.after > threshold).map((fn) => ({
+    path: fn.path,
+    line: fn.line,
+    rule: 'complexity',
+    text: `${fn.function} cyclomatic complexity ${fn.before ?? 'new'} -> ${fn.after} (threshold ${threshold})`,
+    required: policy.blockSignals.includes('complexity')
+  }))
+}
+
 function readState(context) {
   if (!fs.existsSync(context.statePath)) return null
   let state
@@ -599,7 +658,20 @@ export function begin(cwd = process.cwd(), { detect = detectOptionalAnalyzers, e
   }
 }
 
-export function check(cwd = process.cwd(), { detect = detectOptionalAnalyzers, env = process.env, acceptPolicyChange = '' } = {}) {
+function defaultComplexityAnalyzer() {
+  let launcher
+  return (cwd, files) => {
+    if (launcher === undefined) launcher = findLizard()
+    return lizardFunctions(cwd, files, { launcher })
+  }
+}
+
+export function check(cwd = process.cwd(), {
+  detect = detectOptionalAnalyzers,
+  env = process.env,
+  acceptPolicyChange = '',
+  analyzeComplexity = defaultComplexityAnalyzer()
+} = {}) {
   const context = repositoryContext(cwd, env)
   const state = readState(context)
   if (!state) error(`No active quality ratchet baseline exists for ${context.root}. Run begin before the first mutation.`, 'BASELINE_MISSING')
@@ -615,9 +687,13 @@ export function check(cwd = process.cwd(), { detect = detectOptionalAnalyzers, e
   const policyChanged = oldSignature ? oldSignature !== prepared.signature : fs.existsSync(path.join(context.root, POLICY_PATH))
   if (acceptPolicyChange && !acceptPolicyChange.trim()) error('Policy acknowledgement requires a reason.', 'ARGUMENTS')
   const accepted = policyChanged && Boolean(acceptPolicyChange.trim())
-  const signals = signalDelta(state.entry.files, files).map(signal => ({
-    ...signal, required: prepared.policy.blockSignals.includes(signal.rule)
-  }))
+  evidence.complexity = complexityEvidence(context.root, state.entry, evidence.sourceFiles, analyzeComplexity)
+  const signals = [
+    ...signalDelta(state.entry.files, files).map(signal => ({
+      ...signal, required: prepared.policy.blockSignals.includes(signal.rule)
+    })),
+    ...complexitySignals(evidence.complexity, prepared.policy)
+  ]
   const results = policyChanged && !accepted ? [] : runControls(context.root, prepared, state.lastCheck?.evidence?.controls, env)
   const after = configured ? prepareControls(context.root, snapshot(context.root).files, env) : prepared
   evidence.controls = {
@@ -732,6 +808,16 @@ function humanList(values) {
   return values.length ? values.join(', ') : 'none'
 }
 
+function complexityLines(complexity) {
+  if (!complexity) return []
+  if (complexity.status !== 'available') return [`Complexity: unavailable (${complexity.reason})`]
+  return [
+    `Complexity (touched functions): ${complexity.increased} increased, ${complexity.added} new, ${complexity.decreased} decreased or removed; max ${complexity.maxAfter}`,
+    ...complexity.functions.slice(0, 10).map((fn) => `  ${fn.path}:${fn.line} ${fn.function}: ${fn.before ?? 'new'} -> ${fn.after}`),
+    ...(complexity.beforeUnavailable.length ? [`  before unavailable (dirty at begin): ${humanList(complexity.beforeUnavailable)}`] : [])
+  ]
+}
+
 export function formatEvidence(evidence) {
   const lines = [
     'Agent OS quality-ratchet evidence',
@@ -744,6 +830,7 @@ export function formatEvidence(evidence) {
     `Touched legacy after: ${evidence.touchedLegacy.after.status} (${humanList(evidence.touchedLegacy.after.files)})`,
     `Package dependencies: +${evidence.packageDependencies.added.length} -${evidence.packageDependencies.removed.length} ~${evidence.packageDependencies.updated.length} (${evidence.packageDependencies.status})`,
     ...OPTIONAL_ANALYZERS.map((name) => `Optional analyzer ${name}: ${evidence.optionalAnalyzers.candidate[name].status} — ${evidence.optionalAnalyzers.candidate[name].reason}`),
+    ...complexityLines(evidence.complexity),
     `Candidate fingerprint: ${evidence.candidateFingerprint}`,
     ...(evidence.controls ? [
       `Project controls: ${evidence.status}; ${evidence.controls.results.length} checks; ${evidence.controls.signals.length} new advisory/required signals`,

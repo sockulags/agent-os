@@ -29,7 +29,7 @@ export function readPolicy(root) {
   const file = path.join(root, POLICY_PATH)
   if (!fs.existsSync(file)) return { schema: 1, checks: [], blockSignals: [], protectedFiles: [] }
   const policy = JSON.parse(fs.readFileSync(file, 'utf8'))
-  exactKeys(policy, ['schema', 'checks', 'blockSignals', 'protectedFiles'], 'quality policy')
+  exactKeys(policy, ['schema', 'checks', 'blockSignals', 'protectedFiles', 'complexity'], 'quality policy')
   if (policy.schema !== 1 || !Array.isArray(policy.checks)) throw new Error('Quality policy requires schema 1 and checks')
   const ids = new Set()
   for (const check of policy.checks) {
@@ -54,8 +54,17 @@ export function readPolicy(root) {
   }
   policy.blockSignals ??= []
   policy.protectedFiles ??= []
-  if (!Array.isArray(policy.blockSignals) || policy.blockSignals.some(name => !Object.hasOwn(SIGNALS, name))) {
+  if (!Array.isArray(policy.blockSignals) ||
+      policy.blockSignals.some(name => !Object.hasOwn(SIGNALS, name) && name !== 'complexity')) {
     throw new Error('Unknown blockSignals rule')
+  }
+  if (policy.complexity !== undefined) {
+    exactKeys(policy.complexity, ['threshold'], 'complexity')
+    const { threshold } = policy.complexity
+    if (!Number.isInteger(threshold) || threshold < 1 || threshold > 200) throw new Error('complexity.threshold must be an integer between 1 and 200')
+  }
+  if (policy.blockSignals.includes('complexity') && !policy.complexity) {
+    throw new Error('The complexity blockSignals rule requires complexity.threshold')
   }
   if (!Array.isArray(policy.protectedFiles) || !policy.protectedFiles.every(relativeFile)) throw new Error('Invalid protectedFiles')
   return policy

@@ -84,8 +84,8 @@ PowerShell `-EncodedCommand` payload that resolves `$env:PLUGIN_ROOT` at runtime
 The ratchet begins an exact worktree- and host-session-local baseline before the first mutation when `deliver-work`
 can run it, checks the candidate before `simplifier-review`, and reports source-file/NLOC,
 legacy-before/after, dependency, and optional-analyzer evidence. These are signals for semantic
-judgment, not score or raw-count thresholds. Missing Lizard or jscpd is reported as unavailable,
-never clean. A Stop hook blocks a missing, corrupt, or stale active lifecycle check until the same
+judgment, not score or raw-count thresholds. With lizard installed it adds cyclomatic complexity
+before and after for touched functions; missing lizard is reported as unavailable, never clean. A Stop hook blocks a missing, corrupt, or stale active lifecycle check until the same
 host session records a fresh check; `stop_hook_active` does not bypass that requirement. When a fresh
 check keeps failing required project controls, the hook releases the stop to the user after three
 re-entries on the unchanged candidate and keeps delivery blocked. Without a
