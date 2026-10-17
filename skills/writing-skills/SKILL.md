@@ -36,6 +36,9 @@ the adjacent requests it must leave alone. Measure a rewrite with `scripts/trigg
 - Use prose for judgment, examples for preferred shapes, and scripts for exact transformations.
 - Add ordering only where changing the order causes a demonstrated failure.
 - Keep references one hop away and load them only when the task needs them.
+- Keep the contract a run must obey, including stop conditions and gates, in `SKILL.md` itself.
+  After compaction a host re-attaches only the start of an invoked `SKILL.md`, not files it read;
+  the validator caps `SKILL.md` at 18,000 characters for that reason.
 
 ## Enforcement ladder
 

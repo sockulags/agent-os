@@ -5,6 +5,9 @@ import path from 'node:path'
 import process from 'node:process'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 
+// About 4,500 tokens at four characters per token.
+const SKILL_COMPACTION_CHARS = 18000
+
 const scriptDir = path.dirname(fileURLToPath(import.meta.url))
 
 function read(file) {
@@ -294,6 +297,11 @@ export function validate(root = path.resolve(scriptDir, '..')) {
     if (/: | #/.test(meta.description ?? '') && !/^["']/.test(meta.description)) {
       fail('SKILL_DESCRIPTION_YAML', `${name}: an unquoted description must not contain ": " or " #".`)
     }
+    // Claude Code re-attaches only the first 5,000 tokens of an invoked SKILL.md after compaction, and
+    // files the skill told the model to read are not re-attached. Keep each contract inside that budget.
+    if (skillText.length > SKILL_COMPACTION_CHARS) {
+      fail('SKILL_SIZE', `${name}: SKILL.md has ${skillText.length} characters; keep it under ${SKILL_COMPACTION_CHARS} so it survives compaction.`)
+    }
 
     const docFile = path.join(docsSkillsRoot, `${name}.md`)
     if (!fs.existsSync(docFile)) {
@@ -535,7 +543,7 @@ export function validate(root = path.resolve(scriptDir, '..')) {
     }
   }
 
-  checkContains(diagnostics, path.join(root, 'skills/deliver-work/workflow.md'), [
+  checkContains(diagnostics, path.join(root, 'skills/deliver-work/SKILL.md'), [
     '**Outcome:**',
     '**Boundaries:**',
     '**Ground truth:**',
@@ -675,7 +683,7 @@ export function validate(root = path.resolve(scriptDir, '..')) {
     'missing coherent delivery structure to `plan-work`',
     'epic or feature\'s aggregate verification'
   ], 'BATCH_WORKFLOW_CONTRACT')
-  checkContains(diagnostics, path.join(root, 'skills/deliver-work/workflow.md'), [
+  checkContains(diagnostics, path.join(root, 'skills/deliver-work/SKILL.md'), [
     '## Confirm one delivery unit',
     'one coherent implementation issue',
     'stop before mutation and return it for',
@@ -700,13 +708,13 @@ export function validate(root = path.resolve(scriptDir, '..')) {
     'A motivated split of required work goes',
     'Tracker readiness or an existing issue does not grant mutation authority'
   ], 'SCOPE_TWO_AXIS_CONTRACT')
-  checkContains(diagnostics, path.join(root, 'skills/deliver-work/workflow.md'), [
+  checkContains(diagnostics, path.join(root, 'skills/deliver-work/SKILL.md'), [
     'The coordinator owns integration, aggregate review, and aggregate',
     'verification.'
   ], 'BATCH_DELIVERY_BOUNDARY')
   checkContains(diagnostics, path.join(root, 'skills/batch-work/SKILL.md'), [
     'Treat the integrated batch as material.',
-    '../deliver-work/workflow.md#review-gate'
+    '../deliver-work/SKILL.md#review-gate'
   ], 'BATCH_REVIEW_GATE')
   for (const script of ['manifest-hash.mjs', 'test-manifest-hash.mjs']) {
     if (!fs.existsSync(path.join(root, 'skills/batch-work/scripts', script))) {
