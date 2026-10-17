@@ -31,8 +31,11 @@ npx @sockulags/agent-os@latest doctor
 - whether the quality-ratchet Stop hook is configured;
 - whether a newer version is published on npm. `--offline` skips that lookup.
 
-Every finding names the command that fixes it. The command exits with 1 when an install differs from
-the CLI, so a team can run it in an onboarding script. The `list-skills` skill also prints the
+Each finding says how to fix it. For a plugin-only user whose policy block is old, that is the
+`init-agent-os global` skill, because the CLI's `update` would add a direct install next to the
+plugin. A Claude plugin loaded in place from a local directory marketplace is judged by the
+`plugin.json` in that directory, not by its recorded version. The command exits with 1 when an
+install differs from the CLI, so a team can run it in an onboarding script. The `list-skills` skill also prints the
 installed version inside a session.
 
 ## Keep installs current
@@ -44,10 +47,11 @@ scope they installed, then starts a new host session:
 npx @sockulags/agent-os@latest update --platform both --scope user
 ```
 
-**Claude Code plugin installs.** Claude Code turns on auto-update only for Anthropic's own
-marketplaces and marketplaces added from claude.ai, not for this one. Turn it on per marketplace with
-`autoUpdate`. A team can ship the setting through managed settings, or through a repository's
-`.claude/settings.json`, which applies once the developer trusts the workspace:
+**Claude Code plugin installs.** Claude Code turns on auto-update by default for the official
+Anthropic marketplaces; third-party marketplaces such as this one default to off. A developer can
+turn it on in `/plugin` under Marketplaces. A team can set `autoUpdate` for everyone through managed
+settings, or through a repository's `.claude/settings.json`, which applies once the developer trusts
+the workspace:
 
 ```json
 {
@@ -64,9 +68,11 @@ marketplaces and marketplaces added from claude.ai, not for this one. Turn it on
 In managed settings, `"enabledPlugins": { "agent-os@agent-os-marketplace": true }` force-enables the
 plugin so developers cannot turn it off. An update applies after `/reload-plugins` or a restart.
 Without auto-update, run `claude plugin marketplace update agent-os-marketplace` and then
-`claude plugin update agent-os@agent-os-marketplace`. These settings are described in the Claude
-Code [plugin marketplace](https://code.claude.com/docs/en/plugin-marketplaces) documentation (read
-2026-10-17).
+`claude plugin update agent-os@agent-os-marketplace`, adding `--scope project` or `--scope local`
+for those installs. Sources, read 2026-10-17: the `extraKnownMarketplaces` entry in the Claude Code
+[settings reference](https://code.claude.com/docs/en/settings-reference),
+[plugins for organizations](https://code.claude.com/docs/en/plugins/org), and
+[turning on auto-update](https://code.claude.com/docs/en/plugins/host-marketplace#turn-on-auto-update).
 
 **Codex plugin installs.** Run `codex plugin marketplace upgrade agent-os`, reinstall the plugin, and
 start a new session.
