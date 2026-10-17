@@ -11,6 +11,9 @@ import {
   HOOK_TIMEOUT_SECONDS,
   QUALITY_HOOK_MARKER
 } from '../skills/quality-ratchet/scripts/quality-delta.mjs'
+import { planPolicyUpdate, policyTargets } from '../skills/init-agent-os/scripts/policy-block.mjs'
+
+export { planPolicyUpdate }
 
 const packageRoot = fileURLToPath(new URL('../', import.meta.url))
 const packagePath = path.join(packageRoot, 'package.json')
@@ -22,8 +25,6 @@ export const MARKETPLACE_SOURCE = 'sockulags/agent-os'
 export const INSTALL_MANIFEST = '.agent-os-install.json'
 export const QUALITY_HOOK_EVENT = 'Stop'
 
-const BEGIN_MARKER = '<!-- BEGIN AGENT OS -->'
-const END_MARKER = '<!-- END AGENT OS -->'
 const PLATFORM_VALUES = ['claude', 'codex', 'both']
 const METHOD_VALUES = ['direct', 'plugin']
 const SCOPE_VALUES = ['user', 'project', 'local']
@@ -636,6 +637,11 @@ function replaceManagedSkills(target, sourceRoot, skillNames, previousManifest, 
     for (const name of skillNames) {
       fsImpl.cpSync(path.join(sourceRoot, name), path.join(stageRoot, name), { recursive: true })
     }
+    // The init-agent-os policy script needs the policy source outside a checkout or plugin root.
+    const policySource = path.join(sourceRoot, '..', 'policy.md')
+    if (skillNames.includes('init-agent-os') && fsImpl.existsSync(policySource)) {
+      fsImpl.copyFileSync(policySource, path.join(stageRoot, 'init-agent-os', 'policy.md'))
+    }
 
     if (namesToBackup.length > 0) fsImpl.mkdirSync(backupRoot, { recursive: true })
     for (const name of namesToBackup) {
@@ -846,46 +852,9 @@ function executePlugin(options, { output, execute, exists }) {
   }
 }
 
-function countOccurrences(content, value) {
-  return content.split(value).length - 1
-}
-
-export function planPolicyUpdate(content, policy) {
-  const normalizedPolicy = policy.trimEnd()
-  const block = BEGIN_MARKER + '\n' + normalizedPolicy + '\n' + END_MARKER
-  const beginCount = countOccurrences(content, BEGIN_MARKER)
-  const endCount = countOccurrences(content, END_MARKER)
-
-  if (beginCount === 0 && endCount === 0) {
-    const separator = content.length === 0 ? '' : content.endsWith('\n') ? '\n' : '\n\n'
-    return { changed: true, status: 'ADDED', content: content + separator + block + '\n' }
-  }
-
-  const start = content.indexOf(BEGIN_MARKER)
-  const endStart = content.indexOf(END_MARKER)
-  if (beginCount !== 1 || endCount !== 1 || start >= endStart) {
-    throw new CliError(
-      'Malformed Agent OS policy markers (begin=' + beginCount + ' end=' + endCount + '); no files were changed.'
-    )
-  }
-
-  const end = endStart + END_MARKER.length
-  const current = content.slice(start, end)
-  if (current === block) return { changed: false, status: 'OK', content }
-  return {
-    changed: true,
-    status: 'UPDATED',
-    content: content.slice(0, start) + block + content.slice(end)
-  }
-}
-
-function preparePolicyPlans({ fsImpl, homeDir, policyFile }) {
+function preparePolicyPlans({ fsImpl, homeDir, policyFile, platform }) {
   const policy = fsImpl.readFileSync(policyFile, 'utf8')
-  const targets = [
-    path.join(homeDir, '.claude', 'CLAUDE.md'),
-    path.join(homeDir, '.codex', 'AGENTS.md')
-  ]
-  return targets.map((target) => {
+  return policyTargets(selectedPlatforms(platform), homeDir).map((target) => {
     const content = fsImpl.existsSync(target) ? fsImpl.readFileSync(target, 'utf8') : ''
     return { target, ...planPolicyUpdate(content, policy) }
   })
@@ -913,7 +882,7 @@ export async function executeInstall(options, {
   policyFile = packagedPolicyPath()
 } = {}) {
   const policyPlans = options.policy
-    ? preparePolicyPlans({ fsImpl, homeDir, policyFile })
+    ? preparePolicyPlans({ fsImpl, homeDir, policyFile, platform: options.platform })
     : null
   const directPlan = options.method === 'plugin'
     ? null
@@ -947,7 +916,7 @@ export async function executeInstall(options, {
   }
 
   if (options.policy) {
-    output.write('\n[Shared policy]\nSyncing the global Claude Code and Codex policy files...\n')
+    output.write('\n[Shared policy]\nSyncing the global policy for the selected platforms...\n')
     applyPolicyPlans(policyPlans, { output, fsImpl })
   }
 }
@@ -964,7 +933,7 @@ export function printHelp(output = process.stdout) {
     '  -p, --platform <name>  claude, codex, or both\n' +
     '  -m, --method <name>    direct (default) or plugin\n' +
     '  -s, --scope <name>     user or project; plugin mode also supports local\n' +
-    '  --policy               Sync ~/.claude/CLAUDE.md and ~/.codex/AGENTS.md\n' +
+    '  --policy               Sync the global policy file of each selected platform\n' +
     '  --no-policy            Leave global policy files unchanged\n' +
     '  -y, --yes              Accept defaults; useful in scripts\n' +
     '  --dry-run              Show the planned flow without running commands\n' +

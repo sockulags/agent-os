@@ -109,7 +109,7 @@ If you chose `--no-policy`, invoke the setup skill once per machine after openin
 $init-agent-os global                 # Codex
 ```
 
-The skill uses the bundled deterministic PowerShell writer and shows the resulting diff. Never edit
+The skill runs the bundled deterministic Node writer and shows the resulting diff. Never edit
 inside the managed markers by hand — see [Global policy](/guide/global-policy) for why.
 
 Re-run either the npm update with policy sync enabled or `init-agent-os global` after a release that
@@ -123,7 +123,7 @@ location, coherent planning surface, stable identities, batch execution, and dur
 a recommendation. It writes the smallest useful policy and shows the resulting diff.
 
 The result is the repository's [project policy](/guide/project-policy), a living document that
-`deliver-work` will later propose additions to.
+`record-lesson` extends when a session produces a durable lesson.
 
 ## Your first run
 

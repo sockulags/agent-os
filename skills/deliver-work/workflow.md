@@ -116,7 +116,7 @@ waive required review; do not solicit a waiver. When review is required:
    callable or returns no ID, stop without calling a wait tool. Never call a wait tool with empty
    receiver IDs or construct a `/root/...` reviewer label yourself. Use the host's equivalent launch
    receipt elsewhere. Give the reviewer the outcome, boundaries, ground truth, candidate diff, and
-   verification evidence — not the implementer's reasoning.
+   verification evidence, not the implementer's reasoning.
 4. Use one general evidence-based reviewer by default, briefed with the finding contract above.
    Add a focused security or compatibility reviewer
    only when a distinct risk needs that lens; do not create a panel by default.

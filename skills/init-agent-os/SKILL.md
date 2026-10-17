@@ -12,10 +12,14 @@ The invocation authorizes setup writes for the named target. Use one mode per ru
 
 Invoked as `init-agent-os global`.
 
-1. Verify the plugin is visible on this platform (skills listed under the `agent-os` namespace). Report what you find.
-2. Run `scripts/policy-block.ps1 -Check` and report drift between `policy.md` and the managed blocks in `~/.claude/CLAUDE.md` and `~/.codex/AGENTS.md`.
-3. Run `scripts/policy-block.ps1` to apply the managed blocks and show the resulting diff. This
-   deterministic writer shares its marker contract with the npm installer's policy writer.
+1. Verify the agent-os skills are visible on this platform: under the `agent-os` namespace for a
+   plugin install, or as top-level skills for a direct install. Report what you find.
+2. Resolve `scripts/policy-block.mjs` relative to this loaded `SKILL.md` and run it with Node and
+   `--check`. Report drift between the policy source and the managed blocks. Without
+   `--platform`, it targets `~/.claude/CLAUDE.md` and `~/.codex/AGENTS.md` for the hosts present on
+   this machine.
+3. Run the same script without `--check` to apply the managed blocks and show the resulting diff.
+   The npm installer imports this writer, so both share one marker contract.
 
 ## Mode: repo init (default)
 

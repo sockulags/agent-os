@@ -1,7 +1,7 @@
 ---
 title: record-lesson
 description: Record one durable lesson in the repo's project policy or the global agent-os policy.
-skill-description: Records one durable lesson where it applies — the repo's project policy or the global agent-os policy. User-invoked when a session produced a lesson worth keeping, often after notice-lesson offers it. Not for session-specific details or facts the repository already records.
+skill-description: Records one durable lesson where it applies, in the repo's project policy or the global agent-os policy. User-invoked when a session produced a lesson worth keeping, often after notice-lesson offers it. Not for session-specific details or facts the repository already records.
 summary: Record a durable lesson in repo or global policy
 ---
 
@@ -16,8 +16,9 @@ hold only in this repository go to the project policy section that
 [init-agent-os](/skills/init-agent-os) seeds.
 
 **Global level:** lessons about how the developer works that would hold in a repository that has
-never seen them go to `policy.md` in the agent-os repository — the source of truth behind the
-managed blocks. After that edit, the developer is reminded to run `init-agent-os global` to
+never seen them go to `policy.md` in the agent-os repository, the source of truth behind the
+managed blocks. After that edit, the block is synced from that checkout with the init-agent-os policy
+script and `--source`, or the developer is reminded to run `init-agent-os global` to
 reinstall the blocks. An installed managed block is never edited directly; if the agent-os
 repository is not reachable, the workflow stops with the exact lesson text as a handoff.
 

@@ -22,7 +22,8 @@ rewrite:
 - **Structure imposed on the content rather than drawn from it.** Ideas forced into threes, "not just
   X but Y", ranges whose ends share no scale, and bold labels that restate the line they introduce.
 - **Conversational residue.** Openers that congratulate the reader, closing offers of further help,
-  and disclaimers about what could not be checked. State the finding, or go find it.
+  and vague hedges about what might not hold. State the finding, or go find it. A claim that stays
+  unverified after checking is a fact: name it once, in one plain sentence.
 
 Two checks settle a doubtful sentence. Ask what it tells the reader to do or know; if it cannot be
 restated as a fact, an instruction, or a number, cut it. Then ask whether it could appear unchanged

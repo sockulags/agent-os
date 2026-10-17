@@ -39,6 +39,27 @@ test('required failures block repeatedly; fixed code passes and Stop never rerun
   assert.ok(fs.existsSync(started.statePath + '.report.json'))
 })
 
+test('an unfixable required failure releases Stop to the user after the bounded limit', t => {
+  const f = fixture(t, [required])
+  begin(f.root, options)
+  f.write('source.ts', 'BROKEN')
+  assert.equal(check(f.root, options).status, 'blocked')
+  assert.equal(hook(f.root, { stop_hook_active: false }).decision, 'block')
+  assert.equal(hook(f.root, { stop_hook_active: true }).decision, 'block')
+  assert.equal(hook(f.root, { stop_hook_active: true }).decision, 'block')
+  const released = hook(f.root, { stop_hook_active: true })
+  assert.equal(released.decision, undefined)
+  assert.match(released.systemMessage, /verify: failed/)
+  assert.equal(hook(f.root, { stop_hook_active: false }).decision, undefined)
+
+  f.write('source.ts', 'BROKEN again')
+  assert.equal(check(f.root, options).status, 'blocked')
+  assert.equal(hook(f.root, { stop_hook_active: true }).decision, 'block')
+  f.write('source.ts', 'export const value = 3')
+  assert.equal(check(f.root, options).status, 'ok')
+  assert.deepEqual(hook(f.root), {})
+})
+
 test('advisory failures and new exception signals do not gate delivery', t => {
   const f = fixture(t, [{ ...required, required: false }])
   f.write('source.ts', '// @ts-ignore\nexport const value = 1')

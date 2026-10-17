@@ -9,15 +9,15 @@ Keep the active change aligned with the developer's requested outcome. The direc
 accepted spec, and project policy define the boundary. Classify every discovery on both axes before
 editing:
 
-- **Relation — required:** the requested outcome cannot work or be verified without it. It normally
+- **Relation, required:** the requested outcome cannot work or be verified without it. It normally
   belongs in the current mission.
-- **Relation — adjacent:** useful improvement that is relevant but not needed now. Offer it as a
+- **Relation, adjacent:** useful improvement that is relevant but not needed now. Offer it as a
   valuable follow-up only when it is actionable.
-- **Relation — unrelated:** no relevant connection to the requested outcome. Leave it out and do
+- **Relation, unrelated:** no relevant connection to the requested outcome. Leave it out and do
   not manufacture a proposal.
-- **Mandate — covered:** the existing request and policy cover the work. Continue within the
+- **Mandate, covered:** the existing request and policy cover the work. Continue within the
   covered boundary; do not ask for a second approval.
-- **Mandate — new decision or external action:** the existing authority does not cover it. Ask a
+- **Mandate, new decision or external action:** the existing authority does not cover it. Ask a
   focused question only when the required work cannot proceed without that decision or action.
 
 Risk controls how covered work is implemented and verified. Risk can reveal a missing decision, but

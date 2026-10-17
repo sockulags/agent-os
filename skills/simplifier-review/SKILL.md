@@ -1,6 +1,7 @@
 ---
 name: simplifier-review
-description: Reviews the current implementation diff for unnecessary code, abstractions, dependencies, and solution layers without changing files. It activates during code review, including deliver-work review, when the candidate should be checked for a simpler solution. It skips whole-repository audits, initial design, code golf, and correctness or security review outside complexity caused by the diff.
+description: Reviews the current implementation diff for unnecessary code, abstractions, dependencies, and solution layers without changing files. check-work and deliver-work apply it as their simplification lens. Use manually when the developer asks only for a simplification review of a diff. Not for whole-repository audits, initial design, code golf, or correctness and security review.
+disable-model-invocation: true
 ---
 
 # Review for simplification

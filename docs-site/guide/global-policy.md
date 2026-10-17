@@ -67,20 +67,25 @@ verification, design-system, planning, batch, and convention defaults. `init-age
 
 ## How the block is installed
 
-The npm installer's Node writer and `skills/init-agent-os/scripts/policy-block.ps1` share the same
+The npm installer imports `skills/init-agent-os/scripts/policy-block.mjs`, so both use the same
 narrow contract: add exactly one block when none exists, update only the text inside well-formed
 markers, abort without mutating anything when the markers are duplicated or malformed, and never
-touch text outside the block. The npm installer preflights both policy targets before it installs
-skills.
+touch text outside the block. The npm installer syncs only the selected platforms and preflights
+those targets before it installs skills. Installed copies of `init-agent-os` carry the `policy.md`
+they were installed with, so the script works without a checkout.
 
 Run it in check mode to see drift without writing:
 
-```powershell
-pwsh skills/init-agent-os/scripts/policy-block.ps1 -Check
+```bash
+node skills/init-agent-os/scripts/policy-block.mjs --check
 ```
 
+Add `--platform claude`, `codex`, or `both` to choose targets; by default the script targets the
+hosts present on the machine. `--source <file>` syncs from another `policy.md`, such as an edited
+checkout.
+
 Check mode never writes. It exits `0` when the target is in sync, `1` on drift or a missing file, and
-`2` when the markers are malformed — the same exit code the write path uses when it aborts. An empty
+`2` when the markers are malformed, the same exit code the write path uses when it aborts. An empty
 target file counts as "no block", and the block becomes the whole file.
 
 Drift is silent: nothing warns you when `policy.md` moves ahead of the installed blocks. Re-run the

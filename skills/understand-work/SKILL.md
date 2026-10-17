@@ -6,8 +6,8 @@ disable-model-invocation: true
 
 # Understand work
 
-Find the need behind the stated wish. The deliverable is a settled understanding — what the
-developer wants, why now, and what was ruled out — not a plan or a solution.
+Find the need behind the stated wish. The deliverable is a settled understanding of what the
+developer wants, why now, and what was ruled out. It is not a plan or a solution.
 
 ## Questioning loop
 

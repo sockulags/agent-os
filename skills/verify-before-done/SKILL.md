@@ -1,6 +1,6 @@
 ---
 name: verify-before-done
-description: Requires fresh execution evidence before an agent states that implemented work is complete, fixed, passing, or ready to ship. It activates at the completion-claim boundary after changes or validation, including requests to mark work done or report test status. It skips diagnosis, planning, speculative review, and status reports that make no completion claim.
+description: Requires fresh execution evidence before an agent states that implemented work is complete, fixed, passing, or ready to ship. It activates at the completion-claim boundary after changes or validation, including requests to mark work done or to report whether tests pass. It skips diagnosis, planning, speculative review, and progress updates that claim nothing is complete or passing.
 ---
 
 # Verify before done

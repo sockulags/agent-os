@@ -66,6 +66,11 @@ try {
     rewrite(path.join(target, 'skills/scope-guard/SKILL.md'), (text) => text.replace('name: scope-guard', 'name: wrong-name'))
   }, 'SKILL_NAME')
 
+  expectFailure('unquoted colon in description', (target) => {
+    rewrite(path.join(target, 'skills/scope-guard/SKILL.md'), (text) =>
+      text.replace(/^description: /m, 'description: Scope rule: '))
+  }, 'SKILL_DESCRIPTION_YAML')
+
   expectFailure('missing Codex manual gate', (target) => {
     fs.rmSync(path.join(target, 'skills/shape-work/agents/openai.yaml'))
   }, 'SKILL_MANUAL_GATE')
@@ -326,7 +331,7 @@ try {
 
   expectFailure('scope-guard loses mandate axis', (target) => {
     rewrite(path.join(target, 'skills/scope-guard/SKILL.md'), (text) =>
-      text.replace('- **Mandate — covered:**', '- **Mandate — omitted:**'))
+      text.replace('- **Mandate, covered:**', '- **Mandate, omitted:**'))
   }, 'SCOPE_TWO_AXIS_CONTRACT')
 
   expectFailure('shape-work may complete without implementation issues', (target) => {

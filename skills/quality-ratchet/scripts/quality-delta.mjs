@@ -11,6 +11,7 @@ export const STATE_SCHEMA = 2
 export const STATE_FILE_NAME = '.agent-os-quality-ratchet.json'
 export const QUALITY_HOOK_MARKER = '--agent-os-hook=quality-ratchet'
 export const HOOK_TIMEOUT_SECONDS = 10
+export const STOP_BLOCK_LIMIT = 3
 
 const SOURCE_EXTENSIONS = new Set([
   '.c', '.cc', '.cpp', '.cxx', '.cs', '.css', '.go', '.h', '.hpp', '.java', '.js', '.jsx',
@@ -657,6 +658,28 @@ function blockResult(reason) {
   return { decision: 'block', reason }
 }
 
+// A required control can fail for reasons the agent cannot fix (a missing tool, a flaky
+// dependency). After repeated re-entered Stops on the same unchanged candidate, the hook hands the
+// decision to the user instead of looping. The baseline stays active, so delivery stays blocked.
+function controlBlockResult(context, state, fingerprint, blockers, payload) {
+  const summary = blockers.slice(0, 5).join('; ')
+  const released = state.stopRelease?.candidateFingerprint === fingerprint
+  const count = state.stopBlocks?.candidateFingerprint === fingerprint ? state.stopBlocks.count + 1 : 1
+  if (released || (payload?.stop_hook_active === true && count > STOP_BLOCK_LIMIT)) {
+    if (!released) {
+      state.stopRelease = { candidateFingerprint: fingerprint }
+      writeState(context, state)
+    }
+    return {
+      systemMessage: `Quality ratchet: required project controls still fail for the unchanged candidate: ${summary}. ` +
+        'Stopping is allowed so you can decide how to proceed; delivery stays blocked until a passing check.'
+    }
+  }
+  state.stopBlocks = { candidateFingerprint: fingerprint, count }
+  writeState(context, state)
+  return blockResult(`Project controls block delivery: ${summary}. Fix the reported problem; do not rerun unchanged failing checks. If it cannot be fixed in this session, report the blocker and stop.`)
+}
+
 function lifecycleCommand(command) {
   return `"${process.execPath}" "${fileURLToPath(import.meta.url)}" ${command}`
 }
@@ -689,7 +712,7 @@ export function hook(cwd = process.cwd(), payload = {}, { env = process.env } = 
         if (!controls || prepared.fingerprint !== controls.fingerprint) return blockResult('Project control evidence is stale; run quality-ratchet check.')
       }
       const blockers = blockingControls(controls)
-      if (blockers.length) return blockResult(`Project controls block delivery: ${blockers.slice(0, 5).join('; ')}. Fix the reported problem; do not rerun unchanged failing checks.`)
+      if (blockers.length) return controlBlockResult(context, state, candidate.fingerprint, blockers, payload)
       fs.rmSync(context.statePath, { force: true })
       return allowResult()
     }

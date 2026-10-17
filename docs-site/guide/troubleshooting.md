@@ -97,13 +97,13 @@ installed globally.
 Nothing updates the installed blocks automatically when `policy.md` changes — drift is silent.
 Check without writing:
 
-```powershell
-pwsh skills/init-agent-os/scripts/policy-block.ps1 -Check
+```bash
+node skills/init-agent-os/scripts/policy-block.mjs --check
 ```
 
 Exit `0` is in sync; `1` is drift or a missing block; `2` is malformed markers. On drift, run
 `init-agent-os global` to reinstall. Never edit inside the `<!-- BEGIN/END AGENT OS -->` markers by
-hand. Both the npm installer's Node writer and the setup skill's PowerShell writer use the same
+hand. The npm installer and the setup skill use the same Node writer and
 managed-block rules, and hand edits are overwritten on the next sync.
 
 ## A workflow skill did not trigger

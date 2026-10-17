@@ -1,6 +1,6 @@
 ---
 name: quality-ratchet
-description: Keeps implementation quality from regressing by comparing a candidate with its exact entry state and separating bounded touched-surface improvement from cleanup. It activates during implementation and delivery review, not for repository-wide debt hunts or line-count optimization.
+description: Keeps implementation quality from regressing by comparing a candidate with its exact entry state and separating bounded touched-surface improvement from cleanup. It activates during implementation, not for review-only requests, repository-wide debt hunts, or line-count optimization.
 ---
 
 # Quality ratchet
@@ -62,7 +62,10 @@ IDs exist. Stop uses payload
 `session_id`, treating a non-empty `turn_id` as Codex and otherwise as Claude; without `session_id`,
 it retains the command environment for direct/manual use. A worktree without an active baseline for
 the current session is a cheap no-op. A re-entered Stop hook remains blocked until that same session
-records a fresh passing `check`; the `stop_hook_active` payload does not bypass the lifecycle requirement. A fresh passing Stop clears only the
+records a fresh passing `check`; the `stop_hook_active` payload does not bypass the lifecycle requirement.
+The one bounded exception is a fresh check whose required project controls keep failing: after three
+re-entered Stops on the same unchanged candidate, the hook allows the stop with a user-visible
+message and keeps the baseline active, so delivery stays blocked. A fresh passing Stop clears only the
 current session state. Run `clear` deliberately from the same host session when abandoning an
 implementation attempt; uninstall is not currently a command.
 

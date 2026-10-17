@@ -1,7 +1,7 @@
 ---
 title: quality-ratchet
 description: Keep implementation quality from regressing without turning delivery into cleanup.
-skill-description: Keeps implementation quality from regressing by comparing a candidate with its exact entry state and separating bounded touched-surface improvement from cleanup. It activates during implementation and delivery review, not for repository-wide debt hunts or line-count optimization.
+skill-description: Keeps implementation quality from regressing by comparing a candidate with its exact entry state and separating bounded touched-surface improvement from cleanup. It activates during implementation, not for review-only requests, repository-wide debt hunts, or line-count optimization.
 summary: Compare exact entry and candidate evidence without score gates
 ---
 
@@ -54,6 +54,9 @@ identifies Codex by its required non-empty `turn_id`, and otherwise uses the Cla
 The Stop hook blocks corrupt or stale active evidence, unacknowledged control-policy changes,
 and failed explicit project requirements. It validates recorded results without rerunning commands. Without an active baseline for the current session it is a cheap no-op. Re-entry via
 `stop_hook_active` remains blocked until a fresh check; a fresh Stop then clears that session's state.
+When a fresh check keeps failing required project controls, for example because a tool is missing,
+the hook allows the stop after three re-entries on the unchanged candidate and shows the failing
+controls to the user. The baseline stays active, so delivery stays blocked until a passing check.
 Raw structural counts never block completion. New exception signals are advisory unless the project
 explicitly selects them as requirements.
 

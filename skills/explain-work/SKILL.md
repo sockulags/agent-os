@@ -6,13 +6,13 @@ disable-model-invocation: true
 
 # Explain work
 
-Say what the work solves as if the reader knows no technical terms — then let the developer judge
+Say what the work solves as if the reader knows no technical terms, then let the developer judge
 it.
 
 ## The summary
 
 Cover, in everyday language: the problem it solves, who feels that problem, what changes in their
-day when it works, and what it deliberately will not do. No technical vocabulary at all — if the
+day when it works, and what it deliberately will not do. No technical vocabulary at all. If the
 summary cannot stand without a technical term, the understanding is not finished; go back and
 understand before explaining. Keep it short enough to read in under a minute: a TLDR, not a report.
 
