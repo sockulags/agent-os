@@ -55,7 +55,9 @@ semantic review and pass the evidence to that review. Diff review automatically 
 unnecessary code and solution layers are removed rather than carried into delivery. Test selection applies
 [proportional-testing](/skills/proportional-testing): protect the changed behavior and plausible
 regressions with the minimum meaningful test surface, while retaining required delivery checks. The
-agent chooses the local method.
+agent chooses the local method. At delivery it runs the ratchet's `finish`, which closes the baseline
+only after a passing check; a turn that ends earlier, for example to ask the developer a question,
+keeps the baseline for the next turn.
 
 ## Review without a review panel
 

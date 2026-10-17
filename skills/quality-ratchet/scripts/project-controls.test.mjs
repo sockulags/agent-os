@@ -4,7 +4,7 @@ import os from 'node:os'
 import path from 'node:path'
 import { execFileSync } from 'node:child_process'
 import test from 'node:test'
-import { begin, check, hook, clear } from './quality-delta.mjs'
+import { begin, check, finish, hook, clear } from './quality-delta.mjs'
 
 const options = { detect: () => ({}) }
 function fixture(t, checks = [], extra = {}) {
@@ -110,6 +110,19 @@ test('dynamic checks and failed static checks are never reused', t => {
     assert.equal(check(f.root, options).controls.results[0].cached, false)
     assert.equal(f.count(), 2)
   }
+})
+
+test('finish keeps the baseline while a required control fails and closes it once it passes', t => {
+  const f = fixture(t, [required])
+  const started = begin(f.root, options)
+  f.write('source.ts', 'BROKEN')
+  const refused = finish(f.root, options)
+  assert.equal(refused.closed, false)
+  assert.equal(refused.evidence.status, 'blocked')
+  assert.equal(fs.existsSync(started.statePath), true)
+  f.write('source.ts', 'export const value = 4')
+  assert.equal(finish(f.root, options).closed, true)
+  assert.equal(fs.existsSync(started.statePath), false)
 })
 
 test('policy changes require explicit acknowledgement and cannot be cleared silently', t => {

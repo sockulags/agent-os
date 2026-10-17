@@ -13,6 +13,7 @@ export const STATE_FILE_NAME = '.agent-os-quality-ratchet.json'
 export const QUALITY_HOOK_MARKER = '--agent-os-hook=quality-ratchet'
 export const HOOK_TIMEOUT_SECONDS = 10
 export const STOP_BLOCK_LIMIT = 3
+export const STALE_STATE_DAYS = 14
 
 const SOURCE_EXTENSIONS = new Set([
   '.c', '.cc', '.cpp', '.cxx', '.cs', '.css', '.go', '.h', '.hpp', '.java', '.js', '.jsx',
@@ -637,8 +638,31 @@ function baselineState(context, candidate, dependencies, analyzers) {
   }
 }
 
+// Baselines now outlive a single turn, so an attempt that never reached `finish` or `clear` leaves
+// its state behind. Remove other sessions' state and reports untouched for STALE_STATE_DAYS.
+function pruneStaleStates(context, now = Date.now()) {
+  let names
+  try {
+    names = fs.readdirSync(context.gitDir)
+  } catch {
+    return
+  }
+  const limit = STALE_STATE_DAYS * 24 * 60 * 60 * 1000
+  for (const name of names) {
+    if (!name.startsWith(`${STATE_FILE_NAME}.`)) continue
+    const file = path.join(context.gitDir, name)
+    if (file === context.statePath) continue
+    try {
+      if (now - fs.statSync(file).mtimeMs > limit) fs.rmSync(file, { force: true })
+    } catch {
+      // Another session may remove its own state concurrently.
+    }
+  }
+}
+
 export function begin(cwd = process.cwd(), { detect = detectOptionalAnalyzers, env = process.env } = {}) {
   const context = repositoryContext(cwd, env)
+  pruneStaleStates(context)
   if (fs.existsSync(context.statePath)) {
     readState(context)
     error(`An active quality ratchet baseline already exists for this session and worktree at ${context.statePath}. Run clear before beginning a new delivery.`, 'BASELINE_ACTIVE')
@@ -726,6 +750,16 @@ export function clear(cwd = process.cwd(), { env = process.env } = {}) {
   return { statePath: context.statePath, cleared: true }
 }
 
+// Closes a delivered attempt: it records a fresh check and removes the baseline only when that
+// check passes. A blocked check keeps the baseline so delivery stays blocked.
+export function finish(cwd = process.cwd(), options = {}) {
+  const evidence = check(cwd, options)
+  const context = repositoryContext(cwd, options.env ?? process.env)
+  if (evidence.status !== 'ok') return { evidence, statePath: context.statePath, closed: false }
+  fs.rmSync(context.statePath, { force: true })
+  return { evidence, statePath: context.statePath, closed: true }
+}
+
 function allowResult() {
   return {}
 }
@@ -734,26 +768,25 @@ function blockResult(reason) {
   return { decision: 'block', reason }
 }
 
-// A required control can fail for reasons the agent cannot fix (a missing tool, a flaky
-// dependency). After repeated re-entered Stops on the same unchanged candidate, the hook hands the
-// decision to the user instead of looping. The baseline stays active, so delivery stays blocked.
-function controlBlockResult(context, state, fingerprint, blockers, payload) {
-  const summary = blockers.slice(0, 5).join('; ')
-  const released = state.stopRelease?.candidateFingerprint === fingerprint
-  const count = state.stopBlocks?.candidateFingerprint === fingerprint ? state.stopBlocks.count + 1 : 1
+// Every Stop block is bounded. A check can stay stale or a required control can keep failing for
+// reasons the agent cannot fix (a missing tool, a flaky dependency, a failing runner), and the
+// host's own continuation cap resets whenever the agent calls a tool. After repeated re-entered
+// Stops on the same unchanged candidate, the hook hands the decision to the user instead of
+// looping. The baseline stays active, so `finish` still refuses delivery until a passing check.
+function boundedBlockResult(context, state, kind, fingerprint, reason, releaseMessage, payload) {
+  const key = `${kind}:${fingerprint}`
+  const released = state.stopRelease?.key === key
+  const count = state.stopBlocks?.key === key ? state.stopBlocks.count + 1 : 1
   if (released || (payload?.stop_hook_active === true && count > STOP_BLOCK_LIMIT)) {
     if (!released) {
-      state.stopRelease = { candidateFingerprint: fingerprint }
+      state.stopRelease = { key }
       writeState(context, state)
     }
-    return {
-      systemMessage: `Quality ratchet: required project controls still fail for the unchanged candidate: ${summary}. ` +
-        'Stopping is allowed so you can decide how to proceed; delivery stays blocked until a passing check.'
-    }
+    return { systemMessage: `${releaseMessage} Stopping is allowed so you can decide how to proceed; the baseline stays active and delivery stays blocked until a passing check.` }
   }
-  state.stopBlocks = { candidateFingerprint: fingerprint, count }
+  state.stopBlocks = { key, count }
   writeState(context, state)
-  return blockResult(`Project controls block delivery: ${summary}. Fix the reported problem; do not rerun unchanged failing checks. If it cannot be fixed in this session, report the blocker and stop.`)
+  return blockResult(reason)
 }
 
 function lifecycleCommand(command) {
@@ -776,8 +809,9 @@ export function hook(cwd = process.cwd(), payload = {}, { env = process.env } = 
     try {
       candidate = candidateSnapshot(context.root, state.entry, { includeFiles: false })
     } catch (cause) {
-      const reason = `Quality ratchet could not inspect the candidate: ${cause.message}. Run the quality-ratchet check and retry.`
-      return blockResult(reason)
+      return boundedBlockResult(context, state, 'inspect', 'uninspectable',
+        `Quality ratchet could not inspect the candidate: ${cause.message}. Run the quality-ratchet check and retry.`,
+        `Quality ratchet still cannot inspect the candidate: ${cause.message}.`, payload)
     }
     const fresh = state.lastCheck?.candidateFingerprint === candidate.fingerprint
     if (fresh) {
@@ -785,17 +819,27 @@ export function hook(cwd = process.cwd(), payload = {}, { env = process.env } = 
       const configured = fs.existsSync(path.join(context.root, POLICY_PATH)) || controls?.results?.length || controls?.policyChanged
       if (configured) {
         const prepared = prepareControls(context.root, snapshot(context.root).files, env)
-        if (!controls || prepared.fingerprint !== controls.fingerprint) return blockResult('Project control evidence is stale; run quality-ratchet check.')
+        if (!controls || prepared.fingerprint !== controls.fingerprint) {
+          return boundedBlockResult(context, state, 'controls-stale', candidate.fingerprint,
+            `Project control evidence is stale. Run \`${lifecycleCommand('check')}\` before stopping.`,
+            'Quality ratchet: project control evidence is still stale for the unchanged candidate.', payload)
+        }
       }
       const blockers = blockingControls(controls)
-      if (blockers.length) return controlBlockResult(context, state, candidate.fingerprint, blockers, payload)
-      fs.rmSync(context.statePath, { force: true })
+      if (blockers.length) {
+        const summary = blockers.slice(0, 5).join('; ')
+        return boundedBlockResult(context, state, 'controls', candidate.fingerprint,
+          `Project controls block delivery: ${summary}. Fix the reported problem; do not rerun unchanged failing checks. If it cannot be fixed in this session, report the blocker and stop.`,
+          `Quality ratchet: required project controls still fail for the unchanged candidate: ${summary}.`, payload)
+      }
+      // A passing check keeps the baseline: a turn can end mid-delivery to ask the developer, and
+      // the next turn still compares against the exact entry state. `finish` or `clear` ends it.
       return allowResult()
     }
-    const reason = state.lastCheck
-      ? `Quality ratchet check is stale for the current candidate. Run \`${lifecycleCommand('check')}\` before stopping.`
-      : `Quality ratchet has an active baseline but no check for this candidate. Run \`${lifecycleCommand('check')}\` before stopping.`
-    return blockResult(reason)
+    const missing = state.lastCheck ? 'is stale for the current candidate' : 'has not run for this candidate'
+    return boundedBlockResult(context, state, 'stale', candidate.fingerprint,
+      `Quality ratchet check ${missing}. Run \`${lifecycleCommand('check')}\` before stopping, also when you only pause to ask the developer; the baseline stays active across turns.`,
+      `Quality ratchet: the check ${missing} after repeated Stop blocks.`, payload)
   } catch (cause) {
     const reason = cause instanceof QualityRatchetError
       ? cause.message
@@ -852,7 +896,7 @@ function parseArguments(args) {
       result.json = true
     } else if (argument === '--accept-policy-change') {
       const reason = args[++index]
-      if (result.command !== 'check' || !reason?.trim() || reason.startsWith('--')) error('--accept-policy-change requires check and a reason.', 'ARGUMENTS')
+      if (!['check', 'finish'].includes(result.command) || !reason?.trim() || reason.startsWith('--')) error('--accept-policy-change requires check or finish and a reason.', 'ARGUMENTS')
       result.acceptPolicyChange = reason
     } else if (argument === '--root') {
       const root = args[index + 1]
@@ -869,8 +913,8 @@ function parseArguments(args) {
     }
     index += 1
   }
-  if (!['begin', 'check', 'clear', 'hook'].includes(result.command)) {
-    error(`Unknown command "${result.command}". Use begin, check, clear, or hook.`, 'ARGUMENTS')
+  if (!['begin', 'check', 'finish', 'clear', 'hook'].includes(result.command)) {
+    error(`Unknown command "${result.command}". Use begin, check, finish, clear, or hook.`, 'ARGUMENTS')
   }
   return result
 }
@@ -896,6 +940,17 @@ function main() {
       const evidence = check(options.root, { acceptPolicyChange: options.acceptPolicyChange })
       console.log(options.json ? JSON.stringify(evidence) : formatEvidence(evidence))
       if (evidence.status !== 'ok') process.exitCode = 1
+      return
+    }
+    if (options.command === 'finish') {
+      const result = finish(options.root, { acceptPolicyChange: options.acceptPolicyChange })
+      console.log(options.json ? JSON.stringify(result) : [
+        formatEvidence(result.evidence),
+        result.closed
+          ? `Quality ratchet baseline closed at ${result.statePath}.`
+          : `Quality ratchet check is ${result.evidence.status}; the baseline stays active at ${result.statePath}.`
+      ].join('\n'))
+      if (!result.closed) process.exitCode = 1
       return
     }
     if (options.command === 'clear') {

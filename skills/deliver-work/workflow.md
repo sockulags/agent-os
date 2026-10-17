@@ -59,7 +59,8 @@ the parent or grants authority over its siblings.
    simplifier-review lens and resolve findings using the
    [finding contract](../check-work/references/findings.md) before freezing the candidate.
 8. Complete the review gate below.
-9. Apply `verify-before-done` to the final candidate and deliver only to the requested boundary.
+9. Apply `verify-before-done` to the final candidate, run quality-ratchet's `finish` when its
+   baseline is active, and deliver only to the requested boundary.
 
 Ground truth governs the loop; no prescribed implementation sequence substitutes for it.
 
