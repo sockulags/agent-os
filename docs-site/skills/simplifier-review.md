@@ -19,7 +19,8 @@ It is read-only and reports only actionable findings with a concrete simpler rep
 not reward code golf and does not replace correctness, security, or scope review.
 
 When [quality-ratchet](/skills/quality-ratchet) has produced evidence, use it as context before
-forming findings. Read the diff and code yourself: file, NLOC, legacy, dependency, and analyzer
+forming findings. Its complexity deltas point to the functions whose number of paths rose most; start
+there. Read the diff and code yourself: file, NLOC, legacy, dependency, complexity, and analyzer
 signals are not threshold gates. Preserve abstractions justified by multiple providers, runtime
 selection, compatibility, or trust boundaries, and leave unrelated debt to `scope-guard`.
 

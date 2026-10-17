@@ -9,6 +9,13 @@ disable-model-invocation: true
 Find the repository's strongest opportunities to own less code and fewer solution layers without
 changing required behavior.
 
+Start with deterministic evidence. Resolve `scripts/audit-evidence.mjs` relative to this loaded
+`SKILL.md` and run it with Node from the repository root. It ranks the most complex functions
+(lizard), duplicated blocks (jscpd), and unused code (knip for JavaScript and TypeScript, vulture for
+Python) when those tools are installed, and reports each missing tool as unavailable. Do not install
+them. Use the output to decide where to read; dead code and duplication found by a tool need a usage
+check, not a repository-wide read. The tool output is a candidate list, not findings.
+
 Inspect the project structure, dependencies, conventions, representative flows, and usages of each
 candidate before reporting it. Look for:
 

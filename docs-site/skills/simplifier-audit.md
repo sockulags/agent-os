@@ -13,6 +13,16 @@ Scans the whole repository for high-confidence opportunities to own less code, f
 and fewer solution layers. Each finding includes evidence, a simpler replacement, and constraints
 that must be preserved.
 
+It starts with deterministic evidence from `scripts/audit-evidence.mjs`: the most complex functions
+(lizard), duplicated blocks (jscpd), and unused code (knip for JavaScript and TypeScript, vulture for
+Python). Each tool is optional and never installed by Agent OS; a missing tool is reported as
+unavailable. The tool output decides where to read, so dead code and duplication cost a usage check
+instead of a repository-wide read. It is a candidate list, not a set of findings.
+
+```bash
+node skills/simplifier-audit/scripts/audit-evidence.mjs .
+```
+
 The audit is read-only. Use `simplifier` separately when the developer wants findings applied.
 
 A cohesive named responsibility or protected invariant can justify an abstraction with one caller.

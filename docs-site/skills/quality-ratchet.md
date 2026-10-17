@@ -34,9 +34,13 @@ may be reported, while unrelated debt remains out of scope.
 
 The check reports added, changed, and deleted source files, touched-source NLOC before/after, the
 before/after status of source paths that already existed at entry, package dependency additions and
-removals, and optional analyzer capability. Lizard and jscpd are optional capabilities: when absent
-or not integrated, the output says `unavailable` or `detected-not-integrated`; it never says clean.
-Reliable Lizard/jscpd parsing remains a follow-up rather than an install-time prerequisite.
+removals, and optional analyzer capability. When lizard is installed, `check` also reports cyclomatic
+complexity before and after for touched functions, ranked by increase. It counts paths through a
+function rather than readability, can miss functions in unusual formatting, and has before values
+only for files that were clean at entry. A project can set `complexity.threshold` in
+`.agent-os/quality.json` and list `complexity` in `blockSignals` to block on it; otherwise it is a
+signal. Missing lizard is reported as `unavailable`, never clean. jscpd is detected but not
+integrated into the delta.
 
 The baseline lives in a worktree- and host-session-specific file under `git rev-parse --git-dir`. It
 includes tracked dirty files and nonignored untracked files without stashing or editing them. Claude
