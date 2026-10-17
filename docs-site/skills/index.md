@@ -55,7 +55,7 @@ request.
 | Skill | Bucket | Invocation | Purpose |
 |---|---|---|---|
 | [`understand-work`](/skills/understand-work) | workflow | manual | Question out the need behind a stated wish |
-| [`explain-work`](/skills/explain-work) | workflow | manual | Explain the task in plain language for approval |
+| [`explain-work`](/skills/explain-work) | workflow | manual | Explain the task in plain language |
 
 ## Disciplines
 
