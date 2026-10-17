@@ -84,8 +84,10 @@ that did not run.
 
 The repository declares commands in `.agent-os/quality.json`, and nobody has trusted that exact policy
 on this machine. Read the listed commands, then run the printed `trust` command yourself in a
-terminal. Agents cannot complete it. Trust survives updates to the code but not to the policy or its
-protected files.
+terminal. It refuses without an interactive terminal, and the skill tells agents never to run it;
+this is a visible prompt, not a tamper-proof boundary. Trust survives updates to the code but not to
+the policy or its protected files. Stop lets the turn end with this message instead of blocking,
+and `finish` refuses delivery until the controls are trusted and pass.
 
 ## The Stop hook never runs on Codex
 

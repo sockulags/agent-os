@@ -51,7 +51,7 @@ project's explicitly selected shell for `.cmd` wrappers. The repository configur
 project code, so `check` runs it only after the developer trusts it on that machine:
 
 ```sh
-node "$QUALITY_RUNNER" trust
+node "$QUALITY_RUNNER" trust --root <worktree>
 ```
 
 `trust` prints the declared commands and protected files and records trust only after a yes in an

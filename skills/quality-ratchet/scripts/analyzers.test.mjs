@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict'
-import { execFileSync } from 'node:child_process'
+import { execFileSync, spawnSync } from 'node:child_process'
 import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
@@ -128,4 +128,31 @@ test('real lizard output feeds the same delta', { skip: !findLizard() && 'lizard
   fs.writeFileSync(path.join(root, 'src', 'two.js'), 'function two(a) {\n  if (a > 1) {\n    return 1\n  }\n  return 0\n}\n')
   const functions = lizardFunctions(root, ['src/two.js'])
   assert.deepEqual(functions.map((fn) => [fn.file, fn.function, fn.ccn]), [['src/two.js', 'two', 2]])
+})
+
+const python = ['python3', 'python'].find((name) => {
+  try {
+    return spawnSync(name, ['--version'], { encoding: 'utf8' }).status === 0
+  } catch {
+    return false
+  }
+})
+
+test('a lizard.py in the repository never runs through python -m lizard', { skip: !python && 'python is not installed' }, (t) => {
+  const root = repository(t)
+  const marker = path.join(root, 'lizard-ran')
+  fs.writeFileSync(path.join(root, 'lizard.py'), `open(${JSON.stringify(marker)}, 'w').write('ran')\nprint('lizard 0.0.0')\n`)
+  const previous = process.cwd()
+  process.chdir(root)
+  try {
+    findLizard()
+    try {
+      lizardFunctions(root, ['src/legacy.js'], { launcher: [python, '-m', 'lizard'] })
+    } catch {
+      // Without a real lizard module the run fails; it must not import the repository's file.
+    }
+  } finally {
+    process.chdir(previous)
+  }
+  assert.equal(fs.existsSync(marker), false)
 })

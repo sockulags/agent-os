@@ -161,10 +161,15 @@ test('untrusted repository commands never run and block delivery until the devel
   assert.equal(evidence.status, 'blocked')
   assert.deepEqual(evidence.controls.results, [])
   assert.deepEqual(evidence.controls.untrusted.commands, [{ id: 'verify', command: ['node', 'verify.cjs'] }])
-  assert.match(evidence.controls.untrusted.trustCommand, / trust$/)
+  const trustRootArgument = evidence.controls.untrusted.trustCommand.match(/ trust --root "(.*)"$/)?.[1]
+  assert.equal(fs.realpathSync(trustRootArgument), fs.realpathSync(f.root))
+  assert.equal(evidence.controls.untrusted.trustCommand.startsWith('& '), process.platform === 'win32')
   assert.equal(fs.existsSync(path.join(f.root, 'counter')), false)
   assert.equal(finish(f.root, untrusted).closed, false)
-  assert.match(hook(f.root, {}, { env: developerEnv }).reason, /not trusted on this machine/)
+  // Untrusted controls are the developer's decision, so Stop lets the turn end at once.
+  const released = hook(f.root, { stop_hook_active: false }, { env: developerEnv })
+  assert.equal(released.decision, undefined)
+  assert.match(released.systemMessage, /not trusted on this machine.*verify \["node","verify\.cjs"\].* trust --root /)
 
   trustControls(controlsTrustPlan(f.root), { trustStore: untrustedStore })
   assert.equal(finish(f.root, untrusted).closed, true)

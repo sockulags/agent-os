@@ -732,7 +732,7 @@ export function check(cwd = process.cwd(), {
     fingerprint: prepared.fingerprint, policyChanged: policyChanged && !accepted,
     untrusted: trusted ? null : {
       commands: prepared.policy.checks.map(entry => ({ id: entry.id, command: entry.command })),
-      trustCommand: lifecycleCommand('trust')
+      trustCommand: developerTrustCommand(context.root)
     },
     policyAcknowledgement: accepted ? { before: oldSignature || null, after: prepared.signature, reason: acceptPolicyChange.trim() } : state.policyAcknowledgement || null,
     stale: after.fingerprint !== prepared.fingerprint, results, signals
@@ -834,6 +834,13 @@ function lifecycleCommand(command) {
   return `"${process.execPath}" "${fileURLToPath(import.meta.url)}" ${command}`
 }
 
+// A developer pastes this into their own terminal, so it names the worktree and, on Windows, uses
+// the PowerShell call operator that a quoted executable path needs.
+function developerTrustCommand(root) {
+  const command = `${lifecycleCommand('trust')} --root "${root}"`
+  return process.platform === 'win32' ? `& ${command}` : command
+}
+
 export function hook(cwd = process.cwd(), payload = {}, { env = process.env } = {}) {
   let context
   try {
@@ -873,6 +880,14 @@ export function hook(cwd = process.cwd(), payload = {}, { env = process.env } = 
         }
       }
       const blockers = blockingControls(controls)
+      // The agent cannot resolve untrusted controls, so blocking would only spend continuations.
+      if (controls?.untrusted && blockers.length === 1) {
+        return {
+          systemMessage: 'Quality ratchet: this repository declares project controls that are not trusted on this machine, so none ran: ' +
+            controls.untrusted.commands.map((entry) => `${entry.id} ${JSON.stringify(entry.command)}`).join('; ') +
+            `. To review and trust them, run in a terminal: ${controls.untrusted.trustCommand}. Delivery stays blocked until then.`
+        }
+      }
       if (blockers.length) {
         const summary = blockers.slice(0, 5).join('; ')
         return boundedBlockResult(context, state, 'controls', candidate.fingerprint,
