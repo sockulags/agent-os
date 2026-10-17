@@ -99,6 +99,12 @@ from `CODEX_THREAD_ID` or `CLAUDE_CODE_SESSION_ID`, with Codex taking precedence
 native Stop resolves the same identity from its `session_id` payload, using non-empty `turn_id` to
 identify Codex. There is no uninstall command yet.
 
+`npx @sockulags/agent-os@latest doctor` is a read-only report of every installed version, retired or
+missing skills, duplicate direct and plugin installs, the global policy blocks (each carries an
+`<!-- agent-os version X -->` line), and the Stop hook, with the command that fixes each difference.
+Team update, governance, and removal steps are in the
+[team setup guide](https://sockulags.github.io/agent-os/guide/team-setup).
+
 Native marketplace installation remains available with `--method plugin`. It requires the selected
 host CLI. Claude plugin skills appear as `/agent-os:<skill>`; Codex plugin skills remain
 `$<skill>`.

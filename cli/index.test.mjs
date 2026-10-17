@@ -16,6 +16,7 @@ import {
   parseArgs,
   planManagedHookConfig,
   planPolicyUpdate,
+  policyBlockVersion,
   resolveOptions,
   run,
   targetSkillRoot,
@@ -52,7 +53,8 @@ test('defaults to guided direct install', () => {
     yes: false,
     dryRun: false,
     help: false,
-    version: false
+    version: false,
+    offline: false
   })
 })
 
@@ -75,7 +77,8 @@ test('parses non-interactive direct update flags', () => {
     yes: true,
     dryRun: false,
     help: false,
-    version: false
+    version: false,
+    offline: false
   })
 })
 
@@ -89,7 +92,8 @@ test('supports Claude Code as a platform alias and upgrade as update', () => {
     yes: true,
     dryRun: false,
     help: false,
-    version: false
+    version: false,
+    offline: false
   })
 })
 
@@ -512,6 +516,13 @@ test('policy planning preserves surrounding text and rejects malformed markers',
     () => planPolicyUpdate('<!-- BEGIN AGENT OS -->\nbroken\n', policy),
     /Malformed Agent OS policy markers/
   )
+
+  const versioned = planPolicyUpdate(updated.content, policy, '9.9.9')
+  assert.equal(versioned.status, 'UPDATED')
+  assert.equal(policyBlockVersion(versioned.content), '9.9.9')
+  assert.match(versioned.content, /<!-- BEGIN AGENT OS -->\n<!-- agent-os version 9\.9\.9 -->\n# Policy\n/)
+  assert.equal(planPolicyUpdate(versioned.content, policy, '9.9.9').status, 'OK')
+  assert.equal(policyBlockVersion('no block here'), null)
 })
 
 test('policy sync follows the selected platform and the installed policy script works without a checkout', async () => {
@@ -525,10 +536,15 @@ test('policy sync follows the selected platform and the installed policy script 
     policy: true
   }, { output: silentOutput(), homeDir, cwd: root })
 
-  assert.match(fs.readFileSync(path.join(homeDir, '.codex', 'AGENTS.md'), 'utf8'), /BEGIN AGENT OS/)
+  const installedPolicy = fs.readFileSync(path.join(homeDir, '.codex', 'AGENTS.md'), 'utf8')
+  assert.match(installedPolicy, /BEGIN AGENT OS/)
+  assert.equal(policyBlockVersion(installedPolicy), VERSION)
   assert.equal(fs.existsSync(path.join(homeDir, '.claude', 'CLAUDE.md')), false)
 
   const script = path.join(homeDir, '.codex', 'skills', 'init-agent-os', 'scripts', 'policy-block.mjs')
+  // The installed skill resolves the same version from the install manifest, so it sees no drift.
+  const installedCheck = spawnSync(process.execPath, [script, '--check', '--target', path.join(homeDir, '.codex', 'AGENTS.md')], { encoding: 'utf8' })
+  assert.equal(installedCheck.status, 0, installedCheck.stdout + installedCheck.stderr)
   const target = path.join(root, 'CLAUDE.md')
   fs.writeFileSync(target, '# Mine\n')
   const run = (...args) => spawnSync(process.execPath, [script, '--target', target, ...args], { encoding: 'utf8' })
@@ -613,4 +629,61 @@ test('plugin update skips Git refresh for a registered local Codex marketplace',
     ['plugin', 'list', '--json'],
     ['plugin', 'add', 'agent-os@agent-os']
   ])
+})
+
+test('doctor reports a current install as clean and names drift with the fixing command', async () => {
+  const root = temporaryRoot()
+  const homeDir = path.join(root, 'home')
+  const cwd = path.join(root, 'project')
+  fs.mkdirSync(cwd, { recursive: true })
+  await executeInstall({
+    command: 'install', platform: 'codex', method: 'direct', scope: 'user', policy: true
+  }, { output: silentOutput(), homeDir, cwd })
+
+  const doctor = async (args = ['doctor', '--offline'], extra = {}) => {
+    let text = ''
+    const code = await run(args, { output: { write(chunk) { text += chunk } }, homeDir, cwd, ...extra })
+    return { code, text }
+  }
+  const clean = await doctor()
+  assert.equal(clean.code, 0, clean.text)
+  assert.match(clean.text, /OK {4}codex direct user .*version /)
+  assert.match(clean.text, /OK {4}codex global policy/)
+  assert.match(clean.text, /No version drift found/)
+
+  const outdated = await doctor(['doctor'], { latestVersion: () => '999.0.0' })
+  assert.match(outdated.text, /WARN {2}installer: .*latest published version is 999\.0\.0/)
+
+  const skillsRoot = path.join(homeDir, '.codex', 'skills')
+  const manifestPath = path.join(skillsRoot, INSTALL_MANIFEST)
+  const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'))
+  manifest.version = '0.1.0'
+  manifest.skills.push('retired-skill')
+  fs.writeFileSync(manifestPath, JSON.stringify(manifest))
+  fs.mkdirSync(path.join(skillsRoot, 'retired-skill'))
+  fs.writeFileSync(path.join(skillsRoot, 'retired-skill', 'SKILL.md'), '---\nname: retired-skill\n---\n')
+  fs.mkdirSync(path.join(homeDir, '.claude', 'plugins'), { recursive: true })
+  fs.writeFileSync(path.join(homeDir, '.claude', 'plugins', 'installed_plugins.json'), JSON.stringify({
+    plugins: { 'agent-os@agent-os-marketplace': [{ scope: 'user', version: '0.2.0' }] }
+  }))
+  const policyPath = path.join(homeDir, '.codex', 'AGENTS.md')
+  fs.writeFileSync(policyPath, fs.readFileSync(policyPath, 'utf8').replace(/<!-- agent-os version [^>]+ -->\n/, ''))
+
+  const drifted = await doctor()
+  assert.equal(drifted.code, 1)
+  assert.match(drifted.text, /DRIFT codex direct user .*installed 0\.1\.0.*update --platform codex --scope user/)
+  assert.match(drifted.text, /retired skills still installed: retired-skill/)
+  assert.match(drifted.text, /DRIFT claude plugin agent-os@agent-os-marketplace \(user\): recorded version 0\.2\.0/)
+  assert.match(drifted.text, /DRIFT codex global policy .*no version line/)
+  assert.equal(fs.readFileSync(manifestPath, 'utf8'), JSON.stringify(manifest))
+})
+
+test('doctor finds no installation and suggests install', async () => {
+  const root = temporaryRoot()
+  let text = ''
+  const code = await run(['doctor', '--offline'], {
+    output: { write(chunk) { text += chunk } }, homeDir: path.join(root, 'home'), cwd: root
+  })
+  assert.equal(code, 0)
+  assert.match(text, /no Agent OS installation found/)
 })

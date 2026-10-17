@@ -56,6 +56,7 @@ export default withMermaid(defineConfig({
             { text: 'The work loop', link: '/guide/the-work-loop' },
             { text: 'Global policy', link: '/guide/global-policy' },
             { text: 'Project policy', link: '/guide/project-policy' },
+            { text: 'Team setup', link: '/guide/team-setup' },
             { text: 'Troubleshooting', link: '/guide/troubleshooting' }
           ]
         }

@@ -11,9 +11,10 @@ import {
   HOOK_TIMEOUT_SECONDS,
   QUALITY_HOOK_MARKER
 } from '../skills/quality-ratchet/scripts/quality-delta.mjs'
-import { planPolicyUpdate, policyTargets } from '../skills/init-agent-os/scripts/policy-block.mjs'
+import { planPolicyUpdate, policyBlockVersion, policyTargets } from '../skills/init-agent-os/scripts/policy-block.mjs'
+import { collectDoctorReport, formatDoctorReport, latestPublishedVersion } from './doctor.mjs'
 
-export { planPolicyUpdate }
+export { planPolicyUpdate, policyBlockVersion }
 
 const packageRoot = fileURLToPath(new URL('../', import.meta.url))
 const packagePath = path.join(packageRoot, 'package.json')
@@ -103,7 +104,8 @@ export function parseArgs(argv) {
     yes: false,
     dryRun: false,
     help: false,
-    version: false
+    version: false,
+    offline: false
   }
 
   let index = 0
@@ -113,8 +115,8 @@ export function parseArgs(argv) {
   }
 
   if (result.command === 'upgrade') result.command = 'update'
-  if (!['install', 'update', 'help'].includes(result.command)) {
-    throw new CliError('Unknown command "' + result.command + '". Use install or update.')
+  if (!['install', 'update', 'doctor', 'help'].includes(result.command)) {
+    throw new CliError('Unknown command "' + result.command + '". Use install, update, or doctor.')
   }
 
   while (index < argv.length) {
@@ -125,6 +127,8 @@ export function parseArgs(argv) {
       result.version = true
     } else if (argument === '--yes' || argument === '-y') {
       result.yes = true
+    } else if (argument === '--offline') {
+      result.offline = true
     } else if (argument === '--dry-run') {
       result.dryRun = true
     } else if (argument === '--policy') {
@@ -859,7 +863,7 @@ function preparePolicyPlans({ fsImpl, homeDir, policyFile, platform }) {
   const policy = fsImpl.readFileSync(policyFile, 'utf8')
   return policyTargets(selectedPlatforms(platform), homeDir).map((target) => {
     const content = fsImpl.existsSync(target) ? fsImpl.readFileSync(target, 'utf8') : ''
-    return { target, ...planPolicyUpdate(content, policy) }
+    return { target, ...planPolicyUpdate(content, policy, VERSION) }
   })
 }
 
@@ -929,7 +933,8 @@ export function printHelp(output = process.stdout) {
     'Agent OS installer ' + VERSION + '\n\n' +
     'Usage:\n' +
     '  npx ' + PACKAGE_NAME + ' install\n' +
-    '  npx ' + PACKAGE_NAME + ' update\n\n' +
+    '  npx ' + PACKAGE_NAME + ' update\n' +
+    '  npx ' + PACKAGE_NAME + '@latest doctor   Report installed versions, drift, and fixes (read-only)\n\n' +
     'Direct installation is the default and does not require Codex or Claude Code CLI.\n\n' +
     'Direct installation also merges the Agent OS quality-ratchet Stop hook without replacing unrelated hooks.\n\n' +
     'Options:\n' +
@@ -940,6 +945,7 @@ export function printHelp(output = process.stdout) {
     '  --no-policy            Leave global policy files unchanged\n' +
     '  -y, --yes              Accept defaults; useful in scripts\n' +
     '  --dry-run              Show the planned flow without running commands\n' +
+    '  --offline              doctor: skip the npm lookup of the latest version\n' +
     '  -h, --help             Show this help\n' +
     '  -v, --version          Show the CLI version\n\n' +
     'Examples:\n' +
@@ -968,6 +974,24 @@ export async function run(argv = process.argv.slice(2), dependencies = {}) {
   if (parsed.version) {
     (dependencies.output || process.stdout).write(VERSION + '\n')
     return 0
+  }
+  if (parsed.command === 'doctor') {
+    const fsImpl = dependencies.fsImpl || fs
+    const latest = parsed.offline
+      ? null
+      : (dependencies.latestVersion || ((name) => latestPublishedVersion(name)))(PACKAGE_NAME)
+    const result = collectDoctorReport({
+      version: VERSION,
+      packageName: PACKAGE_NAME,
+      packagedSkills: listPackagedSkills(packagedSkillsPath(), fsImpl),
+      policy: fsImpl.readFileSync(packagedPolicyPath(), 'utf8'),
+      homeDir: dependencies.homeDir,
+      cwd: dependencies.cwd,
+      fsImpl,
+      latest
+    })
+    ;(dependencies.output || process.stdout).write(formatDoctorReport(result))
+    return result.drift ? 1 : 0
   }
   const options = await resolveOptions(parsed, dependencies)
   if (options.dryRun) {

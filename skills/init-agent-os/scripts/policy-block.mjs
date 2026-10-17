@@ -30,8 +30,19 @@ function countOccurrences(content, value) {
   return content.split(value).length - 1
 }
 
-export function planPolicyUpdate(content, policy) {
-  const block = BEGIN_MARKER + '\n' + policy.trimEnd() + '\n' + END_MARKER
+const VERSION_LINE = /^<!-- agent-os version ([0-9A-Za-z.+-]+) -->$/m
+
+// The installed block names its Agent OS version so drift between teammates is visible in the file.
+export function policyBlockVersion(content) {
+  const start = content.indexOf(BEGIN_MARKER)
+  const end = content.indexOf(END_MARKER)
+  if (start < 0 || end < start) return null
+  return content.slice(start, end).match(VERSION_LINE)?.[1] ?? null
+}
+
+export function planPolicyUpdate(content, policy, version = null) {
+  const versionLine = version ? '<!-- agent-os version ' + version + ' -->\n' : ''
+  const block = BEGIN_MARKER + '\n' + versionLine + policy.trimEnd() + '\n' + END_MARKER
   const beginCount = countOccurrences(content, BEGIN_MARKER)
   const endCount = countOccurrences(content, END_MARKER)
 
@@ -73,11 +84,32 @@ export function resolvePolicySource(source, scriptDir = path.dirname(fileURLToPa
   return found
 }
 
-export function syncPolicy({ check = false, targets, policyFile, fsImpl = fs }) {
+// The version comes from the direct-install manifest in the skills root, or from package.json at a
+// plugin or checkout root. Without either, the block carries no version line.
+export function resolvePolicyVersion(scriptDir = path.dirname(fileURLToPath(import.meta.url)), fsImpl = fs) {
+  const candidates = [
+    path.join(scriptDir, '..', '..', '.agent-os-install.json'),
+    path.join(scriptDir, '..', '..', '..', 'package.json')
+  ]
+  for (const candidate of candidates) {
+    try {
+      const value = JSON.parse(fsImpl.readFileSync(candidate, 'utf8'))
+      const version = candidate.endsWith('package.json')
+        ? (value.name === '@sockulags/agent-os' ? value.version : null)
+        : value.version
+      if (typeof version === 'string' && /^[0-9A-Za-z.+-]+$/.test(version)) return version
+    } catch {
+      // Try the next location.
+    }
+  }
+  return null
+}
+
+export function syncPolicy({ check = false, targets, policyFile, version = null, fsImpl = fs }) {
   const policy = fsImpl.readFileSync(policyFile, 'utf8')
   const plans = targets.map((target) => {
     const content = fsImpl.existsSync(target) ? fsImpl.readFileSync(target, 'utf8') : ''
-    return { target, missing: !fsImpl.existsSync(target), ...planPolicyUpdate(content, policy) }
+    return { target, missing: !fsImpl.existsSync(target), ...planPolicyUpdate(content, policy, version) }
   })
   if (!check) {
     for (const plan of plans) {
@@ -118,7 +150,8 @@ function main() {
       ? options.targets.map((target) => path.resolve(target))
       : policyTargets(options.platforms || detectPlatforms())
     const policyFile = resolvePolicySource(options.source)
-    const plans = syncPolicy({ check: options.check, targets, policyFile })
+    const version = resolvePolicyVersion()
+    const plans = syncPolicy({ check: options.check, targets, policyFile, version })
     let drift = false
     for (const plan of plans) {
       const status = options.check && plan.changed ? 'DRIFT' : plan.status
@@ -126,7 +159,7 @@ function main() {
       const detail = options.check && plan.missing ? ' (file missing)' : ''
       console.log(status.padEnd(8) + plan.target + detail)
     }
-    console.log('Policy source: ' + policyFile)
+    console.log('Policy source: ' + policyFile + (version ? ' (agent-os ' + version + ')' : ''))
     if (drift) process.exitCode = 1
   } catch (cause) {
     console.error('policy-block: ' + cause.message)

@@ -100,6 +100,11 @@ host. Compare that card against the [skills overview](/skills/): every skill in 
 present. If only some appear, run the update command for the same platform and scope before
 debugging anything else.
 
+From a terminal, `npx @sockulags/agent-os@latest doctor` reports the installed version of every
+direct and plugin install, the global policy blocks, and the Stop hook, and names the command that
+fixes each difference. It changes nothing. For keeping a whole team on one version, see
+[Team setup](/guide/team-setup).
+
 ## 2. Install or refresh the global policy
 
 The npm installer can do this during installation. Its Node-based writer updates only the managed
