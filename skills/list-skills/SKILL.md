@@ -24,6 +24,11 @@ instructions.
 
 ## Report
 
+Start with the installed Agent OS version: `version` in the `.agent-os-install.json` beside the skill
+directories for a direct install, or in `package.json` or `.claude-plugin/plugin.json` at the plugin
+root. If neither exists, say the version is unknown. Name `npx @sockulags/agent-os@latest doctor` as
+the way to compare it with the latest release.
+
 Group by invocation, explicit skills first, and give each one line: how to invoke it and what it
 does, condensed from its description rather than copied whole. Show the invocation form matching how
 this skill was itself reached: `/agent-os:<name>` through the Claude plugin, `/<name>` for a direct

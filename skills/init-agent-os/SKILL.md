@@ -19,7 +19,8 @@ Invoked as `init-agent-os global`.
    `--platform`, it targets `~/.claude/CLAUDE.md` and `~/.codex/AGENTS.md` for the hosts present on
    this machine.
 3. Run the same script without `--check` to apply the managed blocks and show the resulting diff.
-   The npm installer imports this writer, so both share one marker contract.
+   The npm installer imports this writer, so both share one marker contract. Each block starts with
+   an `<!-- agent-os version X -->` line taken from the installed release.
 
 ## Mode: repo init (default)
 

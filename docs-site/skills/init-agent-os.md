@@ -12,7 +12,9 @@ summary: Managed policy setup or repository defaults
 Sets up managed global policy or seeds one repository's project policy.
 
 `global` verifies plugin visibility, checks drift, and applies the managed policy blocks through the
-deterministic script. The explicit invocation authorizes those setup writes.
+deterministic script. The explicit invocation authorizes those setup writes. Each block starts with
+an `<!-- agent-os version X -->` line, so `npx @sockulags/agent-os@latest doctor` can show which
+release wrote it.
 
 Repository mode is facts-first: it inspects instruction and policy surfaces, project docs, build and
 test configuration, CI, and evidence of conditional concerns before asking anything. Before writing,

@@ -16,11 +16,14 @@ import {
   parseArgs,
   planManagedHookConfig,
   planPolicyUpdate,
+  policyBlockVersion,
   resolveOptions,
   run,
   targetSkillRoot,
   VERSION
 } from './index.mjs'
+import { compareVersions, latestPublishedVersion } from './doctor.mjs'
+import { resolvePolicyVersion } from '../skills/init-agent-os/scripts/policy-block.mjs'
 
 const temporaryRoots = []
 
@@ -52,7 +55,8 @@ test('defaults to guided direct install', () => {
     yes: false,
     dryRun: false,
     help: false,
-    version: false
+    version: false,
+    offline: false
   })
 })
 
@@ -75,7 +79,8 @@ test('parses non-interactive direct update flags', () => {
     yes: true,
     dryRun: false,
     help: false,
-    version: false
+    version: false,
+    offline: false
   })
 })
 
@@ -89,7 +94,8 @@ test('supports Claude Code as a platform alias and upgrade as update', () => {
     yes: true,
     dryRun: false,
     help: false,
-    version: false
+    version: false,
+    offline: false
   })
 })
 
@@ -512,6 +518,13 @@ test('policy planning preserves surrounding text and rejects malformed markers',
     () => planPolicyUpdate('<!-- BEGIN AGENT OS -->\nbroken\n', policy),
     /Malformed Agent OS policy markers/
   )
+
+  const versioned = planPolicyUpdate(updated.content, policy, '9.9.9')
+  assert.equal(versioned.status, 'UPDATED')
+  assert.equal(policyBlockVersion(versioned.content), '9.9.9')
+  assert.match(versioned.content, /<!-- BEGIN AGENT OS -->\n<!-- agent-os version 9\.9\.9 -->\n# Policy\n/)
+  assert.equal(planPolicyUpdate(versioned.content, policy, '9.9.9').status, 'OK')
+  assert.equal(policyBlockVersion('no block here'), null)
 })
 
 test('policy sync follows the selected platform and the installed policy script works without a checkout', async () => {
@@ -525,10 +538,15 @@ test('policy sync follows the selected platform and the installed policy script 
     policy: true
   }, { output: silentOutput(), homeDir, cwd: root })
 
-  assert.match(fs.readFileSync(path.join(homeDir, '.codex', 'AGENTS.md'), 'utf8'), /BEGIN AGENT OS/)
+  const installedPolicy = fs.readFileSync(path.join(homeDir, '.codex', 'AGENTS.md'), 'utf8')
+  assert.match(installedPolicy, /BEGIN AGENT OS/)
+  assert.equal(policyBlockVersion(installedPolicy), VERSION)
   assert.equal(fs.existsSync(path.join(homeDir, '.claude', 'CLAUDE.md')), false)
 
   const script = path.join(homeDir, '.codex', 'skills', 'init-agent-os', 'scripts', 'policy-block.mjs')
+  // The installed skill resolves the same version from the install manifest, so it sees no drift.
+  const installedCheck = spawnSync(process.execPath, [script, '--check', '--target', path.join(homeDir, '.codex', 'AGENTS.md')], { encoding: 'utf8' })
+  assert.equal(installedCheck.status, 0, installedCheck.stdout + installedCheck.stderr)
   const target = path.join(root, 'CLAUDE.md')
   fs.writeFileSync(target, '# Mine\n')
   const run = (...args) => spawnSync(process.execPath, [script, '--target', target, ...args], { encoding: 'utf8' })
@@ -613,4 +631,220 @@ test('plugin update skips Git refresh for a registered local Codex marketplace',
     ['plugin', 'list', '--json'],
     ['plugin', 'add', 'agent-os@agent-os']
   ])
+})
+
+test('doctor reports a current install as clean and names drift with the fixing command', async () => {
+  const root = temporaryRoot()
+  const homeDir = path.join(root, 'home')
+  const cwd = path.join(root, 'project')
+  fs.mkdirSync(cwd, { recursive: true })
+  await executeInstall({
+    command: 'install', platform: 'codex', method: 'direct', scope: 'user', policy: true
+  }, { output: silentOutput(), homeDir, cwd })
+
+  const doctor = async (args = ['doctor', '--offline'], extra = {}) => {
+    let text = ''
+    const code = await run(args, { output: { write(chunk) { text += chunk } }, homeDir, cwd, ...extra })
+    return { code, text }
+  }
+  const clean = await doctor()
+  assert.equal(clean.code, 0, clean.text)
+  assert.match(clean.text, /OK {4}codex direct user .*version /)
+  assert.match(clean.text, /OK {4}codex global policy/)
+  assert.match(clean.text, /No version drift found/)
+
+  const outdated = await doctor(['doctor'], { latestVersion: () => '999.0.0' })
+  assert.match(outdated.text, /WARN {2}installer: .*latest published version is 999\.0\.0/)
+
+  const skillsRoot = path.join(homeDir, '.codex', 'skills')
+  const manifestPath = path.join(skillsRoot, INSTALL_MANIFEST)
+  const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'))
+  manifest.version = '0.1.0'
+  manifest.skills.push('retired-skill')
+  fs.writeFileSync(manifestPath, JSON.stringify(manifest))
+  fs.mkdirSync(path.join(skillsRoot, 'retired-skill'))
+  fs.writeFileSync(path.join(skillsRoot, 'retired-skill', 'SKILL.md'), '---\nname: retired-skill\n---\n')
+  fs.mkdirSync(path.join(homeDir, '.claude', 'plugins'), { recursive: true })
+  fs.writeFileSync(path.join(homeDir, '.claude', 'plugins', 'installed_plugins.json'), JSON.stringify({
+    plugins: { 'agent-os@agent-os-marketplace': [{ scope: 'user', version: '0.2.0' }] }
+  }))
+  const policyPath = path.join(homeDir, '.codex', 'AGENTS.md')
+  fs.writeFileSync(policyPath, fs.readFileSync(policyPath, 'utf8').replace(/<!-- agent-os version [^>]+ -->\n/, ''))
+
+  const drifted = await doctor()
+  assert.equal(drifted.code, 1)
+  assert.match(drifted.text, /DRIFT codex direct user .*installed 0\.1\.0.*update --platform codex --scope user/)
+  assert.match(drifted.text, /retired skills still installed: retired-skill/)
+  assert.match(drifted.text, /DRIFT claude plugin agent-os@agent-os-marketplace \(user\): recorded version 0\.2\.0/)
+  assert.match(drifted.text, /DRIFT codex global policy .*no version line/)
+  assert.equal(fs.readFileSync(manifestPath, 'utf8'), JSON.stringify(manifest))
+})
+
+test('doctor finds no installation and suggests install', async () => {
+  const root = temporaryRoot()
+  let text = ''
+  const code = await run(['doctor', '--offline'], {
+    output: { write(chunk) { text += chunk } }, homeDir: path.join(root, 'home'), cwd: root
+  })
+  assert.equal(code, 0)
+  assert.match(text, /no Agent OS installation found/)
+})
+
+function snapshotTree(root) {
+  const entries = []
+  const visit = (dir) => {
+    for (const entry of fs.readdirSync(dir, { withFileTypes: true }).sort((a, b) => a.name.localeCompare(b.name))) {
+      const file = path.join(dir, entry.name)
+      if (entry.isDirectory()) {
+        entries.push(['dir', path.relative(root, file)])
+        visit(file)
+      } else {
+        entries.push(['file', path.relative(root, file), fs.readFileSync(file, 'utf8')])
+      }
+    }
+  }
+  visit(root)
+  return entries
+}
+
+async function runDoctor(homeDir, cwd, args = ['doctor', '--offline'], extra = {}) {
+  let text = ''
+  const code = await run(args, { output: { write(chunk) { text += chunk } }, homeDir, cwd, ...extra })
+  return { code, text }
+}
+
+test('doctor reports broken install files as findings instead of crashing, and writes nothing', async () => {
+  const root = temporaryRoot()
+  const homeDir = path.join(root, 'home')
+  const cwd = path.join(root, 'project')
+  fs.mkdirSync(cwd, { recursive: true })
+  fs.mkdirSync(path.join(homeDir, '.claude', 'skills'), { recursive: true })
+  fs.writeFileSync(path.join(homeDir, '.claude', 'skills', INSTALL_MANIFEST), 'null')
+  fs.mkdirSync(path.join(homeDir, '.claude', 'CLAUDE.md'), { recursive: true })
+  fs.mkdirSync(path.join(homeDir, '.claude', 'plugins'), { recursive: true })
+  fs.writeFileSync(path.join(homeDir, '.claude', 'plugins', 'installed_plugins.json'),
+    JSON.stringify({ plugins: { 'agent-os@m': [null, 5, 'text'] } }))
+  fs.mkdirSync(path.join(homeDir, '.codex', 'plugins'), { recursive: true })
+  fs.writeFileSync(path.join(homeDir, '.codex', 'plugins', 'cache'), 'not a directory')
+  await executeInstall({
+    command: 'install', platform: 'codex', method: 'direct', scope: 'project', policy: false
+  }, { output: silentOutput(), homeDir, cwd })
+  fs.rmSync(path.join(cwd, '.codex', 'hooks.json'))
+  fs.mkdirSync(path.join(cwd, '.codex', 'hooks.json'))
+
+  const before = snapshotTree(root)
+  const result = await runDoctor(homeDir, cwd)
+  assert.deepEqual(snapshotTree(root), before)
+  assert.equal(result.code, 1, result.text)
+  assert.match(result.text, /DRIFT claude direct user .*is not a readable Agent OS install manifest.*Move it aside/)
+  assert.match(result.text, /WARN {2}codex direct project .*cannot read .*hooks\.json/)
+  assert.match(result.text, /WARN {2}claude global policy .*cannot read the file/)
+  assert.doesNotMatch(result.text, /no Agent OS installation found/)
+})
+
+test('doctor covers plugin caches, duplicates, strays, scopes, and in-place local marketplaces', async () => {
+  const root = temporaryRoot()
+  const homeDir = path.join(root, 'home')
+  const cwd = path.join(root, 'project')
+  fs.mkdirSync(cwd, { recursive: true })
+  await executeInstall({
+    command: 'install', platform: 'codex', method: 'direct', scope: 'user', policy: false
+  }, { output: silentOutput(), homeDir, cwd })
+  const cache = path.join(homeDir, '.codex', 'plugins', 'cache', 'agent-os', 'agent-os')
+  fs.mkdirSync(path.join(cache, '0.1.0'), { recursive: true })
+  fs.writeFileSync(path.join(cache, '.DS_Store'), '')
+  fs.mkdirSync(path.join(homeDir, '.agents', 'skills', 'shape-work'), { recursive: true })
+  fs.writeFileSync(path.join(homeDir, '.agents', 'skills', 'shape-work', 'SKILL.md'), '---\nname: shape-work\n---\n')
+
+  const checkout = path.join(root, 'checkout')
+  fs.mkdirSync(path.join(checkout, '.claude-plugin'), { recursive: true })
+  fs.writeFileSync(path.join(checkout, '.claude-plugin', 'plugin.json'), JSON.stringify({ name: 'agent-os', version: VERSION }))
+  const plugins = path.join(homeDir, '.claude', 'plugins')
+  fs.mkdirSync(plugins, { recursive: true })
+  fs.writeFileSync(path.join(plugins, 'known_marketplaces.json'), JSON.stringify({
+    local: { source: { source: 'directory', path: checkout }, installLocation: checkout },
+    remote: { source: { source: 'github', repo: 'sockulags/agent-os' } }
+  }))
+  fs.writeFileSync(path.join(plugins, 'installed_plugins.json'), JSON.stringify({ plugins: {
+    'agent-os@local': [{ scope: 'user', version: '0.2.0' }],
+    'agent-os@remote': [{ scope: 'project', version: '0.1.0' }]
+  } }))
+
+  const { code, text } = await runDoctor(homeDir, cwd)
+  assert.equal(code, 1)
+  assert.match(text, /DRIFT codex plugin agent-os@agent-os: cached version 0\.1\.0/)
+  assert.doesNotMatch(text, /\.DS_Store/)
+  assert.match(text, /WARN {2}codex: both the plugin and a direct install are present.*Keep one/)
+  assert.match(text, /Agent OS skills outside the managed install: shape-work/)
+  assert.match(text, /OK {4}claude plugin agent-os@local \(user\): loaded in place from .*version /)
+  assert.match(text, /claude plugin update agent-os@remote --scope project/)
+})
+
+test('doctor names a policy-only fix for plugin users and handles a CLI newer than npm', async () => {
+  const root = temporaryRoot()
+  const homeDir = path.join(root, 'home')
+  fs.mkdirSync(path.join(homeDir, '.claude', 'plugins'), { recursive: true })
+  fs.writeFileSync(path.join(homeDir, '.claude', 'plugins', 'installed_plugins.json'), JSON.stringify({
+    plugins: { 'agent-os@remote': [{ scope: 'user', version: VERSION }] }
+  }))
+  fs.writeFileSync(path.join(homeDir, '.claude', 'CLAUDE.md'), '# Mine\n')
+  const { text } = await runDoctor(homeDir, root, ['doctor'], { latestVersion: () => '0.0.1' })
+  assert.match(text, /WARN {2}claude global policy .*no Agent OS block\. To add it: run \/agent-os:init-agent-os global/)
+  assert.match(text, /INFO {2}installer: this CLI is .* newer than the published 0\.0\.1/)
+})
+
+test('version comparison and the npm lookup tolerate odd input', () => {
+  assert.ok(compareVersions('0.16.0', '0.15.9') > 0)
+  assert.equal(compareVersions('0.15.0', '0.15.0-beta.1'), 0)
+  assert.ok(compareVersions('1.0.0', '0.99.99') > 0)
+  const calls = []
+  const spawn = (command, options) => {
+    calls.push([command, options.shell])
+    return { status: 0, stdout: '1.2.3\n' }
+  }
+  assert.equal(latestPublishedVersion('@sockulags/agent-os', { spawn }), '1.2.3')
+  assert.deepEqual(calls, [['npm view @sockulags/agent-os version', true]])
+  assert.equal(latestPublishedVersion('@sockulags/agent-os', { spawn: () => ({ status: 1, stdout: '' }) }), null)
+  assert.equal(latestPublishedVersion('@sockulags/agent-os', { spawn: () => ({ status: 0, stdout: 'npm warn\n' }) }), null)
+  assert.equal(latestPublishedVersion('@sockulags/agent-os', { spawn: () => { throw new Error('spawn failed') } }), null)
+  assert.equal(latestPublishedVersion('x; rm -rf /', { spawn }), null)
+  assert.equal(calls.length, 1)
+})
+
+test('the policy script reads the version from a plugin or checkout package.json and ignores other packages', () => {
+  const root = temporaryRoot()
+  const scriptDir = path.join(root, 'skills', 'init-agent-os', 'scripts')
+  fs.mkdirSync(scriptDir, { recursive: true })
+  fs.writeFileSync(path.join(root, 'package.json'), JSON.stringify({ name: 'other-package', version: '9.9.9' }))
+  assert.equal(resolvePolicyVersion(scriptDir), null)
+  fs.writeFileSync(path.join(root, 'package.json'), JSON.stringify({ name: PACKAGE_NAME, version: '1.2.3' }))
+  assert.equal(resolvePolicyVersion(scriptDir), '1.2.3')
+  fs.writeFileSync(path.join(root, 'skills', INSTALL_MANIFEST), JSON.stringify({ version: '2.0.0' }))
+  assert.equal(resolvePolicyVersion(scriptDir), '2.0.0')
+})
+
+test('doctor names the recorded Claude plugin key and gives no install advice for an unreadable plugin record', async () => {
+  const root = temporaryRoot()
+  const homeDir = path.join(root, 'home')
+  await executeInstall({
+    command: 'install', platform: 'claude', method: 'direct', scope: 'user', policy: false
+  }, { output: silentOutput(), homeDir, cwd: root })
+  const plugins = path.join(homeDir, '.claude', 'plugins')
+  fs.mkdirSync(plugins, { recursive: true })
+  fs.writeFileSync(path.join(plugins, 'installed_plugins.json'), JSON.stringify({
+    plugins: { 'agent-os@team': [{ scope: 'user', version: VERSION }] }
+  }))
+  const duplicate = await runDoctor(homeDir, root)
+  assert.match(duplicate.text, /Keep one: claude plugin uninstall agent-os@team, or delete/)
+  assert.doesNotMatch(duplicate.text, /agent-os@agent-os-marketplace/)
+
+  const unreadableHome = path.join(root, 'unreadable')
+  fs.mkdirSync(path.join(unreadableHome, '.claude', 'plugins'), { recursive: true })
+  fs.writeFileSync(path.join(unreadableHome, '.claude', 'plugins', 'installed_plugins.json'), '{ not json')
+  fs.writeFileSync(path.join(unreadableHome, '.claude', 'CLAUDE.md'), '# Mine\n')
+  const unreadable = await runDoctor(unreadableHome, root)
+  assert.match(unreadable.text, /WARN {2}claude plugins: cannot read/)
+  assert.doesNotMatch(unreadable.text, /no Agent OS installation found/)
+  assert.doesNotMatch(unreadable.text, /install --platform claude/)
+  assert.match(unreadable.text, /To add it: run \/agent-os:init-agent-os global/)
 })

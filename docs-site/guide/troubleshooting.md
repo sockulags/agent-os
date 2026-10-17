@@ -12,6 +12,13 @@ deterministic checks.
 
 **Symptom:** the agent lists only some skills, or a skill behaves like an older version.
 
+Start with the read-only report, which lists each install's version, retired or missing skills,
+duplicate installs, and the command that fixes each:
+
+```bash
+npx @sockulags/agent-os@latest doctor
+```
+
 For the default direct installation, update the same platform and scope you originally selected,
 then start a new host session:
 

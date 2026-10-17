@@ -17,6 +17,10 @@ so it reflects what is actually present — including a partial or outdated inst
 comes from the same frontmatter that gates it, so explicit and automatic skills never appear under
 the wrong heading. An automatic workflow may still document explicit modes in its own instructions.
 
+The card starts with the installed Agent OS version, read from the direct-install manifest or the
+plugin root, and points to `npx @sockulags/agent-os@latest doctor` for comparing it with the latest
+release.
+
 Invocation syntax differs per host: `/agent-os:<name>` through the Claude plugin, `/<name>` for a
 direct Claude install, and `$<name>` on Codex. The card names which form it is showing.
 
