@@ -100,7 +100,16 @@ rewritten to one template, measured before and after:
 
 Every negative control stayed silent, so all remaining misses are skills that should have fired and
 did not. `plain-voice` does not fire for ordinary explanations or status replies, and
-`quality-ratchet` rarely fires on implementation requests. See
+`quality-ratchet` rarely fires on implementation requests.
+
+A follow-up the same day moved plain-voice's core rules into the global policy block, so they reach
+every reply, and narrowed the skill to written artifacts such as documentation, commit messages, and
+pull request text. On the updated case set it fired on 12/12 artifact runs and stayed silent on
+27/27 negative runs, against 7/12 and 27/27 for the old description. Whether the policy rules
+shape ordinary replies is not measured, because plugin evals load no project rules. A new
+quality-ratchet description that also covers reviewing your own candidate before delivery raised
+its trigger accuracy from 8/21 to 15/21, and check-work, proportional-testing, and scope-guard
+kept their non-held-out results. See
 [`evals/RESULTS.md`](https://github.com/sockulags/agent-os/blob/main/evals/RESULTS.md) for the
 method, the with/without behavior delta, and the limits.
 

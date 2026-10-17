@@ -170,18 +170,20 @@
     "plain-voice": {
       "positive": [
         "plain-voice.md#PV-P1 Generated draft",
-        "plain-voice.md#PV-P2 Swedish technical terms",
-        "plain-voice.md#PV-P3 Ordinary reply",
-        "plain-voice.md#PV-P4 Short status reply",
         "plain-voice.md#PV-P5 EN PR description",
-        "plain-voice.md#PV-P6 EN explain slowdown",
-        "plain-voice.md#PV-P7 EN status update",
-        "plain-voice.md#PV-P8 EN HO repo summary"
+        "plain-voice.md#PV-P9 EN commit message",
+        "plain-voice.md#PV-P10 EN docs page"
       ],
       "negative": [
         "plain-voice.md#PV-N1 Developer's own text",
         "plain-voice.md#PV-N2 Quoted source",
-        "plain-voice.md#PV-N3 EN own commit message"
+        "plain-voice.md#PV-N3 EN own commit message",
+        "plain-voice.md#PV-N4 Swedish summary reply",
+        "plain-voice.md#PV-N5 Ordinary reply",
+        "plain-voice.md#PV-N6 Short status reply",
+        "plain-voice.md#PV-N7 EN explain slowdown",
+        "plain-voice.md#PV-N8 EN status update",
+        "plain-voice.md#PV-N9 EN HO repo summary"
       ]
     },
     "scope-guard": {
