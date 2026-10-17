@@ -25,7 +25,7 @@ and the meta skills.
 | `simplifier-review` | workflow | manual | Review a diff for unnecessary complexity |
 | `check-work` | workflow | automatic | Independently review a candidate and report or fix supported findings |
 | `understand-work` | workflow | manual | Question out the need behind a stated wish |
-| `explain-work` | workflow | manual | Explain the task in plain language for approval |
+| `explain-work` | workflow | manual | Explain the task in plain language |
 | `verify-before-done` | discipline | automatic | Fresh evidence before any completion claim |
 | `diagnose-before-fix` | discipline | automatic | Reproduce and root-cause before patching |
 | `proportional-testing` | discipline | automatic | Minimum meaningful regression coverage |

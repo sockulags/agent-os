@@ -16,13 +16,15 @@ day when it works, and what it deliberately will not do. No technical vocabulary
 summary cannot stand without a technical term, the understanding is not finished; go back and
 understand before explaining. Keep it short enough to read in under a minute: a TLDR, not a report.
 
-## The gate
+## After the summary
 
-Present the summary when it is needed for an actual decision and let the developer approve or
-challenge it. A challenge means the understanding was wrong somewhere: name what was misunderstood
-and reopen the questioning or the plan at that point rather than defending the summary. Under
-plan-work, the summary may be linked from the canonical planning artifact; it is not a general
-workflow gate.
+End with the summary. Do not ask for approval, confirmation, or feedback, and do not close with a
+question: the developer reads it and replies only to challenge it. When the summary supports a
+decision that another workflow owns, that workflow asks its one question; explain-work adds none.
+
+A challenge means the understanding was wrong somewhere: name what was misunderstood and reopen the
+questioning or the plan at that point rather than defending the summary. Under plan-work, the
+summary may be linked from the canonical planning artifact; it is not a workflow gate.
 
 Standalone, explain-work can run against any plan, diff, or pull request; the deliverable is the
-plain-language summary itself and the developer's verdict on it.
+plain-language summary itself.
