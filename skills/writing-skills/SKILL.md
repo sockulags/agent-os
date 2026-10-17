@@ -21,7 +21,11 @@ Make these elements discoverable without forcing headings when prose is clearer:
 - **Exit:** the delivered artifact, evidence, or precise blocker.
 
 The description says what the skill does, when it applies, and when it does not. Keep execution detail
-in the body.
+in the body. Automatic skills share one template, because the description is their whole trigger
+surface: the keyword phrase a developer would say, one sentence on what the skill does, "Use when the
+user says things like" followed by phrasings in the developer's own words, and "Not for" followed by
+the adjacent requests it must leave alone. Measure a rewrite with `scripts/trigger-eval.mjs` and
+`claude plugin eval` before keeping it.
 
 ## Freedom and control
 

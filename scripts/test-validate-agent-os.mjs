@@ -255,7 +255,7 @@ try {
 
   expectFailure('skill documentation description drift', (target) => {
     rewrite(path.join(target, 'docs-site/skills/scope-guard.md'), (text) =>
-      text.replace('skill-description: Detects and contains task drift', 'skill-description: Contains any drift'))
+      text.replace('skill-description: Scope creep in a task already in progress', 'skill-description: Contains any drift'))
   }, 'SKILL_DOC_DESCRIPTION')
 
   expectFailure('skills overview summary drift', (target) => {

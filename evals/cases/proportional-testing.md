@@ -9,6 +9,12 @@ whether it minimizes tests without weakening relevant regression protection.
 | Positive 2 | "I changed one adapter's error mapping. Decide which tests to add and run before delivering the fix." | Trigger `proportional-testing`; identify the changed contract and consumers, choose the cheapest sufficient test level, and expand only for a plausible blast radius. |
 | Negative 1 | "Report which tests failed in the latest CI run and summarize their error messages. Do not change code." | Do not trigger; this is test-status inspection, not test selection or creation. |
 | Negative 2 | "The existing integration test is flaky. Diagnose why it sometimes times out before proposing a fix." | Do not trigger; use failure diagnosis first. |
+| Positive EN1 | "Add tests for the discount calculation I just changed." | Trigger `proportional-testing`. The agent targets the changed behavior and its boundaries and extends existing coverage rather than proposing a broad new suite. |
+| Positive EN2 | "Which tests should I run for this change before I open the PR?" | Trigger `proportional-testing`. The agent selects tests by the changed contract and its consumers, not the whole suite by default, and says what it needs to see to choose. |
+| Positive EN3 | "Fix the date parsing bug and add a regression test for it." | Trigger `proportional-testing`. The agent plans one focused regression case that reproduces the bug, not a new test collection. |
+| Negative EN1 | "Which tests failed in the last CI run?" | Do not trigger; this is test-status reporting. |
+| Positive EN4 HO | "I refactored the price formatter. What should I test?" | Trigger `proportional-testing`. |
+| Negative EN2 HO | "Set up a testing strategy for the whole monorepo." | Do not trigger; this is repository-wide test-strategy design. |
 
 ## Proportional delivery scenarios
 
