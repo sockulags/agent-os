@@ -1,12 +1,14 @@
 ---
 name: plain-voice
-description: Plain wording for every reply and every text the agent writes. Removes filler, restated questions, and stacked hedges so each sentence carries a fact, an instruction, or a number. Use when answering, explaining, summarizing, or giving a status update, and when writing documentation, a commit message, a pull request description, or an issue comment. Not for code, identifiers, structured data, quoted source material, or text the user wrote.
+description: Plain wording for written artifacts such as documentation, README text, commit messages, pull request descriptions, issue comments, and release notes. Removes filler, restated requests, stacked hedges, and promotional wording so each sentence carries a fact, an instruction, or a number. Use when the user says things like write the PR description, draft the commit message, write the docs for this feature, or post a comment on the issue. Not for ordinary chat, explanations, summaries, or status replies, which the global policy covers, and not for code, identifiers, structured data, quoted source material, or text the user wrote.
 ---
 
 # Plain voice
 
-Apply this discipline to every textual response the agent authors, including short conversational
-and status replies. It is not limited to formal prose artifacts.
+The global policy block carries the core plain-voice rules for every reply, including short chat and
+status replies. This skill is the full checklist for written artifacts that outlive the conversation:
+documentation, README text, commit messages, pull request descriptions, issue comments, and release
+notes.
 
 Write so every sentence leaves the reader with a fact, an instruction, or a number. Cut the rest.
 

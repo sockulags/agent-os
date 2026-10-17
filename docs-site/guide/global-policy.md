@@ -47,7 +47,12 @@ code, commits and technical artifacts stay English unless the project says other
 
 The remaining rules govern how the agent writes. Lead with the outcome, so the first sentence answers
 what happened or what was found. Shorten by leaving out what does not change the reader's next step,
-not by compressing language into arrow chains or invented shorthand. Never make the reader
+not by compressing language into arrow chains or invented shorthand. Plain voice applies to every
+reply: each sentence carries a fact, an instruction, or a number, without unsourced claims, filler,
+restated questions, stacked hedges, imposed structure, or closing offers of help. An unverified
+claim is stated once, plainly, and established technical terms stay in English. The
+[`plain-voice`](/skills/plain-voice) skill holds the full checklist for documentation, commits, and
+pull request text. Never make the reader
 cross-reference a label invented earlier in the same text. Explanations belong in prose; tables are
 for short enumerable facts. Tone tracks the topic, and when it is unclear whether a topic is serious,
 it is.

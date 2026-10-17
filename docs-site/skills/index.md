@@ -77,7 +77,7 @@ Always on; no invocation.
 | [`scope-guard`](/skills/scope-guard) | discipline | automatic | Keep work inside the task; flag drift |
 | [`quality-ratchet`](/skills/quality-ratchet) | discipline | automatic | Compare exact entry and candidate evidence without score gates |
 | [`notice-lesson`](/skills/notice-lesson) | discipline | automatic | Treat interruptions as misunderstanding signals |
-| [`plain-voice`](/skills/plain-voice) | discipline | automatic | Apply plain voice to every agent-authored text response |
+| [`plain-voice`](/skills/plain-voice) | discipline | automatic | Apply plain voice to documentation, commits, and pull request text |
 
 ## Meta
 
