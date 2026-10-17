@@ -105,18 +105,18 @@ function localMarketplaceVersion(homeDir, marketplace, fsImpl) {
 function checkClaudePlugin(homeDir, { version, fsImpl, report }) {
   const file = path.join(homeDir, '.claude', 'plugins', 'installed_plugins.json')
   const installed = readJson(file, fsImpl)
-  if (installed.state === 'absent') return false
+  if (installed.state === 'absent') return { keys: [], unknown: false }
   if (installed.state === 'invalid' || !isObject(installed.value)) {
     report('warn', 'claude plugins', `cannot read ${file}; plugin installs were not checked.`)
-    return false
+    return { keys: [], unknown: true }
   }
   const plugins = isObject(installed.value.plugins) ? installed.value.plugins : {}
-  let found = false
+  const keys = new Set()
   for (const [key, installs] of Object.entries(plugins).filter(([name]) => name.startsWith('agent-os@'))) {
     const marketplace = key.slice('agent-os@'.length)
     const local = localMarketplaceVersion(homeDir, marketplace, fsImpl)
     for (const install of (Array.isArray(installs) ? installs : []).filter(isObject)) {
-      found = true
+      keys.add(key)
       const scope = typeof install.scope === 'string' ? install.scope : 'user'
       const label = `claude plugin ${key} (${scope})`
       const current = local ? local.version : install.version
@@ -130,7 +130,7 @@ function checkClaudePlugin(homeDir, { version, fsImpl, report }) {
       }
     }
   }
-  return found
+  return { keys: [...keys], unknown: false }
 }
 
 function checkCodexPlugin(homeDir, { version, fsImpl, report }) {
@@ -148,9 +148,10 @@ function checkCodexPlugin(homeDir, { version, fsImpl, report }) {
 }
 
 // The CLI's update reinstalls skills, so a plugin-only user syncs the policy through the skill.
-function policyFix(platform, { packageName, direct, plugin }) {
+// An unreadable plugin record may hide a plugin install, so it never leads to install advice.
+function policyFix(platform, { packageName, direct, plugin, unknown }) {
   if (direct) return `npx ${packageName}@latest update --platform ${platform} --policy`
-  if (plugin) return platform === 'claude' ? 'run /agent-os:init-agent-os global in Claude Code' : 'run $init-agent-os global in Codex'
+  if (plugin || unknown) return platform === 'claude' ? 'run /agent-os:init-agent-os global in Claude Code' : 'run $init-agent-os global in Codex'
   return `npx ${packageName}@latest install --platform ${platform}`
 }
 
@@ -214,12 +215,15 @@ export function collectDoctorReport({
   for (const target of directRoots(homeDir, cwd)) {
     if (checkDirectInstall(target, { version, packageName, packagedSkills, fsImpl, report })) installed[target.platform].direct = true
   }
-  installed.claude.plugin = checkClaudePlugin(homeDir, { version, fsImpl, report })
+  const claudePlugin = checkClaudePlugin(homeDir, { version, fsImpl, report })
+  installed.claude.plugin = claudePlugin.keys.length > 0
+  installed.claude.unknown = claudePlugin.unknown
   installed.codex.plugin = checkCodexPlugin(homeDir, { version, fsImpl, report })
 
   if (installed.claude.direct && installed.claude.plugin) {
+    const uninstall = claudePlugin.keys.map((key) => `claude plugin uninstall ${key}`).join(' and ')
     report('warn', 'claude', 'both the plugin and a direct install are present, so every skill appears twice (/agent-os:<skill> and /<skill>). ' +
-      'Keep one: claude plugin uninstall agent-os@agent-os-marketplace, or delete the directories listed in the direct install manifest.')
+      `Keep one: ${uninstall}, or delete the directories listed in the direct install manifest.`)
   }
   if (installed.codex.direct && installed.codex.plugin) {
     report('warn', 'codex', 'both the plugin and a direct install are present, so Codex lists every skill twice. ' +
@@ -231,7 +235,7 @@ export function collectDoctorReport({
     report('warn', `codex ${agentsRoot}`, `Agent OS skills outside the managed install: ${strays.join(', ')}. ` +
       `Codex may list them next to the managed copies. Delete these directories from ${agentsRoot} if you did not install them on purpose.`)
   }
-  if (!Object.values(installed).some((host) => host.direct || host.plugin)) {
+  if (!Object.values(installed).some((host) => host.direct || host.plugin || host.unknown)) {
     report('warn', 'install', `no Agent OS installation found. Run: npx ${packageName}@latest install`)
   }
 

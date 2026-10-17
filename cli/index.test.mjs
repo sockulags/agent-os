@@ -822,3 +822,29 @@ test('the policy script reads the version from a plugin or checkout package.json
   fs.writeFileSync(path.join(root, 'skills', INSTALL_MANIFEST), JSON.stringify({ version: '2.0.0' }))
   assert.equal(resolvePolicyVersion(scriptDir), '2.0.0')
 })
+
+test('doctor names the recorded Claude plugin key and gives no install advice for an unreadable plugin record', async () => {
+  const root = temporaryRoot()
+  const homeDir = path.join(root, 'home')
+  await executeInstall({
+    command: 'install', platform: 'claude', method: 'direct', scope: 'user', policy: false
+  }, { output: silentOutput(), homeDir, cwd: root })
+  const plugins = path.join(homeDir, '.claude', 'plugins')
+  fs.mkdirSync(plugins, { recursive: true })
+  fs.writeFileSync(path.join(plugins, 'installed_plugins.json'), JSON.stringify({
+    plugins: { 'agent-os@team': [{ scope: 'user', version: VERSION }] }
+  }))
+  const duplicate = await runDoctor(homeDir, root)
+  assert.match(duplicate.text, /Keep one: claude plugin uninstall agent-os@team, or delete/)
+  assert.doesNotMatch(duplicate.text, /agent-os@agent-os-marketplace/)
+
+  const unreadableHome = path.join(root, 'unreadable')
+  fs.mkdirSync(path.join(unreadableHome, '.claude', 'plugins'), { recursive: true })
+  fs.writeFileSync(path.join(unreadableHome, '.claude', 'plugins', 'installed_plugins.json'), '{ not json')
+  fs.writeFileSync(path.join(unreadableHome, '.claude', 'CLAUDE.md'), '# Mine\n')
+  const unreadable = await runDoctor(unreadableHome, root)
+  assert.match(unreadable.text, /WARN {2}claude plugins: cannot read/)
+  assert.doesNotMatch(unreadable.text, /no Agent OS installation found/)
+  assert.doesNotMatch(unreadable.text, /install --platform claude/)
+  assert.match(unreadable.text, /To add it: run \/agent-os:init-agent-os global/)
+})
