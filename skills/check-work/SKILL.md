@@ -29,7 +29,7 @@ merge, deploy, publication, approval, comment, or other external effect.
    from the request, repository policy, working-tree state, and relevant source and tests. A
    missing target or material unresolved product choice is a blocker, not a reason to invent scope.
 2. Freeze the candidate to be reviewed. Launch a fresh-context, read-only reviewer through a real host reviewer launch tool, using the independent-review semantics in
-   [`deliver-work`](../deliver-work/workflow.md#review-gate). A wait tool alone is not a launch
+   [`deliver-work`](../deliver-work/SKILL.md#review-gate). A wait tool alone is not a launch
    mechanism. If no reviewer can be launched or the launched reviewer does not return a result,
    report `BLOCKED`; never present self-review as independent review.
 3. Give the reviewer the outcome, boundaries, ground truth, candidate identity, and available

@@ -289,9 +289,13 @@ try {
   }, 'EVAL_CASE_POLARITY')
 
   expectFailure('missing delivery ground truth', (target) => {
-    rewrite(path.join(target, 'skills/deliver-work/workflow.md'), (text) =>
+    rewrite(path.join(target, 'skills/deliver-work/SKILL.md'), (text) =>
       text.replace('**Ground truth:**', '**Checks:**'))
   }, 'DELIVER_CONTRACT')
+
+  expectFailure('skill too large to survive compaction', (target) => {
+    rewrite(path.join(target, 'skills/deliver-work/SKILL.md'), (text) => `${text}\n${'x'.repeat(18000)}`)
+  }, 'SKILL_SIZE')
 
   expectFailure('missing check-work independent review contract', (target) => {
     rewrite(path.join(target, 'skills/check-work/SKILL.md'), (text) =>
@@ -299,23 +303,23 @@ try {
   }, 'CHECK_WORK_CONTRACT')
 
   expectFailure('missing independent review default', (target) => {
-    rewrite(path.join(target, 'skills/deliver-work/workflow.md'), (text) =>
+    rewrite(path.join(target, 'skills/deliver-work/SKILL.md'), (text) =>
       text.replace('Independent review is required unless', 'Independent review may be useful unless'))
   }, 'DELIVER_CONTRACT')
 
   expectFailure('missing pre-mutation review mechanism gate', (target) => {
-    rewrite(path.join(target, 'skills/deliver-work/workflow.md'), (text) =>
+    rewrite(path.join(target, 'skills/deliver-work/SKILL.md'), (text) =>
       text.replace('A wait tool alone is not a launch mechanism.', 'Use any available review tool.'))
   }, 'DELIVER_CONTRACT')
 
   expectFailure('missing independent review isolation', (target) => {
-    rewrite(path.join(target, 'skills/deliver-work/workflow.md'), (text) =>
+    rewrite(path.join(target, 'skills/deliver-work/SKILL.md'), (text) =>
       text.replace('the next review tool action after freezing the candidate must be',
         'the review tool action may be'))
   }, 'DELIVER_CONTRACT')
 
   expectFailure('missing empty-review rejection', (target) => {
-    rewrite(path.join(target, 'skills/deliver-work/workflow.md'), (text) =>
+    rewrite(path.join(target, 'skills/deliver-work/SKILL.md'), (text) =>
       text.replace('Never call a wait tool with empty', 'A wait tool may use empty'))
   }, 'DELIVER_CONTRACT')
 
@@ -351,7 +355,7 @@ try {
   }, 'IMPLEMENTATION_ISSUE_CONTRACT')
 
   expectFailure('deliver-work accepts an undecomposed target', (target) => {
-    rewrite(path.join(target, 'skills/deliver-work/workflow.md'), (text) =>
+    rewrite(path.join(target, 'skills/deliver-work/SKILL.md'), (text) =>
       text.replace('## Confirm one delivery unit', '## Confirm the broad request'))
   }, 'DELIVER_UNIT_CONTRACT')
 
@@ -366,7 +370,7 @@ try {
   }, 'BATCH_MANIFEST_CONTRACT')
 
   expectFailure('missing batch worker delivery boundary', (target) => {
-    rewrite(path.join(target, 'skills/deliver-work/workflow.md'), (text) =>
+    rewrite(path.join(target, 'skills/deliver-work/SKILL.md'), (text) =>
       text.replace(/The coordinator owns integration, aggregate review, and aggregate\r?\nverification\./,
         'Return to the coordinator.'))
   }, 'BATCH_DELIVERY_BOUNDARY')

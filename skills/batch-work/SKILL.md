@@ -37,7 +37,7 @@ invoke it. Use this workflow only when the developer explicitly requests an inte
 6. After all tasks integrate, run the epic or feature's aggregate verification contract when one
    exists, then run fresh aggregate checks. Child checks never prove the shared result.
 7. Treat the integrated batch as material. Apply the
-   [deliver-work review gate](../deliver-work/workflow.md#review-gate) to the complete candidate,
+   [deliver-work review gate](../deliver-work/SKILL.md#review-gate) to the complete candidate,
    resolve supported findings, and rerun affected aggregate checks.
 8. Deliver the candidate only to the boundary named by the request or project policy.
 

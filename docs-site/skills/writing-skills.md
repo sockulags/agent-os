@@ -23,6 +23,11 @@ the skill does, "Use when the user says things like" with the developer's own ph
 for" with the adjacent requests it must leave alone. A rewrite is kept only after a measured
 trigger run.
 
+The contract a run must obey, including its stop conditions and gates, lives in `SKILL.md` itself.
+After compaction Claude Code re-attaches only the first 5,000 tokens of an invoked `SKILL.md`, not
+reference files the skill told the agent to read, so the validator rejects a `SKILL.md` over 18,000
+characters. References hold material a run loads on demand.
+
 Delete no-ops, tactic locks, duplicate rules, sediment, audit theater, and authority theater.
 Validate structure and invocation boundaries, keep positive and negative trigger cases, and use
 blind forward tests for risky or complex behavior.
