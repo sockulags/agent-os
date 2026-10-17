@@ -24,8 +24,8 @@ Five recurring failures:
 - **Abstract metaphor in place of a concrete noun.** Substrate, vector, surface, north star.
 - **Structure imposed on the content.** Ideas forced into threes, "not just X but Y", bold labels
   that restate the line they introduce.
-- **Conversational residue.** Congratulatory openers, closing offers of help, disclaimers about what
-  could not be checked.
+- **Conversational residue.** Congratulatory openers, closing offers of help, vague hedges about what
+  might not hold. A claim that stays unverified after checking is stated once, plainly.
 
 Two checks settle a doubtful sentence. Ask what it tells the reader to do or know; if it cannot be
 restated as a fact, an instruction, or a number, cut it. Then ask whether it could appear unchanged

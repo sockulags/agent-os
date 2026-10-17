@@ -26,8 +26,8 @@ instructions.
 
 Group by invocation, explicit skills first, and give each one line: how to invoke it and what it
 does, condensed from its description rather than copied whole. Show the invocation form matching how
-this skill was itself reached — `/agent-os:<name>` through the Claude plugin, `/<name>` for a direct
-Claude install, `$<name>` on Codex — and name which form is shown, since the same skill set is typed
+this skill was itself reached: `/agent-os:<name>` through the Claude plugin, `/<name>` for a direct
+Claude install, `$<name>` on Codex. Name which form is shown, since the same skill set is typed
 differently per host.
 
 Close with the entry points for a developer who has not named a skill: coherent planning starts at

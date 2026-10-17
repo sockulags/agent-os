@@ -290,6 +290,10 @@ export function validate(root = path.resolve(scriptDir, '..')) {
       fail('SKILL_NAME', `${name}: folder and frontmatter name must match kebab-case.`)
     }
     if (!meta.description) fail('SKILL_DESCRIPTION', `${name}: description is required.`)
+    // An unquoted ": " or " #" turns a plain YAML scalar invalid, and hosts then drop the skill.
+    if (/: | #/.test(meta.description ?? '') && !/^["']/.test(meta.description)) {
+      fail('SKILL_DESCRIPTION_YAML', `${name}: an unquoted description must not contain ": " or " #".`)
+    }
 
     const docFile = path.join(docsSkillsRoot, `${name}.md`)
     if (!fs.existsSync(docFile)) {
@@ -685,11 +689,11 @@ export function validate(root = path.resolve(scriptDir, '..')) {
     'broad or mission-level planning to `plan-work`'
   ], 'DISPATCH_ROUTE_CONTRACT')
   checkContains(diagnostics, path.join(root, 'skills/scope-guard/SKILL.md'), [
-    'Relation — required',
-    'Relation — adjacent',
-    'Relation — unrelated',
-    'Mandate — covered',
-    'Mandate — new decision or external action',
+    'Relation, required',
+    'Relation, adjacent',
+    'Relation, unrelated',
+    'Mandate, covered',
+    'Mandate, new decision or external action',
     'Risk controls how covered work',
     'risk area does not automatically require new permission',
     'returns to `plan-work`',

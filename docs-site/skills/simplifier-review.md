@@ -1,15 +1,17 @@
 ---
 title: simplifier-review
 description: Review the current diff for unnecessary code and solution layers.
-skill-description: Reviews the current implementation diff for unnecessary code, abstractions, dependencies, and solution layers without changing files. It activates during code review, including deliver-work review, when the candidate should be checked for a simpler solution. It skips whole-repository audits, initial design, code golf, and correctness or security review outside complexity caused by the diff.
+skill-description: Reviews the current implementation diff for unnecessary code, abstractions, dependencies, and solution layers without changing files. check-work and deliver-work apply it as their simplification lens. Use manually when the developer asks only for a simplification review of a diff. Not for whole-repository audits, initial design, code golf, or correctness and security review.
 summary: Review a diff for unnecessary complexity
 ---
 
 # simplifier-review
 
-**Bucket:** discipline · **Invocation:** automatic
+**Bucket:** workflow · **Invocation:** manual
 
-Adds a simplification lens to code review. It finds unnecessary additions, duplicated project code,
+Adds a simplification lens to code review. [check-work](/skills/check-work) and
+[deliver-work](/skills/deliver-work) apply it during every review, so it is manual on its own and
+does not compete with check-work for review requests. It finds unnecessary additions, duplicated project code,
 avoidable dependencies, custom versions of standard or native behavior, and layers without real
 variation.
 

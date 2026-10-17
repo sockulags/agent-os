@@ -1,4 +1,4 @@
-# Agent OS — global policy
+# Agent OS global policy
 
 Source of truth for the managed policy block installed into `~/.claude/CLAUDE.md` and
 `~/.codex/AGENTS.md` by `init-agent-os global`. Edit here, never inside the installed blocks.
@@ -26,13 +26,14 @@ Rules:
 - Respond in the language used by the user. Code, commits, and technical artifacts are English unless the project says otherwise.
 - Lead with the outcome: the first sentence answers "what happened" or "what did you find". Supporting detail comes after.
 - Readable beats brief: shorten by leaving out what does not change the reader's next step, not by compressing language. Full sentences; no arrow chains, fragment style, or invented shorthand the reader must decode.
-- Never force the reader to cross-reference labels or numbering invented earlier in the text — say what you mean in place.
+- Never force the reader to cross-reference labels or numbering invented earlier in the text; say what you mean in place.
 - Explanations belong in prose; tables only for short enumerable facts.
 - Calibrate tone to the topic: playfulness is fine, neutral and factual the moment the subject is serious. When in doubt, it is serious.
 - Orchestration is opt-in: `plan-work`, `shape-work`, `batch-work`, `deliver-work`, `dispatch-next`,
   `init-agent-os`, `understand-work`, `explain-work`, and `record-lesson` exist for planned work;
   invoke them through the name exposed by the host (`/plan-work` for direct Claude skills,
-  `/agent-os:plan-work` for the Claude plugin, or `$plan-work` for Codex). Never self-invoke them.
+  `/agent-os:plan-work` for the Claude plugin, or `$plan-work` for Codex). Never self-invoke them
+  or any other manual agent-os skill.
   Planning depth is chosen internally by plan-work, and its use does not add a general summary
   approval gate. Existing authority may continue into the workflow its exit contract names; planning
   alone never starts implementation. The automatic `check-work` review workflow is also available
@@ -55,7 +56,7 @@ Rules:
   acceptance changes, new owners or deliveries, or closure. Without that mandate, keep corrections
   local and preserve an unsynced delta in working memory only when it must survive the session.
 
-## Preferences (seed defaults — project policy overrides)
+## Preferences (seed defaults; project policy overrides)
 
 - UI feedback under ~250 ms; feedback must not block the next interaction.
 - Own design identity; do not imitate the look of well-known apps.

@@ -1,6 +1,6 @@
 ---
 name: writing-skills
-description: Doctrine for writing and validating agent-os skills, loaded before creating or editing any SKILL.md, description, or eval case in this framework. Not for ordinary coding tasks that do not touch skill files.
+description: Doctrine for writing and validating agent-os skills. Use manually before creating or editing any SKILL.md, description, or eval case in this framework. Not for ordinary coding tasks that do not touch skill files.
 disable-model-invocation: true
 ---
 
@@ -59,7 +59,7 @@ infrastructure or leave a deterministic invariant as a reminder.
 - **Audit theater**: receipts, states, or logs that do not protect recovery, correctness, or trust.
 - **Authority theater**: asking again for permission already granted by the direct request.
 
-## Definition of done — a skill is not finished until
+## Definition of done: a skill is not finished until
 
 1. Structural validation passes: folder name equals `name`, frontmatter has `name` + `description`, and manual skills (including manual workflows and this meta-skill) have `disable-model-invocation: true` and `agents/openai.yaml` with `policy.allow_implicit_invocation: false`. Automatic skills carry neither gate.
 2. At least two positive and two negative trigger cases describe the intended boundary.

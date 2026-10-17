@@ -22,6 +22,7 @@ and the meta skills.
 | `record-lesson` | workflow | manual | Record a durable lesson in repo or global policy |
 | `simplifier` | workflow | manual | Remove unnecessary code and solution layers |
 | `simplifier-audit` | workflow | manual | Audit a repository for simplification opportunities |
+| `simplifier-review` | workflow | manual | Review a diff for unnecessary complexity |
 | `check-work` | workflow | automatic | Independently review a candidate and report or fix supported findings |
 | `understand-work` | workflow | manual | Question out the need behind a stated wish |
 | `explain-work` | workflow | manual | Explain the task in plain language for approval |
@@ -29,7 +30,6 @@ and the meta skills.
 | `diagnose-before-fix` | discipline | automatic | Reproduce and root-cause before patching |
 | `proportional-testing` | discipline | automatic | Minimum meaningful regression coverage |
 | `scope-guard` | discipline | automatic | Keep work inside the task; flag drift |
-| `simplifier-review` | discipline | automatic | Review a diff for unnecessary complexity |
 | `quality-ratchet` | discipline | automatic | Compare exact entry and candidate evidence without score gates |
 | `notice-lesson` | discipline | automatic | Treat interruptions as misunderstanding signals |
 | `plain-voice` | discipline | automatic | Apply plain voice to every agent-authored text response |
@@ -86,7 +86,9 @@ can run it, checks the candidate before `simplifier-review`, and reports source-
 legacy-before/after, dependency, and optional-analyzer evidence. These are signals for semantic
 judgment, not score or raw-count thresholds. Missing Lizard or jscpd is reported as unavailable,
 never clean. A Stop hook blocks a missing, corrupt, or stale active lifecycle check until the same
-host session records a fresh check; `stop_hook_active` does not bypass that requirement. Without a
+host session records a fresh check; `stop_hook_active` does not bypass that requirement. When a fresh
+check keeps failing required project controls, the hook releases the stop to the user after three
+re-entries on the unchanged candidate and keeps delivery blocked. Without a
 baseline for the current host session it is a no-op. Resolve
 `scripts/quality-delta.mjs` relative to the installed `quality-ratchet/SKILL.md` and run its `clear`
 command from that same host session to abandon an active attempt. Standalone/manual use without a
@@ -104,7 +106,7 @@ register the local `.agents/plugins/marketplace.json` marketplace.
 
 ## Release routine
 
-1. Run `node scripts/validate-agent-os.mjs`, `npm test`, its red-case suite, and the live evals in `evals/`.
+1. Run `node scripts/validate-agent-os.mjs`, `npm test`, its red-case suite, and `npm run test:evals`.
 2. Bump `version` in `.claude-plugin/plugin.json`, `.codex-plugin/plugin.json`, and `package.json`.
 3. Add a dedicated changelog heading, commit and push, merge the green pull request to `main`, and
    create the matching tag before publishing. Never publish npm from a dirty worktree.

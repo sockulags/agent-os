@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict'
+import { spawnSync } from 'node:child_process'
 import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
@@ -495,6 +496,31 @@ test('policy planning preserves surrounding text and rejects malformed markers',
     () => planPolicyUpdate('<!-- BEGIN AGENT OS -->\nbroken\n', policy),
     /Malformed Agent OS policy markers/
   )
+})
+
+test('policy sync follows the selected platform and the installed policy script works without a checkout', async () => {
+  const root = temporaryRoot()
+  const homeDir = path.join(root, 'home')
+  await executeInstall({
+    command: 'install',
+    platform: 'codex',
+    method: 'direct',
+    scope: 'user',
+    policy: true
+  }, { output: silentOutput(), homeDir, cwd: root })
+
+  assert.match(fs.readFileSync(path.join(homeDir, '.codex', 'AGENTS.md'), 'utf8'), /BEGIN AGENT OS/)
+  assert.equal(fs.existsSync(path.join(homeDir, '.claude', 'CLAUDE.md')), false)
+
+  const script = path.join(homeDir, '.codex', 'skills', 'init-agent-os', 'scripts', 'policy-block.mjs')
+  const target = path.join(root, 'CLAUDE.md')
+  fs.writeFileSync(target, '# Mine\n')
+  const run = (...args) => spawnSync(process.execPath, [script, '--target', target, ...args], { encoding: 'utf8' })
+  assert.equal(run('--check').status, 1)
+  assert.equal(fs.readFileSync(target, 'utf8'), '# Mine\n')
+  assert.equal(run().status, 0)
+  assert.equal(run('--check').status, 0)
+  assert.match(fs.readFileSync(target, 'utf8'), /^# Mine\n\n<!-- BEGIN AGENT OS -->/)
 })
 
 test('malformed policy markers abort before direct skill installation', async () => {

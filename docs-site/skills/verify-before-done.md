@@ -1,7 +1,7 @@
 ---
 title: verify-before-done
 description: Fresh execution evidence before an agent calls implemented work complete or ready.
-skill-description: Requires fresh execution evidence before an agent states that implemented work is complete, fixed, passing, or ready to ship. It activates at the completion-claim boundary after changes or validation, including requests to mark work done or report test status. It skips diagnosis, planning, speculative review, and status reports that make no completion claim.
+skill-description: Requires fresh execution evidence before an agent states that implemented work is complete, fixed, passing, or ready to ship. It activates at the completion-claim boundary after changes or validation, including requests to mark work done or to report whether tests pass. It skips diagnosis, planning, speculative review, and progress updates that claim nothing is complete or passing.
 summary: Fresh evidence before any completion claim
 ---
 
