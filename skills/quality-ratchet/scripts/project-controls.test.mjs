@@ -4,7 +4,7 @@ import os from 'node:os'
 import path from 'node:path'
 import { execFileSync } from 'node:child_process'
 import test from 'node:test'
-import { begin, check, hook, clear } from './quality-delta.mjs'
+import { begin, check, finish, hook, clear } from './quality-delta.mjs'
 
 const options = { detect: () => ({}) }
 function fixture(t, checks = [], extra = {}) {
@@ -112,6 +112,19 @@ test('dynamic checks and failed static checks are never reused', t => {
   }
 })
 
+test('finish keeps the baseline while a required control fails and closes it once it passes', t => {
+  const f = fixture(t, [required])
+  const started = begin(f.root, options)
+  f.write('source.ts', 'BROKEN')
+  const refused = finish(f.root, options)
+  assert.equal(refused.closed, false)
+  assert.equal(refused.evidence.status, 'blocked')
+  assert.equal(fs.existsSync(started.statePath), true)
+  f.write('source.ts', 'export const value = 4')
+  assert.equal(finish(f.root, options).closed, true)
+  assert.equal(fs.existsSync(started.statePath), false)
+})
+
 test('policy changes require explicit acknowledgement and cannot be cleared silently', t => {
   const f = fixture(t, [required], { protectedFiles: ['verify.cjs'] })
   begin(f.root, options)
@@ -193,4 +206,27 @@ test('external executable permission changes invalidate a cached pass', { skip: 
   fs.chmodSync(tool, 0o644)
   assert.equal(hook(f.root).decision, 'block')
   assert.equal(check(f.root, options).status, 'blocked')
+})
+
+test('stale control evidence is bounded at Stop', t => {
+  const f = fixture(t, [required])
+  begin(f.root, options)
+  assert.equal(check(f.root, options).status, 'ok')
+  const env = { ...process.env, CONTROL_FIXTURE: 'changed after check' }
+  assert.match(hook(f.root, { stop_hook_active: false }, { env }).reason, /control evidence is stale/)
+  assert.equal(hook(f.root, { stop_hook_active: true }, { env }).decision, 'block')
+  assert.equal(hook(f.root, { stop_hook_active: true }, { env }).decision, 'block')
+  assert.match(hook(f.root, { stop_hook_active: true }, { env }).systemMessage, /still stale/)
+})
+
+test('a released stale-check block does not use up the failing-controls budget', t => {
+  const f = fixture(t, [required])
+  begin(f.root, options)
+  f.write('source.ts', 'BROKEN')
+  assert.equal(hook(f.root, { stop_hook_active: false }).decision, 'block')
+  assert.equal(hook(f.root, { stop_hook_active: true }).decision, 'block')
+  assert.equal(hook(f.root, { stop_hook_active: true }).decision, 'block')
+  assert.match(hook(f.root, { stop_hook_active: true }).systemMessage, /has not run/)
+  assert.equal(check(f.root, options).status, 'blocked')
+  assert.match(hook(f.root, { stop_hook_active: false }).reason, /Project controls block delivery/)
 })

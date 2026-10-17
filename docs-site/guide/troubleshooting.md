@@ -35,14 +35,16 @@ cache before debugging anything else.
 
 **Symptom:** the host asks for another turn instead of stopping.
 
-The hook blocks only an active lifecycle problem. In the implementation worktree, inspect the
+The hook blocks only an active lifecycle problem, and every block is bounded: after three re-entered
+Stops on the same unchanged candidate it lets the turn end and shows the reason, while the baseline
+stays active and `finish` still refuses delivery. In the implementation worktree, inspect the
 candidate with:
 
 ```text
 node "<installed quality-ratchet runner>" check
 ```
 
-Run `check` or `clear` from the same host session that owns the blocked lifecycle. Those commands
+Run `check`, `finish`, or `clear` from the same host session that owns the blocked lifecycle. Those commands
 bind state through `CODEX_THREAD_ID` or `CLAUDE_CODE_SESSION_ID`, with Codex taking precedence when
 both exist; native Stop uses its `session_id` payload and distinguishes Codex by non-empty `turn_id`.
 A manual invocation with neither identity uses the deterministic standalone fallback instead of

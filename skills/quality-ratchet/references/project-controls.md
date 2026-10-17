@@ -135,7 +135,7 @@ node "$QUALITY_RUNNER" check --json
 `check` exits 1 on blocked evidence, 0 when all required checks pass, and reports errors as nonzero.
 The default output is concise; `--json` includes per-check status, command, fingerprint, cache reuse,
 measured scope, duration, output, signals, and any policy acknowledgement. The latest full report is
-`<session-state-path>.report.json` under Git metadata and survives successful Stop; `begin` prints the
+`<session-state-path>.report.json` under Git metadata and remains after `finish`; `begin` prints the
 session state path. Treat command output as potentially sensitive when uploading reports.
 
 For CI, use a fresh checkout and the same runner and project policy; `check` is the gate. A baseline

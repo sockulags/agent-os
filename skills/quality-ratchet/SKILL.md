@@ -17,8 +17,9 @@ Resolve `scripts/quality-delta.mjs` relative to this loaded `SKILL.md`; do not a
 worktree contains an Agent OS checkout. Before the first mutation in a Git worktree, run that
 installed runner with `begin` when it is available. It records the exact tracked and nonignored
 untracked entry state without stashing or changing user files. After implementation and before
-`simplifier-review`, run the same runner with `check` and pass its evidence to that review. Use its
-`clear` command only when abandoning the attempt. The normal correctness, security, scope,
+`simplifier-review`, run the same runner with `check` and pass its evidence to that review. At
+delivery, run `finish`: it records a fresh check and closes the baseline only when that check passes.
+Use its `clear` command only when abandoning the attempt. The normal correctness, security, scope,
 independent-review, and verification steps still decide delivery.
 
 Use three zones:
@@ -60,17 +61,17 @@ The Stop hook blocks an active lifecycle violation (a corrupt baseline or missin
 unacknowledged control-policy changes, or failed explicit project requirements. It checks recorded
 results and their inputs without rerunning project commands. State is bound to the current Git worktree and host session: Claude uses
 `CLAUDE_CODE_SESSION_ID`, Codex uses `CODEX_THREAD_ID`, and standalone/manual use has a deterministic
-fallback. `begin`, `check`, and `clear` use those command environments, preferring Codex when both
+fallback. `begin`, `check`, `finish`, and `clear` use those command environments, preferring Codex when both
 IDs exist. Stop uses payload
 `session_id`, treating a non-empty `turn_id` as Codex and otherwise as Claude; without `session_id`,
 it retains the command environment for direct/manual use. A worktree without an active baseline for
-the current session is a cheap no-op. A re-entered Stop hook remains blocked until that same session
-records a fresh passing `check`; the `stop_hook_active` payload does not bypass the lifecycle requirement.
-The one bounded exception is a fresh check whose required project controls keep failing: after three
-re-entered Stops on the same unchanged candidate, the hook allows the stop with a user-visible
-message and keeps the baseline active, so delivery stays blocked. A fresh passing Stop clears only the
-current session state. Run `clear` deliberately from the same host session when abandoning an
-implementation attempt; uninstall is not currently a command.
+the current session is a cheap no-op. Before ending any turn with an active baseline, including a
+pause to ask the developer, run `check`; a fresh passing check lets the turn end and keeps the
+baseline, so the next turn still compares against the exact entry state. Every Stop block is bounded:
+after three re-entered Stops on the same unchanged candidate, the hook allows the stop with a
+user-visible message and keeps the baseline active, so `finish` still refuses delivery. Run `clear`
+deliberately from the same host session when abandoning an implementation attempt; uninstall is not
+currently a command.
 
 Exit with the smallest complete implementation, the quality evidence, semantic review findings,
 and fresh verification. Do not remove a legitimate abstraction merely because it increases a raw

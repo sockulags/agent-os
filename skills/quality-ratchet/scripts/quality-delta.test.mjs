@@ -9,7 +9,9 @@ import {
   begin,
   check,
   clear,
-  hook
+  finish,
+  hook,
+  STALE_STATE_DAYS
 } from './quality-delta.mjs'
 
 const temporaryRoots = []
@@ -120,6 +122,8 @@ test('reports the first committed source delta from an unborn baseline', () => {
   assert.deepEqual(evidence.sourceFiles.changed, [])
   assert.deepEqual(evidence.sourceFiles.deleted, [])
   assert.deepEqual(hook(root, { stop_hook_active: false }), {})
+  assert.equal(fs.existsSync(started.statePath), true)
+  assert.equal(finish(root, { detect: unavailableAnalyzers }).closed, true)
   assert.equal(fs.existsSync(started.statePath), false)
 })
 
@@ -255,15 +259,15 @@ test('rejects corrupted entry heads before Stop inspection', () => {
   }
 })
 
-test('Stop hook remains fail-closed until a fresh check, then clears state', () => {
+test('Stop hook blocks until a fresh check and keeps the baseline until finish', () => {
   const root = repository()
   const started = begin(root, { detect: unavailableAnalyzers })
   const blocked = hook(root, { stop_hook_active: false })
   assert.equal(blocked.decision, 'block')
-  assert.match(blocked.reason, /no check/)
+  assert.match(blocked.reason, /has not run/)
   const reentered = hook(root, { stop_hook_active: true })
   assert.equal(reentered.decision, 'block')
-  assert.match(reentered.reason, /no check/)
+  assert.match(reentered.reason, /has not run/)
   assert.equal(fs.existsSync(started.statePath), true)
 
   check(root, { detect: unavailableAnalyzers })
@@ -274,8 +278,64 @@ test('Stop hook remains fail-closed until a fresh check, then clears state', () 
 
   check(root, { detect: unavailableAnalyzers })
   assert.deepEqual(hook(root, { stop_hook_active: true }), {})
+  assert.equal(fs.existsSync(started.statePath), true)
+  assert.deepEqual(hook(root, { stop_hook_active: false }), {})
+
+  const finished = finish(root, { detect: unavailableAnalyzers })
+  assert.equal(finished.closed, true)
+  assert.deepEqual(finished.evidence.sourceFiles.added, ['src/new.js'])
   assert.equal(fs.existsSync(started.statePath), false)
   assert.deepEqual(hook(root, { stop_hook_active: false }), {})
+})
+
+test('a turn that ends mid-delivery keeps comparing against the exact entry state', () => {
+  const root = repository()
+  begin(root, { detect: unavailableAnalyzers })
+  fs.writeFileSync(path.join(root, 'src', 'legacy.js'), 'export function legacy() {\n  return 2\n}\n')
+  assert.equal(hook(root, { stop_hook_active: false }).decision, 'block')
+  check(root, { detect: unavailableAnalyzers })
+  assert.deepEqual(hook(root, { stop_hook_active: true }), {})
+
+  fs.writeFileSync(path.join(root, 'src', 'added.js'), 'export const added = true\n')
+  const resumed = check(root, { detect: unavailableAnalyzers })
+  assert.deepEqual(resumed.sourceFiles.changed, ['src/legacy.js'])
+  assert.deepEqual(resumed.sourceFiles.added, ['src/added.js'])
+})
+
+test('a check that never becomes fresh releases Stop after the bounded limit', () => {
+  const root = repository()
+  const started = begin(root, { detect: unavailableAnalyzers })
+  assert.equal(hook(root, { stop_hook_active: false }).decision, 'block')
+  assert.equal(hook(root, { stop_hook_active: true }).decision, 'block')
+  assert.equal(hook(root, { stop_hook_active: true }).decision, 'block')
+  const released = hook(root, { stop_hook_active: true })
+  assert.equal(released.decision, undefined)
+  assert.match(released.systemMessage, /has not run for this candidate/)
+  assert.match(released.systemMessage, /delivery stays blocked/)
+  assert.equal(hook(root, { stop_hook_active: false }).decision, undefined)
+  assert.equal(fs.existsSync(started.statePath), true)
+
+  fs.writeFileSync(path.join(root, 'src', 'new.js'), 'export const later = true\n')
+  assert.equal(hook(root, { stop_hook_active: false }).decision, 'block')
+})
+
+test('begin prunes state from other sessions that has been idle past the retention limit', () => {
+  const root = repository()
+  const gitDir = path.join(root, '.git')
+  const old = path.join(gitDir, '.agent-os-quality-ratchet.json.claude-' + 'a'.repeat(32))
+  const oldReport = old + '.report.json'
+  const recent = path.join(gitDir, '.agent-os-quality-ratchet.json.codex-' + 'b'.repeat(32))
+  const unrelated = path.join(gitDir, 'unrelated-old-file')
+  for (const file of [old, oldReport, recent, unrelated]) fs.writeFileSync(file, '{}\n')
+  const past = new Date(Date.now() - (STALE_STATE_DAYS + 1) * 24 * 60 * 60 * 1000)
+  for (const file of [old, oldReport, unrelated]) fs.utimesSync(file, past, past)
+
+  const started = begin(root, { detect: unavailableAnalyzers })
+  assert.equal(fs.existsSync(old), false)
+  assert.equal(fs.existsSync(oldReport), false)
+  assert.equal(fs.existsSync(recent), true)
+  assert.equal(fs.existsSync(unrelated), true)
+  assert.equal(fs.existsSync(started.statePath), true)
 })
 
 test('Stop hook resolves current Codex and Claude payload session identities', () => {
@@ -297,7 +357,7 @@ test('Stop hook resolves current Codex and Claude payload session identities', (
     const started = begin(root, { detect: unavailableAnalyzers, env: scenario.env })
     const first = hook(root, { ...scenario.payload, stop_hook_active: false }, { env: {} })
     assert.equal(first.decision, 'block', scenario.name)
-    assert.match(first.reason, /no check/, scenario.name)
+    assert.match(first.reason, /has not run/, scenario.name)
     const reentered = hook(root, { ...scenario.payload, stop_hook_active: true }, { env: {} })
     assert.equal(reentered.decision, 'block', scenario.name)
     assert.equal(fs.existsSync(started.statePath), true, scenario.name)
@@ -308,6 +368,8 @@ test('Stop hook resolves current Codex and Claude payload session identities', (
       {},
       scenario.name
     )
+    assert.equal(fs.existsSync(started.statePath), true, scenario.name)
+    clear(root, { env: scenario.env })
     assert.equal(fs.existsSync(started.statePath), false, scenario.name)
   }
 })
@@ -335,6 +397,8 @@ test('Codex takes precedence when both host environment IDs are present', () => 
 
   check(root, { detect: unavailableAnalyzers, env })
   assert.deepEqual(hook(root, { ...payload, stop_hook_active: false }, { env: {} }), {})
+  assert.equal(fs.existsSync(started.statePath), true)
+  assert.equal(finish(root, { detect: unavailableAnalyzers, env }).closed, true)
   assert.equal(fs.existsSync(started.statePath), false)
 })
 
@@ -370,6 +434,7 @@ test('state files are isolated between host sessions in the same worktree', () =
 
   check(root, { detect: unavailableAnalyzers, env: claudeSession })
   assert.deepEqual(hook(root, { stop_hook_active: false }, { env: claudeSession }), {})
+  assert.equal(finish(root, { detect: unavailableAnalyzers, env: claudeSession }).closed, true)
   assert.equal(fs.existsSync(first.statePath), false)
   assert.equal(fs.existsSync(second.statePath), true)
 
@@ -432,7 +497,7 @@ test('Stop hook does not read unchanged tracked files', () => {
   }
 })
 
-test('Stop accepts and clears a fresh check after a committed source change', () => {
+test('Stop accepts a fresh check after a committed source change and finish closes it', () => {
   const root = repository()
   const started = begin(root, { detect: unavailableAnalyzers })
   fs.writeFileSync(path.join(root, 'src', 'legacy.js'), 'export function legacy() {\n  return 2\n}\n')
@@ -442,6 +507,8 @@ test('Stop accepts and clears a fresh check after a committed source change', ()
   const evidence = check(root, { detect: unavailableAnalyzers })
   assert.deepEqual(evidence.sourceFiles.changed, ['src/legacy.js'])
   assert.deepEqual(hook(root, { stop_hook_active: false }), {})
+  assert.equal(fs.existsSync(started.statePath), true)
+  assert.equal(finish(root, { detect: unavailableAnalyzers }).closed, true)
   assert.equal(fs.existsSync(started.statePath), false)
 })
 
@@ -456,6 +523,8 @@ test('reports both sides of a committed source rename after begin', () => {
   assert.deepEqual(evidence.sourceFiles.changed, [])
   assert.deepEqual(evidence.sourceFiles.deleted, ['src/legacy.js'])
   assert.deepEqual(hook(root, { stop_hook_active: false }), {})
+  assert.equal(fs.existsSync(started.statePath), true)
+  assert.equal(finish(root, { detect: unavailableAnalyzers }).closed, true)
   assert.equal(fs.existsSync(started.statePath), false)
 })
 
@@ -511,4 +580,43 @@ test('Codex Stop contract accepts structured exit 0 and uses stderr on exit 2', 
     reason: exitTwo.stderr
   })
   assert.throws(() => parseCodexStopResult({ ...exitTwo, stderr: '' }), /Codex rejected/)
+})
+
+test('an uninspectable candidate is bounded and its release resets once inspection works', () => {
+  const root = repository()
+  begin(root, { detect: unavailableAnalyzers })
+  const index = path.join(root, '.git', 'index')
+  const saved = fs.readFileSync(index)
+  fs.writeFileSync(index, 'not an index')
+
+  assert.match(hook(root, { stop_hook_active: false }).reason, /could not inspect the candidate/)
+  assert.equal(hook(root, { stop_hook_active: true }).decision, 'block')
+  assert.equal(hook(root, { stop_hook_active: true }).decision, 'block')
+  assert.match(hook(root, { stop_hook_active: true }).systemMessage, /still cannot inspect/)
+
+  fs.writeFileSync(index, saved)
+  assert.match(hook(root, { stop_hook_active: false }).reason, /has not run/)
+  fs.writeFileSync(index, 'broken again')
+  assert.equal(hook(root, { stop_hook_active: false }).decision, 'block')
+  fs.writeFileSync(index, saved)
+})
+
+test('finish command reports JSON, accepts a policy reason, and exits 1 when the baseline stays', () => {
+  const runner = path.join(path.dirname(fileURLToPath(import.meta.url)), 'quality-delta.mjs')
+  const root = repository()
+  const env = { ...process.env, CLAUDE_CODE_SESSION_ID: 'finish-cli', CODEX_THREAD_ID: '' }
+  const run = (...args) => spawnSync(process.execPath, [runner, ...args, '--root', root], { encoding: 'utf8', env })
+
+  assert.equal(run('begin').status, 0)
+  const closed = run('finish', '--json')
+  assert.equal(closed.status, 0)
+  const result = JSON.parse(closed.stdout)
+  assert.equal(result.closed, true)
+  assert.equal(result.evidence.status, 'ok')
+  assert.equal(fs.existsSync(result.statePath), false)
+
+  assert.equal(run('finish').status, 1)
+  assert.equal(run('begin', '--accept-policy-change', 'reason').status, 2)
+  assert.equal(run('begin').status, 0)
+  assert.equal(run('finish', '--accept-policy-change', 'authorized reason').status, 0)
 })

@@ -21,7 +21,9 @@ When the discipline is available, `deliver-work` runs:
 2. the bounded implementation, including behavior-preserving improvement on the touched surface;
 3. the same installed runner's `check` command before `simplifier-review`;
 4. the normal simplification, correctness, security, scope, independent-review, and verification
-   gates.
+   gates;
+5. the same runner's `finish` command at delivery, which records a fresh check and closes the
+   baseline only when that check passes.
 
 The agent resolves `scripts/quality-delta.mjs` relative to the loaded `quality-ratchet/SKILL.md`, so
 direct installations do not depend on an Agent OS checkout in the current repository.
@@ -47,20 +49,26 @@ includes tracked dirty files and nonignored untracked files without stashing or 
 binds the state to `CLAUDE_CODE_SESSION_ID`, Codex binds it to `CODEX_THREAD_ID`, and standalone/manual
 use has a deterministic fallback. Session IDs are reduced to bounded safe path keys and the derived
 identity is validated when state is read. `begin` refuses to overwrite an active baseline for the
-current session. `check` records the candidate fingerprint. `clear` removes only the current session's
-abandoned active baseline.
+current session. `check` records the candidate fingerprint. `finish` runs a fresh check and removes
+the current session's baseline only when it passes. `clear` removes only the current session's
+abandoned active baseline. The baseline survives turn ends, so a delivery that pauses to ask the
+developer still compares against the exact entry state when it resumes. `begin` removes other
+sessions' state files and reports that have been untouched for 14 days.
 
-`begin`, `check`, and `clear` read the host ID from their command environment, preferring
+`begin`, `check`, `finish`, and `clear` read the host ID from their command environment, preferring
 `CODEX_THREAD_ID` when both host variables exist. Native Stop reads `session_id` from its payload,
 identifies Codex by its required non-empty `turn_id`, and otherwise uses the Claude identity. If
 `session_id` is absent, direct/manual hook calls retain their injected or process environment.
 
 The Stop hook blocks corrupt or stale active evidence, unacknowledged control-policy changes,
-and failed explicit project requirements. It validates recorded results without rerunning commands. Without an active baseline for the current session it is a cheap no-op. Re-entry via
-`stop_hook_active` remains blocked until a fresh check; a fresh Stop then clears that session's state.
-When a fresh check keeps failing required project controls, for example because a tool is missing,
-the hook allows the stop after three re-entries on the unchanged candidate and shows the failing
-controls to the user. The baseline stays active, so delivery stays blocked until a passing check.
+and failed explicit project requirements. It validates recorded results without rerunning commands. Without an active baseline for the current session it is a cheap no-op. A fresh
+passing check lets the turn end and keeps the baseline for the next turn. Every block is bounded:
+when the check stays missing or stale, the candidate cannot be inspected, or a fresh check keeps
+failing required project controls, the hook allows the stop after three re-entries on the unchanged
+candidate and shows the reason to the user. Claude Code's own continuation cap resets whenever the
+agent calls a tool, so it cannot end such a loop by itself. The baseline stays active after a
+release, so `finish` still refuses delivery until a passing check. Corrupt or foreign state keeps
+blocking because `clear` always resolves it.
 Raw structural counts never block completion. New exception signals are advisory unless the project
 explicitly selects them as requirements.
 
@@ -84,7 +92,7 @@ The corresponding direct-install runners are:
 | User | `~/.claude/skills/quality-ratchet/scripts/quality-delta.mjs` | `~/.codex/skills/quality-ratchet/scripts/quality-delta.mjs` |
 | Project | `<project>/.claude/skills/quality-ratchet/scripts/quality-delta.mjs` | `<project>/.agents/skills/quality-ratchet/scripts/quality-delta.mjs` |
 
-Run `node "<runner path>" begin`, `check`, or `clear`. The checkout-relative
+Run `node "<runner path>" begin`, `check`, `finish`, or `clear`. The checkout-relative
 `node skills/quality-ratchet/scripts/quality-delta.mjs ...` form is only for repository development
 or a native plugin working copy where that path actually exists.
 
@@ -94,8 +102,8 @@ or ambiguous managed configuration aborts before skill or hook mutation. The ins
 backward-compatible with schema 1 and records the schema 2 managed hook integration.
 
 If a host does not show the hook after installation, update the same scope, start a new session, or
-reload the plugin where the host supports it. To inspect a blocked lifecycle, run `check`; to abandon
-the attempt, run `clear`. There is no uninstall command yet, so remove only the exact managed entry
+reload the plugin where the host supports it. To inspect a blocked lifecycle, run `check`; to close
+a delivered attempt, run `finish`; to abandon the attempt, run `clear`. There is no uninstall command yet, so remove only the exact managed entry
 manually if the integration must be disabled, preserving unrelated hooks.
 
 ## Structure before implementation
@@ -133,6 +141,6 @@ the target repository before enabling large tool directories; the hook has a ten
 
 `check --json` prints full structured evidence. The concise default prints failures and an evidence
 summary. The last full report remains beside the session state in Git's metadata directory after
-successful Stop. Policy changes are held until restored or acknowledged with
+`finish`. Policy changes are held until restored or acknowledged with
 `check --accept-policy-change "reason grounded in the authorized task"`. This is an audit trail,
 not an independent authorization or tamper-proof enforcement boundary; use CI for protected gates.
