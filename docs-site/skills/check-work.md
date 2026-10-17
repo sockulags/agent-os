@@ -1,7 +1,7 @@
 ---
 title: check-work
 description: Review a code candidate independently and report or fix supported findings.
-skill-description: Reviews a diff, commit, branch, pull request, or completed implementation for supported correctness, scope, risk, and unnecessary-complexity findings, and in explicit fix mode applies supported in-scope fixes with verification and targeted re-review. It skips merely running tests, checking status, initial design, and repository-wide audits.
+skill-description: Code review of changes, a diff, a commit, a branch, or a pull request. Reviews them for bugs, scope, risk, and needless complexity, reports findings first, and fixes only when the user asks for fixes. Use when the user says things like review my changes, take a look before I push, sanity-check the last commit, review this PR, or review and fix what is broken. Not for only running tests, checking git status, designing a feature before code exists, or auditing the whole repository.
 summary: Independently review a candidate and report or fix supported findings
 ---
 

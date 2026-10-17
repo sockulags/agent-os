@@ -13,6 +13,12 @@ invocation and confirm the review workflow activates only for the supported boun
 | CW-N2 Status-only request | “Check the repository status and list changed files.” | Do not trigger `check-work`; report status without a code review. |
 | CW-N3 Initial design | “Review the design for a new feature before any implementation or diff exists.” | Do not trigger `check-work`; route the unresolved design to the planning workflow. |
 | CW-N4 Repository audit | “Audit the entire repository for bugs and old abstractions.” | Do not trigger `check-work`; use the appropriate repository-wide audit workflow. |
+| CW-P7 EN pre-push look | "Can you take a look at my changes before I push? Just tell me if anything looks wrong." | Trigger `check-work`. The agent reviews before suggesting edits and reports findings first, or states plainly that it found no diff or changed files to review. |
+| CW-P8 EN pull request review | "Review PR 42 and fix anything that's actually broken." | Trigger `check-work`. The agent treats the request as a review with fix authority, reviews before any edit, and does not claim it reviewed or fixed a pull request it could not access. |
+| CW-P9 EN last commit | "Sanity-check my last commit for bugs." | Trigger `check-work`. The agent looks for the commit to review and reports findings, or reports that no commit or repository is available, without inventing findings. |
+| CW-N5 EN run the tests | "Run the test suite and tell me what fails." | Do not trigger; this is test execution and status, not a code review. |
+| CW-P10 EN HO auth changes | "Look over what I changed in the auth module and tell me if you see problems." | Trigger `check-work`. |
+| CW-N6 EN HO changed files | "What files did I change since main?" | Do not trigger; this is a status question. |
 
 Pass criteria: implicit code-review wording activates the workflow, authority selects report or fix
 mode, review stays independent and findings-first, and excluded requests remain outside its scope.

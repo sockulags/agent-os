@@ -18,6 +18,11 @@ The developer's request is the authority boundary. Skills do not add a second pe
 for requested work. Product choices remain with the developer; deterministic transformations belong
 in scripts or tests.
 
+Automatic skill descriptions share one template: the keyword phrase a developer would say, what
+the skill does, "Use when the user says things like" with the developer's own phrasings, and "Not
+for" with the adjacent requests it must leave alone. A rewrite is kept only after a measured
+trigger run.
+
 Delete no-ops, tactic locks, duplicate rules, sediment, audit theater, and authority theater.
 Validate structure and invocation boundaries, keep positive and negative trigger cases, and use
 blind forward tests for risky or complex behavior.

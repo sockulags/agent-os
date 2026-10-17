@@ -1,7 +1,7 @@
 ---
 title: notice-lesson
 description: Treat a developer interruption, correction, or challenge as a misunderstanding signal worth examining.
-skill-description: Treats a developer interruption, correction, or challenge as a misunderstanding signal worth examining. It activates when the developer stops the agent, contradicts its direction, or questions its output mid-task. It skips ordinary clarifying questions, requested iteration rounds, and disagreements the developer resolves in the same breath.
+skill-description: Interruption, pushback, or correction from the user in the middle of a task. Names what was assumed and what was wanted, changes course without arguing, and offers to record a repeated correction as a lesson. Use when the user says things like no, stop, that is not what I asked, wait, why are you touching that, I said leave it alone, or you did it again. Not for ordinary clarifying questions, a requested next iteration, or a disagreement the user settles in the same message.
 summary: Treat interruptions as misunderstanding signals
 ---
 

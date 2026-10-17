@@ -21,13 +21,19 @@
         "check-work.md#CW-P3 Bare mode choice",
         "check-work.md#CW-P4 Reviewer unavailable",
         "check-work.md#CW-P5 Evidence disposition",
-        "check-work.md#CW-P6 Targeted re-review"
+        "check-work.md#CW-P6 Targeted re-review",
+        "check-work.md#CW-P7 EN pre-push look",
+        "check-work.md#CW-P8 EN pull request review",
+        "check-work.md#CW-P9 EN last commit",
+        "check-work.md#CW-P10 EN HO auth changes"
       ],
       "negative": [
         "check-work.md#CW-N1 Test-only request",
         "check-work.md#CW-N2 Status-only request",
         "check-work.md#CW-N3 Initial design",
-        "check-work.md#CW-N4 Repository audit"
+        "check-work.md#CW-N4 Repository audit",
+        "check-work.md#CW-N5 EN run the tests",
+        "check-work.md#CW-N6 EN HO changed files"
       ]
     },
     "plan-work": {
@@ -86,11 +92,16 @@
     "notice-lesson": {
       "positive": [
         "notice-lesson.md#NL-P1 Interruption",
-        "notice-lesson.md#NL-P2 Repeated correction"
+        "notice-lesson.md#NL-P2 Repeated correction",
+        "notice-lesson.md#NL-P3 EN stop",
+        "notice-lesson.md#NL-P4 EN wrong area",
+        "notice-lesson.md#NL-P5 EN repeated correction",
+        "notice-lesson.md#NL-P6 EN HO wrong file"
       ],
       "negative": [
         "notice-lesson.md#NL-N1 Clarifying question",
-        "notice-lesson.md#NL-N2 Requested iteration"
+        "notice-lesson.md#NL-N2 Requested iteration",
+        "notice-lesson.md#NL-N3 EN clarifying question"
       ]
     },
     "record-lesson": {
@@ -118,11 +129,16 @@
     "diagnose-before-fix": {
       "positive": [
         "diagnose-before-fix.md#Positive 1",
-        "diagnose-before-fix.md#Positive 2"
+        "diagnose-before-fix.md#Positive 2",
+        "diagnose-before-fix.md#Positive EN1",
+        "diagnose-before-fix.md#Positive EN2",
+        "diagnose-before-fix.md#Positive EN3",
+        "diagnose-before-fix.md#Positive EN4 HO"
       ],
       "negative": [
         "diagnose-before-fix.md#Negative 1",
-        "diagnose-before-fix.md#Negative 2"
+        "diagnose-before-fix.md#Negative 2",
+        "diagnose-before-fix.md#Negative EN1"
       ]
     },
     "dispatch-next": {
@@ -156,35 +172,52 @@
         "plain-voice.md#PV-P1 Generated draft",
         "plain-voice.md#PV-P2 Swedish technical terms",
         "plain-voice.md#PV-P3 Ordinary reply",
-        "plain-voice.md#PV-P4 Short status reply"
+        "plain-voice.md#PV-P4 Short status reply",
+        "plain-voice.md#PV-P5 EN PR description",
+        "plain-voice.md#PV-P6 EN explain slowdown",
+        "plain-voice.md#PV-P7 EN status update",
+        "plain-voice.md#PV-P8 EN HO repo summary"
       ],
       "negative": [
         "plain-voice.md#PV-N1 Developer's own text",
-        "plain-voice.md#PV-N2 Quoted source"
+        "plain-voice.md#PV-N2 Quoted source",
+        "plain-voice.md#PV-N3 EN own commit message"
       ]
     },
     "scope-guard": {
       "positive": [
         "scope-guard.md#Positive 1",
         "scope-guard.md#Positive 2",
-        "scope-guard.md#Positive 3 \u2014 follow-up authority"
+        "scope-guard.md#Positive 3 \u2014 follow-up authority",
+        "scope-guard.md#Positive EN1",
+        "scope-guard.md#Positive EN2",
+        "scope-guard.md#Positive EN3",
+        "scope-guard.md#Positive EN4 HO"
       ],
       "negative": [
         "scope-guard.md#Negative 1",
         "scope-guard.md#Negative 2",
-        "scope-guard.md#Negative 3 \u2014 preference ticket"
+        "scope-guard.md#Negative 3 \u2014 preference ticket",
+        "scope-guard.md#Negative EN1",
+        "scope-guard.md#Negative EN2 HO"
       ]
     },
     "proportional-testing": {
       "positive": [
         "proportional-testing.md#Positive 1",
         "proportional-testing.md#Positive 2",
-        "proportional-testing.md#Positive 3 \u2014 cross-service journey"
+        "proportional-testing.md#Positive 3 \u2014 cross-service journey",
+        "proportional-testing.md#Positive EN1",
+        "proportional-testing.md#Positive EN2",
+        "proportional-testing.md#Positive EN3",
+        "proportional-testing.md#Positive EN4 HO"
       ],
       "negative": [
         "proportional-testing.md#Negative 1",
         "proportional-testing.md#Negative 2",
-        "proportional-testing.md#Negative 3 \u2014 count-driven deletion"
+        "proportional-testing.md#Negative 3 \u2014 count-driven deletion",
+        "proportional-testing.md#Negative EN1",
+        "proportional-testing.md#Negative EN2 HO"
       ]
     },
     "quality-ratchet": {
@@ -194,7 +227,11 @@
         "quality-ratchet.md#Positive 3 \u2014 contract ownership",
         "quality-ratchet.md#Positive 4 \u2014 cohesive React boundary",
         "quality-ratchet.md#Positive 5 \u2014 required command failure",
-        "quality-ratchet.md#Positive 6 \u2014 authorized policy update"
+        "quality-ratchet.md#Positive 6 \u2014 authorized policy update",
+        "quality-ratchet.md#Positive EN1",
+        "quality-ratchet.md#Positive EN2",
+        "quality-ratchet.md#Positive EN3",
+        "quality-ratchet.md#Positive EN4 HO"
       ],
       "negative": [
         "quality-ratchet.md#Negative 1 \u2014 legitimate runtime selection",
@@ -202,7 +239,8 @@
         "quality-ratchet.md#Negative 3 \u2014 different contracts",
         "quality-ratchet.md#Negative 4 \u2014 missing analyzers",
         "quality-ratchet.md#Negative 5 \u2014 advisory exception signal",
-        "quality-ratchet.md#Negative 6 \u2014 dynamic test cache"
+        "quality-ratchet.md#Negative 6 \u2014 dynamic test cache",
+        "quality-ratchet.md#Negative EN1"
       ]
     },
     "simplifier": {
@@ -253,11 +291,17 @@
     "verify-before-done": {
       "positive": [
         "verify-before-done.md#Positive 1",
-        "verify-before-done.md#Positive 2"
+        "verify-before-done.md#Positive 2",
+        "verify-before-done.md#Positive EN1",
+        "verify-before-done.md#Positive EN2",
+        "verify-before-done.md#Positive EN3",
+        "verify-before-done.md#Positive EN4 HO"
       ],
       "negative": [
         "verify-before-done.md#Negative 1",
-        "verify-before-done.md#Negative 2"
+        "verify-before-done.md#Negative 2",
+        "verify-before-done.md#Negative EN1",
+        "verify-before-done.md#Negative EN2 HO"
       ]
     },
     "list-skills": {

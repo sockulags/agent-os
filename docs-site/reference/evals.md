@@ -78,6 +78,34 @@ checkout; trustworthy live results still require a caller-supplied isolated harn
 
 ## Current measured results
 
+Run 2026-10-17 · agent-os 0.15.0 plus `c50c3b9` · Claude Code 2.1.296 `claude plugin eval` ·
+`claude-sonnet-5-5` · empty workspace · read-only tools · no project rules · 3 runs per case.
+
+`node scripts/trigger-eval.mjs build` turns every quoted trigger prompt in `evals/cases/*.md` into
+a plugin-eval case with a `tool_used: Skill` grader. `node scripts/trigger-eval.mjs summarize`
+prints the per-skill table below from the run's JSON. The automatic skill descriptions were
+rewritten to one template, measured before and after:
+
+| Skill | Before rewrite | After rewrite | Held-out English, old → new |
+|---|---:|---:|---:|
+| `check-work` | 19/27 | 27/27 | 5/10 → 10/10 |
+| `diagnose-before-fix` | 24/24 | 24/24 | 5/5 → 5/5 |
+| `notice-lesson` | 8/12 | 12/12 | 0/5 → 2/5 |
+| `plain-voice` | 15/30 | 15/30 | 0/5 → 0/5 |
+| `proportional-testing` | 15/24 | 18/24 | 6/10 → 10/10 |
+| `quality-ratchet` | 6/18 | 7/18 | 0/5 → 0/5 |
+| `scope-guard` | 13/24 | 21/24 | 5/10 → 10/10 |
+| `verify-before-done` | 21/24 | 24/24 | 10/10 → 10/10 |
+| **Total runs correct** | **121/183** | **148/183** | **31/60 → 47/60** |
+
+Every negative control stayed silent, so all remaining misses are skills that should have fired and
+did not. `plain-voice` does not fire for ordinary explanations or status replies, and
+`quality-ratchet` rarely fires on implementation requests. See
+[`evals/RESULTS.md`](https://github.com/sockulags/agent-os/blob/main/evals/RESULTS.md) for the
+method, the with/without behavior delta, and the limits.
+
+### Codex trigger matrix (v0.6.2)
+
 Run 2026-07-30 · agent-os 0.6.2 · Codex CLI 0.146.0-alpha.3.1 · fresh ephemeral
 sessions · read-only empty fixture · no project rules.
 

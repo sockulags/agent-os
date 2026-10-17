@@ -1,6 +1,6 @@
 ---
 name: quality-ratchet
-description: Keeps implementation quality from regressing by comparing a candidate with its exact entry state and separating bounded touched-surface improvement from cleanup. It activates during implementation, not for review-only requests, repository-wide debt hunts, or line-count optimization.
+description: Code quality while implementing a change, so the code does not get worse than it was. Compares the change with the code before it and keeps any cleanup limited to the code the change touches. Use when the user adds or changes code and says things like don't make it worse, no quality regressions compared with main, or tidy it up but only what you touch. Not for review-only requests, repository-wide tech-debt hunts, or cutting line counts.
 ---
 
 # Quality ratchet

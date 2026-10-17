@@ -1,6 +1,6 @@
 ---
 name: proportional-testing
-description: Selects the smallest meaningful test surface when code is implemented or modified. It activates before adding or expanding tests, and when choosing affected test execution for a change or bug fix. It skips test-status reporting, diagnosis of an already failing test, and repository-wide test-strategy design requested as its own deliverable.
+description: Tests for a change or bug fix, both which tests to write and which to run. Picks the smallest test set that still guards the changed behavior and its callers, extending existing tests first. Use when the user says things like add tests for this, write a regression test, fix the bug and add a test, or which tests should I run before the PR. Not for reporting which tests failed, diagnosing a failing or flaky test, or designing a test strategy for the whole repository.
 ---
 
 # Test proportionally
