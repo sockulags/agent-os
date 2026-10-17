@@ -24,6 +24,8 @@ export const PACKAGE_NAME = packageJson.name
 export const MARKETPLACE_SOURCE = 'sockulags/agent-os'
 export const INSTALL_MANIFEST = '.agent-os-install.json'
 export const QUALITY_HOOK_EVENT = 'Stop'
+// Codex records hook trust against each hook's hash and skips new or changed hooks until trusted.
+export const CODEX_HOOK_TRUST_NOTICE = 'Codex skips new or changed hooks until you trust them: open Codex, run /hooks, and trust the Agent OS quality-ratchet Stop hook.'
 
 const PLATFORM_VALUES = ['claude', 'codex', 'both']
 const METHOD_VALUES = ['direct', 'plugin']
@@ -46,7 +48,7 @@ export const PLATFORM_CONFIG = Object.freeze({
     installArgs: ['plugin', 'marketplace', 'add', MARKETPLACE_SOURCE],
     refreshArgs: ['plugin', 'marketplace', 'upgrade', 'agent-os'],
     pluginArgs: () => ['plugin', 'add', 'agent-os@agent-os'],
-    nextStep: 'Start a new Codex session so the refreshed plugin is loaded.'
+    nextStep: 'Start a new Codex session so the refreshed plugin is loaded. ' + CODEX_HOOK_TRUST_NOTICE
   })
 })
 
@@ -586,6 +588,7 @@ function applyHookPlans(plans, { output, fsImpl = fs }) {
       }
       output.write(plan.status.padEnd(7) + plan.hookPath + '\n')
     }
+    if (plans.some((plan) => plan.changed && plan.platform === 'codex')) output.write(CODEX_HOOK_TRUST_NOTICE + '\n')
   } catch (cause) {
     let rollbackFailure = null
     for (const plan of applied.reverse()) {

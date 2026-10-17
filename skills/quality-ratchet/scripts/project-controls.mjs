@@ -1,9 +1,11 @@
 import fs from 'node:fs'
+import os from 'node:os'
 import path from 'node:path'
-import { createHash } from 'node:crypto'
+import { createHash, randomUUID } from 'node:crypto'
 import { spawnSync } from 'node:child_process'
 
 export const POLICY_PATH = '.agent-os/quality.json'
+export const DEFAULT_TRUST_STORE = path.join(os.homedir(), '.agent-os', 'trusted-controls.json')
 const SIGNALS = {
   'type-escape': /@ts-(?:ignore|nocheck|expect-error)\b|:\s*any\b|\bas\s+any\b/,
   'lint-disable': /eslint-disable|@SuppressWarnings\b/,
@@ -132,17 +134,56 @@ function executable(root, name, env) {
   throw new Error(`Executable unavailable: ${name}`)
 }
 
-export function prepareControls(root, files, env = process.env) {
-  const policy = readPolicy(root)
-  const fileIdentity = files.map(file => [file.path, file.kind, file.hash, file.mode])
-  const environment = identity(Object.entries(env).sort(([a], [b]) => a.localeCompare(b)))
+// The declared controls: the policy plus the protected files that implement it.
+export function controlSignature(root, policy = readPolicy(root)) {
   const protectedIdentity = [POLICY_PATH, ...policy.protectedFiles].map(name => {
     try { return [name, inputHash(root, name)] } catch (error) {
       if (error.code === 'ENOENT') return [name, null]
       throw error
     }
   })
-  const signature = identity({ policy, protectedIdentity })
+  return identity({ policy, protectedIdentity })
+}
+
+// A repository's quality.json can name any program, and check runs it with the developer's
+// environment. The developer trusts each repository's declared controls once per signature from an
+// interactive terminal before check runs them. The store lives outside every repository.
+function readTrustStore(file) {
+  try {
+    const value = JSON.parse(fs.readFileSync(file, 'utf8'))
+    if (value?.schema === 1 && value.trusted && typeof value.trusted === 'object' && !Array.isArray(value.trusted)) return value
+  } catch {
+    // A missing or unreadable store trusts nothing.
+  }
+  return { schema: 1, trusted: {} }
+}
+
+const trustKey = (repository, signature) => identity({ repository, signature })
+
+export function controlsTrusted(repository, signature, trustStore = DEFAULT_TRUST_STORE) {
+  return Object.hasOwn(readTrustStore(trustStore).trusted, trustKey(repository, signature))
+}
+
+export function recordControlsTrust(repository, signature, checks, trustStore = DEFAULT_TRUST_STORE) {
+  const store = readTrustStore(trustStore)
+  store.trusted[trustKey(repository, signature)] = {
+    repository, trustedAt: new Date().toISOString(), commands: checks.map(check => [check.id, check.command])
+  }
+  fs.mkdirSync(path.dirname(trustStore), { recursive: true })
+  const temporary = `${trustStore}.${randomUUID()}.tmp`
+  try {
+    fs.writeFileSync(temporary, JSON.stringify(store, null, 2) + '\n')
+    fs.renameSync(temporary, trustStore)
+  } finally {
+    if (fs.existsSync(temporary)) fs.rmSync(temporary, { force: true })
+  }
+}
+
+export function prepareControls(root, files, env = process.env) {
+  const policy = readPolicy(root)
+  const fileIdentity = files.map(file => [file.path, file.kind, file.hash, file.mode])
+  const environment = identity(Object.entries(env).sort(([a], [b]) => a.localeCompare(b)))
+  const signature = controlSignature(root, policy)
   const checks = policy.checks.map(check => {
     try {
       if (check.cache && files.some(file => !['file', 'missing'].includes(file.kind))) {
@@ -188,6 +229,7 @@ export function blockingControls(report) {
   if (!report) return []
   return [
     ...(report.policyChanged ? ['quality policy changed: restore it or explicitly acknowledge the authorized change'] : []),
+    ...(report.untrusted ? ['project controls are not trusted on this machine: the developer must run trust in an interactive terminal'] : []),
     ...(report.stale ? ['inputs changed during verification; run check again'] : []),
     ...report.results.filter(result => result.required && result.status !== 'passed').map(result => `${result.id}: ${result.status}`),
     ...report.signals.filter(signal => signal.required).map(signal => `${signal.path}:${signal.line} ${signal.rule}`)

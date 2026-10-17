@@ -48,7 +48,10 @@ integrated into the delta. The core Node evidence remains usable without either.
 Use existing project checks for enforceable rules and report structural signals as advisory.
 When configuring external checks, read [references/project-controls.md](references/project-controls.md).
 The runner executes project commands from `.agent-os/quality.json`; required failures block delivery.
-Do not rerun unchanged failing checks in a loop. Fix the failure or report the blocker.
+It runs them only after the developer has trusted that repository's declared commands on this
+machine. Untrusted commands do not run and block delivery: show the listed commands and the `trust`
+command to the developer. Never run `trust` yourself, write its trust store, or set `CI` to bypass
+it; trust is the developer's decision. Do not rerun unchanged failing checks in a loop. Fix the failure or report the blocker.
 Policy changes require an explicit acknowledgement with the already-authorized reason; do not ask
 for approval again when the task authorizes the change or clear the baseline to hide it. A
 fresh `check` proves evidence freshness, not code quality, passing tests, or completed review. The

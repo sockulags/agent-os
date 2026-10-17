@@ -77,6 +77,27 @@ The installer preserves unrelated hook groups and replaces only the stable Agent
 is no uninstall command yet; disable safely by removing only that managed entry and keeping the
 rest of the host configuration. Native plugin hooks require Node on PATH.
 
+## Project controls are reported as untrusted
+
+**Symptom:** `check` reports "project controls are not trusted on this machine" and lists commands
+that did not run.
+
+The repository declares commands in `.agent-os/quality.json`, and nobody has trusted that exact policy
+on this machine. Read the listed commands, then run the printed `trust` command yourself in a
+terminal. It refuses without an interactive terminal, and the skill tells agents never to run it;
+this is a visible prompt, not a tamper-proof boundary. Trust survives updates to the code but not to
+the policy or its protected files. Stop lets the turn end with this message instead of blocking,
+and `finish` refuses delivery until the controls are trusted and pass.
+
+## The Stop hook never runs on Codex
+
+**Symptom:** Codex finishes turns with an active quality baseline and no Stop hook message.
+
+Codex runs a non-managed hook only after you trust it, and records that trust against the hook's
+hash. A new install, an update that changes the hook command, or a new Node path makes Codex skip the
+hook again. Open Codex, run `/hooks`, and trust the Agent OS quality-ratchet Stop hook. The installer
+prints this reminder whenever it changes the Codex hook.
+
 ## Plugin mode cannot find a host CLI
 
 Direct installation does not require Codex or Claude Code. If you selected `--method plugin`, install

@@ -2,11 +2,18 @@ import assert from 'node:assert/strict'
 import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
-import { execFileSync } from 'node:child_process'
-import test from 'node:test'
-import { begin, check, finish, hook, clear } from './quality-delta.mjs'
+import { execFileSync, spawnSync } from 'node:child_process'
+import test, { after } from 'node:test'
+import { fileURLToPath } from 'node:url'
+import { begin, check, finish, hook, clear, controlsTrustPlan, trustControls } from './quality-delta.mjs'
 
-const options = { detect: () => ({}) }
+const trustRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'agent-os-trust-'))
+after(() => fs.rmSync(trustRoot, { recursive: true, force: true }))
+const trustStore = path.join(trustRoot, 'trusted-controls.json')
+const options = { detect: () => ({}), trustStore }
+// CI=true trusts every control, so trust tests run as a developer machine.
+const developerEnv = { ...process.env, CI: '' }
+const trust = root => trustControls(controlsTrustPlan(root), { trustStore })
 function fixture(t, checks = [], extra = {}) {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'agent-os-controls-'))
   t.after(() => fs.rmSync(root, { recursive: true, force: true }))
@@ -19,6 +26,7 @@ function fixture(t, checks = [], extra = {}) {
   write('tools/version', '1')
   write('source.ts', 'export const value = 1\n')
   write('verify.cjs', "const fs = require('fs'); fs.appendFileSync('counter', 'x'); if (fs.readFileSync('source.ts', 'utf8').includes('BROKEN')) process.exit(1)")
+  trust(root)
   return { root, write, policy: JSON.parse(fs.readFileSync(path.join(root, '.agent-os/quality.json'))), count: () => fs.readFileSync(path.join(root, 'counter'), 'utf8').length }
 }
 const required = { id: 'verify', command: ['node', 'verify.cjs'], required: true }
@@ -132,11 +140,72 @@ test('policy changes require explicit acknowledgement and cannot be cleared sile
   assert.equal(check(f.root, options).status, 'blocked')
   assert.throws(() => clear(f.root), /Policy changed|policy changed/)
   assert.equal(hook(f.root).decision, 'block')
-  const accepted = check(f.root, { ...options, acceptPolicyChange: 'Authorized replacement of obsolete check' })
-  assert.equal(accepted.status, 'ok')
+  const accepted = check(f.root, { ...options, env: developerEnv, acceptPolicyChange: 'Authorized replacement of obsolete check' })
   assert.match(accepted.controls.policyAcknowledgement.reason, /Authorized/)
-  assert.match(check(f.root, options).controls.policyAcknowledgement.reason, /Authorized/)
-  assert.deepEqual(hook(f.root), {})
+  // The acknowledged policy is a new signature, so its commands need the developer's trust again.
+  assert.equal(accepted.status, 'blocked')
+  assert.ok(accepted.controls.untrusted)
+  trust(f.root)
+  const trusted = check(f.root, { ...options, env: developerEnv })
+  assert.equal(trusted.status, 'ok')
+  assert.match(trusted.controls.policyAcknowledgement.reason, /Authorized/)
+  assert.deepEqual(hook(f.root, {}, { env: developerEnv }), {})
+})
+
+test('untrusted repository commands never run and block delivery until the developer trusts them', t => {
+  const f = fixture(t, [required])
+  const untrustedStore = path.join(trustRoot, `untrusted-${Date.now()}.json`)
+  const untrusted = { ...options, env: developerEnv, trustStore: untrustedStore }
+  const started = begin(f.root, untrusted)
+  const evidence = check(f.root, untrusted)
+  assert.equal(evidence.status, 'blocked')
+  assert.deepEqual(evidence.controls.results, [])
+  assert.deepEqual(evidence.controls.untrusted.commands, [{ id: 'verify', command: ['node', 'verify.cjs'] }])
+  const trustRootArgument = evidence.controls.untrusted.trustCommand.match(/ trust --root "(.*)"$/)?.[1]
+  assert.equal(fs.realpathSync(trustRootArgument), fs.realpathSync(f.root))
+  assert.equal(evidence.controls.untrusted.trustCommand.startsWith('& '), process.platform === 'win32')
+  assert.equal(fs.existsSync(path.join(f.root, 'counter')), false)
+  assert.equal(finish(f.root, untrusted).closed, false)
+  // Untrusted controls are the developer's decision, so Stop lets the turn end at once.
+  const released = hook(f.root, { stop_hook_active: false }, { env: developerEnv })
+  assert.equal(released.decision, undefined)
+  assert.match(released.systemMessage, /not trusted on this machine.*verify \["node","verify\.cjs"\].* trust --root /)
+
+  trustControls(controlsTrustPlan(f.root), { trustStore: untrustedStore })
+  assert.equal(finish(f.root, untrusted).closed, true)
+  assert.equal(f.count(), 1)
+  assert.equal(fs.existsSync(started.statePath), false)
+})
+
+test('a CI environment runs declared controls without a trust record', t => {
+  const f = fixture(t, [required])
+  const env = { ...process.env, CI: 'true' }
+  const untrusted = { ...options, env, trustStore: path.join(trustRoot, `ci-${Date.now()}.json`) }
+  begin(f.root, untrusted)
+  const evidence = check(f.root, untrusted)
+  assert.equal(evidence.status, 'ok')
+  assert.equal(evidence.controls.untrusted, null)
+  assert.equal(f.count(), 1)
+})
+
+test('trust is shared by linked worktrees of the same repository', t => {
+  const f = fixture(t, [required])
+  execFileSync('git', ['-C', f.root, '-c', 'user.name=t', '-c', 'user.email=t@t', 'add', '.'])
+  execFileSync('git', ['-C', f.root, '-c', 'user.name=t', '-c', 'user.email=t@t', 'commit', '-qm', 'fixture'])
+  const linked = fs.mkdtempSync(path.join(os.tmpdir(), 'agent-os-controls-linked-'))
+  fs.rmSync(linked, { recursive: true })
+  t.after(() => fs.rmSync(linked, { recursive: true, force: true }))
+  execFileSync('git', ['-C', f.root, 'worktree', 'add', '-q', '-b', 'linked', linked])
+  assert.equal(controlsTrustPlan(linked).repository, controlsTrustPlan(f.root).repository)
+})
+
+test('the trust command refuses to record trust without an interactive terminal', t => {
+  const f = fixture(t, [required])
+  const runner = path.join(path.dirname(fileURLToPath(import.meta.url)), 'quality-delta.mjs')
+  const result = spawnSync(process.execPath, [runner, 'trust', '--root', f.root], { encoding: 'utf8', input: 'y\n' })
+  assert.equal(result.status, 2)
+  assert.match(result.stdout, /verify \(required\): \["node","verify.cjs"\]/)
+  assert.match(result.stderr, /interactive terminal/)
 })
 
 test('missing executable, missing tool inputs, timeout, and malformed policy cannot report success', t => {

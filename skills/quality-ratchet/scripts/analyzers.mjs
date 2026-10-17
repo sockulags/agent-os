@@ -16,13 +16,27 @@ function run(argv, cwd, spawn) {
   })
 }
 
-export function findLizard({ spawn = spawnSync } = {}) {
-  for (const launcher of LIZARD_LAUNCHERS) {
-    try {
-      if (run([...launcher, '--version'], process.cwd(), spawn).status === 0) return launcher
-    } catch { /* try the next launcher */ }
+// `python -m lizard` imports from its working directory first, so a lizard.py in the repository
+// would run. Every lizard process therefore starts in an empty temporary directory and receives
+// absolute file paths.
+function inNeutralDirectory(callback) {
+  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'agent-os-lizard-'))
+  try {
+    return callback(directory)
+  } finally {
+    fs.rmSync(directory, { recursive: true, force: true })
   }
-  return null
+}
+
+export function findLizard({ spawn = spawnSync } = {}) {
+  return inNeutralDirectory((directory) => {
+    for (const launcher of LIZARD_LAUNCHERS) {
+      try {
+        if (run([...launcher, '--version'], directory, spawn).status === 0) return launcher
+      } catch { /* try the next launcher */ }
+    }
+    return null
+  })
 }
 
 function csvFields(line) {
@@ -63,15 +77,20 @@ export function parseLizardCsv(text) {
 // Runs lizard on repository-relative files under cwd. Returns null when lizard is unavailable.
 export function lizardFunctions(cwd, files, { launcher = findLizard(), spawn = spawnSync } = {}) {
   if (!launcher) return null
-  const functions = []
-  for (let start = 0; start < files.length; start += BATCH_SIZE) {
-    const result = run([...launcher, '--csv', ...files.slice(start, start + BATCH_SIZE)], cwd, spawn)
-    if (result.error || result.status !== 0) {
-      throw new Error(`lizard failed: ${result.error?.message || result.stderr?.trim() || `exit ${result.status}`}`)
+  const root = path.resolve(cwd)
+  const relative = (file) => path.isAbsolute(file) ? path.relative(root, file).replaceAll('\\', '/') : file
+  return inNeutralDirectory((directory) => {
+    const functions = []
+    for (let start = 0; start < files.length; start += BATCH_SIZE) {
+      const batch = files.slice(start, start + BATCH_SIZE).map((file) => path.join(root, file))
+      const result = run([...launcher, '--csv', ...batch], directory, spawn)
+      if (result.error || result.status !== 0) {
+        throw new Error(`lizard failed: ${result.error?.message || result.stderr?.trim() || `exit ${result.status}`}`)
+      }
+      functions.push(...parseLizardCsv(result.stdout).map((fn) => ({ ...fn, file: relative(fn.file) })))
     }
-    functions.push(...parseLizardCsv(result.stdout))
-  }
-  return functions
+    return functions
+  })
 }
 
 // Same-named functions in one file are told apart by their order of appearance.

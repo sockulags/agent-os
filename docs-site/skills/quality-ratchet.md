@@ -129,6 +129,15 @@ Checks are advisory by default; `required: true` makes nonzero exits, unavailabl
 block delivery. New type escapes, lint suppressions, and skipped tests are reported relative to
 the entry state. No analyzer is installed automatically.
 
+A repository's `quality.json` can name any program, so `check` runs the declared commands only after
+the developer has trusted them on that machine. Run the `trust` command that `check` prints, which
+names the worktree with `--root`, in an interactive terminal: it lists the commands and protected
+files and records trust after a yes. It refuses without a terminal, and the skill tells agents never
+to run it. Changing the policy or a protected file needs trust again; until then `check` runs
+nothing, lists the untrusted commands, and blocks delivery. Stop lets the turn end with that list
+instead of blocking, because only the developer can resolve it. `CI=true` runs the controls without a trust record. This is
+a visible prompt and a speed bump, not a tamper-proof boundary.
+
 See the [configuration and examples](https://github.com/sockulags/agent-os/blob/main/skills/quality-ratchet/references/project-controls.md)
 for dependency-cruiser and ArchUnit commands, policy-change acknowledgement, and CI usage.
 

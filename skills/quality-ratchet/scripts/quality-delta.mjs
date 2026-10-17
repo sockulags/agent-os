@@ -5,7 +5,10 @@ import { createHash, randomUUID } from 'node:crypto'
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
-import { prepareControls, runControls, scanSignals, signalDelta, blockingControls, POLICY_PATH } from './project-controls.mjs'
+import {
+  prepareControls, runControls, scanSignals, signalDelta, blockingControls, POLICY_PATH,
+  readPolicy, controlSignature, controlsTrusted, recordControlsTrust, DEFAULT_TRUST_STORE
+} from './project-controls.mjs'
 import { complexityDelta, findLizard, lizardFunctions, withTemporaryFiles } from './analyzers.mjs'
 
 export const STATE_SCHEMA = 2
@@ -694,7 +697,8 @@ export function check(cwd = process.cwd(), {
   detect = detectOptionalAnalyzers,
   env = process.env,
   acceptPolicyChange = '',
-  analyzeComplexity = defaultComplexityAnalyzer()
+  analyzeComplexity = defaultComplexityAnalyzer(),
+  trustStore = DEFAULT_TRUST_STORE
 } = {}) {
   const context = repositoryContext(cwd, env)
   const state = readState(context)
@@ -718,10 +722,18 @@ export function check(cwd = process.cwd(), {
     })),
     ...complexitySignals(evidence.complexity, prepared.policy)
   ]
-  const results = policyChanged && !accepted ? [] : runControls(context.root, prepared, state.lastCheck?.evidence?.controls, env)
+  // CI already runs the repository's own code in a disposable checkout and cannot answer a prompt.
+  const ciEnvironment = ['true', '1'].includes(String(env.CI ?? '').toLowerCase())
+  const trusted = !prepared.policy.checks.length || ciEnvironment ||
+    controlsTrusted(repositoryIdentity(context.root), prepared.signature, trustStore)
+  const results = (policyChanged && !accepted) || !trusted ? [] : runControls(context.root, prepared, state.lastCheck?.evidence?.controls, env)
   const after = configured ? prepareControls(context.root, snapshot(context.root).files, env) : prepared
   evidence.controls = {
     fingerprint: prepared.fingerprint, policyChanged: policyChanged && !accepted,
+    untrusted: trusted ? null : {
+      commands: prepared.policy.checks.map(entry => ({ id: entry.id, command: entry.command })),
+      trustCommand: developerTrustCommand(context.root)
+    },
     policyAcknowledgement: accepted ? { before: oldSignature || null, after: prepared.signature, reason: acceptPolicyChange.trim() } : state.policyAcknowledgement || null,
     stale: after.fingerprint !== prepared.fingerprint, results, signals
   }
@@ -738,6 +750,35 @@ export function check(cwd = process.cwd(), {
   writeState(context, state)
   fs.writeFileSync(evidence.reportPath, JSON.stringify(evidence, null, 2) + '\n')
   return evidence
+}
+
+// Trust is shared by every worktree of one repository, so it keys on the common Git directory.
+function repositoryIdentity(root) {
+  const common = path.resolve(root, runGit(root, ['rev-parse', '--git-common-dir']).trim())
+  let real = common
+  try {
+    real = fs.realpathSync(common)
+  } catch {
+    // Keep the resolved path when the directory cannot be canonicalized.
+  }
+  return normalizePath(real)
+}
+
+export function controlsTrustPlan(cwd = process.cwd()) {
+  const root = path.resolve(runGit(path.resolve(cwd), ['rev-parse', '--show-toplevel']).trim())
+  const policy = readPolicy(root)
+  return {
+    root,
+    repository: repositoryIdentity(root),
+    signature: controlSignature(root, policy),
+    checks: policy.checks.map(entry => ({ id: entry.id, command: entry.command, required: entry.required === true })),
+    protectedFiles: policy.protectedFiles
+  }
+}
+
+export function trustControls(plan, { trustStore = DEFAULT_TRUST_STORE } = {}) {
+  recordControlsTrust(plan.repository, plan.signature, plan.checks, trustStore)
+  return { trustStore, trusted: plan.checks.length }
 }
 
 export function clear(cwd = process.cwd(), { env = process.env } = {}) {
@@ -793,6 +834,13 @@ function lifecycleCommand(command) {
   return `"${process.execPath}" "${fileURLToPath(import.meta.url)}" ${command}`
 }
 
+// A developer pastes this into their own terminal, so it names the worktree and, on Windows, uses
+// the PowerShell call operator that a quoted executable path needs.
+function developerTrustCommand(root) {
+  const command = `${lifecycleCommand('trust')} --root "${root}"`
+  return process.platform === 'win32' ? `& ${command}` : command
+}
+
 export function hook(cwd = process.cwd(), payload = {}, { env = process.env } = {}) {
   let context
   try {
@@ -832,6 +880,14 @@ export function hook(cwd = process.cwd(), payload = {}, { env = process.env } = 
         }
       }
       const blockers = blockingControls(controls)
+      // The agent cannot resolve untrusted controls, so blocking would only spend continuations.
+      if (controls?.untrusted && blockers.length === 1) {
+        return {
+          systemMessage: 'Quality ratchet: this repository declares project controls that are not trusted on this machine, so none ran: ' +
+            controls.untrusted.commands.map((entry) => `${entry.id} ${JSON.stringify(entry.command)}`).join('; ') +
+            `. To review and trust them, run in a terminal: ${controls.untrusted.trustCommand}. Delivery stays blocked until then.`
+        }
+      }
       if (blockers.length) {
         const summary = blockers.slice(0, 5).join('; ')
         return boundedBlockResult(context, state, 'controls', candidate.fingerprint,
@@ -887,6 +943,11 @@ export function formatEvidence(evidence) {
       ...evidence.controls.results.filter(result => result.status !== 'passed').map(result => `  ${result.id}: ${result.status} ${result.detail || result.output?.slice(0, 500) || ''}`),
       ...evidence.controls.signals.filter(signal => !signal.required).slice(0, 5).map(signal => `  advisory: ${signal.path}:${signal.line} ${signal.rule}: ${signal.text}`),
       ...blockingControls(evidence.controls).slice(0, 5).map(reason => `  blocked: ${reason}`),
+      ...(evidence.controls.untrusted ? [
+        '  Untrusted repository commands that were not run:',
+        ...evidence.controls.untrusted.commands.map(entry => `    ${entry.id}: ${JSON.stringify(entry.command)}`),
+        `  The developer reviews and trusts them by running this in an interactive terminal: ${evidence.controls.untrusted.trustCommand}`
+      ] : []),
       `Full report: ${evidence.reportPath}; use --json for structured output.`
     ] : [])
   ]
@@ -919,10 +980,39 @@ function parseArguments(args) {
     }
     index += 1
   }
-  if (!['begin', 'check', 'finish', 'clear', 'hook'].includes(result.command)) {
-    error(`Unknown command "${result.command}". Use begin, check, finish, clear, or hook.`, 'ARGUMENTS')
+  if (!['begin', 'check', 'finish', 'clear', 'trust', 'hook'].includes(result.command)) {
+    error(`Unknown command "${result.command}". Use begin, check, finish, clear, trust, or hook.`, 'ARGUMENTS')
   }
   return result
+}
+
+// Trust is the developer's decision, so it needs an interactive terminal. An agent's shell tool has
+// no TTY; this is a speed bump and a visible prompt, not a tamper-proof boundary.
+async function runTrust(root, { input = process.stdin, output = process.stdout } = {}) {
+  const plan = controlsTrustPlan(root)
+  if (!plan.checks.length) {
+    output.write(`No project controls are declared in ${POLICY_PATH}.\n`)
+    return
+  }
+  output.write(`Repository: ${plan.root}\nCommands declared in ${POLICY_PATH}:\n`)
+  for (const entry of plan.checks) output.write(`  ${entry.id}${entry.required ? ' (required)' : ''}: ${JSON.stringify(entry.command)}\n`)
+  if (plan.protectedFiles.length) output.write(`Protected files: ${plan.protectedFiles.join(', ')}\n`)
+  if (!input.isTTY || !output.isTTY) {
+    error('trust must be run by the developer in an interactive terminal; an agent must not run it.', 'TRUST_INTERACTIVE')
+  }
+  const readline = await import('node:readline/promises')
+  const prompt = readline.createInterface({ input, output })
+  try {
+    const answer = (await prompt.question('Run these commands during quality-ratchet check on this machine? [y/N] ')).trim().toLowerCase()
+    if (answer !== 'y' && answer !== 'yes') {
+      output.write('Not trusted. check will keep reporting these controls as untrusted.\n')
+      return
+    }
+  } finally {
+    prompt.close()
+  }
+  const result = trustControls(plan)
+  output.write(`Trusted ${result.trusted} commands for this repository in ${result.trustStore}. Changing ${POLICY_PATH} or a protected file requires trusting again.\n`)
 }
 
 function readHookPayload() {
@@ -934,9 +1024,13 @@ function readHookPayload() {
   }
 }
 
-function main() {
+async function main() {
   try {
     const options = parseArguments(process.argv.slice(2))
+    if (options.command === 'trust') {
+      await runTrust(options.root)
+      return
+    }
     if (options.command === 'begin') {
       const result = begin(options.root)
       console.log(`Quality ratchet baseline started for ${result.fileCount} files (${result.fingerprint}). State: ${result.statePath}`)
@@ -969,7 +1063,7 @@ function main() {
     console.log(JSON.stringify(result))
   } catch (cause) {
     console.error(`quality-ratchet: ${cause.message}`)
-    process.exitCode = cause instanceof QualityRatchetError && cause.code === 'ARGUMENTS' ? 2 : 1
+    process.exitCode = cause instanceof QualityRatchetError && ['ARGUMENTS', 'TRUST_INTERACTIVE'].includes(cause.code) ? 2 : 1
   }
 }
 
