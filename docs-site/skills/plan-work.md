@@ -1,13 +1,13 @@
 ---
 title: plan-work
 description: Plan a coherent mission with adaptive depth, code-informed coverage, canonical decisions, reconsideration, and stable handoffs.
-skill-description: Plans a coherent mission from outcome through coverage, decisions, feasibility, and verification with adaptive depth and an optional decision map. User-invoked when the developer wants a plan or the work needs one. Not required for an already clear implementation request or a substitute for shape-work delivery structure.
-summary: Plan a coherent mission with adaptive depth and canonical decisions
+skill-description: Plans a coherent mission from outcome through coverage, decisions, feasibility, and verification with adaptive depth, and writes the result as a versioned spec beside its intent. User-invoked when the developer wants a plan or a spec, or the work needs one. Not required for an already clear implementation request or a substitute for shape-work delivery structure.
+summary: Plan a mission and write it as a versioned spec
 ---
 
 # plan-work
 
-**Bucket:** workflow · **Invocation:** manual · `/plan-work` (direct Claude), `/agent-os:plan-work` (Claude plugin), or `$plan-work` (Codex)
+**Bucket:** workflow · **Invocation:** manual · `/plan-work` (direct Claude), `/agent-os-core:plan-work` (Claude plugin), or `$plan-work` (Codex)
 
 Owns the coherent mission before delivery: desired result and behavior, boundaries, affected parts,
 material decisions, technical feasibility, and one verification story for the whole result.
@@ -35,10 +35,21 @@ errors, and integrations. A bounded open choice gets facts first and focused que
 initiative uses the decision map only when independent ownership, separate evidence, or parallel
 treatment makes it worthwhile.
 
-Use [understand-work](/skills/understand-work) while the outcome is still moving. Use
-[explain-work](/skills/explain-work) when a plain-language summary is needed for an actual decision;
-summary approval is not a general gate. Planning is not mandatory before an already clear
+Use [capture-intent](/skills/capture-intent) while the outcome is still moving or when work that
+needs an intent has none. Use [explain-work](/skills/explain-work) for the plain-language summary at
+the top of the spec and whenever an actual decision needs one; summary approval is not a general
+gate. Planning is not mandatory before an already clear
 implementation request, and shape-work accepts an existing specification.
+
+## The spec file
+
+When the work has an intent, the plan is written as `intents/<id>/spec.md` beside it: a plain
+language `## Summary`, `## Behavior` as given, when, then examples, boundaries and non-goals,
+decisions with rejected alternatives, ground truth, open risks, and a decision log. Its `built_on`
+names the intent revision it answers, such as `intent@2`. Acceptance examples live in the spec, and
+a tracker item links to the spec section instead of copying it. A spec built on an older intent
+revision is stale and is reconsidered before anything is shaped or delivered from it. The format is
+in [Intent, spec, and plan files](/reference/intents).
 
 ## What the plan checks
 
@@ -55,7 +66,7 @@ does not start implementation; existing mandate continues across workflow bounda
 ## Decision-map mode
 
 The canonical map and ticket contract lives in [Maps and decision tickets](/reference/maps-and-tickets)
-and [`skills/plan-work/references/map.md`](https://github.com/sockulags/agent-os/blob/main/skills/plan-work/references/map.md).
+and [`plugins/agent-os-core/skills/plan-work/references/map.md`](https://github.com/sockulags/agent-os/blob/main/plugins/agent-os-core/skills/plan-work/references/map.md).
 The decision ticket owns its question, evidence, and resolution; the map is a repairable index.
 Stable identities, idempotent retries, dependency links, claims before independent work,
 compare-and-swap protection, and the open frontier keep parallel planning trustworthy. A map never

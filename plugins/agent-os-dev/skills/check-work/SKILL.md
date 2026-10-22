@@ -1,0 +1,80 @@
+---
+name: check-work
+description: Code review of changes, a diff, a commit, a branch, or a pull request, in a session or headless in CI. Reviews them for bugs, scope, risk, and needless complexity against the spec and the repository's REVIEW.md, reports findings first, and fixes only when the user asks for fixes. Use when the user says things like review my changes, take a look before I push, sanity-check the last commit, review this PR, or review and fix what is broken. Not for only running tests, checking git status, designing a feature before code exists, or auditing the whole repository.
+---
+
+# Check work
+
+Produce a decision-ready code review of the requested candidate. Review findings before proposing
+or applying changes, keep the review independent, and never turn a review into an unrequested
+merge, deploy, publication, approval, comment, or other external effect.
+
+## Select the mode
+
+- A bare explicit `check-work` invocation asks, **before reading repository code or the diff**,
+  whether the developer wants findings reported only or wants authorized findings fixed. Do not
+  run tests or inspect the candidate before that answer.
+- `check-work report` performs a read-only review without asking. It may run relevant checks, but
+  it does not edit files or external review state.
+- `check-work fix` reviews first, then fixes only supported findings inside the requested scope,
+  runs relevant verification, and gets a targeted independent re-review of every changed area.
+  The explicit fix request is the authority; do not ask for a second approval.
+- `check-work ci` is report mode for a non-interactive run on a pull request, such as the
+  `agent-review` workflow. It never asks, never edits, and writes the findings as its final output
+  for the workflow to post.
+- For an implicit request, infer the mode from authority: “review this” is report-only; “review
+  and fix this” is fix mode. Ask before inspection only when the requested authority is genuinely
+  ambiguous.
+
+## Review policy and contract
+
+Read `REVIEW.md` at the repository root when it exists. It is the repository's review policy: focus
+areas, severity tiers, what counts as a blocking finding, and limits such as a cap on minor
+findings. It narrows and ranks findings; it never turns a speculative concern into a supported one.
+
+When the candidate carries `Intent-Unit: <intent-id>/<unit-key>`, read that unit in
+`intents/<intent-id>/plan.md` and the spec beside it. The spec's behavior, boundaries, and ground
+truth are the review contract: report a candidate that misses an acceptance example, crosses a
+non-goal, or edits an accepted intent or spec.
+
+## Review loop
+
+1. Establish the review target, candidate identity, requested scope, non-goals, and ground truth
+   from the request, repository policy, working-tree state, and relevant source and tests. A
+   missing target or material unresolved product choice is a blocker, not a reason to invent scope.
+2. Freeze the candidate to be reviewed. Launch a fresh-context, read-only reviewer through a real host reviewer launch tool, using the independent-review semantics in
+   [`deliver-work`](../deliver-work/SKILL.md#review-gate). A wait tool alone is not a launch
+   mechanism. If no reviewer can be launched or the launched reviewer does not return a result,
+   report `BLOCKED`; never present self-review as independent review. In `ci` mode the run itself is
+   the independent reviewer: it started in a fresh context with no part in the implementation, so
+   review directly without launching another.
+3. Give the reviewer the outcome, boundaries, ground truth, candidate identity, and available
+   verification evidence. Synthesize only findings supported by the code, diff, tests, policy, or
+   returned review evidence. Omit speculative and cosmetic findings.
+   Apply [references/findings.md](references/findings.md) when reporting and resolving findings;
+   include that contract in the independent review brief.
+4. Apply the relevant existing disciplines only when the question needs them: use the `scope-guard`
+   skill for drift, [`simplify`](../simplify/SKILL.md) review mode for unnecessary complexity,
+   [`proportional-testing`](../proportional-testing/SKILL.md) when test adequacy is part of the
+   finding, [`diagnose-before-fix`](../diagnose-before-fix/SKILL.md) when a finding's cause is not
+   established, and the `verify-before-done` skill after fixes. These are lenses, not unconditional
+   passes.
+5. In report and ci modes, leave the candidate unchanged. In fix mode, apply only supported,
+   in-scope findings; preserve unrelated work and stop at the local authority boundary. Re-run the
+   relevant checks on the final candidate and launch a targeted fresh-context read-only re-review
+   after any fix. If that reviewer cannot launch or return, report `BLOCKED`.
+
+## Findings-first result
+
+Start with actionable findings, each containing:
+
+- **Priority and title**;
+- **Exact location** (file and line, symbol, or other precise anchor);
+- **Evidence and impact**;
+- **Required change** (or clearly nonblocking follow-up).
+
+Then report “No actionable findings” when none are supported. Fix mode additionally reports applied
+fixes, fresh verification, and targeted re-review. State the candidate identity, reviewer identity
+and role, and any material unverified claim. End the response with exactly one status line:
+`APPROVED`, `CHANGES_REQUESTED`, or `BLOCKED`. In `ci` mode, `APPROVED` means no blocking finding;
+it never replaces the human approval that branch protection requires.

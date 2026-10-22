@@ -1,77 +1,97 @@
 ---
 title: Plugin manifests
-description: How one agent-os repository is packaged for Claude Code and Codex.
+description: How one agent-os repository is packaged as two plugins for Claude Code and Codex, and as one npm package.
 ---
 
 # Plugin manifests
 
-agent-os ships one repository that is a valid plugin — and a valid marketplace — on both platforms.
-The plugin manifests and one npm package manifest provide the distribution surfaces.
+agent-os ships one repository with two plugin roots, `plugins/agent-os-core` and
+`plugins/agent-os-dev`, and one marketplace per host at the repository root that lists both. Each
+plugin root is self-contained, because a plugin install copies only that directory: a skill in one
+package never links to a file in the other, and the validator fails such a link. agent-os-dev
+requires agent-os-core. Both packages share one version.
 
-## `.claude-plugin/plugin.json`
+```text
+.claude-plugin/marketplace.json        Claude marketplace listing both plugins
+.agents/plugins/marketplace.json       Codex marketplace listing both plugins
+plugins/agent-os-core/
+  .claude-plugin/plugin.json
+  .codex-plugin/plugin.json
+  skills/
+plugins/agent-os-dev/
+  .claude-plugin/plugin.json
+  .codex-plugin/plugin.json
+  hooks/hooks.json
+  skills/
+policy.md                              global policy source
+package.json                           npm installer
+```
 
-The Claude Code plugin manifest.
+## `plugins/<name>/.claude-plugin/plugin.json`
+
+The Claude Code plugin manifests. The dev manifest looks like this, and the core manifest differs in
+`name`, `description`, and `keywords`:
 
 ```json
 {
-  "name": "agent-os",
-  "description": "A lightweight agent operating system with explicit workflows and automatic disciplines, shared between Claude Code and Codex.",
+  "name": "agent-os-dev",
+  "description": "Agent OS development: shape plans, deliver against ground truth, review independently, and guard delivery with hooks. Requires agent-os-core.",
   "version": "0.15.0",
   "author": { "name": "Lucas Skog" },
   "homepage": "https://sockulags.github.io/agent-os/",
   "repository": "https://github.com/sockulags/agent-os",
-  "keywords": ["workflow", "planning", "code-review", "verification", "scope-control", "skills"]
+  "keywords": ["workflow", "delivery", "code-review", "testing", "hooks", "skills"]
 }
 ```
 
-Claude discovers skills from the `skills/` directory by convention, so no path field is needed.
-The packaged `hooks/hooks.json` adds one shared `Stop` hook for the quality-ratchet lifecycle; it
-does not install PostToolUse or SessionStart hooks.
+Claude discovers skills from each plugin's `skills/` directory by convention. The dev plugin's
+`hooks/hooks.json` registers the quality-ratchet `Stop` hook and the `SessionStart` and `PreToolUse`
+guard hooks; the core plugin has no hooks.
 
 ## `.claude-plugin/marketplace.json`
 
-Makes the repository installable as a personal marketplace pointing at itself:
+Makes the repository installable as a marketplace that lists both plugins:
 
 ```json
 {
   "name": "agent-os-marketplace",
   "owner": { "name": "Agent OS Maintainers" },
   "plugins": [
-    {
-      "name": "agent-os",
-      "source": "./",
-      "description": "A lightweight agent operating system with explicit workflows and automatic disciplines, shared between Claude Code and Codex."
-    }
+    { "name": "agent-os-core", "source": "./plugins/agent-os-core", "description": "…" },
+    { "name": "agent-os-dev", "source": "./plugins/agent-os-dev", "description": "…" }
   ]
 }
 ```
 
-## `.codex-plugin/plugin.json`
+Before the split the marketplace listed one plugin, `agent-os`, from `./`. See
+[Team setup](/guide/team-setup#move-from-the-single-agent-os-plugin) for the migration.
 
-The Codex plugin manifest. It needs an explicit `skills` path, and it carries the `interface` block
-that Codex surfaces in its plugin UI — including `websiteURL`, which points at this documentation
+## `plugins/<name>/.codex-plugin/plugin.json`
+
+The Codex plugin manifests. Each needs an explicit `skills` path, and carries the `interface` block
+that Codex surfaces in its plugin UI, including `websiteURL`, which points at this documentation
 site.
 
 ```json
 {
-  "name": "agent-os",
+  "name": "agent-os-core",
   "version": "0.15.0",
   "homepage": "https://sockulags.github.io/agent-os/",
   "repository": "https://github.com/sockulags/agent-os",
   "skills": "./skills/",
   "interface": {
-    "displayName": "Agent OS",
-    "shortDescription": "Explicit workflows and automatic disciplines",
+    "displayName": "Agent OS Core",
+    "shortDescription": "Intent, planning, and evidence disciplines",
     "longDescription": "…",
     "developerName": "Lucas Skog",
-    "category": "Engineering",
+    "category": "Productivity",
     "websiteURL": "https://sockulags.github.io/agent-os/"
   }
 }
 ```
 
 `homepage` is the top-level pointer; `interface.websiteURL` is the one Codex renders next to the
-plugin. Both point at the same place, so a user who finds the plugin through either surface lands on
+plugin. Both point at the same place, so a user who finds a plugin through either surface lands on
 these docs.
 
 ## `.agents/plugins/marketplace.json`
@@ -84,10 +104,16 @@ The Codex-side local marketplace:
   "interface": { "displayName": "Agent OS" },
   "plugins": [
     {
-      "name": "agent-os",
-      "source": { "source": "local", "path": "./" },
+      "name": "agent-os-core",
+      "source": { "source": "local", "path": "./plugins/agent-os-core" },
       "policy": { "installation": "AVAILABLE", "authentication": "ON_INSTALL" },
       "category": "Productivity"
+    },
+    {
+      "name": "agent-os-dev",
+      "source": { "source": "local", "path": "./plugins/agent-os-dev" },
+      "policy": { "installation": "AVAILABLE", "authentication": "ON_INSTALL" },
+      "category": "Engineering"
     }
   ]
 }
@@ -95,10 +121,10 @@ The Codex-side local marketplace:
 
 ## `package.json`
 
-The root npm manifest exposes the guided installer as the `agent-os` binary and packages the
-complete `skills/` tree with the policy source. Direct installation therefore needs neither a
-repository checkout nor a host CLI. The plugin manifests remain available for users who explicitly
-choose native marketplace installation.
+The root npm manifest exposes the guided installer as the `agent-os` binary and packages both plugin
+roots with the policy source. Direct installation therefore needs neither a repository checkout nor
+a host CLI. The plugin manifests remain available for users who explicitly choose native marketplace
+installation.
 
 ~~~json
 {
@@ -108,17 +134,18 @@ choose native marketplace installation.
   "bin": {
     "agent-os": "./cli/index.mjs"
   },
-  "files": ["cli/", "hooks/", "policy.md", "skills/"]
+  "files": ["cli/", "plugins/", "policy.md"]
 }
 ~~~
 
 This makes `npx @sockulags/agent-os install` and `npx @sockulags/agent-os update` self-contained.
-The installer records its owned skill directories and managed hook integration in
-`.agent-os-install.json`, updates only those directories and the exact Agent OS hook entry, and
-preserves unrelated host skills and hook groups. Direct hook commands use an absolute Node path and
-the runner copied into that host's managed skill root. The packaged native hook keeps one logical
-source: Claude and Unix-like Codex use `CLAUDE_PLUGIN_ROOT`, while Windows Codex uses a quote-free
-`commandWindows` with a UTF-16LE PowerShell `-EncodedCommand` payload that resolves
+A direct install copies the skills of the selected packages side by side into one skill root. The
+installer records its owned skill directories, the installed packages, and the managed hook
+integration in `.agent-os-install.json`, updates only those directories and the exact Agent OS hook
+entries, and preserves unrelated host skills and hook groups. Direct hook commands use an absolute
+Node path and the runners copied into that host's managed skill root. The packaged native hooks keep
+one logical source: Claude and Unix-like Codex use `CLAUDE_PLUGIN_ROOT`, while Windows Codex uses a
+quote-free `commandWindows` with a UTF-16LE PowerShell `-EncodedCommand` payload that resolves
 `$env:PLUGIN_ROOT`; Node and PowerShell on PATH are required for the native path.
 
 ## Per-skill invocation gating
@@ -137,7 +164,7 @@ disable-model-invocation: true
 ---
 ```
 
-Codex reads `skills/<name>/agents/openai.yaml`:
+Codex reads `plugins/<package>/skills/<name>/agents/openai.yaml`:
 
 ```yaml
 policy:
@@ -149,6 +176,6 @@ failure mode the [workflow non-invocation eval cases](/reference/evals) exist to
 
 ## Version bumps
 
-The version lives in both plugin manifests and `package.json`. All three get bumped in the same
-commit, together with the validated documentation copies — see the
+The version lives in the four plugin manifests and `package.json`. All five get bumped in the same
+commit, together with the validated documentation copies; see the
 [release routine](/reference/release).

@@ -2,8 +2,7 @@
 
 The manual workflow skills below are manual-only. Every case below must NOT activate any of
 `init-agent-os`, `plan-work`, `shape-work`, `batch-work`, `deliver-work`, `dispatch-next`,
-`understand-work`, `explain-work`, `record-lesson` implicitly, on either
-platform.
+`capture-intent`, `explain-work`, `simplify` implicitly, on either platform.
 Run each prompt in a fresh session and confirm the agent handles it directly without invoking
 or imitating a workflow skill.
 
@@ -17,9 +16,9 @@ or imitating a workflow skill.
 | W6 | "Det här blir en jättegrej och jag vet inte var jag ska börja — kan du planera den?" | plan-work |
 | W7 | "Planera hela den här backlogen och skicka agenter att implementera allt parallellt." | batch-work |
 | W8 | "Jag vet inte riktigt vad jag vill med det här projektet, hjälp mig tänka." | plan-work |
-| W9 | "Ställ några frågor så vi förstår vad jag egentligen behöver." | understand-work |
+| W9 | "Ställ några frågor så vi förstår vad jag egentligen behöver." | capture-intent |
 | W10 | "Förklara planen enkelt utan tekniska ord." | explain-work |
-| W11 | "Bra lärdom, spara den till framtiden." | record-lesson |
+| W11 | "Gör den här koden enklare, den känns överbyggd." | simplify |
 
 Pass criterion: the agent may mention that a workflow skill exists, but must not load or execute
 its procedure without an explicit `/agent-os:<skill>` (Claude) or `$<skill>` (Codex) invocation.

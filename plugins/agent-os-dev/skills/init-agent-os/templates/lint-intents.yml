@@ -1,0 +1,30 @@
+# Checks intents/<id>/ intent, spec, and plan files on every pull request that touches them.
+# Copied into .github/workflows/ by init-agent-os. Label a pull request `no-rev` to allow a pure
+# wording fix to an accepted file without raising its rev.
+name: Lint intents
+
+on:
+  pull_request:
+    paths:
+      - 'intents/**'
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Check intent files
+        env:
+          BASE: origin/${{ github.base_ref }}
+          ALLOW_UNCHANGED_REV: ${{ contains(github.event.pull_request.labels.*.name, 'no-rev') && '--allow-unchanged-rev' || '' }}
+        run: npx --yes @sockulags/agent-os@latest lint-intents --base "$BASE" $ALLOW_UNCHANGED_REV

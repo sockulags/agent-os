@@ -8,6 +8,44 @@ description: What changed in each agent-os release, in plain terms.
 One entry per release: what changed, and what it means for how you work. Full commit-level history
 lives on [GitHub](https://github.com/sockulags/agent-os/commits/main).
 
+## Unreleased
+
+The core and dev release: Agent OS splits into two plugins, carries decisions in versioned intent
+files, and enforces its most important rules with hooks.
+
+- **Two packages** — `agent-os-core` holds intent, planning, explanation, scope, evidence, and lesson
+  skills for any agent work; `agent-os-dev` holds delivery, review, testing, simplification, setup,
+  and the hooks, and requires core. The installer takes `--package core|all`, and a core-only install
+  gets no hooks and the global policy without its new `## Development workflows` section.
+- **Intent files** — `capture-intent` (formerly `understand-work`) writes `intents/<id>/intent.md`,
+  `plan-work` writes `spec.md` with a plain-language summary, and `shape-work` writes `plan.md` with
+  stable unit keys. `rev` and `built_on` mark a spec or plan as stale when its source changes. See
+  [Intent, spec, and plan files](/reference/intents).
+- **Claims through pull requests** — `deliver-work` claims a unit with a draft pull request carrying
+  `Intent-Unit: <intent-id>/<unit-key>`, and `dispatch-next` reads status from pull requests, so
+  parallel deliveries never conflict in `plan.md`.
+- **Guard hooks** — new `SessionStart` and `PreToolUse` hooks read `.agent-os/guards.json`: session
+  context, protected paths, frozen accepted intents and specs during delivery, locked failing tests
+  (`guards.mjs lock-test`), and a secret scan on commit. The delivery ground truth is a required check
+  in `.agent-os/quality.json`, enforced by the existing quality-ratchet Stop gate. See
+  [Guard hooks](/reference/guards).
+- **Review in CI** — `check-work ci` reviews a pull request headless against `REVIEW.md` and the spec.
+  `init-agent-os` writes `REVIEW.md`, `guards.json`, `quality.json`, and the `lint-intents` and
+  `agent-review` workflows, and proposes a `CODEOWNERS` entry.
+- **`lint-intents`** — `npx @sockulags/agent-os lint-intents` checks intent folders, frontmatter,
+  revisions, staleness, and unit lines, and with `--base` fails an accepted file changed without a
+  higher `rev`.
+- **Merged skills** — `simplifier`, `simplifier-review`, and `simplifier-audit` are now `simplify`
+  with review, audit, and apply modes. `notice-lesson` is part of `record-lesson`, which is now
+  automatic. `explain-work` also shortens over-long explanations. `writing-skills` moved to the
+  repository as a maintainer-only skill.
+
+**Migration.** Direct installs update as usual with `npx @sockulags/agent-os@latest update`, which
+removes the retired skills and adds the guard hooks. Plugin users replace `agent-os` with
+`agent-os-core` and `agent-os-dev`; `doctor` reports the old plugin with the exact commands, and the
+[team setup guide](/guide/team-setup#move-from-the-single-agent-os-plugin) lists them. Claude plugin
+invocations change from `/agent-os:<skill>` to `/agent-os-core:<skill>` or `/agent-os-dev:<skill>`.
+
 ## 0.15.0 — 2026-09-12
 
 The plan-work release: replace separate planning entry points with one adaptive planner that owns a

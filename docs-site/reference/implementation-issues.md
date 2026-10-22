@@ -1,15 +1,19 @@
 ---
 title: Implementation issues
-description: The required delivery-ready output of shape-work and the developer-owned execution choice.
+description: The delivery units shape-work writes to plan.md or a tracker, and the developer-owned execution choice.
 ---
 
 # Implementation issues
 
 > This page orients. The canonical contract agents load is
-> [`skills/shape-work/references/implementation-issues.md`](https://github.com/sockulags/agent-os/blob/main/skills/shape-work/references/implementation-issues.md).
+> [`plugins/agent-os-dev/skills/shape-work/references/implementation-issues.md`](https://github.com/sockulags/agent-os/blob/main/plugins/agent-os-dev/skills/shape-work/references/implementation-issues.md).
 
 Research, grilling, and prototypes provide decision evidence. The durable output of shaping is one
-or more implementation-ready issues on the configured planning surface.
+or more implementation-ready units. By default they live in `intents/<id>/plan.md` beside the spec
+(`source: files`), with one `### <KEY>` section per unit holding its contract. When the project policy
+makes a tracker the source of truth for units (`source: issues`), the tracker issues hold the contract
+and `plan.md` lists only their keys. The line format, claims, and status rules are in
+[Intent, spec, and plan files](/reference/intents).
 
 Shape-work is not complete, and a selected branch is not delivery-ready, until those issues exist.
 Parked and rejected branches need no implementation issue.
@@ -18,7 +22,8 @@ Parked and rejected branches need no implementation issue.
 
 Every issue has a stable `(origin, unit key)` identity and records:
 
-- explicit ready or blocked status using project conventions;
+- ready or blocked state, read from dependencies, pull requests, and an explicit `blocked:` note rather
+  than a status field written during delivery;
 - one coherent independently useful or assessable delivery unit;
 - boundaries and non-goals;
 - acceptance examples;

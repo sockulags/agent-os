@@ -26,7 +26,7 @@ users as global policy; do not put repository-only release rules there.
 
 - Repository checks: `node scripts/validate-agent-os.mjs`,
   `node scripts/test-validate-agent-os.mjs`, `npm test`, `npm run test:evals`,
-  `node skills/batch-work/scripts/test-manifest-hash.mjs`,
+  `node plugins/agent-os-dev/skills/batch-work/scripts/test-manifest-hash.mjs`,
   `npm --prefix docs-site run build`, and `git diff --check`.
 - Before publishing, inspect `npm pack --dry-run --json` and install the packed artifact in isolated
   Claude and Codex homes without relying on a checkout or host CLI.
@@ -42,6 +42,9 @@ users as global policy; do not put repository-only release rules there.
   plugin-manifest examples, and the current changelog heading on the same stable version.
 - Give every released version its own changelog heading. Never let one release's notes remain under
   another version.
+- Skills live in `plugins/agent-os-core/skills/` and `plugins/agent-os-dev/skills/`. Read
+  `.agents/skills/writing-skills/SKILL.md` before creating or editing a skill, description, or eval
+  case; it is maintainer doctrine and is not distributed.
 - A skill edit and its documentation page are one change. Changes under `docs-site/**` must reach a
   successful Pages deployment on `main` before documentation is considered synchronized.
 

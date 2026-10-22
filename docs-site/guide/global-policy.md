@@ -11,6 +11,20 @@ across every project. It is installed as a managed block into `~/.claude/CLAUDE.
 
 You edit `policy.md`. You never edit the installed blocks.
 
+## Core and development sections
+
+Everything above the `## Development workflows` heading is the core policy: priority order,
+authority, evidence, scope, writing rules, the opt-in rule for manual skills, the tracker mandate
+rule, the rule that durable decisions live in versioned intent and spec files, and the preferences.
+The `## Development workflows` section holds what only matters with code: the Git identity rule, the
+manual development skills, `plan.md` and draft pull request claims, and how to treat guard hook
+blocks. The installer adds that section only when agent-os-dev is installed, so a core-only install
+gets the core policy alone. `init-agent-os global` ships in agent-os-dev and always installs both.
+
+The agent-os-dev plugin carries an identical copy at
+`plugins/agent-os-dev/skills/init-agent-os/policy.md`, so a plugin install can find the source; the
+repository validator keeps the two equal.
+
 ## Priority order
 
 The policy opens by stating what wins when instructions conflict:
@@ -41,8 +55,13 @@ implementation and verification and can reveal a missing decision, but risk-area
 not grant permission. Required covered work normally stays in scope; adjacent work is a follow-up,
 and unrelated work gets no invented proposal. No skill grants tracker write access automatically.
 
-Commits use the Git identity configured by the repository or the current session, and never carry AI
-attribution or `Co-Authored-By` trailers. Responses follow the language the user is writing in, while
+Decisions that outlive a session live in versioned files: `intents/<id>/intent.md` and `spec.md`
+beside it. They change only through a reviewed change, and a file whose `built_on` revision is older
+than its source is stale until it is reconsidered. A tracker mandate lives in the project policy's
+`## Tracker mandate` section.
+
+In the development section, commits use the Git identity configured by the repository or the
+current session, and never carry AI attribution or `Co-Authored-By` trailers. Responses follow the language the user is writing in, while
 code, commits and technical artifacts stay English unless the project says otherwise.
 
 The remaining rules govern how the agent writes. Lead with the outcome, so the first sentence answers
@@ -57,9 +76,14 @@ cross-reference a label invented earlier in the same text. Explanations belong i
 for short enumerable facts. Tone tracks the topic, and when it is unclear whether a topic is serious,
 it is.
 
-The last core rule is the invocation rule: orchestration is opt-in, except that the automatic
-`check-work` review workflow may activate for a supported implicit code-review request. Its report
-mode is read-only and its fix mode requires explicit authority.
+The invocation rule: orchestration is opt-in. Manual skills such as `capture-intent`, `plan-work`,
+and `explain-work` in core, and `shape-work` and `deliver-work` in dev, run only when invoked. The
+automatic `check-work` review workflow may activate for a supported implicit code-review request; its
+report mode is read-only and its fix mode requires explicit authority.
+
+The development section also says that `plan.md` lists units and dependencies only, that a draft
+pull request with `Intent-Unit: <intent-id>/<unit-key>` claims a unit, and that a hook block is a
+boundary the agent never routes around.
 
 ## Preferences
 
@@ -72,17 +96,18 @@ verification, design-system, planning, batch, and convention defaults. `init-age
 
 ## How the block is installed
 
-The npm installer imports `skills/init-agent-os/scripts/policy-block.mjs`, so both use the same
+The npm installer imports `plugins/agent-os-dev/skills/init-agent-os/scripts/policy-block.mjs`, so both use the same
 narrow contract: add exactly one block when none exists, update only the text inside well-formed
 markers, abort without mutating anything when the markers are duplicated or malformed, and never
 touch text outside the block. The npm installer syncs only the selected platforms and preflights
 those targets before it installs skills. Installed copies of `init-agent-os` carry the `policy.md`
-they were installed with, so the script works without a checkout.
+they were installed with, so the script works without a checkout. The installer passes the policy
+through the same writer with or without its development section, depending on the selected packages.
 
 Run it in check mode to see drift without writing:
 
 ```bash
-node skills/init-agent-os/scripts/policy-block.mjs --check
+node plugins/agent-os-dev/skills/init-agent-os/scripts/policy-block.mjs --check
 ```
 
 Add `--platform claude`, `codex`, or `both` to choose targets; by default the script targets the

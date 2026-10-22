@@ -12,7 +12,8 @@ policy, and remove Agent OS.
 ## Pick one installation method per host
 
 Use either the direct install or the plugin on each host, not both. With both, every skill appears
-twice: `/agent-os:<skill>` and `/<skill>` in Claude Code, and two entries per skill in Codex. The
+twice: `/agent-os-core:<skill>` or `/agent-os-dev:<skill>` and `/<skill>` in Claude Code, and two
+entries per skill in Codex. The
 `doctor` command below warns when it finds both.
 
 ## See which version each machine runs
@@ -25,10 +26,12 @@ npx @sockulags/agent-os@latest doctor
 
 - the version of each direct install, the skills that a later release removed but are still on disk,
   and skills that are missing;
-- the recorded version of each Claude and Codex plugin install;
+- the installed packages of each direct install, and the recorded version of each Claude and Codex
+  plugin install, including an old single `agent-os` plugin that must be replaced;
 - whether the Agent OS block in `~/.claude/CLAUDE.md` and `~/.codex/AGENTS.md` matches this release.
   Each block starts with a `<!-- agent-os version X -->` line;
-- whether the quality-ratchet Stop hook is configured;
+- whether the quality-ratchet Stop hook and the guard hooks are configured where agent-os-dev is
+  installed;
 - whether a newer version is published on npm. `--offline` skips that lookup.
 
 Each finding says how to fix it. For a plugin-only user whose policy block is old, that is the
@@ -61,25 +64,52 @@ the workspace:
       "autoUpdate": true
     }
   },
-  "enabledPlugins": { "agent-os@agent-os-marketplace": true }
+  "enabledPlugins": {
+    "agent-os-core@agent-os-marketplace": true,
+    "agent-os-dev@agent-os-marketplace": true
+  }
 }
 ```
 
-In managed settings, `"enabledPlugins": { "agent-os@agent-os-marketplace": true }` force-enables the
-plugin so developers cannot turn it off. An update applies after `/reload-plugins` or a restart.
-Without auto-update, run `claude plugin marketplace update agent-os-marketplace` and then
-`claude plugin update agent-os@agent-os-marketplace`, adding `--scope project` or `--scope local`
-for those installs. Sources, read 2026-10-17: the `extraKnownMarketplaces` entry in the Claude Code
+In managed settings, the same `enabledPlugins` entries force-enable the plugins so developers cannot
+turn them off. A team that only plans and documents can enable `agent-os-core` alone. An update
+applies after `/reload-plugins` or a restart. Without auto-update, run
+`claude plugin marketplace update agent-os-marketplace` and then
+`claude plugin update agent-os-core@agent-os-marketplace` and
+`claude plugin update agent-os-dev@agent-os-marketplace`, adding `--scope project` or
+`--scope local` for those installs. Sources, read 2026-10-17: the `extraKnownMarketplaces` entry in the Claude Code
 [settings reference](https://code.claude.com/docs/en/settings-reference),
 [plugins for organizations](https://code.claude.com/docs/en/plugins/org), and
 [turning on auto-update](https://code.claude.com/docs/en/plugins/host-marketplace#turn-on-auto-update).
 
-**Codex plugin installs.** Run `codex plugin marketplace upgrade agent-os`, reinstall the plugin, and
-start a new session.
+**Codex plugin installs.** Run `codex plugin marketplace upgrade agent-os`, reinstall both plugins,
+and start a new session.
 
 **Codex hooks.** Codex runs a non-managed hook only after you trust it in `/hooks`. It records trust
-against the hook's hash, so an update that changes the hook needs trust again. The installer prints a
-reminder whenever it changes the Codex hook.
+against the hook's hash, so an update that changes a hook needs trust again. The installer prints a
+reminder whenever it changes the Codex hooks.
+
+## Move from the single agent-os plugin
+
+Before the split, one plugin named `agent-os` carried every skill. It is replaced by `agent-os-core`
+and `agent-os-dev`, and the marketplace no longer lists `agent-os`. `doctor` reports an old install
+with the exact commands. For Claude Code:
+
+```bash
+claude plugin marketplace update agent-os-marketplace
+claude plugin uninstall agent-os@agent-os-marketplace
+claude plugin install agent-os-core@agent-os-marketplace
+claude plugin install agent-os-dev@agent-os-marketplace
+```
+
+For Codex, run `codex plugin marketplace upgrade agent-os`, remove `agent-os` in `/plugins`, then
+add `agent-os-core@agent-os` and `agent-os-dev@agent-os`. Update managed settings that enabled
+`agent-os@agent-os-marketplace` to name both new plugins. Direct installs need only the usual
+`npx @sockulags/agent-os@latest update`: it installs both packages, removes the retired skills, and
+adds the guard hooks. Invocations change from `/agent-os:<skill>` to `/agent-os-core:<skill>` or
+`/agent-os-dev:<skill>`; direct and Codex invocations stay the same. Renamed skills: `understand-work`
+is now `capture-intent`, and `simplifier`, `simplifier-review`, and `simplifier-audit` are now
+`simplify`. `notice-lesson` is part of `record-lesson`.
 
 ## Who changes the global policy
 
@@ -96,11 +126,13 @@ never changes text outside them. Put a rule for one repository in that repositor
 
 There is no uninstall command yet.
 
-- **Claude Code plugin:** `claude plugin uninstall agent-os@agent-os-marketplace`.
+- **Claude Code plugins:** `claude plugin uninstall agent-os-dev@agent-os-marketplace` and
+  `claude plugin uninstall agent-os-core@agent-os-marketplace`.
 - **Codex plugin:** open `/plugins` and choose "Uninstall plugin".
 - **Direct install:** delete the skill directories listed in `.agent-os-install.json` in the skill
-  root, then the manifest itself. Remove the hook entry that contains `--agent-os-hook=quality-ratchet`
-  from `~/.claude/settings.json` or `~/.codex/hooks.json`, and keep the other hooks.
+  root, then the manifest itself. Remove the hook entries that contain `--agent-os-hook=quality-ratchet`
+  or `--agent-os-hook=guards` from `~/.claude/settings.json` or `~/.codex/hooks.json`, and keep the
+  other hooks. Reinstalling with `--package core` removes the managed hooks for you.
 - **Global policy:** delete the text from `<!-- BEGIN AGENT OS -->` to `<!-- END AGENT OS -->`
   inclusive.
 - **Project controls trust:** delete `~/.agent-os/trusted-controls.json`.

@@ -6,7 +6,7 @@ description: Stable task identity, dependencies, reconciliation, and aggregate v
 # Batch manifests
 
 > This page orients. The canonical contract agents load is
-> [`skills/batch-work/references/manifest.md`](https://github.com/sockulags/agent-os/blob/main/skills/batch-work/references/manifest.md).
+> [`plugins/agent-os-dev/skills/batch-work/references/manifest.md`](https://github.com/sockulags/agent-os/blob/main/plugins/agent-os-dev/skills/batch-work/references/manifest.md).
 
 `batch-work` keeps resumable coordinator state in `.agent-os/batches/<batch-slug>.md`.
 
@@ -26,4 +26,4 @@ isolated task workspaces. After serial integration, the coordinator reruns task 
 fresh aggregate ground truth. When the graph belongs to an epic or planned feature, the manifest
 links the canonical epic contract and its aggregate checks; green child tasks do not close the
 parent. See the source
-[manifest contract](https://github.com/sockulags/agent-os/blob/main/skills/batch-work/references/manifest.md).
+[manifest contract](https://github.com/sockulags/agent-os/blob/main/plugins/agent-os-dev/skills/batch-work/references/manifest.md).

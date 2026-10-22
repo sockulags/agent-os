@@ -1,0 +1,42 @@
+{
+  "description": "Agent OS dev hooks: the quality-ratchet delivery Stop gate and the guard hooks that read .agent-os/guards.json.",
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/skills/quality-ratchet/scripts/guards.mjs\" hook --agent-os-hook=guards",
+            "commandWindows": "powershell.exe -NoProfile -NonInteractive -EncodedCommand JAByAHUAbgBuAGUAcgAgAD0AIABKAG8AaQBuAC0AUABhAHQAaAAgACQAZQBuAHYAOgBQAEwAVQBHAEkATgBfAFIATwBPAFQAIAAnAHMAawBpAGwAbABzAFwAcQB1AGEAbABpAHQAeQAtAHIAYQB0AGMAaABlAHQAXABzAGMAcgBpAHAAdABzAFwAZwB1AGEAcgBkAHMALgBtAGoAcwAnADsAIABuAG8AZABlACAAJAByAHUAbgBuAGUAcgAgAGgAbwBvAGsAIAAtAC0AYQBnAGUAbgB0AC0AbwBzAC0AaABvAG8AawA9AGcAdQBhAHIAZABzAA==",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit|NotebookEdit|Bash|apply_patch|shell|exec_command|local_shell",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/skills/quality-ratchet/scripts/guards.mjs\" hook --agent-os-hook=guards",
+            "commandWindows": "powershell.exe -NoProfile -NonInteractive -EncodedCommand JAByAHUAbgBuAGUAcgAgAD0AIABKAG8AaQBuAC0AUABhAHQAaAAgACQAZQBuAHYAOgBQAEwAVQBHAEkATgBfAFIATwBPAFQAIAAnAHMAawBpAGwAbABzAFwAcQB1AGEAbABpAHQAeQAtAHIAYQB0AGMAaABlAHQAXABzAGMAcgBpAHAAdABzAFwAZwB1AGEAcgBkAHMALgBtAGoAcwAnADsAIABuAG8AZABlACAAJAByAHUAbgBuAGUAcgAgAGgAbwBvAGsAIAAtAC0AYQBnAGUAbgB0AC0AbwBzAC0AaABvAG8AawA9AGcAdQBhAHIAZABzAA==",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/skills/quality-ratchet/scripts/quality-delta.mjs\" hook --agent-os-hook=quality-ratchet",
+            "commandWindows": "powershell.exe -NoProfile -NonInteractive -EncodedCommand JAByAHUAbgBuAGUAcgAgAD0AIABKAG8AaQBuAC0AUABhAHQAaAAgACQAZQBuAHYAOgBQAEwAVQBHAEkATgBfAFIATwBPAFQAIAAnAHMAawBpAGwAbABzAFwAcQB1AGEAbABpAHQAeQAtAHIAYQB0AGMAaABlAHQAXABzAGMAcgBpAHAAdABzAFwAcQB1AGEAbABpAHQAeQAtAGQAZQBsAHQAYQAuAG0AagBzACcAOwAgAG4AbwBkAGUAIAAkAHIAdQBuAG4AZQByACAAaABvAG8AawAgAC0ALQBhAGcAZQBuAHQALQBvAHMALQBoAG8AbwBrAD0AcQB1AGEAbABpAHQAeQAtAHIAYQB0AGMAaABlAHQA",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
+}

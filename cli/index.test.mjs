@@ -14,7 +14,7 @@ import {
   INSTALL_MANIFEST,
   PACKAGE_NAME,
   parseArgs,
-  planManagedHookConfig,
+  planManagedHooks,
   planPolicyUpdate,
   policyBlockVersion,
   resolveOptions,
@@ -23,7 +23,7 @@ import {
   VERSION
 } from './index.mjs'
 import { compareVersions, latestPublishedVersion } from './doctor.mjs'
-import { resolvePolicyVersion } from '../skills/init-agent-os/scripts/policy-block.mjs'
+import { resolvePolicyVersion } from '../plugins/agent-os-dev/skills/init-agent-os/scripts/policy-block.mjs'
 
 const temporaryRoots = []
 
@@ -51,6 +51,7 @@ test('defaults to guided direct install', () => {
     platform: null,
     method: null,
     scope: null,
+    package: null,
     policy: null,
     yes: false,
     dryRun: false,
@@ -75,6 +76,7 @@ test('parses non-interactive direct update flags', () => {
     platform: 'both',
     method: 'direct',
     scope: 'project',
+    package: null,
     policy: false,
     yes: true,
     dryRun: false,
@@ -90,6 +92,7 @@ test('supports Claude Code as a platform alias and upgrade as update', () => {
     platform: 'claude',
     method: null,
     scope: null,
+    package: null,
     policy: null,
     yes: true,
     dryRun: false,
@@ -228,7 +231,9 @@ test('direct project install configures both hosts without replacing unrelated h
   ]) {
     const config = JSON.parse(fs.readFileSync(file, 'utf8'))
     assert.deepEqual(config.permissions, unrelated.permissions)
-    assert.deepEqual(config.hooks.PreToolUse, unrelated.hooks.PreToolUse)
+    assert.deepEqual(config.hooks.PreToolUse[0], unrelated.hooks.PreToolUse[0])
+    assert.equal(config.hooks.PreToolUse.filter((group) => JSON.stringify(group).includes('--agent-os-hook=guards')).length, 1)
+    assert.equal(config.hooks.SessionStart.filter((group) => JSON.stringify(group).includes('--agent-os-hook=guards')).length, 1)
     assert.deepEqual(config.hooks.Stop[0], unrelated.hooks.Stop[0])
     assert.equal(config.hooks.Stop.filter((group) => JSON.stringify(group).includes('--agent-os-hook=quality-ratchet')).length, 1)
     const command = config.hooks.Stop.find((group) =>
@@ -266,7 +271,9 @@ test('managed hook updates replace only the exact Agent OS entry', () => {
       ]
     }
   }, null, 2) + '\n'
-  const planned = planManagedHookConfig(original, managedCommand, 'test hooks.json')
+  const planned = planManagedHooks(original, [
+    { event: 'Stop', marker: '--agent-os-hook=quality-ratchet', command: managedCommand }
+  ], 'test hooks.json')
   assert.equal(planned.status, 'UPDATED')
   const config = JSON.parse(planned.content)
   assert.equal(config.unrelated, true)
@@ -440,11 +447,11 @@ test('upgrades a schema 1 direct manifest while retaining managed integration st
 
 test('packaged hook asset and direct command use the stable runner marker', () => {
   const packageJson = JSON.parse(fs.readFileSync(path.join(packageRootForTest(), 'package.json'), 'utf8'))
-  const hooks = JSON.parse(fs.readFileSync(path.join(packageRootForTest(), 'hooks', 'hooks.json'), 'utf8'))
+  const hooks = JSON.parse(fs.readFileSync(path.join(packageRootForTest(), 'plugins', 'agent-os-dev', 'hooks', 'hooks.json'), 'utf8'))
   const durableScript = path.join(temporaryRoot(), '.claude', 'skills', 'quality-ratchet', 'scripts', 'quality-delta.mjs')
   const command = buildManagedHookCommand(durableScript)
   const nativeHook = hooks.hooks.Stop[0].hooks[0]
-  assert.ok(packageJson.files.includes('hooks/'))
+  assert.ok(packageJson.files.includes('plugins/'))
   assert.equal(hooks.description.includes('quality-ratchet'), true)
   assert.match(nativeHook.command, /\$\{CLAUDE_PLUGIN_ROOT\}/)
   assert.equal(typeof nativeHook.commandWindows, 'string')
@@ -629,8 +636,65 @@ test('plugin update skips Git refresh for a registered local Codex marketplace',
   assert.deepEqual(calls.map((call) => call[1]), [
     ['plugin', 'marketplace', 'list', '--json'],
     ['plugin', 'list', '--json'],
-    ['plugin', 'add', 'agent-os@agent-os']
+    ['plugin', 'add', 'agent-os-core@agent-os'],
+    ['plugin', 'add', 'agent-os-dev@agent-os']
   ])
+})
+
+test('core-only install copies core skills, adds no hooks, and installs the policy without its dev section', async () => {
+  const root = temporaryRoot()
+  const homeDir = path.join(root, 'home')
+  const options = { command: 'install', platform: 'claude', method: 'direct', scope: 'user', policy: true, package: 'core' }
+  await executeInstall(options, { output: silentOutput(), homeDir, cwd: root })
+  const skillsRoot = path.join(homeDir, '.claude', 'skills')
+  assert.equal(fs.existsSync(path.join(skillsRoot, 'plan-work', 'SKILL.md')), true)
+  assert.equal(fs.existsSync(path.join(skillsRoot, 'deliver-work')), false)
+  const manifest = JSON.parse(fs.readFileSync(path.join(skillsRoot, INSTALL_MANIFEST), 'utf8'))
+  assert.deepEqual(manifest.packages, ['agent-os-core'])
+  assert.equal(fs.existsSync(path.join(homeDir, '.claude', 'settings.json')), false)
+  const policy = fs.readFileSync(path.join(homeDir, '.claude', 'CLAUDE.md'), 'utf8')
+  assert.match(policy, /## Core policy/)
+  assert.doesNotMatch(policy, /^## Development workflows$/m)
+
+  const doctor = await runDoctor(homeDir, root)
+  assert.match(doctor.text, /OK {4}claude direct user .*version /)
+  assert.match(doctor.text, /OK {4}claude global policy/)
+  assert.doesNotMatch(doctor.text, /hook missing|hooks missing|skills missing/)
+})
+
+test('switching from all packages to core removes dev skills and every managed hook', async () => {
+  const root = temporaryRoot()
+  const homeDir = path.join(root, 'home')
+  const options = { command: 'install', platform: 'codex', method: 'direct', scope: 'user', policy: false }
+  await executeInstall(options, { output: silentOutput(), homeDir, cwd: root })
+  const hookFile = path.join(homeDir, '.codex', 'hooks.json')
+  const all = JSON.parse(fs.readFileSync(hookFile, 'utf8'))
+  assert.equal(all.hooks.PreToolUse[0].matcher.includes('Edit'), true)
+  assert.match(JSON.stringify(all.hooks.SessionStart), /guards\.mjs/)
+  await executeInstall({ ...options, command: 'update', package: 'core' }, { output: silentOutput(), homeDir, cwd: root })
+  assert.equal(fs.existsSync(path.join(homeDir, '.codex', 'skills', 'deliver-work')), false)
+  assert.doesNotMatch(fs.readFileSync(hookFile, 'utf8'), /--agent-os-hook=/)
+})
+
+test('lint-intents reports errors with a failing exit code and warnings only under --strict', async () => {
+  const root = temporaryRoot()
+  const folder = path.join(root, 'intents', '2026-11-export')
+  fs.mkdirSync(folder, { recursive: true })
+  fs.writeFileSync(path.join(folder, 'intent.md'), '---\nid: 2026-11-export\nstatus: accepted\nrev: 2\nsupersedes: null\n---\n# Export\n')
+  fs.writeFileSync(path.join(folder, 'spec.md'), '---\nintent: 2026-11-export\nrev: 1\nbuilt_on: intent@1\nstatus: accepted\n---\n# Export\n')
+  const lint = async (...args) => {
+    let text = ''
+    const code = await run(['lint-intents', ...args], { output: { write(chunk) { text += chunk } }, cwd: root })
+    return { code, text }
+  }
+  const relaxed = await lint()
+  assert.equal(relaxed.code, 0, relaxed.text)
+  assert.match(relaxed.text, /WARN  intents\/2026-11-export\/spec\.md: stale/)
+  assert.equal((await lint('--strict')).code, 1)
+  fs.writeFileSync(path.join(folder, 'spec.md'), '---\nintent: other\nrev: 1\nbuilt_on: intent@3\nstatus: draft\n---\n')
+  const broken = await lint()
+  assert.equal(broken.code, 1)
+  assert.match(broken.text, /ERROR intents\/2026-11-export\/spec\.md: status must be one of accepted, superseded/)
 })
 
 test('doctor reports a current install as clean and names drift with the fixing command', async () => {
@@ -675,7 +739,7 @@ test('doctor reports a current install as clean and names drift with the fixing 
   assert.equal(drifted.code, 1)
   assert.match(drifted.text, /DRIFT codex direct user .*installed 0\.1\.0.*update --platform codex --scope user/)
   assert.match(drifted.text, /retired skills still installed: retired-skill/)
-  assert.match(drifted.text, /DRIFT claude plugin agent-os@agent-os-marketplace \(user\): recorded version 0\.2\.0/)
+  assert.match(drifted.text, /DRIFT claude plugin agent-os@agent-os-marketplace \(user\): the single agent-os plugin is replaced by agent-os-core and agent-os-dev/)
   assert.match(drifted.text, /DRIFT codex global policy .*no version line/)
   assert.equal(fs.readFileSync(manifestPath, 'utf8'), JSON.stringify(manifest))
 })
@@ -750,15 +814,15 @@ test('doctor covers plugin caches, duplicates, strays, scopes, and in-place loca
   await executeInstall({
     command: 'install', platform: 'codex', method: 'direct', scope: 'user', policy: false
   }, { output: silentOutput(), homeDir, cwd })
-  const cache = path.join(homeDir, '.codex', 'plugins', 'cache', 'agent-os', 'agent-os')
+  const cache = path.join(homeDir, '.codex', 'plugins', 'cache', 'agent-os', 'agent-os-dev')
   fs.mkdirSync(path.join(cache, '0.1.0'), { recursive: true })
   fs.writeFileSync(path.join(cache, '.DS_Store'), '')
   fs.mkdirSync(path.join(homeDir, '.agents', 'skills', 'shape-work'), { recursive: true })
   fs.writeFileSync(path.join(homeDir, '.agents', 'skills', 'shape-work', 'SKILL.md'), '---\nname: shape-work\n---\n')
 
   const checkout = path.join(root, 'checkout')
-  fs.mkdirSync(path.join(checkout, '.claude-plugin'), { recursive: true })
-  fs.writeFileSync(path.join(checkout, '.claude-plugin', 'plugin.json'), JSON.stringify({ name: 'agent-os', version: VERSION }))
+  fs.mkdirSync(path.join(checkout, 'plugins', 'agent-os-core', '.claude-plugin'), { recursive: true })
+  fs.writeFileSync(path.join(checkout, 'plugins', 'agent-os-core', '.claude-plugin', 'plugin.json'), JSON.stringify({ name: 'agent-os-core', version: VERSION }))
   const plugins = path.join(homeDir, '.claude', 'plugins')
   fs.mkdirSync(plugins, { recursive: true })
   fs.writeFileSync(path.join(plugins, 'known_marketplaces.json'), JSON.stringify({
@@ -766,18 +830,18 @@ test('doctor covers plugin caches, duplicates, strays, scopes, and in-place loca
     remote: { source: { source: 'github', repo: 'sockulags/agent-os' } }
   }))
   fs.writeFileSync(path.join(plugins, 'installed_plugins.json'), JSON.stringify({ plugins: {
-    'agent-os@local': [{ scope: 'user', version: '0.2.0' }],
-    'agent-os@remote': [{ scope: 'project', version: '0.1.0' }]
+    'agent-os-core@local': [{ scope: 'user', version: '0.2.0' }],
+    'agent-os-dev@remote': [{ scope: 'project', version: '0.1.0' }]
   } }))
 
   const { code, text } = await runDoctor(homeDir, cwd)
   assert.equal(code, 1)
-  assert.match(text, /DRIFT codex plugin agent-os@agent-os: cached version 0\.1\.0/)
+  assert.match(text, /DRIFT codex plugin agent-os-dev@agent-os: cached version 0\.1\.0/)
   assert.doesNotMatch(text, /\.DS_Store/)
   assert.match(text, /WARN {2}codex: both the plugin and a direct install are present.*Keep one/)
   assert.match(text, /Agent OS skills outside the managed install: shape-work/)
-  assert.match(text, /OK {4}claude plugin agent-os@local \(user\): loaded in place from .*version /)
-  assert.match(text, /claude plugin update agent-os@remote --scope project/)
+  assert.match(text, /OK {4}claude plugin agent-os-core@local \(user\): loaded in place from .*version /)
+  assert.match(text, /claude plugin update agent-os-dev@remote --scope project/)
 })
 
 test('doctor names a policy-only fix for plugin users and handles a CLI newer than npm', async () => {
@@ -785,11 +849,14 @@ test('doctor names a policy-only fix for plugin users and handles a CLI newer th
   const homeDir = path.join(root, 'home')
   fs.mkdirSync(path.join(homeDir, '.claude', 'plugins'), { recursive: true })
   fs.writeFileSync(path.join(homeDir, '.claude', 'plugins', 'installed_plugins.json'), JSON.stringify({
-    plugins: { 'agent-os@remote': [{ scope: 'user', version: VERSION }] }
+    plugins: {
+      'agent-os-core@remote': [{ scope: 'user', version: VERSION }],
+      'agent-os-dev@remote': [{ scope: 'user', version: VERSION }]
+    }
   }))
   fs.writeFileSync(path.join(homeDir, '.claude', 'CLAUDE.md'), '# Mine\n')
   const { text } = await runDoctor(homeDir, root, ['doctor'], { latestVersion: () => '0.0.1' })
-  assert.match(text, /WARN {2}claude global policy .*no Agent OS block\. To add it: run \/agent-os:init-agent-os global/)
+  assert.match(text, /WARN {2}claude global policy .*no Agent OS block\. To add it: run \/agent-os-dev:init-agent-os global/)
   assert.match(text, /INFO {2}installer: this CLI is .* newer than the published 0\.0\.1/)
 })
 
@@ -811,15 +878,19 @@ test('version comparison and the npm lookup tolerate odd input', () => {
   assert.equal(calls.length, 1)
 })
 
-test('the policy script reads the version from a plugin or checkout package.json and ignores other packages', () => {
+test('the policy script reads the version from the dev plugin or checkout package.json and ignores other packages', () => {
   const root = temporaryRoot()
-  const scriptDir = path.join(root, 'skills', 'init-agent-os', 'scripts')
+  const pluginRoot = path.join(root, 'plugins', 'agent-os-dev')
+  const scriptDir = path.join(pluginRoot, 'skills', 'init-agent-os', 'scripts')
   fs.mkdirSync(scriptDir, { recursive: true })
   fs.writeFileSync(path.join(root, 'package.json'), JSON.stringify({ name: 'other-package', version: '9.9.9' }))
   assert.equal(resolvePolicyVersion(scriptDir), null)
   fs.writeFileSync(path.join(root, 'package.json'), JSON.stringify({ name: PACKAGE_NAME, version: '1.2.3' }))
   assert.equal(resolvePolicyVersion(scriptDir), '1.2.3')
-  fs.writeFileSync(path.join(root, 'skills', INSTALL_MANIFEST), JSON.stringify({ version: '2.0.0' }))
+  fs.mkdirSync(path.join(pluginRoot, '.claude-plugin'))
+  fs.writeFileSync(path.join(pluginRoot, '.claude-plugin', 'plugin.json'), JSON.stringify({ name: 'agent-os-dev', version: '1.5.0' }))
+  assert.equal(resolvePolicyVersion(scriptDir), '1.5.0')
+  fs.writeFileSync(path.join(pluginRoot, 'skills', INSTALL_MANIFEST), JSON.stringify({ version: '2.0.0' }))
   assert.equal(resolvePolicyVersion(scriptDir), '2.0.0')
 })
 
@@ -832,10 +903,10 @@ test('doctor names the recorded Claude plugin key and gives no install advice fo
   const plugins = path.join(homeDir, '.claude', 'plugins')
   fs.mkdirSync(plugins, { recursive: true })
   fs.writeFileSync(path.join(plugins, 'installed_plugins.json'), JSON.stringify({
-    plugins: { 'agent-os@team': [{ scope: 'user', version: VERSION }] }
+    plugins: { 'agent-os-core@team': [{ scope: 'user', version: VERSION }] }
   }))
   const duplicate = await runDoctor(homeDir, root)
-  assert.match(duplicate.text, /Keep one: claude plugin uninstall agent-os@team, or delete/)
+  assert.match(duplicate.text, /Keep one: claude plugin uninstall agent-os-core@team, or delete/)
   assert.doesNotMatch(duplicate.text, /agent-os@agent-os-marketplace/)
 
   const unreadableHome = path.join(root, 'unreadable')
@@ -846,5 +917,42 @@ test('doctor names the recorded Claude plugin key and gives no install advice fo
   assert.match(unreadable.text, /WARN {2}claude plugins: cannot read/)
   assert.doesNotMatch(unreadable.text, /no Agent OS installation found/)
   assert.doesNotMatch(unreadable.text, /install --platform claude/)
-  assert.match(unreadable.text, /To add it: run \/agent-os:init-agent-os global/)
+  assert.match(unreadable.text, /To add it: run \/agent-os-dev:init-agent-os global/)
+})
+
+test('update without --package keeps an earlier core-only choice', async () => {
+  const root = temporaryRoot()
+  const homeDir = path.join(root, 'home')
+  const options = { command: 'install', platform: 'codex', method: 'direct', scope: 'user', policy: false, package: 'core' }
+  await executeInstall(options, { output: silentOutput(), homeDir, cwd: root })
+  const parsed = await resolveOptions(parseArgs(['update', '--platform', 'codex', '--yes', '--no-policy']), {
+    input: { isTTY: false }, output: { isTTY: false }
+  })
+  assert.equal(parsed.package, null)
+  await executeInstall(parsed, { output: silentOutput(), homeDir, cwd: root })
+  const skillsRoot = path.join(homeDir, '.codex', 'skills')
+  assert.equal(fs.existsSync(path.join(skillsRoot, 'deliver-work')), false)
+  assert.deepEqual(JSON.parse(fs.readFileSync(path.join(skillsRoot, INSTALL_MANIFEST), 'utf8')).packages, ['agent-os-core'])
+  assert.equal(fs.existsSync(path.join(homeDir, '.codex', 'hooks.json')), false)
+})
+
+test('Claude plugin update removes the single legacy plugin before installing core and dev', async () => {
+  const calls = []
+  await executeInstall({
+    command: 'update', platform: 'claude', method: 'plugin', scope: 'user', policy: false
+  }, {
+    output: silentOutput(),
+    exists: () => true,
+    execute: (command, args) => {
+      calls.push(args.join(' '))
+      if (args.join(' ') === 'plugin marketplace list --json') {
+        return { status: 0, stdout: JSON.stringify([{ name: 'agent-os-marketplace' }]), stderr: '' }
+      }
+      return { status: 0, stdout: '', stderr: '' }
+    }
+  })
+  const uninstall = calls.indexOf('plugin uninstall agent-os@agent-os-marketplace --scope user')
+  assert.ok(uninstall >= 0, calls.join('\n'))
+  assert.ok(uninstall < calls.indexOf('plugin install agent-os-core@agent-os-marketplace --scope user'))
+  assert.ok(calls.includes('plugin install agent-os-dev@agent-os-marketplace --scope user'))
 })

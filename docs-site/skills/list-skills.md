@@ -21,12 +21,14 @@ The card starts with the installed Agent OS version, read from the direct-instal
 plugin root, and points to `npx @sockulags/agent-os@latest doctor` for comparing it with the latest
 release.
 
-Invocation syntax differs per host: `/agent-os:<name>` through the Claude plugin, `/<name>` for a
-direct Claude install, and `$<name>` on Codex. The card names which form it is showing.
+Invocation syntax differs per host: `/agent-os-core:<name>` or `/agent-os-dev:<name>` through the
+Claude plugins, `/<name>` for a direct Claude install, and `$<name>` on Codex. A plugin install keeps
+the two packages apart, so the card adds the agent-os-dev skills the host lists or says that
+agent-os-dev is not installed. The card names which form it is showing.
 
-It closes with entry points for a developer who has not named a skill: coherent planning starts at
-`plan-work`, delivery structure with material choices at `shape-work`, and a decision-complete unit
-at `deliver-work`. Automatic skills need no entry point for an implicit trigger. It is read-only: it
+It closes with entry points for a person who has not named a skill: a new need starts at
+`capture-intent`, behavior and decisions at `plan-work`, delivery structure at `shape-work`, and a
+decision-complete unit at `deliver-work`, the last two only when agent-os-dev is installed. Automatic skills need no entry point for an implicit trigger. It is read-only: it
 never runs, stages, or offers to run what it lists. Choosing the next action is
 [`dispatch-next`](/skills/dispatch-next); describing work already underway is
 [`explain-work`](/skills/explain-work).

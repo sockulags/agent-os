@@ -5,9 +5,14 @@
   },
   "plugins": [
     {
-      "name": "agent-os",
-      "source": "./",
-      "description": "A lightweight agent operating system with explicit workflows and automatic disciplines, shared between Claude Code and Codex."
+      "name": "agent-os-core",
+      "source": "./plugins/agent-os-core",
+      "description": "Agent OS core: capture intent, plan decisions, explain plainly, keep scope, and prove claims. Useful for any agent work, not only code."
+    },
+    {
+      "name": "agent-os-dev",
+      "source": "./plugins/agent-os-dev",
+      "description": "Agent OS development: shape plans, deliver against ground truth, review independently, and guard delivery with hooks. Requires agent-os-core."
     }
   ]
 }

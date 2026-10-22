@@ -1,0 +1,24 @@
+{
+  "name": "agent-os-core",
+  "description": "Agent OS core: capture intent, plan decisions, explain plainly, keep scope, and prove claims. Useful for any agent work, not only code.",
+  "version": "0.15.0",
+  "homepage": "https://sockulags.github.io/agent-os/",
+  "repository": "https://github.com/sockulags/agent-os",
+  "keywords": [
+    "workflow",
+    "planning",
+    "intent",
+    "scope-control",
+    "verification",
+    "skills"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Agent OS Core",
+    "shortDescription": "Intent, planning, and evidence disciplines",
+    "longDescription": "Captures what is needed and why as a versioned intent, plans decisions and ground truth as a spec with a plain-language summary, explains or shortens text for non-technical readers, keeps work inside its agreed scope, records durable lessons, and requires fresh evidence before any completion claim. Works for product, documentation, and analysis work as well as code.",
+    "developerName": "Lucas Skog",
+    "category": "Productivity",
+    "websiteURL": "https://sockulags.github.io/agent-os/"
+  }
+}

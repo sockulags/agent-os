@@ -15,6 +15,13 @@ Use the narrowest reliable reproduction as ground truth. Reduce the failure, tra
 compare plausible causes, and run high-information checks. Tests, logs, and temporary instrumentation
 inside the task scope are available working surfaces.
 
+When the failure can be captured as an automated test, the test comes first and must fail for the
+diagnosed reason. In a delivery that commits, the failing test is committed before the fix and, with
+agent-os-dev guard hooks installed, locked with `guards.mjs lock-test <path>` from quality-ratchet's
+`scripts/`, so the test cannot be bent to fit the fix. It is unlocked with `unlock-test` once the fix
+passes. Changing a locked test needs the developer's explicit agreement. See
+[Guard hooks](/reference/guards).
+
 Once evidence supports a cause, implement the smallest fix and rerun the original failing path. When
 the cause cannot be distinguished, report bounded uncertainty and the next useful check rather than
 presenting a hypothesis as a diagnosis.

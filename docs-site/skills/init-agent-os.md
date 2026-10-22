@@ -7,7 +7,7 @@ summary: Managed policy setup or repository defaults
 
 # init-agent-os
 
-**Bucket:** workflow · **Invocation:** manual · `/init-agent-os` (direct Claude), `/agent-os:init-agent-os` (Claude plugin), or `$init-agent-os` (Codex)
+**Bucket:** workflow · **Invocation:** manual · `/init-agent-os` (direct Claude), `/agent-os-dev:init-agent-os` (Claude plugin), or `$init-agent-os` (Codex)
 
 Sets up managed global policy or seeds one repository's project policy.
 
@@ -37,4 +37,19 @@ behavior-changing defaults and relevant sections; it omits inactive modules, N/A
 and interview history, preserves unrelated instructions, and shows all changed policy surfaces in
 the resulting diff. The invocation itself authorizes this setup write.
 
-Managed block edits remain script-owned and stop on duplicate or malformed markers.
+Besides the policy, repository mode writes these files when they are absent and shows each in the
+diff:
+
+- `.agent-os/guards.json` with protected paths found by inspection, the default frozen intent and
+  spec globs, and `secretScan: true` ([Guard hooks](/reference/guards));
+- `.agent-os/quality.json` with the main test command as a `required` check, which the developer
+  trusts once with quality-ratchet's `trust` command;
+- `REVIEW.md`, the repository's review policy for [check-work](/skills/check-work);
+- for GitHub Actions repositories, the `lint-intents` and `agent-review` workflows.
+
+The planning field now covers where intents live, whether units live in `plan.md` or a tracker,
+and, with a tracker, a `## Tracker mandate` section. A `CODEOWNERS` entry for intents and specs is
+proposed but not written, because it changes who must review other people's work.
+
+Managed block edits remain script-owned and stop on duplicate or malformed markers. The global mode
+installs the policy's development section because this skill ships in agent-os-dev.

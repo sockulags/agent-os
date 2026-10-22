@@ -23,8 +23,8 @@ hero:
 
 features:
   - icon: 🧭
-    title: Plan, shape, batch, deliver
-    details: A coherent mission gets the planning depth it needs, a bounded branch becomes implementation-ready delivery units, and the developer chooses individual delivery or an explicit integrated batch.
+    title: Intent, spec, plan, deliver
+    details: A need becomes a versioned intent, a spec with ground truth, and delivery units in a plan, each reviewed like code. A small fix skips the files, and the developer chooses individual delivery or an explicit integrated batch.
   - icon: 🧾
     title: Evidence before claims
     details: The verify-before-done discipline turns "it works" into a command, an exit status and a result. A check that ran proves only what that check exercised — and unverified claims get named as unverified.
@@ -35,8 +35,8 @@ features:
     title: Control the contract
     details: Skills lock outcomes, boundaries and ground truth while leaving local tactics to the implementer. Material delivery gets independent review; a fully qualified small fix may skip it.
   - icon: 🤝
-    title: Two platforms, one source
-    details: Every skill ships once and loads in both Claude Code and Codex. Manual skills are opted into explicitly on both; automatic skills trigger themselves from the situation.
+    title: Two packages, two platforms, one source
+    details: agent-os-core helps any agent work; agent-os-dev adds delivery, review, and guard hooks for code. Every skill ships once and loads in both Claude Code and Codex.
   - icon: 📐
     title: Policy you can edit
     details: A single policy.md is installed as a managed block in your global instruction files, and every repo grows its own living project policy through an interview instead of a template.

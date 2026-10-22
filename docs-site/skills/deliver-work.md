@@ -2,12 +2,12 @@
 title: deliver-work
 description: Implement one decision-ready change against explicit boundaries and ground truth.
 skill-description: Delivers one decision-ready change against explicit boundaries and ground truth. User-invoked for implementation, including as a batch worker. Not for exploration or specification-only work.
-summary: Implement one change against boundaries and ground truth
+summary: Deliver one unit against its contract and claim it with a draft pull request
 ---
 
 # deliver-work
 
-**Bucket:** workflow · **Invocation:** manual · `/deliver-work` (direct Claude), `/agent-os:deliver-work` (Claude plugin), or `$deliver-work` (Codex)
+**Bucket:** workflow · **Invocation:** manual · `/deliver-work` (direct Claude), `/agent-os-dev:deliver-work` (Claude plugin), or `$deliver-work` (Codex)
 
 Delivers one decision-ready change against explicit boundaries and ground truth.
 
@@ -51,7 +51,7 @@ first mutation, classify review, implement, check the candidate, adapt, review t
 the final candidate. The ratchet allows bounded behavior-preserving improvement on the touched
 surface, but its raw counts are evidence rather than gates. Run its candidate check before the
 semantic review and pass the evidence to that review. Diff review automatically applies the
-[simplifier-review](/skills/simplifier-review) lens before the candidate is frozen, so supported
+[simplify](/skills/simplify) review lens before the candidate is frozen, so supported
 unnecessary code and solution layers are removed rather than carried into delivery. Test selection applies
 [proportional-testing](/skills/proportional-testing): protect the changed behavior and plausible
 regressions with the minimum meaningful test surface, while retaining required delivery checks. The
@@ -86,7 +86,23 @@ self-review is not presented as independent review.
 Ask only when an unresolved product decision would materially change the outcome. Reversible
 implementation choices belong to the implementer.
 
-Ordinary work creates no state artifact. Work expected to span sessions may use a compact
+## Intent units and claims
+
+When the unit comes from `intents/<id>/plan.md`, the plan entry, the spec, and the intent are the
+contract. A spec built on an older intent revision, or a plan built on an older spec revision, is an
+unresolved product decision: delivery stops before mutation and returns the unit to plan-work or
+shape-work. Delivery never edits an accepted intent, spec, or plan entry, and the guard hooks block
+such an edit while a delivery baseline is active.
+
+When the delivery target includes a pull request, the unit is claimed early: a branch named by the
+project policy, or `<intent-id>-<unit-key>` by default, and a draft pull request opened with the first
+commit. Its body carries `Intent-Unit: <intent-id>/<unit-key>`, the outcome, the ground truth, and,
+as delivery proceeds, the evidence and review record. A unit that already has an open pull request
+with its line is skipped. The pull request that delivers the last open unit also sets the intent's
+and plan's `status: done`, after quality-ratchet's `finish`.
+
+Ordinary work creates no state artifact, and a draft pull request is the record for a claimed unit.
+Work that spans sessions without a pull request may use a compact
 [work record](/reference/work-records) as resumable working memory.
 
 Batch workers stay in their assigned task workspace and return a commit SHA, changed files, checks,

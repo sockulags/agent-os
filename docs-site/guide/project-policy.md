@@ -24,8 +24,9 @@ Record only durable behavior-changing defaults:
 - canonical policy ownership and instruction surfaces;
 - delivery boundary, stopping point, and external-effect conventions;
 - verification commands and ground truth, including manual checks when commands are insufficient;
-- coherent planning surface, stable plan and decision-ticket identities, claims and canonical
-  handoffs, dependencies, readiness states or labels, and epic ownership;
+- where intents live (`intents/` by default, or a named product repository), whether units live in
+  `plan.md` or a tracker, branch naming, stable plan and decision-ticket identities, dependencies,
+  and epic ownership;
 - maintenance location for durable lessons and gotchas;
 - only conditional sections supported by repository evidence: frontend/rendered QA,
   package/release/docs, CI/deploy, auth/security/billing/external writes,
@@ -41,6 +42,30 @@ consequence, and records explicit deferrals under **Open setup questions**. It d
 `N/A` fields, interview history, or the completeness ledger. It writes the smallest useful policy,
 preserves unrelated instructions, and shows all changed policy surfaces in the resulting diff; the
 invocation itself authorizes that setup write.
+
+## Repository files beside the policy
+
+Repository mode also writes, when absent and shown in the diff:
+
+- `.agent-os/guards.json`: protected paths, frozen intent and spec globs, and the secret scan for the
+  [guard hooks](/reference/guards);
+- `.agent-os/quality.json`: the main test command as a `required` check, which quality-ratchet's Stop
+  gate enforces after the developer runs its `trust` command once;
+- `REVIEW.md`: focus areas, severity tiers, what blocks, and a cap on minor findings for
+  [check-work](/skills/check-work);
+- for GitHub Actions repositories, the `lint-intents` and `agent-review` workflows.
+
+A `CODEOWNERS` entry naming who approves `intents/**/intent.md` and `intents/**/spec.md` is proposed
+but not written, because it changes who must review other people's work.
+
+## Tracker mandate
+
+When a tracker holds delivery units (`source: issues` in `plan.md`), the policy gets a
+`## Tracker mandate` section that names what the agent may create, update, and comment on. It always
+states that the agent never changes priority, assignee, or acceptance, and never closes items.
+Without that section, no skill writes to a tracker; corrections stay local and the unsynced delta is
+reported. Team-specific tracker conventions, such as how Jira keys map to units, belong in the
+project policy or a team's own plugin, not in Agent OS.
 
 Keep the policy alive by updating facts that repeatedly affect work. Do not turn one-off preferences
 or speculative guardrails into permanent process.

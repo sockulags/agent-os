@@ -3,7 +3,7 @@ import { withMermaid } from 'vitepress-plugin-mermaid'
 
 export default withMermaid(defineConfig({
   title: 'agent-os',
-  description: 'A lightweight agent operating system — explicit workflows and automatic disciplines, shared between Claude Code and Codex.',
+  description: 'A lightweight agent operating system for Claude Code and Codex: agent-os-core for intent, planning, and evidence, and agent-os-dev for delivery, review, and guard hooks.',
   base: '/agent-os/',
   lang: 'en-US',
   lastUpdated: true,
@@ -69,50 +69,31 @@ export default withMermaid(defineConfig({
           ]
         },
         {
-          text: 'Planning foundation',
+          text: 'agent-os-core',
           items: [
+            { text: 'capture-intent', link: '/skills/capture-intent' },
             { text: 'plan-work', link: '/skills/plan-work' },
-            { text: 'shape-work', link: '/skills/shape-work' }
+            { text: 'explain-work', link: '/skills/explain-work' },
+            { text: 'scope-guard', link: '/skills/scope-guard' },
+            { text: 'verify-before-done', link: '/skills/verify-before-done' },
+            { text: 'plain-voice', link: '/skills/plain-voice' },
+            { text: 'record-lesson', link: '/skills/record-lesson' },
+            { text: 'list-skills', link: '/skills/list-skills' }
           ]
         },
         {
-          text: 'Execution and operations',
+          text: 'agent-os-dev',
           items: [
+            { text: 'shape-work', link: '/skills/shape-work' },
             { text: 'deliver-work', link: '/skills/deliver-work' },
             { text: 'batch-work', link: '/skills/batch-work' },
             { text: 'dispatch-next', link: '/skills/dispatch-next' },
+            { text: 'check-work', link: '/skills/check-work' },
+            { text: 'simplify', link: '/skills/simplify' },
             { text: 'init-agent-os', link: '/skills/init-agent-os' },
-            { text: 'record-lesson', link: '/skills/record-lesson' },
-            { text: 'simplifier', link: '/skills/simplifier' },
-            { text: 'simplifier-audit', link: '/skills/simplifier-audit' },
-            { text: 'check-work', link: '/skills/check-work' }
-          ]
-        },
-        {
-          text: 'Component skills',
-          items: [
-            { text: 'understand-work', link: '/skills/understand-work' },
-            { text: 'explain-work', link: '/skills/explain-work' }
-          ]
-        },
-        {
-          text: 'Disciplines',
-          items: [
-            { text: 'verify-before-done', link: '/skills/verify-before-done' },
             { text: 'diagnose-before-fix', link: '/skills/diagnose-before-fix' },
             { text: 'proportional-testing', link: '/skills/proportional-testing' },
-            { text: 'scope-guard', link: '/skills/scope-guard' },
-            { text: 'simplifier-review', link: '/skills/simplifier-review' },
-            { text: 'quality-ratchet', link: '/skills/quality-ratchet' },
-            { text: 'notice-lesson', link: '/skills/notice-lesson' },
-            { text: 'plain-voice', link: '/skills/plain-voice' }
-          ]
-        },
-        {
-          text: 'Meta',
-          items: [
-            { text: 'list-skills', link: '/skills/list-skills' },
-            { text: 'writing-skills', link: '/skills/writing-skills' }
+            { text: 'quality-ratchet', link: '/skills/quality-ratchet' }
           ]
         }
       ],
@@ -121,6 +102,8 @@ export default withMermaid(defineConfig({
           text: 'Reference',
           items: [
             { text: 'Plugin manifests', link: '/reference/plugin-manifests' },
+            { text: 'Intent, spec, and plan files', link: '/reference/intents' },
+            { text: 'Guard hooks', link: '/reference/guards' },
             { text: 'Work records', link: '/reference/work-records' },
             { text: 'Batch manifests', link: '/reference/batches' },
             { text: 'Maps and decision tickets', link: '/reference/maps-and-tickets' },
@@ -129,6 +112,7 @@ export default withMermaid(defineConfig({
             { text: 'Proportional testing', link: '/reference/proportional-testing' },
             { text: 'Codex custom instructions', link: '/reference/codex-custom-instructions' },
             { text: 'Frontend mockups', link: '/reference/mockups' },
+            { text: 'Writing skills', link: '/reference/writing-skills' },
             { text: 'Evals', link: '/reference/evals' },
             { text: 'Release routine', link: '/reference/release' }
           ]

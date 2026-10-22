@@ -1,12 +1,18 @@
 ---
 title: Work records
-description: Compact resumable state for delivery work that spans sessions.
+description: Where delivery state lives, and the compact resume file for work without a pull request.
 ---
 
 # Work records
 
-Ordinary `deliver-work` runs need no state file. Use `.agent-os/work/<slug>.md` only when work is
-expected to span sessions or when a concise handoff materially improves recovery.
+Ordinary `deliver-work` runs need no state file. A unit from an `intents/<id>/plan.md` is claimed by
+a draft pull request whose body carries `Intent-Unit: <intent-id>/<unit-key>`, the outcome, the ground
+truth, and the evidence and review record as delivery proceeds. That pull request is the record, and
+status is read from pull requests rather than written into the plan. See
+[Intent, spec, and plan files](/reference/intents).
+
+Use `.agent-os/work/<slug>.md` only when work is expected to span sessions without a pull request, or
+when a concise handoff materially improves recovery.
 
 ```yaml
 ---

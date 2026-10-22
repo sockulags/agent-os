@@ -46,7 +46,7 @@ jobs:
           node scripts/validate-agent-os.mjs
           node scripts/test-validate-agent-os.mjs
           npm test
-          node skills/batch-work/scripts/test-manifest-hash.mjs
+          node plugins/agent-os-dev/skills/batch-work/scripts/test-manifest-hash.mjs
 
       - name: Build documentation
         run: |
