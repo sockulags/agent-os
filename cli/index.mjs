@@ -10,8 +10,15 @@ import { fileURLToPath, pathToFileURL } from 'node:url'
 import {
   HOOK_TIMEOUT_SECONDS,
   QUALITY_HOOK_MARKER
-} from '../skills/quality-ratchet/scripts/quality-delta.mjs'
-import { planPolicyUpdate, policyBlockVersion, policyTargets } from '../skills/init-agent-os/scripts/policy-block.mjs'
+} from '../plugins/agent-os-dev/skills/quality-ratchet/scripts/quality-delta.mjs'
+import { GUARDS_HOOK_MARKER } from '../plugins/agent-os-dev/skills/quality-ratchet/scripts/guards.mjs'
+import { lintIntents } from '../plugins/agent-os-dev/skills/quality-ratchet/scripts/intent-files.mjs'
+import {
+  composePolicy,
+  planPolicyUpdate,
+  policyBlockVersion,
+  policyTargets
+} from '../plugins/agent-os-dev/skills/init-agent-os/scripts/policy-block.mjs'
 import { collectDoctorReport, formatDoctorReport, latestPublishedVersion } from './doctor.mjs'
 
 export { planPolicyUpdate, policyBlockVersion }
@@ -26,11 +33,37 @@ export const MARKETPLACE_SOURCE = 'sockulags/agent-os'
 export const INSTALL_MANIFEST = '.agent-os-install.json'
 export const QUALITY_HOOK_EVENT = 'Stop'
 // Codex records hook trust against each hook's hash and skips new or changed hooks until trusted.
-export const CODEX_HOOK_TRUST_NOTICE = 'Codex skips new or changed hooks until you trust them: open Codex, run /hooks, and trust the Agent OS quality-ratchet Stop hook.'
+export const CODEX_HOOK_TRUST_NOTICE = 'Codex skips new or changed hooks until you trust them: open Codex, run /hooks, and trust the Agent OS quality-ratchet and guard hooks.'
 
 const PLATFORM_VALUES = ['claude', 'codex', 'both']
 const METHOD_VALUES = ['direct', 'plugin']
 const SCOPE_VALUES = ['user', 'project', 'local']
+const PACKAGE_VALUES = ['core', 'all']
+
+// Each package is a plugin root in this repository; a direct install copies their skills side by side.
+export const PACKAGES = Object.freeze({
+  core: Object.freeze({ plugin: 'agent-os-core', skills: path.join('plugins', 'agent-os-core', 'skills') }),
+  dev: Object.freeze({ plugin: 'agent-os-dev', skills: path.join('plugins', 'agent-os-dev', 'skills') })
+})
+
+export function selectedPackages(value = 'all') {
+  return value === 'core' ? ['core'] : ['core', 'dev']
+}
+
+// Managed hook entries, one per marker. The dev package owns all of them.
+export const PRE_TOOL_USE_MATCHER = 'Edit|Write|MultiEdit|NotebookEdit|Bash|apply_patch|shell|exec_command|local_shell'
+export function managedHookEntries(skillsRoot, nodePath = process.execPath) {
+  const scripts = path.join(skillsRoot, 'quality-ratchet', 'scripts')
+  const guards = buildManagedHookCommand(path.join(scripts, 'guards.mjs'), nodePath, GUARDS_HOOK_MARKER)
+  return [
+    { event: 'Stop', marker: QUALITY_HOOK_MARKER, command: buildManagedHookCommand(path.join(scripts, 'quality-delta.mjs'), nodePath) },
+    { event: 'SessionStart', marker: GUARDS_HOOK_MARKER, command: guards },
+    { event: 'PreToolUse', marker: GUARDS_HOOK_MARKER, command: guards, matcher: PRE_TOOL_USE_MATCHER }
+  ]
+}
+
+const pluginInstall = (packages, marketplace, extra = []) =>
+  packages.map((name) => ['plugin', 'install', PACKAGES[name].plugin + '@' + marketplace, ...extra])
 
 export const PLATFORM_CONFIG = Object.freeze({
   claude: Object.freeze({
@@ -39,7 +72,7 @@ export const PLATFORM_CONFIG = Object.freeze({
     marketplace: 'agent-os-marketplace',
     installArgs: ['plugin', 'marketplace', 'add', MARKETPLACE_SOURCE],
     refreshArgs: ['plugin', 'marketplace', 'update', 'agent-os-marketplace'],
-    pluginArgs: (scope) => ['plugin', 'install', 'agent-os@agent-os-marketplace', '--scope', scope],
+    pluginArgs: (scope, packages = ['core', 'dev']) => pluginInstall(packages, 'agent-os-marketplace', ['--scope', scope]),
     nextStep: 'Restart Claude Code or run /reload-plugins.'
   }),
   codex: Object.freeze({
@@ -48,8 +81,9 @@ export const PLATFORM_CONFIG = Object.freeze({
     marketplace: 'agent-os',
     installArgs: ['plugin', 'marketplace', 'add', MARKETPLACE_SOURCE],
     refreshArgs: ['plugin', 'marketplace', 'upgrade', 'agent-os'],
-    pluginArgs: () => ['plugin', 'add', 'agent-os@agent-os'],
-    nextStep: 'Start a new Codex session so the refreshed plugin is loaded. ' + CODEX_HOOK_TRUST_NOTICE
+    pluginArgs: (scope, packages = ['core', 'dev']) =>
+      packages.map((name) => ['plugin', 'add', PACKAGES[name].plugin + '@agent-os']),
+    nextStep: 'Start a new Codex session so the refreshed plugins are loaded. ' + CODEX_HOOK_TRUST_NOTICE
   })
 })
 
@@ -86,12 +120,20 @@ function normalizeScope(value) {
   return normalized
 }
 
+function normalizePackage(value) {
+  const normalized = value.toLowerCase()
+  if (!PACKAGE_VALUES.includes(normalized)) {
+    throw new CliError('Package must be core or all.')
+  }
+  return normalized
+}
+
 function quoteCommandArg(value) {
   return '"' + String(value).replaceAll('"', '\\"') + '"'
 }
 
-export function buildManagedHookCommand(scriptPath, nodePath = process.execPath) {
-  return [quoteCommandArg(nodePath), quoteCommandArg(scriptPath), 'hook', QUALITY_HOOK_MARKER].join(' ')
+export function buildManagedHookCommand(scriptPath, nodePath = process.execPath, marker = QUALITY_HOOK_MARKER) {
+  return [quoteCommandArg(nodePath), quoteCommandArg(scriptPath), 'hook', marker].join(' ')
 }
 
 export function parseArgs(argv) {
@@ -100,6 +142,7 @@ export function parseArgs(argv) {
     platform: null,
     method: null,
     scope: null,
+    package: null,
     policy: null,
     yes: false,
     dryRun: false,
@@ -116,7 +159,7 @@ export function parseArgs(argv) {
 
   if (result.command === 'upgrade') result.command = 'update'
   if (!['install', 'update', 'doctor', 'help'].includes(result.command)) {
-    throw new CliError('Unknown command "' + result.command + '". Use install, update, or doctor.')
+    throw new CliError('Unknown command "' + result.command + '". Use install, update, doctor, or lint-intents.')
   }
 
   while (index < argv.length) {
@@ -152,6 +195,11 @@ export function parseArgs(argv) {
       index += 1
     } else if (argument.startsWith('--scope=')) {
       result.scope = normalizeScope(argument.slice('--scope='.length))
+    } else if (argument === '--package') {
+      result.package = normalizePackage(valueAfter(argv, index, argument))
+      index += 1
+    } else if (argument.startsWith('--package=')) {
+      result.package = normalizePackage(argument.slice('--package='.length))
     } else {
       throw new CliError('Unknown option "' + argument + '". Use --help for usage.')
     }
@@ -202,6 +250,7 @@ export function hookConfigPath(platform, scope, {
 
 export function buildPlan(options, pathOptions = {}) {
   const { command, platform, method = 'direct', scope = 'user', policy = true } = options
+  const packages = selectedPackages(options.package ?? 'all')
   const steps = []
   for (const name of selectedPlatforms(platform)) {
     const config = PLATFORM_CONFIG[name]
@@ -213,14 +262,16 @@ export function buildPlan(options, pathOptions = {}) {
         command: 'filesystem',
         args: [root],
         description: (command === 'update' ? 'Update' : 'Install') +
-          ' Agent OS managed skills for ' + config.label + '.'
+          ' Agent OS managed skills (' + packages.map((key) => PACKAGES[key].plugin).join(', ') + ') for ' + config.label + '.'
       })
       steps.push({
         platform: name,
         kind: 'install-hooks',
         command: 'filesystem',
         args: [hookConfigPath(name, scope, pathOptions)],
-        description: 'Merge the Agent OS Stop hook into the ' + config.label + ' configuration.'
+        description: packages.includes('dev')
+          ? 'Merge the Agent OS Stop, SessionStart, and PreToolUse hooks into the ' + config.label + ' configuration.'
+          : 'Remove any Agent OS hooks from the ' + config.label + ' configuration; agent-os-core has none.'
       })
       continue
     }
@@ -248,15 +299,17 @@ export function buildPlan(options, pathOptions = {}) {
         description: 'Refresh the Agent OS Git marketplace when applicable.'
       })
     }
-    steps.push({
-      platform: name,
-      kind: 'install-plugin',
-      command: config.command,
-      args: config.pluginArgs(scope),
-      description: command === 'update'
-        ? 'Install the current Agent OS plugin snapshot.'
-        : 'Install the Agent OS plugin.'
-    })
+    for (const args of config.pluginArgs(scope, packages)) {
+      steps.push({
+        platform: name,
+        kind: 'install-plugin',
+        command: config.command,
+        args,
+        description: command === 'update'
+          ? 'Install the current Agent OS plugin snapshot.'
+          : 'Install the Agent OS plugin.'
+      })
+    }
   }
   if (policy) {
     steps.push({
@@ -412,52 +465,74 @@ export async function resolveOptions(parsed, {
       : true
   }
 
-  return { ...parsed, platform, method, scope, policy }
-}
+  let pkg = parsed.package
+  // An update keeps the packages already installed; executeInstall reads them from the manifest.
+  if (!pkg && parsed.command !== 'update') {
+    pkg = interactive && !parsed.yes
+      ? await choose('Which Agent OS packages should be installed?', [
+        { value: 'all', label: 'Core and dev (recommended for software work)' },
+        { value: 'core', label: 'Core only (intent, planning, and evidence disciplines without code delivery)' }
+      ], dependencies)
+      : 'all'
+  }
 
-function packagedSkillsPath() {
-  return path.join(packageRoot, 'skills')
+  return { ...parsed, platform, method, scope, policy, package: pkg }
 }
 
 function packagedPolicyPath() {
   return path.join(packageRoot, 'policy.md')
 }
 
-function listPackagedSkills(sourceRoot, fsImpl = fs) {
-  if (!fsImpl.existsSync(sourceRoot)) {
-    throw new CliError('Packaged skills directory is missing: ' + sourceRoot)
+// Returns [{ name, dir, package }] for the selected packages, sorted by skill name.
+export function listPackagedSkills(packages = ['core', 'dev'], fsImpl = fs, root = packageRoot) {
+  const skills = []
+  for (const key of packages) {
+    const sourceRoot = path.join(root, PACKAGES[key].skills)
+    if (!fsImpl.existsSync(sourceRoot)) {
+      throw new CliError('Packaged skills directory is missing: ' + sourceRoot)
+    }
+    for (const entry of fsImpl.readdirSync(sourceRoot, { withFileTypes: true })) {
+      if (entry.isDirectory() && fsImpl.existsSync(path.join(sourceRoot, entry.name, 'SKILL.md'))) {
+        skills.push({ name: entry.name, dir: path.join(sourceRoot, entry.name), package: key })
+      }
+    }
   }
-  const entries = fsImpl.readdirSync(sourceRoot, { withFileTypes: true })
-    .filter((entry) => entry.isDirectory() && fsImpl.existsSync(path.join(sourceRoot, entry.name, 'SKILL.md')))
-    .map((entry) => entry.name)
-    .sort()
-  if (entries.length === 0) throw new CliError('No packaged skills were found in ' + sourceRoot)
-  return entries
+  if (skills.length === 0) throw new CliError('No packaged skills were found in ' + root)
+  return skills.sort((left, right) => left.name.localeCompare(right.name))
 }
 
-function containsHookMarker(value) {
-  if (typeof value === 'string') return value.includes(QUALITY_HOOK_MARKER)
-  if (Array.isArray(value)) return value.some(containsHookMarker)
-  if (value && typeof value === 'object') return Object.values(value).some(containsHookMarker)
-  return false
-}
-
-function managedCommandHooks(value, matches = []) {
+function managedCommandHooks(value, marker, matches = []) {
   if (Array.isArray(value)) {
-    value.forEach((item) => managedCommandHooks(item, matches))
+    value.forEach((item) => managedCommandHooks(item, marker, matches))
     return matches
   }
   if (!value || typeof value !== 'object') return matches
-  if (typeof value.command === 'string' && value.command.includes(QUALITY_HOOK_MARKER)) {
+  if (typeof value.command === 'string' && value.command.includes(marker)) {
     matches.push(value)
   }
   Object.entries(value).forEach(([key, item]) => {
-    if (key !== 'command') managedCommandHooks(item, matches)
+    if (key !== 'command') managedCommandHooks(item, marker, matches)
   })
   return matches
 }
 
-export function planManagedHookConfig(content, command, target = 'Agent OS hook configuration') {
+function containsMarker(value, marker) {
+  if (typeof value === 'string') return value.includes(marker)
+  if (Array.isArray(value)) return value.some((item) => containsMarker(item, marker))
+  if (value && typeof value === 'object') return Object.values(value).some((item) => containsMarker(item, marker))
+  return false
+}
+
+function removeManagedHook(groups, entry) {
+  for (const group of groups) {
+    if (Array.isArray(group?.hooks)) group.hooks = group.hooks.filter((hook) => hook !== entry)
+  }
+  return groups.filter((group) => !Array.isArray(group?.hooks) || group.hooks.length > 0)
+}
+
+// entries: [{ event, marker, command, matcher?, remove? }]. Each marker owns exactly one command hook
+// per event; unrelated hooks and settings are preserved byte-for-byte in meaning.
+export function planManagedHooks(content, entries, target = 'Agent OS hook configuration') {
   let config
   if (!content.trim()) {
     config = {}
@@ -471,55 +546,79 @@ export function planManagedHookConfig(content, command, target = 'Agent OS hook 
   if (!config || typeof config !== 'object' || Array.isArray(config)) {
     throw new CliError('Refusing to merge the Agent OS hook into malformed ' + target + '; no files were changed.')
   }
+  const hadHooks = config.hooks !== undefined
   if (config.hooks === undefined) config.hooks = {}
   if (!config.hooks || typeof config.hooks !== 'object' || Array.isArray(config.hooks)) {
     throw new CliError('Refusing to merge the Agent OS hook into malformed ' + target + '.hooks; no files were changed.')
   }
-  if (config.hooks[QUALITY_HOOK_EVENT] === undefined) config.hooks[QUALITY_HOOK_EVENT] = []
-  if (!Array.isArray(config.hooks[QUALITY_HOOK_EVENT])) {
-    throw new CliError('Refusing to merge the Agent OS hook into malformed ' + target + '.hooks.Stop; no files were changed.')
-  }
 
-  const managed = []
-  for (const [event, value] of Object.entries(config.hooks)) {
-    const matches = managedCommandHooks(value)
-    if (matches.length && event !== QUALITY_HOOK_EVENT) {
-      throw new CliError('Refusing to update an Agent OS hook outside hooks.Stop in ' + target + '; no files were changed.')
+  const markers = [...new Set(entries.map((entry) => entry.marker))]
+  for (const marker of markers) {
+    const events = entries.filter((entry) => entry.marker === marker).map((entry) => entry.event)
+    let found = 0
+    for (const [event, value] of Object.entries(config.hooks)) {
+      const matches = managedCommandHooks(value, marker)
+      if (matches.length && !events.includes(event)) {
+        throw new CliError('Refusing to update an Agent OS hook outside hooks.' + events.join('/hooks.') + ' in ' + target + '; no files were changed.')
+      }
+      found += matches.length
     }
-    managed.push(...matches)
-  }
-  if (containsHookMarker(config) && managed.length === 0) {
-    throw new CliError('Refusing to update an ambiguous Agent OS hook marker in ' + target + '; no files were changed.')
-  }
-  if (managed.length > 1) {
-    throw new CliError('Refusing to update multiple Agent OS hook entries in ' + target + '; no files were changed.')
+    if (containsMarker(config, marker) && found === 0) {
+      throw new CliError('Refusing to update an ambiguous Agent OS hook marker in ' + target + '; no files were changed.')
+    }
   }
 
-  if (managed.length === 1) {
-    const entry = managed[0]
-    if (entry.type !== 'command') {
+  let changed = false
+  let added = false
+  for (const entry of entries) {
+    if (config.hooks[entry.event] === undefined) {
+      if (entry.remove) continue
+      config.hooks[entry.event] = []
+    }
+    if (!Array.isArray(config.hooks[entry.event])) {
+      throw new CliError('Refusing to merge the Agent OS hook into malformed ' + target + '.hooks.' + entry.event + '; no files were changed.')
+    }
+    const managed = managedCommandHooks(config.hooks[entry.event], entry.marker)
+    if (managed.length > 1) {
+      throw new CliError('Refusing to update multiple Agent OS hook entries in ' + target + '; no files were changed.')
+    }
+    if (managed.length === 1 && managed[0].type !== 'command') {
       throw new CliError('Refusing to update a malformed Agent OS command hook in ' + target + '; no files were changed.')
     }
-    const changed = entry.command !== command || entry.timeout !== HOOK_TIMEOUT_SECONDS
-    entry.command = command
-    entry.timeout = HOOK_TIMEOUT_SECONDS
-    return {
-      changed,
-      status: changed ? 'UPDATED' : 'OK',
-      content: changed ? JSON.stringify(config, null, 2) + '\n' : content
+    if (entry.remove) {
+      if (managed.length === 1) {
+        config.hooks[entry.event] = removeManagedHook(config.hooks[entry.event], managed[0])
+        if (config.hooks[entry.event].length === 0) delete config.hooks[entry.event]
+        changed = true
+      }
+      continue
     }
+    if (managed.length === 1) {
+      const hook = managed[0]
+      if (hook.command !== entry.command || hook.timeout !== HOOK_TIMEOUT_SECONDS) {
+        hook.command = entry.command
+        hook.timeout = HOOK_TIMEOUT_SECONDS
+        changed = true
+      }
+      const group = config.hooks[entry.event].find((item) => Array.isArray(item?.hooks) && item.hooks.includes(hook))
+      if (entry.matcher && group && group.matcher !== entry.matcher) {
+        group.matcher = entry.matcher
+        changed = true
+      }
+      continue
+    }
+    config.hooks[entry.event].push({
+      ...(entry.matcher ? { matcher: entry.matcher } : {}),
+      hooks: [{ type: 'command', command: entry.command, timeout: HOOK_TIMEOUT_SECONDS }]
+    })
+    changed = true
+    added = true
   }
-
-  config.hooks[QUALITY_HOOK_EVENT].push({
-    hooks: [{
-      type: 'command',
-      command,
-      timeout: HOOK_TIMEOUT_SECONDS
-    }]
-  })
+  if (!hadHooks && Object.keys(config.hooks).length === 0) delete config.hooks
+  if (!changed) return { changed: false, status: 'OK', content }
   return {
     changed: true,
-    status: 'ADDED',
+    status: added ? 'ADDED' : 'UPDATED',
     content: JSON.stringify(config, null, 2) + '\n'
   }
 }
@@ -550,16 +649,16 @@ function directTargets(options, { homeDir, cwd }) {
 }
 
 function prepareHookPlans(options, { homeDir, cwd, fsImpl = fs }) {
+  const dev = selectedPackages(options.package ?? 'all').includes('dev')
   return directTargets(options, { homeDir, cwd }).map((target) => {
-    const scriptPath = path.join(target.root, 'quality-ratchet', 'scripts', 'quality-delta.mjs')
-    const command = buildManagedHookCommand(scriptPath)
+    const entries = managedHookEntries(target.root).map((entry) => (dev ? entry : { ...entry, remove: true }))
     const current = fsImpl.existsSync(target.hookPath)
       ? fsImpl.readFileSync(target.hookPath, 'utf8')
       : ''
     return {
       ...target,
-      command,
-      ...planManagedHookConfig(current, command, target.hookPath)
+      command: entries[0].command,
+      ...planManagedHooks(current, entries, target.hookPath)
     }
   })
 }
@@ -624,7 +723,7 @@ function preflightDirectTarget(target, skillNames, fsImpl = fs) {
   return manifest
 }
 
-function replaceManagedSkills(target, sourceRoot, skillNames, previousManifest, fsImpl = fs) {
+function replaceManagedSkills(target, sources, skillNames, previousManifest, fsImpl = fs, packages = ['core', 'dev']) {
   fsImpl.mkdirSync(target.root, { recursive: true })
   const token = randomUUID()
   const stageRoot = path.join(target.root, '.agent-os-stage-' + token)
@@ -642,10 +741,10 @@ function replaceManagedSkills(target, sourceRoot, skillNames, previousManifest, 
   try {
     fsImpl.mkdirSync(stageRoot, { recursive: true })
     for (const name of skillNames) {
-      fsImpl.cpSync(path.join(sourceRoot, name), path.join(stageRoot, name), { recursive: true })
+      fsImpl.cpSync(sources[name], path.join(stageRoot, name), { recursive: true })
     }
     // The init-agent-os policy script needs the policy source outside a checkout or plugin root.
-    const policySource = path.join(sourceRoot, '..', 'policy.md')
+    const policySource = packagedPolicyPath()
     if (skillNames.includes('init-agent-os') && fsImpl.existsSync(policySource)) {
       fsImpl.copyFileSync(policySource, path.join(stageRoot, 'init-agent-os', 'policy.md'))
     }
@@ -668,13 +767,17 @@ function replaceManagedSkills(target, sourceRoot, skillNames, previousManifest, 
       platform: target.platform,
       scope: target.scope,
       skills: skillNames,
-      integrations: {
-        hooks: {
-          configPath: target.hookPath,
-          event: QUALITY_HOOK_EVENT,
-          marker: QUALITY_HOOK_MARKER
-        }
-      }
+      packages: packages.map((key) => PACKAGES[key].plugin),
+      integrations: packages.includes('dev')
+        ? {
+            hooks: {
+              configPath: target.hookPath,
+              event: QUALITY_HOOK_EVENT,
+              marker: QUALITY_HOOK_MARKER,
+              guards: { events: ['SessionStart', 'PreToolUse'], marker: GUARDS_HOOK_MARKER }
+            }
+          }
+        : {}
     }
     writeFileAtomic(manifestPath, JSON.stringify(manifest, null, 2) + '\n', fsImpl)
   } catch (error) {
@@ -704,10 +807,13 @@ function prepareDirectInstall(options, {
   cwd,
   sourceRoot
 }) {
-  const skillNames = listPackagedSkills(sourceRoot, fsImpl)
+  const packages = selectedPackages(options.package ?? 'all')
+  const skills = listPackagedSkills(packages, fsImpl, sourceRoot)
+  const skillNames = skills.map((skill) => skill.name)
+  const sources = Object.fromEntries(skills.map((skill) => [skill.name, skill.dir]))
   const targets = directTargets(options, { homeDir, cwd })
   const manifests = targets.map((target) => preflightDirectTarget(target, skillNames, fsImpl))
-  return { skillNames, targets, manifests, sourceRoot }
+  return { skillNames, targets, manifests, sources, packages }
 }
 
 function prepareManagedSkillRollback(plan, fsImpl = fs) {
@@ -783,7 +889,7 @@ function applyDirectInstall(options, plan, {
     output.write('\n[' + config.label + ']\n')
     output.write((options.command === 'update' ? 'Updating' : 'Installing') +
       ' ' + plan.skillNames.length + ' managed skills in ' + target.root + '...\n')
-    replaceManagedSkills(target, plan.sourceRoot, plan.skillNames, plan.manifests[index], fsImpl)
+    replaceManagedSkills(target, plan.sources, plan.skillNames, plan.manifests[index], fsImpl, plan.packages)
     output.write('Done. Start a new ' + config.label + ' session to load the skills.\n')
   })
 }
@@ -825,6 +931,22 @@ function executePlugin(options, { output, execute, exists }) {
       output.write('Agent OS marketplace is already registered.\n')
     }
 
+    const packages = selectedPackages(options.package ?? 'all')
+    if (name === 'claude') {
+      // The single agent-os plugin from before the split, and agent-os-dev for a core-only choice.
+      const stale = [
+        ...(options.command === 'update' ? ['agent-os'] : []),
+        ...(packages.includes('dev') ? [] : [PACKAGES.dev.plugin])
+      ]
+      for (const plugin of stale) {
+        const args = ['plugin', 'uninstall', plugin + '@' + config.marketplace, '--scope', options.scope]
+        if (execute(config.command, args, { capture: true }).status === 0) output.write('Removed ' + plugin + '.\n')
+      }
+    } else if (options.command === 'update' || !packages.includes('dev')) {
+      output.write('If the single agent-os plugin from before the split' +
+        (packages.includes('dev') ? '' : ', or agent-os-dev,') + ' is still installed, remove it in /plugins.\n')
+    }
+
     if (options.command === 'update') {
       let sourceType = null
       if (name === 'codex' && registered) {
@@ -850,17 +972,17 @@ function executePlugin(options, { output, execute, exists }) {
       }
     }
 
-    const pluginArgs = config.pluginArgs(options.scope)
-    output.write(options.command === 'update'
-      ? 'Installing the current plugin snapshot...\n'
-      : 'Installing the plugin...\n')
-    assertSuccess(execute(config.command, pluginArgs), config.command, pluginArgs)
+    for (const pluginArgs of config.pluginArgs(options.scope, selectedPackages(options.package ?? 'all'))) {
+      output.write((options.command === 'update' ? 'Installing the current snapshot of ' : 'Installing ') +
+        pluginArgs[2] + '...\n')
+      assertSuccess(execute(config.command, pluginArgs), config.command, pluginArgs)
+    }
     output.write('Done. ' + config.nextStep + '\n')
   }
 }
 
-function preparePolicyPlans({ fsImpl, homeDir, policyFile, platform }) {
-  const policy = fsImpl.readFileSync(policyFile, 'utf8')
+function preparePolicyPlans({ fsImpl, homeDir, policyFile, platform, dev = true }) {
+  const policy = composePolicy(fsImpl.readFileSync(policyFile, 'utf8'), { dev })
   return policyTargets(selectedPlatforms(platform), homeDir).map((target) => {
     const content = fsImpl.existsSync(target) ? fsImpl.readFileSync(target, 'utf8') : ''
     return { target, ...planPolicyUpdate(content, policy, VERSION) }
@@ -877,6 +999,18 @@ function applyPolicyPlans(plans, { output, fsImpl }) {
   }
 }
 
+// The package choice of an earlier direct install: core when any selected target recorded only core.
+export function installedPackage(options, { homeDir, cwd, fsImpl = fs }) {
+  if (options.method === 'plugin') return 'all'
+  for (const target of directTargets(options, { homeDir, cwd })) {
+    const manifest = readInstallManifest(target.root, fsImpl)
+    if (Array.isArray(manifest?.packages) && manifest.packages.length && !manifest.packages.includes(PACKAGES.dev.plugin)) {
+      return 'core'
+    }
+  }
+  return 'all'
+}
+
 export async function executeInstall(options, {
   output = process.stdout,
   spawn = spawnSync,
@@ -885,11 +1019,17 @@ export async function executeInstall(options, {
   fsImpl = fs,
   homeDir = os.homedir(),
   cwd = process.cwd(),
-  sourceRoot = packagedSkillsPath(),
+  sourceRoot = packageRoot,
   policyFile = packagedPolicyPath()
 } = {}) {
+  if (!options.package) {
+    options = { ...options, package: installedPackage(options, { homeDir, cwd, fsImpl }) }
+  }
   const policyPlans = options.policy
-    ? preparePolicyPlans({ fsImpl, homeDir, policyFile, platform: options.platform })
+    ? preparePolicyPlans({
+        fsImpl, homeDir, policyFile, platform: options.platform,
+        dev: selectedPackages(options.package ?? 'all').includes('dev')
+      })
     : null
   const directPlan = options.method === 'plugin'
     ? null
@@ -904,7 +1044,7 @@ export async function executeInstall(options, {
     const rollback = prepareManagedSkillRollback(directPlan, fsImpl)
     try {
       applyDirectInstall(options, directPlan, { output, fsImpl })
-      output.write('\n[Quality ratchet hooks]\n')
+      output.write('\n[Agent OS hooks]\n')
       applyHookPlans(hookPlans, { output, fsImpl })
     } catch (cause) {
       try {
@@ -934,13 +1074,18 @@ export function printHelp(output = process.stdout) {
     'Usage:\n' +
     '  npx ' + PACKAGE_NAME + ' install\n' +
     '  npx ' + PACKAGE_NAME + ' update\n' +
-    '  npx ' + PACKAGE_NAME + '@latest doctor   Report installed versions, drift, and fixes (read-only)\n\n' +
+    '  npx ' + PACKAGE_NAME + '@latest doctor   Report installed versions, drift, and fixes (read-only)\n' +
+    '  npx ' + PACKAGE_NAME + ' lint-intents     Check intents/<id>/ intent, spec, and plan files\n\n' +
     'Direct installation is the default and does not require Codex or Claude Code CLI.\n\n' +
-    'Direct installation also merges the Agent OS quality-ratchet Stop hook without replacing unrelated hooks.\n\n' +
+    'Agent OS ships two packages: agent-os-core (intent, planning, and evidence disciplines) and\n' +
+    'agent-os-dev (delivery, review, and guard hooks for code). Both are installed unless you choose core.\n' +
+    'With agent-os-dev, direct installation merges its Stop, SessionStart, and PreToolUse hooks without\n' +
+    'replacing unrelated hooks.\n\n' +
     'Options:\n' +
     '  -p, --platform <name>  claude, codex, or both\n' +
     '  -m, --method <name>    direct (default) or plugin\n' +
     '  -s, --scope <name>     user or project; plugin mode also supports local\n' +
+    '  --package <name>       all (default: core and dev) or core\n' +
     '  --policy               Sync the global policy file of each selected platform\n' +
     '  --no-policy            Leave global policy files unchanged\n' +
     '  -y, --yes              Accept defaults; useful in scripts\n' +
@@ -965,7 +1110,30 @@ export function printPlan(options, output = process.stdout, pathOptions = {}) {
   }
 }
 
+export function runLintIntents(argv, { output = process.stdout, cwd = process.cwd() } = {}) {
+  const options = { root: cwd, dir: 'intents', base: null, allowUnchangedRev: false, strict: false }
+  for (let index = 0; index < argv.length; index += 1) {
+    const argument = argv[index]
+    if (argument === '--allow-unchanged-rev') options.allowUnchangedRev = true
+    else if (argument === '--strict') options.strict = true
+    else if (['--base', '--root', '--dir'].includes(argument)) {
+      options[argument.slice(2)] = valueAfter(argv, index, argument)
+      index += 1
+    } else throw new CliError('Unknown lint-intents option "' + argument + '". Use --base <ref>, --allow-unchanged-rev, --strict, --root <dir>, or --dir <dir>.')
+  }
+  const problems = lintIntents(path.resolve(options.root), options)
+  for (const problem of problems) {
+    output.write((problem.level === 'error' ? 'ERROR ' : 'WARN  ') + problem.file + ': ' + problem.message + '\n')
+  }
+  const failing = problems.filter((problem) => problem.level === 'error' || options.strict)
+  output.write(failing.length
+    ? 'lint-intents: ' + failing.length + ' problem(s) must be fixed.\n'
+    : 'lint-intents: intent files are consistent' + (problems.length ? ' (' + problems.length + ' warning(s))' : '') + '.\n')
+  return failing.length ? 1 : 0
+}
+
 export async function run(argv = process.argv.slice(2), dependencies = {}) {
+  if (argv[0] === 'lint-intents') return runLintIntents(argv.slice(1), dependencies)
   const parsed = parseArgs(argv)
   if (parsed.help || parsed.command === 'help') {
     printHelp(dependencies.output || process.stdout)
@@ -983,7 +1151,9 @@ export async function run(argv = process.argv.slice(2), dependencies = {}) {
     const result = collectDoctorReport({
       version: VERSION,
       packageName: PACKAGE_NAME,
-      packagedSkills: listPackagedSkills(packagedSkillsPath(), fsImpl),
+      packagedSkills: listPackagedSkills(['core', 'dev'], fsImpl).map((skill) => skill.name),
+      packageSkills: Object.fromEntries(Object.keys(PACKAGES).map((key) =>
+        [PACKAGES[key].plugin, listPackagedSkills([key], fsImpl).map((skill) => skill.name)])),
       policy: fsImpl.readFileSync(packagedPolicyPath(), 'utf8'),
       homeDir: dependencies.homeDir,
       cwd: dependencies.cwd,

@@ -6,7 +6,7 @@ description: Select regression protection by changed behavior and risk, not test
 # Proportional testing
 
 > Public documentation for
-> [`skills/proportional-testing/references/strategy.md`](https://github.com/sockulags/agent-os/blob/main/skills/proportional-testing/references/strategy.md).
+> [`plugins/agent-os-dev/skills/proportional-testing/references/strategy.md`](https://github.com/sockulags/agent-os/blob/main/plugins/agent-os-dev/skills/proportional-testing/references/strategy.md).
 
 The goal is maximum confidence with the minimum necessary test surface. Test count and coverage
 percentage are signals, not quality targets.

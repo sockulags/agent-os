@@ -117,6 +117,7 @@ function verifyStopLifecycle(label, runner, repository, environment, runStop) {
 }
 
 function verifyNativeCodexWindowsHook(packedRoot, repository) {
+  // packedRoot is the agent-os-dev plugin root, which carries the hooks and the runner.
   const hooks = JSON.parse(fs.readFileSync(path.join(packedRoot, 'hooks', 'hooks.json'), 'utf8'))
   const nativeHook = hooks.hooks?.Stop?.flatMap((group) => group.hooks || [])
     .find((entry) => entry.type === 'command' && entry.command?.includes('--agent-os-hook=quality-ratchet'))
@@ -207,12 +208,14 @@ try {
     packageInstallRoot, 'node_modules', '@sockulags', 'agent-os', 'cli', 'index.mjs'
   )
   const packedRoot = path.dirname(path.dirname(packedCli))
-  if (!fs.existsSync(path.join(packedRoot, 'hooks', 'hooks.json')) ||
-      !fs.existsSync(path.join(packedRoot, 'skills', 'quality-ratchet', 'scripts', 'quality-delta.mjs'))) {
-    throw new Error('Packed artifact omitted the native hook or quality-ratchet runner.')
+  const devPluginRoot = path.join(packedRoot, 'plugins', 'agent-os-dev')
+  if (!fs.existsSync(path.join(devPluginRoot, 'hooks', 'hooks.json')) ||
+      !fs.existsSync(path.join(devPluginRoot, 'skills', 'quality-ratchet', 'scripts', 'quality-delta.mjs')) ||
+      !fs.existsSync(path.join(packedRoot, 'plugins', 'agent-os-core', 'skills', 'plan-work', 'SKILL.md'))) {
+    throw new Error('Packed artifact omitted a plugin package, the native hook, or the quality-ratchet runner.')
   }
   const spacedPluginRoot = path.join(temporaryRoot, 'packed plugin & root^')
-  fs.cpSync(packedRoot, spacedPluginRoot, { recursive: true })
+  fs.cpSync(devPluginRoot, spacedPluginRoot, { recursive: true })
 
   for (const command of ['install', 'update']) {
     run(process.execPath, [

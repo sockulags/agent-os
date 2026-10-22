@@ -14,8 +14,8 @@ function fixture() {
   const target = fs.mkdtempSync(path.join(os.tmpdir(), 'agent-os-validator-'))
   temporaryRoots.push(target)
   for (const item of [
-    '.agents', '.claude-plugin', '.codex-plugin', '.github', 'cli', 'docs-site', 'evals', 'hooks', 'scripts',
-    'skills', 'AGENTS.md', 'CLAUDE.md', 'README.md', 'package.json', 'policy.md'
+    '.agents', '.claude-plugin', '.github', 'cli', 'docs-site', 'evals', 'plugins', 'scripts',
+    'AGENTS.md', 'CLAUDE.md', 'README.md', 'package.json', 'policy.md'
   ]) {
     fs.cpSync(path.join(root, item), path.join(target, item), {
       recursive: true,
@@ -63,20 +63,20 @@ try {
   })
 
   expectFailure('frontmatter name mismatch', (target) => {
-    rewrite(path.join(target, 'skills/scope-guard/SKILL.md'), (text) => text.replace('name: scope-guard', 'name: wrong-name'))
+    rewrite(path.join(target, 'plugins/agent-os-core/skills/scope-guard/SKILL.md'), (text) => text.replace('name: scope-guard', 'name: wrong-name'))
   }, 'SKILL_NAME')
 
   expectFailure('unquoted colon in description', (target) => {
-    rewrite(path.join(target, 'skills/scope-guard/SKILL.md'), (text) =>
+    rewrite(path.join(target, 'plugins/agent-os-core/skills/scope-guard/SKILL.md'), (text) =>
       text.replace(/^description: /m, 'description: Scope rule: '))
   }, 'SKILL_DESCRIPTION_YAML')
 
   expectFailure('missing Codex manual gate', (target) => {
-    fs.rmSync(path.join(target, 'skills/shape-work/agents/openai.yaml'))
+    fs.rmSync(path.join(target, 'plugins/agent-os-dev/skills/shape-work/agents/openai.yaml'))
   }, 'SKILL_MANUAL_GATE')
 
   expectFailure('overridden Codex manual gate', (target) => {
-    fs.appendFileSync(path.join(target, 'skills/shape-work/agents/openai.yaml'), '\nallow_implicit_invocation: true\n')
+    fs.appendFileSync(path.join(target, 'plugins/agent-os-dev/skills/shape-work/agents/openai.yaml'), '\nallow_implicit_invocation: true\n')
   }, 'SKILL_MANUAL_GATE')
 
   expectFailure('non-check-work workflow becomes automatic', (target) => {
@@ -85,18 +85,18 @@ try {
   }, 'SKILL_INVOCATION_CLASS')
 
   expectFailure('automatic skill carries false Claude gate', (target) => {
-    rewrite(path.join(target, 'skills/check-work/SKILL.md'), (text) =>
+    rewrite(path.join(target, 'plugins/agent-os-dev/skills/check-work/SKILL.md'), (text) =>
       text.replace('name: check-work', 'name: check-work\ndisable-model-invocation: false'))
   }, 'SKILL_AUTOMATIC_GATE')
 
   expectFailure('automatic check-work carries Codex gate', (target) => {
-    const file = path.join(target, 'skills/check-work/agents/openai.yaml')
+    const file = path.join(target, 'plugins/agent-os-dev/skills/check-work/agents/openai.yaml')
     fs.mkdirSync(path.dirname(file), { recursive: true })
     fs.writeFileSync(file, 'policy:\n  allow_implicit_invocation: false\n')
   }, 'SKILL_AUTOMATIC_GATE')
 
   expectFailure('manifest version mismatch', (target) => {
-    const file = path.join(target, '.codex-plugin/plugin.json')
+    const file = path.join(target, 'plugins/agent-os-core/.codex-plugin/plugin.json')
     const manifest = JSON.parse(fs.readFileSync(file, 'utf8'))
     manifest.version = '9.9.9'
     fs.writeFileSync(file, `${JSON.stringify(manifest, null, 2)}\n`)
@@ -116,43 +116,59 @@ try {
     fs.writeFileSync(file, JSON.stringify(manifest, null, 2) + '\n')
   }, 'MANIFEST_NPM_NAME')
 
-  expectFailure('npm package omits skills', (target) => {
+  expectFailure('npm package omits the plugin packages', (target) => {
     const file = path.join(target, 'package.json')
     const manifest = JSON.parse(fs.readFileSync(file, 'utf8'))
-    manifest.files = manifest.files.filter((entry) => entry !== 'skills/')
+    manifest.files = manifest.files.filter((entry) => entry !== 'plugins/')
     fs.writeFileSync(file, JSON.stringify(manifest, null, 2) + '\n')
-  }, 'MANIFEST_NPM_SKILLS')
-
-  expectFailure('npm package omits native hooks', (target) => {
-    const file = path.join(target, 'package.json')
-    const manifest = JSON.parse(fs.readFileSync(file, 'utf8'))
-    manifest.files = manifest.files.filter((entry) => entry !== 'hooks/')
-    fs.writeFileSync(file, JSON.stringify(manifest, null, 2) + '\n')
-  }, 'MANIFEST_NPM_HOOKS')
+  }, 'MANIFEST_NPM_PLUGINS')
 
   expectFailure('native hook adds an unsupported lifecycle event', (target) => {
-    const file = path.join(target, 'hooks/hooks.json')
+    const file = path.join(target, 'plugins/agent-os-dev/hooks/hooks.json')
     const hooks = JSON.parse(fs.readFileSync(file, 'utf8'))
-    hooks.hooks.SessionStart = []
+    hooks.hooks.PostToolUse = []
     fs.writeFileSync(file, JSON.stringify(hooks, null, 2) + '\n')
-  }, 'HOOKS_STOP_ONLY')
+  }, 'HOOKS_EVENTS')
+
+  expectFailure('guard hook calls the wrong runner', (target) => {
+    const file = path.join(target, 'plugins/agent-os-dev/hooks/hooks.json')
+    const hooks = JSON.parse(fs.readFileSync(file, 'utf8'))
+    hooks.hooks.PreToolUse[0].hooks[0].command = hooks.hooks.PreToolUse[0].hooks[0].command.replace('guards.mjs', 'other.mjs')
+    fs.writeFileSync(file, JSON.stringify(hooks, null, 2) + '\n')
+  }, 'HOOKS_RUNNER')
+
+  expectFailure('a core skill links into the dev package', (target) => {
+    fs.appendFileSync(path.join(target, 'plugins/agent-os-core/skills/plan-work/SKILL.md'),
+      '\nSee [shape-work](../../../agent-os-dev/skills/shape-work/SKILL.md).\n')
+  }, 'LINK_CROSS_PACKAGE')
+
+  expectFailure('the dev plugin policy copy drifts from policy.md', (target) => {
+    fs.appendFileSync(path.join(target, 'plugins/agent-os-dev/skills/init-agent-os/policy.md'), '\n- Extra rule.\n')
+  }, 'POLICY_COPY_PARITY')
+
+  expectFailure('the marketplace drops the dev plugin', (target) => {
+    const file = path.join(target, '.claude-plugin/marketplace.json')
+    const marketplace = JSON.parse(fs.readFileSync(file, 'utf8'))
+    marketplace.plugins = marketplace.plugins.filter((plugin) => plugin.name !== 'agent-os-dev')
+    fs.writeFileSync(file, JSON.stringify(marketplace, null, 2) + '\n')
+  }, 'MARKETPLACE_CLAUDE')
 
   expectFailure('native Windows hook embeds a command quote', (target) => {
-    const file = path.join(target, 'hooks/hooks.json')
+    const file = path.join(target, 'plugins/agent-os-dev/hooks/hooks.json')
     const hooks = JSON.parse(fs.readFileSync(file, 'utf8'))
     hooks.hooks.Stop[0].hooks[0].commandWindows += '"'
     fs.writeFileSync(file, JSON.stringify(hooks, null, 2) + '\n')
   }, 'HOOKS_WINDOWS_COMMAND')
 
   expectFailure('native Windows hook command is missing', (target) => {
-    const file = path.join(target, 'hooks/hooks.json')
+    const file = path.join(target, 'plugins/agent-os-dev/hooks/hooks.json')
     const hooks = JSON.parse(fs.readFileSync(file, 'utf8'))
     delete hooks.hooks.Stop[0].hooks[0].commandWindows
     fs.writeFileSync(file, JSON.stringify(hooks, null, 2) + '\n')
   }, 'HOOKS_WINDOWS_COMMAND')
 
   expectFailure('native Windows hook encoded payload drifts', (target) => {
-    const file = path.join(target, 'hooks/hooks.json')
+    const file = path.join(target, 'plugins/agent-os-dev/hooks/hooks.json')
     const hooks = JSON.parse(fs.readFileSync(file, 'utf8'))
     const encoded = Buffer.from("Write-Output 'wrong runner'", 'utf16le').toString('base64')
     hooks.hooks.Stop[0].hooks[0].commandWindows =
@@ -289,114 +305,116 @@ try {
   }, 'EVAL_CASE_POLARITY')
 
   expectFailure('missing delivery ground truth', (target) => {
-    rewrite(path.join(target, 'skills/deliver-work/SKILL.md'), (text) =>
+    rewrite(path.join(target, 'plugins/agent-os-dev/skills/deliver-work/SKILL.md'), (text) =>
       text.replace('**Ground truth:**', '**Checks:**'))
   }, 'DELIVER_CONTRACT')
 
   expectFailure('skill too large to survive compaction', (target) => {
-    rewrite(path.join(target, 'skills/deliver-work/SKILL.md'), (text) => `${text}\n${'x'.repeat(18000)}`)
+    rewrite(path.join(target, 'plugins/agent-os-dev/skills/deliver-work/SKILL.md'), (text) => `${text}\n${'x'.repeat(18000)}`)
   }, 'SKILL_SIZE')
 
   expectFailure('missing check-work independent review contract', (target) => {
-    rewrite(path.join(target, 'skills/check-work/SKILL.md'), (text) =>
+    rewrite(path.join(target, 'plugins/agent-os-dev/skills/check-work/SKILL.md'), (text) =>
       text.replace('fresh-context, read-only reviewer', 'reviewer'))
   }, 'CHECK_WORK_CONTRACT')
 
   expectFailure('missing independent review default', (target) => {
-    rewrite(path.join(target, 'skills/deliver-work/SKILL.md'), (text) =>
+    rewrite(path.join(target, 'plugins/agent-os-dev/skills/deliver-work/SKILL.md'), (text) =>
       text.replace('Independent review is required unless', 'Independent review may be useful unless'))
   }, 'DELIVER_CONTRACT')
 
   expectFailure('missing pre-mutation review mechanism gate', (target) => {
-    rewrite(path.join(target, 'skills/deliver-work/SKILL.md'), (text) =>
+    rewrite(path.join(target, 'plugins/agent-os-dev/skills/deliver-work/SKILL.md'), (text) =>
       text.replace('A wait tool alone is not a launch mechanism.', 'Use any available review tool.'))
   }, 'DELIVER_CONTRACT')
 
   expectFailure('missing independent review isolation', (target) => {
-    rewrite(path.join(target, 'skills/deliver-work/SKILL.md'), (text) =>
+    rewrite(path.join(target, 'plugins/agent-os-dev/skills/deliver-work/SKILL.md'), (text) =>
       text.replace('the next review tool action after freezing the candidate must be',
         'the review tool action may be'))
   }, 'DELIVER_CONTRACT')
 
   expectFailure('missing empty-review rejection', (target) => {
-    rewrite(path.join(target, 'skills/deliver-work/SKILL.md'), (text) =>
+    rewrite(path.join(target, 'plugins/agent-os-dev/skills/deliver-work/SKILL.md'), (text) =>
       text.replace('Never call a wait tool with empty', 'A wait tool may use empty'))
   }, 'DELIVER_CONTRACT')
 
   expectFailure('missing plan handoff identity field', (target) => {
-    rewrite(path.join(target, 'skills/plan-work/references/map.md'), (text) =>
+    rewrite(path.join(target, 'plugins/agent-os-core/skills/plan-work/references/map.md'), (text) =>
       text.replace('Branch key:', 'Branch identity:'))
   }, 'PLAN_HANDOFF_CONTRACT')
 
   expectFailure('plan-work loses adaptive depth contract', (target) => {
-    rewrite(path.join(target, 'skills/plan-work/SKILL.md'), (text) =>
+    rewrite(path.join(target, 'plugins/agent-os-core/skills/plan-work/SKILL.md'), (text) =>
       text.replace('## Choose planning depth internally', '## Choose a fixed planning ceremony'))
   }, 'PLAN_WORK_CONTRACT')
 
   expectFailure('scope-guard loses mandate axis', (target) => {
-    rewrite(path.join(target, 'skills/scope-guard/SKILL.md'), (text) =>
+    rewrite(path.join(target, 'plugins/agent-os-core/skills/scope-guard/SKILL.md'), (text) =>
       text.replace('- **Mandate, covered:**', '- **Mandate, omitted:**'))
   }, 'SCOPE_TWO_AXIS_CONTRACT')
 
   expectFailure('shape-work may complete without implementation issues', (target) => {
-    rewrite(path.join(target, 'skills/shape-work/SKILL.md'), (text) =>
+    rewrite(path.join(target, 'plugins/agent-os-dev/skills/shape-work/SKILL.md'), (text) =>
       text.replace('Shape-work is complete only when', 'Shape-work should usually continue until'))
   }, 'SHAPE_IMPLEMENTATION_ISSUES')
 
   expectFailure('implementation issue identity missing', (target) => {
-    rewrite(path.join(target, 'skills/shape-work/references/implementation-issues.md'), (text) =>
+    rewrite(path.join(target, 'plugins/agent-os-dev/skills/shape-work/references/implementation-issues.md'), (text) =>
       text.replace('Identity is `(origin, unit key)`', 'Use a descriptive issue title'))
   }, 'IMPLEMENTATION_ISSUE_CONTRACT')
 
   expectFailure('multiple issues imply batch execution', (target) => {
-    rewrite(path.join(target, 'skills/shape-work/references/implementation-issues.md'), (text) =>
+    rewrite(path.join(target, 'plugins/agent-os-dev/skills/shape-work/references/implementation-issues.md'), (text) =>
       text.replace('the existence of several issues never invokes or recommends batch-work by itself',
         'several issues should be routed to batch-work'))
   }, 'IMPLEMENTATION_ISSUE_CONTRACT')
 
   expectFailure('deliver-work accepts an undecomposed target', (target) => {
-    rewrite(path.join(target, 'skills/deliver-work/SKILL.md'), (text) =>
+    rewrite(path.join(target, 'plugins/agent-os-dev/skills/deliver-work/SKILL.md'), (text) =>
       text.replace('## Confirm one delivery unit', '## Confirm the broad request'))
   }, 'DELIVER_UNIT_CONTRACT')
 
   expectFailure('dispatch-next infers batch from issue count', (target) => {
-    rewrite(path.join(target, 'skills/dispatch-next/SKILL.md'), (text) =>
+    rewrite(path.join(target, 'plugins/agent-os-dev/skills/dispatch-next/SKILL.md'), (text) =>
       text.replace('issue count alone', 'multiple issues'))
   }, 'DISPATCH_ROUTE_CONTRACT')
 
   expectFailure('missing batch manifest hash', (target) => {
-    rewrite(path.join(target, 'skills/batch-work/references/manifest.md'), (text) =>
+    rewrite(path.join(target, 'plugins/agent-os-dev/skills/batch-work/references/manifest.md'), (text) =>
       text.replace('manifest_hash: ""', 'definition_digest: ""'))
   }, 'BATCH_MANIFEST_CONTRACT')
 
   expectFailure('missing batch worker delivery boundary', (target) => {
-    rewrite(path.join(target, 'skills/deliver-work/SKILL.md'), (text) =>
+    rewrite(path.join(target, 'plugins/agent-os-dev/skills/deliver-work/SKILL.md'), (text) =>
       text.replace(/The coordinator owns integration, aggregate review, and aggregate\r?\nverification\./,
         'Return to the coordinator.'))
   }, 'BATCH_DELIVERY_BOUNDARY')
 
   expectFailure('missing aggregate review gate', (target) => {
-    rewrite(path.join(target, 'skills/batch-work/SKILL.md'), (text) =>
+    rewrite(path.join(target, 'plugins/agent-os-dev/skills/batch-work/SKILL.md'), (text) =>
       text.replace('Treat the integrated batch as material.', 'Inspect the integrated batch.'))
   }, 'BATCH_REVIEW_GATE')
 
   expectFailure('missing batch runtime block', (target) => {
-    rewrite(path.join(target, 'skills/batch-work/references/manifest.md'), (text) =>
+    rewrite(path.join(target, 'plugins/agent-os-dev/skills/batch-work/references/manifest.md'), (text) =>
       text.replace('```json batch-runtime', '```json runtime-state'))
   }, 'BATCH_MANIFEST_CONTRACT')
 
   expectFailure('missing deterministic batch hash script', (target) => {
-    fs.rmSync(path.join(target, 'skills/batch-work/scripts/manifest-hash.mjs'))
+    fs.rmSync(path.join(target, 'plugins/agent-os-dev/skills/batch-work/scripts/manifest-hash.mjs'))
   }, 'BATCH_HASH_SCRIPT')
 
   expectFailure('hardcoded skill count in docs prose', (target) => {
-    rewrite(path.join(target, 'docs-site/skills/index.md'), (text) =>
-      text.replace('agent-os ships its skills in three buckets.', 'agent-os ships sixteen skills in three buckets.'))
+    fs.appendFileSync(path.join(target, 'docs-site/skills/index.md'), '\nagent-os ships sixteen skills in three buckets.\n')
   }, 'DOCS_SKILL_COUNT')
 
   expectFailure('leading-zero release version', (target) => {
-    const currentVersion = JSON.parse(fs.readFileSync(path.join(target, '.claude-plugin/plugin.json'), 'utf8')).version
-    for (const manifestPath of ['.claude-plugin/plugin.json', '.codex-plugin/plugin.json']) {
+    const currentVersion = JSON.parse(fs.readFileSync(path.join(target, 'plugins/agent-os-core/.claude-plugin/plugin.json'), 'utf8')).version
+    for (const manifestPath of [
+      'plugins/agent-os-core/.claude-plugin/plugin.json', 'plugins/agent-os-core/.codex-plugin/plugin.json',
+      'plugins/agent-os-dev/.claude-plugin/plugin.json', 'plugins/agent-os-dev/.codex-plugin/plugin.json'
+    ]) {
       const file = path.join(target, manifestPath)
       const manifest = JSON.parse(fs.readFileSync(file, 'utf8'))
       manifest.version = '01.4.2'

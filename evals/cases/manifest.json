@@ -89,41 +89,41 @@
         "explain-work.md#EW-N2 Documentation"
       ]
     },
-    "notice-lesson": {
-      "positive": [
-        "notice-lesson.md#NL-P1 Interruption",
-        "notice-lesson.md#NL-P2 Repeated correction",
-        "notice-lesson.md#NL-P3 EN stop",
-        "notice-lesson.md#NL-P4 EN wrong area",
-        "notice-lesson.md#NL-P5 EN repeated correction",
-        "notice-lesson.md#NL-P6 EN HO wrong file"
-      ],
-      "negative": [
-        "notice-lesson.md#NL-N1 Clarifying question",
-        "notice-lesson.md#NL-N2 Requested iteration",
-        "notice-lesson.md#NL-N3 EN clarifying question"
-      ]
-    },
     "record-lesson": {
       "positive": [
         "record-lesson.md#RL-P1 Repo lesson",
         "record-lesson.md#RL-P2 Global lesson",
-        "record-lesson.md#RL-P3 Enforcement ladder"
+        "record-lesson.md#RL-P3 Enforcement ladder",
+        "record-lesson.md#RL-P4 Interruption",
+        "record-lesson.md#RL-P5 Repeated correction",
+        "record-lesson.md#RL-P6 EN stop",
+        "record-lesson.md#RL-P7 EN wrong area",
+        "record-lesson.md#RL-P8 EN repeated correction",
+        "record-lesson.md#RL-P9 EN HO wrong file",
+        "record-lesson.md#RL-P10 EN remember",
+        "record-lesson.md#RL-P11 One-off correction"
       ],
       "negative": [
         "record-lesson.md#RL-N1 Session detail",
-        "record-lesson.md#RL-N2 Already recorded"
+        "record-lesson.md#RL-N2 Already recorded",
+        "record-lesson.md#RL-N3 Clarifying question",
+        "record-lesson.md#RL-N4 Requested iteration",
+        "record-lesson.md#RL-N5 EN clarifying question"
       ]
     },
-    "understand-work": {
+    "capture-intent": {
       "positive": [
-        "understand-work.md#UW-P1 Facts first",
-        "understand-work.md#UW-P2 Ruled out",
-        "understand-work.md#UW-P3 No premature solution"
+        "capture-intent.md#CI-P1 Facts first",
+        "capture-intent.md#CI-P2 Ruled out",
+        "capture-intent.md#CI-P3 No premature solution",
+        "capture-intent.md#CI-P4 Intent file",
+        "capture-intent.md#CI-P5 Existing intent",
+        "capture-intent.md#CI-P6 Small fix"
       ],
       "negative": [
-        "understand-work.md#UW-N1 Repository fact",
-        "understand-work.md#UW-N2 Stated goal"
+        "capture-intent.md#CI-N1 Repository fact",
+        "capture-intent.md#CI-N2 Stated goal",
+        "capture-intent.md#CI-N3 EN feature idea"
       ]
     },
     "diagnose-before-fix": {
@@ -245,34 +245,21 @@
         "quality-ratchet.md#Negative EN1"
       ]
     },
-    "simplifier": {
+    "simplify": {
       "positive": [
-        "simplifier.md#SIM-P1",
-        "simplifier.md#SIM-P2"
+        "simplify.md#SIM-P1 Apply layers",
+        "simplify.md#SIM-P2 Apply reuse",
+        "simplify.md#SIM-P3 Review diff",
+        "simplify.md#SIM-P4 Review clean diff",
+        "simplify.md#SIM-P5 Audit repository",
+        "simplify.md#SIM-P6 Audit lean repository",
+        "simplify.md#SIM-P7 Bare invocation"
       ],
       "negative": [
-        "simplifier.md#SIM-N1",
-        "simplifier.md#SIM-N2"
-      ]
-    },
-    "simplifier-audit": {
-      "positive": [
-        "simplifier-audit.md#SIMA-P1",
-        "simplifier-audit.md#SIMA-P2"
-      ],
-      "negative": [
-        "simplifier-audit.md#SIMA-N1",
-        "simplifier-audit.md#SIMA-N2"
-      ]
-    },
-    "simplifier-review": {
-      "positive": [
-        "simplifier-review.md#SIMR-P1",
-        "simplifier-review.md#SIMR-P2"
-      ],
-      "negative": [
-        "simplifier-review.md#SIMR-N1",
-        "simplifier-review.md#SIMR-N2"
+        "simplify.md#SIM-N1 Ordinary implementation",
+        "simplify.md#SIM-N2 Code golf",
+        "simplify.md#SIM-N3 Root cause",
+        "simplify.md#SIM-N4 EN unprompted audit"
       ]
     },
     "shape-work": {
@@ -314,16 +301,6 @@
       "negative": [
         "list-skills.md#LS-N1",
         "list-skills.md#LS-N2"
-      ]
-    },
-    "writing-skills": {
-      "positive": [
-        "writing-skills.md#WS-P1",
-        "writing-skills.md#WS-P2"
-      ],
-      "negative": [
-        "writing-skills.md#WS-N1",
-        "writing-skills.md#WS-N2"
       ]
     }
   }

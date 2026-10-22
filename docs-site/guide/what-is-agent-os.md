@@ -43,6 +43,18 @@ not only compatible-looking files. See the current
 [Claude Code skill controls](https://docs.claude.com/en/docs/claude-code/skills) for the host
 extensions Agent OS uses.
 
+## Two packages
+
+**agent-os-core** holds the skills that help any agent work: capturing what is needed as a versioned
+intent, planning decisions and ground truth as a spec, explaining or shortening work in plain
+language, keeping scope, proving claims with fresh evidence, and keeping durable lessons. It is
+useful for product, documentation, and analysis work as well as code.
+
+**agent-os-dev** holds the skills that need code and Git: shaping delivery units, delivering them
+against ground truth with draft pull requests, independent review in a session or in CI,
+reproducing bugs before fixing, proportional testing, simplification, and repository setup. Its
+hooks enforce the rules that must hold. It requires agent-os-core.
+
 ## Two kinds of skill
 
 **Most workflows** are manually invoked. They structure coherent planning, bounded shaping, parallel

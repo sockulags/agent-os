@@ -5,16 +5,28 @@
   },
   "plugins": [
     {
-      "name": "agent-os",
+      "name": "agent-os-core",
       "source": {
         "source": "local",
-        "path": "./"
+        "path": "./plugins/agent-os-core"
       },
       "policy": {
         "installation": "AVAILABLE",
         "authentication": "ON_INSTALL"
       },
       "category": "Productivity"
+    },
+    {
+      "name": "agent-os-dev",
+      "source": {
+        "source": "local",
+        "path": "./plugins/agent-os-dev"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Engineering"
     }
   ]
 }

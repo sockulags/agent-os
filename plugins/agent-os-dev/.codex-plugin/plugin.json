@@ -1,0 +1,24 @@
+{
+  "name": "agent-os-dev",
+  "description": "Agent OS development: shape plans, deliver against ground truth, review independently, and guard delivery with hooks. Requires agent-os-core.",
+  "version": "0.15.0",
+  "homepage": "https://sockulags.github.io/agent-os/",
+  "repository": "https://github.com/sockulags/agent-os",
+  "keywords": [
+    "workflow",
+    "delivery",
+    "code-review",
+    "testing",
+    "hooks",
+    "skills"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Agent OS Dev",
+    "shortDescription": "Delivery, review, and guard hooks for code",
+    "longDescription": "Shapes a spec into delivery units in plan.md, delivers one unit at a time against ground truth with draft pull requests, runs batches through isolated workers, reviews candidates independently in a session or in CI against REVIEW.md, reproduces bugs before fixing, keeps touched code no worse, and enforces it with hooks for spec freeze, test locks, protected paths, secret scans, and a delivery Stop gate. Requires agent-os-core.",
+    "developerName": "Lucas Skog",
+    "category": "Engineering",
+    "websiteURL": "https://sockulags.github.io/agent-os/"
+  }
+}

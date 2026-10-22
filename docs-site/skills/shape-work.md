@@ -1,13 +1,13 @@
 ---
 title: shape-work
 description: Turn a bounded mission into coherent delivery units, dependencies, and implementation-ready issues.
-skill-description: Shapes a bounded mission into coherent delivery units, dependencies, and implementation-ready issues backed by settled product decisions. User-invoked when delivery structure or an epic contract still needs shaping. Not for small fixes or work whose outcome and delivery unit are already clear.
-summary: Shape coherent delivery units and implementation-ready issues
+skill-description: Shapes a bounded mission or accepted spec into coherent delivery units with dependencies, written as plan.md beside the spec or as implementation-ready tracker issues, backed by settled product decisions. User-invoked when delivery structure or an epic contract still needs shaping. Not for small fixes or work whose outcome and delivery unit are already clear.
+summary: Shape a spec into delivery units in plan.md or tracker issues
 ---
 
 # shape-work
 
-**Bucket:** workflow · **Invocation:** manual · `/shape-work` (direct Claude), `/agent-os:shape-work` (Claude plugin), or `$shape-work` (Codex)
+**Bucket:** workflow · **Invocation:** manual · `/shape-work` (direct Claude), `/agent-os-dev:shape-work` (Claude plugin), or `$shape-work` (Codex)
 
 Shapes a bounded mission into coherent delivery units and implementation-ready issues backed by
 settled product decisions.
@@ -36,9 +36,18 @@ Deliver the coherent product shape: outcome, boundaries, acceptance examples, af
 ground truth, settled decisions, and open risks. Start from one coherent delivery unit and split
 only for an independent result, ownership, migration, delivery, or material risk and verification
 boundary. Separate commits, sessions, files, or technical layers are not enough. Keep schema, API,
-UI, configuration, errors, and verification with the behavior they support. Then create or reuse
-implementation issues on the configured planning surface, link real dependencies, and expose the
-first claimable frontier.
+UI, configuration, errors, and verification with the behavior they support. Then write the units:
+`intents/<id>/plan.md` beside the spec by default, or tracker issues when the project policy makes
+the tracker the source of truth for units (`source: issues`, with `plan.md` holding only the keys).
+Link real dependencies and expose the first claimable frontier.
+
+`plan.md` lists each unit as `- [U1] title`, optionally followed by ` — depends on U1` and
+` — blocked: reason`, and gives each unit a `### U1 title` section with its outcome, boundaries,
+acceptance, ground truth, and delivery target. Unit keys never change. Delivery status is never
+written into the plan: a draft pull request with `Intent-Unit: <intent-id>/<unit-key>` claims a unit,
+and its merge delivers it. A spec built on an older intent revision is not shaped; it goes back to
+plan-work. A plan built on an older spec revision is reshaped with stable keys. See
+[Intent, spec, and plan files](/reference/intents).
 
 One shape may produce one issue, several independent issues without an epic, or an epic with
 children when one shared result needs an owner. Issue count does not select an execution workflow.

@@ -11,7 +11,10 @@ summary: Fresh evidence before any completion claim
 
 Matches every material completion claim to fresh evidence from the final candidate.
 
-Choose the closest practical checks and prefer the project's documented acceptance path. Inspect
+Choose the closest practical checks and prefer the ground truth named in the accepted spec, the
+required checks in `.agent-os/quality.json`, or the project's documented acceptance path. With
+agent-os-dev installed, a quality-ratchet Stop block for a stale check or a failed required check is
+this discipline enforced. Inspect
 what each result actually proves: a build cannot establish rendered behavior, and a narrow unit test
 cannot establish an end-to-end flow.
 

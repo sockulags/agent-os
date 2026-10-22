@@ -7,7 +7,7 @@ summary: Pick or dispatch one action according to the request
 
 # dispatch-next
 
-**Bucket:** workflow · **Invocation:** manual · `/dispatch-next` (direct Claude), `/agent-os:dispatch-next` (Claude plugin), or `$dispatch-next` (Codex)
+**Bucket:** workflow · **Invocation:** manual · `/dispatch-next` (direct Claude), `/agent-os-dev:dispatch-next` (Claude plugin), or `$dispatch-next` (Codex)
 
 Reads live project state and selects one decision-ready next action.
 
@@ -21,6 +21,11 @@ The request wording governs action:
 
 Dispatch does not imply merge, closure, or unrelated tracker actions. If nothing is ready, report
 the closest blocker.
+
+Unit status comes from pull requests, never from `plan.md`: a unit with an open pull request
+carrying its `Intent-Unit: <intent-id>/<unit-key>` line is claimed, one whose pull request merged is
+delivered, and one whose dependencies are delivered and whose line has no `blocked:` note is ready.
+A stale spec or plan is not ready and routes to plan-work or shape-work.
 
 A broad mission or decision-planning target routes to `plan-work`; a selected implementation-ready
 issue routes to `deliver-work`. `batch-work` is a route only when

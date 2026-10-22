@@ -6,7 +6,7 @@ description: How plan-work uses a repairable map, canonical decisions, evidence,
 # Maps and decision tickets
 
 > This page orients. The canonical contract agents load is
-> [`skills/plan-work/references/map.md`](https://github.com/sockulags/agent-os/blob/main/skills/plan-work/references/map.md).
+> [`plugins/agent-os-core/skills/plan-work/references/map.md`](https://github.com/sockulags/agent-os/blob/main/plugins/agent-os-core/skills/plan-work/references/map.md).
 
 The map gives low-resolution orientation; each ticket owns its question, evidence, and decision.
 Plan-work uses this depth only when independent ownership, separate evidence work, or parallel

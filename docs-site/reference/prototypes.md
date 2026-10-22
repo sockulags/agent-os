@@ -6,7 +6,7 @@ description: Record what a prototype exercised, what was observed, and which dec
 # Prototype evidence
 
 > This page orients. The canonical contract agents load is
-> [`skills/plan-work/references/prototypes.md`](https://github.com/sockulags/agent-os/blob/main/skills/plan-work/references/prototypes.md).
+> [`plugins/agent-os-dev/skills/shape-work/references/prototypes.md`](https://github.com/sockulags/agent-os/blob/main/plugins/agent-os-dev/skills/shape-work/references/prototypes.md).
 
 A prototype exists to settle a decision.
 

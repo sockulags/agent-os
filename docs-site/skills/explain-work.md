@@ -1,13 +1,13 @@
 ---
 title: explain-work
 description: Explain the current task or plan in plain language so the developer can judge it beyond the jargon.
-skill-description: Explains the current task or plan in plain language with no technical vocabulary, so the developer can judge it beyond the jargon. User-invoked directly when a real decision needs a plain-language summary or as a plan-work aid. Not a substitute for technical review or verification.
-summary: Explain the task in plain language
+skill-description: Explains a task, plan, spec, diff, or an over-long explanation in short plain language with no technical vocabulary, so a developer or product owner can judge it beyond the jargon. User-invoked directly, for example to shorten the agent's own wordy answer, and used by plan-work for the summary at the top of spec.md. Not a substitute for technical review or verification.
+summary: Explain or shorten work in plain language
 ---
 
 # explain-work
 
-**Bucket:** workflow · **Invocation:** manual · `/explain-work` (direct Claude), `/agent-os:explain-work` (Claude plugin), or `$explain-work` (Codex)
+**Bucket:** workflow · **Invocation:** manual · `/explain-work` (direct Claude), `/agent-os-core:explain-work` (Claude plugin), or `$explain-work` (Codex)
 
 Says what the work solves as if the reader knows no technical terms, then lets the developer judge
 it.
@@ -22,6 +22,12 @@ developer replies only to challenge it, and a workflow that owns a pending decis
 question. A challenge means the understanding was wrong somewhere: the misunderstood point is named
 and the questioning or plan reopens there, instead of the summary being defended.
 
-Under [plan-work](/skills/plan-work), the summary can be linked from the canonical planning artifact
-when it supports an actual decision; it is not a general approval gate. Standalone, explain-work
-runs against any plan, diff, or pull request; the deliverable is the plain-language summary.
+Explain-work also shortens an explanation that says too much, often the agent's own previous answer.
+It keeps the outcome, the one decision the reader must make, and what is not done or not verified,
+and drops the reasoning trail and restated context. Shortening never hides a risk or an unverified
+claim.
+
+Under [plan-work](/skills/plan-work), the summary becomes the `## Summary` section at the top of
+`spec.md`, written for the owner who approves the spec; it is not a general approval gate.
+Standalone, explain-work runs against any plan, spec, diff, pull request, or explanation; the
+deliverable is the plain-language summary.

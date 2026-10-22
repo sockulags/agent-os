@@ -1,58 +1,79 @@
 ---
 title: The work loop
-description: Choose the lowest agent-os workflow that matches the uncertainty, then verify the requested delivery target.
+description: Carry a need from intent through spec, plan, delivery, review, and lesson, with ceremony that follows the size of the work.
 ---
 
 # The work loop
 
-Enter at the lowest workflow that matches the uncertainty.
+Enter at the lowest step that still has unresolved work, and leave out the steps a small change does
+not need.
 
 <figure class="agent-os-diagram">
   <a href="/diagrams/agent-os-planning-delivery-flow.svg" target="_blank" rel="noopener" aria-label="Open the Agent OS planning and delivery flow at full size">
     <img class="diagram-light" src="/diagrams/agent-os-planning-delivery-flow.svg" alt="">
     <img class="diagram-dark" src="/diagrams/agent-os-planning-delivery-flow-dark.svg" alt="">
   </a>
-  <figcaption>Uncertainty determines the planning entry point. The developer's explicit selection determines whether delivery runs one ready issue or a batch. Select the diagram to open it at full size.</figcaption>
+  <figcaption>Uncertainty determines the planning entry point. The developer's explicit selection determines whether delivery runs one ready unit or a batch. The diagram predates the intent files. Select the diagram to open it at full size.</figcaption>
 </figure>
 
-Use `plan-work` for a coherent mission whenever planning depth, repository coverage, or material
-decisions need to be made explicit. Use `shape-work` to materialize coherent delivery units and
-implementation-ready issues. Use `deliver-work` for one selected ready issue or an explicitly
-authorized planned feature. Use `batch-work` only when the developer explicitly chooses integrated
-execution of several ready issues with stable dependencies.
+## The steps
 
-Two workflows sit beside the loop rather than inside it, invoked when the developer asks for them:
-`simplifier` removes unnecessary code and solution layers from existing work, and
-`simplifier-audit` reports the same opportunities across a repository without changing files.
+| Step | Skill | File | Who approves |
+|---|---|---|---|
+| Intent | `capture-intent` | `intents/<id>/intent.md` | the product owner merges the pull request |
+| Spec | `plan-work` | `intents/<id>/spec.md` | product owner and tech lead merge |
+| Plan | `shape-work` | `intents/<id>/plan.md`, or tracker issues | tech lead, or no extra gate for a small plan |
+| Deliver | `deliver-work`, `batch-work` | code, tests, a draft pull request per unit | the developer steers |
+| Review | `check-work`, `simplify` | `REVIEW.md`, the pull request review | a person approves the pull request |
+| Lesson | `record-lesson` | the project policy | the developer agrees to each lesson |
+
+Each file is versioned in Git and changes only through a pull request. A spec names the intent
+revision it answers, and a plan names the spec revision, so a changed intent marks everything built
+on it as stale until it is reconsidered. See [Intent, spec, and plan files](/reference/intents).
+
+## Ceremony follows size
+
+| Work | Steps |
+|---|---|
+| A bug without a product question | deliver, review, lesson |
+| A feature | intent, spec, deliver, review, lesson |
+| An initiative with several pull requests | every step |
+
+Use `capture-intent` when a need is new or still moving. Use `plan-work` when behavior, decisions, or
+ground truth need settling; it chooses its own depth, from a small outcome contract to a decision map
+with canonical tickets. Use `shape-work` to write coherent delivery units. Use `deliver-work` for one
+ready unit or an explicitly authorized set. Use `batch-work` only when the developer explicitly
+chooses integrated execution of several ready units. `explain-work` writes the plain-language summary
+at the top of the spec, and shortens any explanation that says too much.
 
 For a diff, commit, branch, pull request, or completed implementation, `check-work` independently
-reviews the candidate. It reports findings by default for an implicit “review this” request;
-“review and fix this” authorizes its fix mode. A bare explicit invocation asks which mode to use
-before inspecting the candidate.
-
-`plan-work` also handles a goal that is still moving by using `understand-work`, and can use
-`explain-work` when a plain-language summary is needed for an actual decision. It does not make
-summary approval a general gate. Its internal depth ranges from a small outcome contract to a
-code-informed coverage pass or a decision map with canonical tickets, claims, and stable
-`shape-work` handoffs.
+reviews the candidate against the spec and `REVIEW.md`. It reports findings by default for an
+implicit “review this” request; “review and fix this” authorizes its fix mode; `check-work ci` runs
+headless on every pull request in the `agent-review` workflow. `simplify` reviews a diff, audits a
+repository, or removes unnecessary code when asked.
 
 Each workflow inherits the same authority rule: the request governs what happens. Planning requests
 produce planning artifacts. Execution requests may mutate repository files in scope. Delivery stops
 at the requested or policy-defined boundary.
 
-The automatic disciplines run underneath:
+## Underneath: disciplines and hooks
 
-- `diagnose-before-fix` establishes a supported cause for unknown failures;
-- `scope-guard` classifies required, adjacent, and unrelated discoveries against the existing mandate;
-- `quality-ratchet` records exact entry/candidate evidence, allowing bounded touched-surface
-  improvement without turning raw counts into gates;
-- `simplifier-review` checks the candidate diff for unnecessary code and solution layers;
-- `verify-before-done` matches material completion claims to fresh evidence;
-- `notice-lesson` treats developer interruptions and corrections as misunderstanding signals and
-  offers `record-lesson` when the lesson is durable.
+The automatic disciplines run in every session, and agent-os-dev pairs the important ones with
+[guard hooks](/reference/guards):
 
-Durable records are optional working memory. Use them when sessions or parallel work need recovery,
-not to prove that ceremony occurred.
+- `scope-guard` classifies discoveries against the mandate; an accepted spec is part of the
+  boundary, and the guard hook blocks edits to it during delivery;
+- `diagnose-before-fix` establishes a supported cause and commits the failing test first; the guard
+  hook keeps that test locked until the fix passes;
+- `quality-ratchet` records exact entry and candidate evidence; its Stop hook blocks a turn that ends
+  with a stale check or a failed required check from `.agent-os/quality.json`;
+- `verify-before-done` matches completion claims to fresh evidence;
+- `proportional-testing` picks the smallest test set that still guards the change;
+- `record-lesson` treats corrections as misunderstanding signals and offers to keep the durable ones.
+
+Status is never written into the files during delivery. A draft pull request with
+`Intent-Unit: <intent-id>/<unit-key>` claims a unit, so several people can deliver units of the same
+plan in parallel without conflicts.
 
 ## Worked example: filtered CSV export
 
@@ -60,26 +81,16 @@ The journey begins before the request exists:
 
 > Reports feel useless for our big customers and I don't know what to do about it.
 
-### 1. plan-work finds the right planning depth
+### 1. capture-intent writes the intent
 
-`plan-work` questions out the need when necessary: the pain is not seeing the data but taking it
-along — customers paste screenshots into slides today. Once the goal is stable, the plan checks the
-real report flows and chooses the smallest sufficient planning depth.
+`capture-intent` questions out the need: the pain is not seeing the data but taking it along, since
+customers paste screenshots into slides today. It writes `intents/2026-11-csv-export/intent.md` with
+`rev: 1` and opens a pull request that the product owner merges.
 
-> Large customers can already find the numbers they need, but the only way to take them along is a
-> screenshot. This work gives them a proper way to take a filtered result with them. It will not
-> change what they can see, only what they can carry away.
+### 2. plan-work writes the spec
 
-The plan is now a request with a coherent outcome and boundaries. A plain-language summary can be
-linked if an actual decision needs it; no second ceremony is added:
-
-> Add export to reports. It should be safe and work for large customers.
-
-### 2. plan-work uses a decision map only when needed
-
-`plan-work` creates a small map and three **decision tickets** only because these questions can be
-owned and evidenced independently. A decision ticket owns one question,
-its evidence, and the resulting decision.
+`plan-work` checks the real report flows. Three questions are owned and evidenced independently, so
+it uses a small decision map:
 
 | Ticket | Question | Evidence | Decision |
 |---|---|---|---|
@@ -87,66 +98,50 @@ its evidence, and the resulting decision.
 | EXP-2 | Who may export? | Existing report authorization tests | Reuse report-view permission |
 | EXP-3 | What counts as large? | Production row-count sample | Synchronous through 10,000 rows; larger exports are out of scope |
 
-The artifact is `planning/report-export/map.md` plus the three tickets. Claims, dependencies, and
-the open frontier are visible; no workers start automatically. The broad request is now one bounded
-branch with settled product decisions.
+The result is `spec.md` built on `intent@1`. Its summary, written by `explain-work`, reads:
 
-### 3. shape-work makes the branch executable
+> Large customers can already find the numbers they need, but the only way to take them along is a
+> screenshot. This work gives them a proper way to take a filtered result with them. It will not
+> change what they can see, only what they can carry away.
 
-`shape-work` follows those tickets, settles the product shape, and creates implementation-ready
-issues:
+### 3. shape-work writes the plan
 
-```text
-Outcome: A permitted user downloads the active report filter as UTF-8 CSV.
-Boundaries: No scheduled exports, background jobs, or new permission model.
-Ground truth: API contract test + rendered download flow + unauthorized request test.
-Delivery: One pull request; no merge or deployment.
+```markdown
+## Units
 
-Implementation issues:
-EXPORT-API  -> serializer, endpoint, authorization tests
-EXPORT-UI   -> download action, loading and error states
-EXPORT-E2E  -> depends on EXPORT-API + EXPORT-UI
-
-Ready frontier: EXPORT-API, EXPORT-UI
+- [U1] Export endpoint with authorization
+- [U2] Download action with loading and error states
+- [U3] End-to-end download check — depends on U1, U2
 ```
 
+Each unit has its own section with outcome, boundaries, the spec examples it satisfies, and ground
+truth such as an API contract test, a rendered download flow, and an unauthorized request test.
 **Ground truth** is the observation that can decide the claim. “The build passes” is not ground truth
 for a browser download.
 
-The three issues are the required shaping output. They exist regardless of whether the developer
-later chooses serial delivery or a batch.
+### 4. deliver-work claims and delivers
 
-### 4. The developer chooses batch-work
-
-For this example, the developer explicitly asks to run the ready issue graph as an integrated batch:
-
-```text
-/batch-work Execute the report-export implementation issues as one integrated batch.
-```
-
-`batch-work` consumes the existing issues and records execution definitions, dependencies, hashes,
-worker commits, and aggregate checks in `.agent-os/batches/report-export.md`. API and UI run in
-isolated workspaces. E2E waits. Without that explicit batch request, the same issues remain available
-for individual `deliver-work` runs.
-
-### 5. deliver-work produces evidence
-
-Each worker uses `deliver-work` against its task outcome, boundaries, and checks, then returns a
-commit and evidence. The coordinator integrates API and UI once, releases E2E, and reruns the
-aggregate download path on the integrated candidate.
-
-The batch is **reconciled** when the current task definitions, returned commits, integrated files,
-and dependency state agree. It is not delivered yet. Delivery follows only after the aggregate
-ground truth passes:
+Two developers take U1 and U2 at the same time. Each `deliver-work` run opens a draft pull request
+with `Intent-Unit: 2026-11-csv-export/U1` or `/U2`, so `dispatch-next` shows both as claimed. The
+ground truth runs as a required check in `.agent-os/quality.json`:
 
 ```text
 Command: npm test -- report-export
 Exit: 0
 Result: API, authorization, and CSV encoding cases pass.
-
-Command: npm run test:e2e -- report-export
-Exit: 0
-Result: filtered CSV downloads; unauthorized export is rejected.
 ```
 
-The final artifact is one verified pull request. Merge and deployment remain outside the request.
+If the developer explicitly asks for it, `batch-work` can run U1 and U2 in isolated workspaces
+instead and integrate them before U3.
+
+### 5. check-work reviews the pull request
+
+The `agent-review` workflow runs `check-work ci` against `REVIEW.md` and the spec, and a person
+approves. The pull request that delivers U3 also sets the intent and plan to `done`. Merge and
+deployment remain outside the request unless the project policy includes them.
+
+### 6. The intent changes
+
+Halfway through, the product owner adds Excel. The intent gets `rev: 2` and a decision log line.
+`lint-intents` and the SessionStart hook now report the spec as stale, and delivery from it stops
+until `plan-work` writes spec revision 2 built on `intent@2`.

@@ -6,7 +6,7 @@ import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
 import { execFileSync } from 'node:child_process'
-import { begin, check, controlsTrustPlan, hook, trustControls } from '../skills/quality-ratchet/scripts/quality-delta.mjs'
+import { begin, check, controlsTrustPlan, hook, trustControls } from '../plugins/agent-os-dev/skills/quality-ratchet/scripts/quality-delta.mjs'
 
 const tool = process.argv[2]
 if (!tool || !path.isAbsolute(tool) || !fs.existsSync(tool)) {

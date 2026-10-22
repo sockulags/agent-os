@@ -19,6 +19,10 @@ Classify discoveries on both axes:
 - **Covered / new decision or external action:** whether the existing request and policy already
   authorize it. A ready issue is not authorization.
 
+An accepted `spec.md` is part of the boundary: its behavior, boundaries, and non-goals hold during
+delivery, and delivery never edits it. With agent-os-dev guard hooks installed, such an edit is
+blocked while a delivery baseline is active; the block is this boundary, not an obstacle.
+
 Risk guides implementation and verification; it can expose a missing decision but does not itself
 grant new permission. Required work normally stays in the mission. A material product or boundary
 change returns to `plan-work`; adjacent work can be offered as a follow-up, and unrelated work gets

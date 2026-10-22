@@ -7,7 +7,7 @@ summary: Run isolated ready units and verify the integrated result
 
 # batch-work
 
-**Bucket:** workflow · **Invocation:** manual · `/batch-work` (direct Claude), `/agent-os:batch-work` (Claude plugin), or `$batch-work` (Codex)
+**Bucket:** workflow · **Invocation:** manual · `/batch-work` (direct Claude), `/agent-os-dev:batch-work` (Claude plugin), or `$batch-work` (Codex)
 
 Plans and runs several decision-ready units through isolated workers and aggregate verification.
 Each worker is simply [deliver-work](/skills/deliver-work) starting in an isolated workspace.
@@ -47,5 +47,8 @@ candidate before delivery, resolves supported findings, and reruns affected aggr
 
 Definition drift invalidates an affected result. Merge, deploy, destructive cleanup, and external
 effects follow the request or project policy.
+
+A unit taken from a `plan.md` keeps its `Intent-Unit: <intent-id>/<unit-key>` line in the commit or
+pull request that delivers it, so the plan's status can be read from history.
 
 See [Batch manifests](/reference/batches).

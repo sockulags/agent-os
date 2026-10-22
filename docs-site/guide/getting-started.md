@@ -9,6 +9,11 @@ The guided npm installer is the fastest path. It installs the packaged skills di
 syncs the global policy, and leaves repository-specific policy initialization for the repository
 where you will work. Codex and Claude Code do not need to be installed before this step.
 
+Agent OS has two packages. **agent-os-core** holds intent, planning, explanation, scope, evidence,
+and lesson skills that help any agent work. **agent-os-dev** holds delivery, review, testing,
+simplification, and setup skills plus the hooks that enforce them, and requires agent-os-core. The
+installer installs both unless you choose core only.
+
 ## 1. Install the skills
 
 Run this from any directory:
@@ -18,13 +23,18 @@ npx @sockulags/agent-os install
 ~~~
 
 The CLI asks whether to install for Codex, Claude Code, or both, whether the skills should be
-user-level or project-level, and whether to sync the shared policy files. For automation, provide
-the choices explicitly:
+user-level or project-level, which packages to install, and whether to sync the shared policy files.
+For automation, provide the choices explicitly:
 
 ~~~bash
 npx @sockulags/agent-os install --platform both --scope user --yes
+npx @sockulags/agent-os install --platform claude --package core --yes
 npx @sockulags/agent-os update --platform codex --scope user --no-policy
 ~~~
+
+`--package all` (the default) installs agent-os-core and agent-os-dev. `--package core` installs only
+the core skills, adds no hooks, and installs the global policy without its development section.
+Updating an all-packages install with `--package core` removes the dev skills and the managed hooks.
 
 The direct installer writes to these locations:
 
@@ -40,10 +50,13 @@ both discovery and update behavior have been verified as one migration.
 
 It records the Agent OS-owned directories in `.agent-os-install.json`. An update replaces only
 those directories, removes managed skills that disappeared from the release, and leaves unrelated
-skills alone. Schema 1 manifests remain readable; new installs record the managed quality-ratchet
-hook integration in schema 2. It refuses to overwrite a same-name directory that it did not install.
+skills alone. Schema 1 manifests remain readable; new installs record the installed packages and the
+managed hook integration in schema 2. It refuses to overwrite a same-name directory that it did not
+install.
 
-Direct installs also merge one Agent OS-owned `Stop` hook without replacing unrelated host hooks:
+With agent-os-dev, direct installs also merge three Agent OS-owned hooks without replacing unrelated
+host hooks: the quality-ratchet `Stop` gate and the `SessionStart` and `PreToolUse` guard hooks
+described in [Guard hooks](/reference/guards). They go into:
 
 | Scope | Claude Code | Codex |
 |---|---|---|
@@ -56,9 +69,9 @@ root. Start a new session after updating;
 there is no uninstall command yet.
 
 Codex runs a non-managed hook only after you trust it, and it records that trust against the hook's
-hash. After a Codex install, or an update that changes the hook, open Codex, run `/hooks`, and trust
-the Agent OS quality-ratchet Stop hook. Until then Codex skips it. The installer prints this reminder
-whenever it changes the Codex hook.
+hash. After a Codex install, or an update that changes the hooks, open Codex, run `/hooks`, and trust
+the Agent OS quality-ratchet and guard hooks. Until then Codex skips them. The installer prints this
+reminder whenever it changes the Codex hooks.
 
 Use `npx @sockulags/agent-os@latest update` to force the latest published installer. A global CLI
 install is optional:
@@ -81,13 +94,23 @@ npx @sockulags/agent-os install --platform codex --method plugin
 npx @sockulags/agent-os install --platform claude --method plugin --scope user
 ~~~
 
-Plugin mode requires the selected host CLI. Claude plugin skills use the namespace
-`/agent-os:<skill>`; Codex plugin skills remain `$<skill>`. Native plugin mode loads the packaged
-shared `Stop` hook through `CLAUDE_PLUGIN_ROOT` on Unix-like hosts and Codex's quote-free
+Plugin mode requires the selected host CLI and installs two plugins, `agent-os-core` and
+`agent-os-dev`, or only core with `--package core`. Claude plugin skills use the namespaces
+`/agent-os-core:<skill>` and `/agent-os-dev:<skill>`; Codex plugin skills remain `$<skill>`. By hand:
+
+~~~bash
+claude plugin marketplace add sockulags/agent-os
+claude plugin install agent-os-core@agent-os-marketplace
+claude plugin install agent-os-dev@agent-os-marketplace
+~~~
+
+Native plugin mode loads the hooks in `plugins/agent-os-dev/hooks/hooks.json`
+through `CLAUDE_PLUGIN_ROOT` on Unix-like hosts and Codex's quote-free
 `commandWindows` with a UTF-16LE PowerShell `-EncodedCommand` payload on Windows. The decoded script
 resolves `$env:PLUGIN_ROOT` at runtime. Node and PowerShell must be on PATH.
 
-For development against a clone, Claude can run `claude --plugin-dir .`. Codex can register the
+For development against a clone, Claude can run
+`claude --plugin-dir plugins/agent-os-core --plugin-dir plugins/agent-os-dev`. Codex can register the
 working copy with `codex plugin marketplace add /path/to/agent-os`. A local Codex marketplace is
 already the source, so the updater skips the Git-only marketplace upgrade step and reinstalls the
 plugin directly.
@@ -101,8 +124,8 @@ present. If only some appear, run the update command for the same platform and s
 debugging anything else.
 
 From a terminal, `npx @sockulags/agent-os@latest doctor` reports the installed version of every
-direct and plugin install, the global policy blocks, and the Stop hook, and names the command that
-fixes each difference. It changes nothing. For keeping a whole team on one version, see
+direct and plugin install, the installed packages, the global policy blocks, and the hooks, and names
+the command that fixes each difference. It changes nothing. For keeping a whole team on one version, see
 [Team setup](/guide/team-setup).
 
 ## 2. Install or refresh the global policy
@@ -115,7 +138,7 @@ If you chose `--no-policy`, invoke the setup skill once per machine after openin
 
 ```text
 /init-agent-os global                 # direct Claude install
-/agent-os:init-agent-os global        # Claude plugin install
+/agent-os-dev:init-agent-os global        # Claude plugin install
 $init-agent-os global                 # Codex
 ```
 
@@ -129,18 +152,23 @@ changes `policy.md`. The installed blocks do not update themselves.
 
 In the repository you want to work in, invoke `init-agent-os` without `global`. It reads the repo
 first and asks only about missing material defaults: delivery, verification, design-system
-location, coherent planning surface, stable identities, batch execution, and durable conventions. Every question arrives with
-a recommendation. It writes the smallest useful policy and shows the resulting diff.
+location, where intents live, whether units live in `plan.md` or a tracker, stable identities, batch
+execution, and durable conventions. Every question arrives with a recommendation. It writes the
+smallest useful policy, `.agent-os/guards.json`, `.agent-os/quality.json` with the main test command
+as a required check, `REVIEW.md`, and, for GitHub Actions repositories, the `lint-intents` and
+`agent-review` workflows, and shows the resulting diff.
 
 The result is the repository's [project policy](/guide/project-policy), a living document that
 `record-lesson` extends when a session produces a durable lesson.
 
 ## Your first run
 
-For a coherent mission whose planning depth or coverage is not yet settled, invoke `plan-work`.
+For a new need that is not yet clear, invoke `capture-intent`; it writes `intents/<id>/intent.md`.
+For a coherent mission whose planning depth or coverage is not yet settled, invoke `plan-work`; with
+an intent, it writes `spec.md` beside it.
 For a bounded change with open product questions, invoke `shape-work` with the task. For work whose
 decisions are already made, use `deliver-work`. For a completed implementation or diff, use
-`/check-work report|fix` in direct Claude, `/agent-os:check-work report|fix` in the Claude plugin, or
+`/check-work report|fix` in direct Claude, `/agent-os-dev:check-work report|fix` in the Claude plugin, or
 `$check-work report|fix` in Codex; report is read-only, while fix authorizes supported fixes. Use
 `batch-work` only when you explicitly want
 several implementation-ready, dependency-mapped issues executed and integrated as one batch.
@@ -151,7 +179,7 @@ When you want help planning a mission or cannot yet say what you want, invoke `p
 /plan-work Something about this project feels off and I don't know where to start
 ```
 
-That example uses a direct Claude install. Use `/agent-os:plan-work` in the Claude plugin or
+That example uses a direct Claude install. Use `/agent-os-core:plan-work` in the Claude plugin or
 `$plan-work` in Codex. The workflow adapts its depth: it may question the need, inspect the
 repository, resolve a bounded choice, or open a decision map before continuing into shaping.
 

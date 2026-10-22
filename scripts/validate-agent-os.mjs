@@ -154,14 +154,26 @@ function skillTable(content) {
 export function validate(root = path.resolve(scriptDir, '..')) {
   const diagnostics = []
   const fail = (code, message) => diagnostics.push({ code, message })
-  const skillsRoot = path.join(root, 'skills')
   const docsSkillsRoot = path.join(root, 'docs-site/skills')
-  const skillNames = fs.existsSync(skillsRoot)
-    ? fs.readdirSync(skillsRoot, { withFileTypes: true })
-      .filter((entry) => entry.isDirectory() && fs.existsSync(path.join(skillsRoot, entry.name, 'SKILL.md')))
-      .map((entry) => entry.name)
-      .sort()
-    : []
+  // Each package is a self-contained plugin root; a skill lives in exactly one of them.
+  const packageRoots = {
+    'agent-os-core': path.join(root, 'plugins/agent-os-core'),
+    'agent-os-dev': path.join(root, 'plugins/agent-os-dev')
+  }
+  const skillDirs = new Map()
+  for (const [packageName, pluginRoot] of Object.entries(packageRoots)) {
+    const packageSkills = path.join(pluginRoot, 'skills')
+    if (!fs.existsSync(packageSkills)) {
+      fail('PACKAGE_MISSING', `${packageName}: plugins/${packageName}/skills is required.`)
+      continue
+    }
+    for (const entry of fs.readdirSync(packageSkills, { withFileTypes: true })) {
+      if (!entry.isDirectory() || !fs.existsSync(path.join(packageSkills, entry.name, 'SKILL.md'))) continue
+      if (skillDirs.has(entry.name)) fail('SKILL_DUPLICATE', `${entry.name}: a skill may live in only one package.`)
+      skillDirs.set(entry.name, { dir: path.join(packageSkills, entry.name), packageName, pluginRoot })
+    }
+  }
+  const skillNames = [...skillDirs.keys()].sort()
   const docsSkillNames = fs.existsSync(docsSkillsRoot)
     ? fs.readdirSync(docsSkillsRoot)
       .filter((name) => name.endsWith('.md') && name !== 'index.md')
@@ -282,7 +294,7 @@ export function validate(root = path.resolve(scriptDir, '..')) {
   if (!skillNames.length) fail('SKILL_NONE', 'No skills found.')
 
   for (const name of skillNames) {
-    const skillFile = path.join(skillsRoot, name, 'SKILL.md')
+    const skillFile = path.join(skillDirs.get(name).dir, 'SKILL.md')
     const skillText = read(skillFile)
     const meta = frontmatter(skillText)
     if (!meta) {
@@ -335,7 +347,7 @@ export function validate(root = path.resolve(scriptDir, '..')) {
     }
 
     const claudeManual = meta['disable-model-invocation'] === 'true'
-    const codexGate = path.join(skillsRoot, name, 'agents/openai.yaml')
+    const codexGate = path.join(skillDirs.get(name).dir, 'agents/openai.yaml')
     const normalizedCodexGate = fs.existsSync(codexGate)
       ? read(codexGate).replace(/\r\n/g, '\n').trim()
       : ''
@@ -371,22 +383,32 @@ export function validate(root = path.resolve(scriptDir, '..')) {
     }
   }
 
-  const claudeManifest = json(path.join(root, '.claude-plugin/plugin.json'), diagnostics, 'MANIFEST_CLAUDE_JSON')
-  const codexManifest = json(path.join(root, '.codex-plugin/plugin.json'), diagnostics, 'MANIFEST_CODEX_JSON')
   const npmManifest = json(path.join(root, 'package.json'), diagnostics, 'MANIFEST_NPM_JSON')
-  if (claudeManifest && codexManifest) {
+  let claudeManifest = null
+  for (const [packageName, pluginRoot] of Object.entries(packageRoots)) {
+    const relative = path.relative(root, pluginRoot).split(path.sep).join('/')
+    const claude = json(path.join(pluginRoot, '.claude-plugin/plugin.json'), diagnostics, 'MANIFEST_CLAUDE_JSON')
+    const codex = json(path.join(pluginRoot, '.codex-plugin/plugin.json'), diagnostics, 'MANIFEST_CODEX_JSON')
+    if (!claude || !codex) continue
+    if (claude.name !== packageName) fail('MANIFEST_NAME', `${relative}: plugin name must be ${packageName}.`)
     for (const key of ['name', 'description', 'version', 'homepage', 'repository', 'keywords']) {
-      if (JSON.stringify(claudeManifest[key]) !== JSON.stringify(codexManifest[key])) {
-        fail('MANIFEST_PARITY', `${key} differs between plugin manifests.`)
+      if (JSON.stringify(claude[key]) !== JSON.stringify(codex[key])) {
+        fail('MANIFEST_PARITY', `${relative}: ${key} differs between plugin manifests.`)
       }
     }
-    if (!/^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/.test(claudeManifest.version ?? '')) {
-      fail('MANIFEST_VERSION', 'Plugin version must be stable numeric X.Y.Z without leading zeros.')
+    if (!/^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/.test(claude.version ?? '')) {
+      fail('MANIFEST_VERSION', `${relative}: plugin version must be stable numeric X.Y.Z without leading zeros.`)
     }
-    if (codexManifest.skills !== './skills/') fail('MANIFEST_SKILLS_PATH', 'Codex skills path must be ./skills/.')
-    if (codexManifest.homepage !== codexManifest.interface?.websiteURL) {
-      fail('MANIFEST_HOMEPAGE', 'Codex homepage and interface.websiteURL must match.')
+    if (claudeManifest && claude.version !== claudeManifest.version) {
+      fail('MANIFEST_PACKAGE_VERSION', 'agent-os-core and agent-os-dev must share one version.')
     }
+    if (codex.skills !== './skills/') fail('MANIFEST_SKILLS_PATH', `${relative}: Codex skills path must be ./skills/.`)
+    if (codex.homepage !== codex.interface?.websiteURL) {
+      fail('MANIFEST_HOMEPAGE', `${relative}: Codex homepage and interface.websiteURL must match.`)
+    }
+    claudeManifest ??= claude
+  }
+  if (claudeManifest) {
     const config = read(path.join(root, 'docs-site/.vitepress/config.mjs'))
     if (!config.includes(`text: 'v${claudeManifest.version}'`)) {
       fail('MANIFEST_DOCS_VERSION', 'Documentation navigation version does not match manifests.')
@@ -410,11 +432,8 @@ export function validate(root = path.resolve(scriptDir, '..')) {
     if (npmManifest.bin?.['agent-os'] !== './cli/index.mjs') {
       fail('MANIFEST_NPM_BIN', 'npm package must expose the agent-os CLI.')
     }
-    if (!Array.isArray(npmManifest.files) || !npmManifest.files.includes('skills/')) {
-      fail('MANIFEST_NPM_SKILLS', 'npm package must include the complete skills directory.')
-    }
-    if (!Array.isArray(npmManifest.files) || !npmManifest.files.includes('hooks/')) {
-      fail('MANIFEST_NPM_HOOKS', 'npm package must include the native hooks directory.')
+    if (!Array.isArray(npmManifest.files) || !npmManifest.files.includes('plugins/')) {
+      fail('MANIFEST_NPM_PLUGINS', 'npm package must include the plugins directory with both packages and their hooks.')
     }
     if (!fs.existsSync(path.join(root, 'cli/index.mjs'))) {
       fail('MANIFEST_NPM_CLI', 'cli/index.mjs is required by the npm package.')
@@ -432,55 +451,68 @@ export function validate(root = path.resolve(scriptDir, '..')) {
     }
   }
 
-  const hooksManifest = json(path.join(root, 'hooks/hooks.json'), diagnostics, 'HOOKS_JSON')
+  const hooksFile = 'plugins/agent-os-dev/hooks/hooks.json'
+  const hooksManifest = json(path.join(root, hooksFile), diagnostics, 'HOOKS_JSON')
+  const windowsCommand = (entry) => {
+    const match = typeof entry?.commandWindows === 'string'
+      ? /^powershell\.exe -NoProfile -NonInteractive -EncodedCommand ([A-Za-z0-9+/]+={0,2})$/.exec(entry.commandWindows)
+      : null
+    if (!match) return null
+    const bytes = Buffer.from(match[1], 'base64')
+    return bytes.toString('base64') === match[1] ? bytes.toString('utf16le') : null
+  }
+  const managedHook = (groups, marker) => (Array.isArray(groups) ? groups : [])
+    .flatMap((group) => Array.isArray(group?.hooks) ? group.hooks : [])
+    .find((entry) => entry?.type === 'command' && typeof entry.command === 'string' && entry.command.includes(marker))
   if (hooksManifest) {
     if (typeof hooksManifest.description !== 'string' || !hooksManifest.description.trim()) {
-      fail('HOOKS_DESCRIPTION', 'hooks/hooks.json must have a description.')
+      fail('HOOKS_DESCRIPTION', `${hooksFile} must have a description.`)
     }
     const hookEvents = hooksManifest.hooks
+    const allowedEvents = ['SessionStart', 'PreToolUse', 'Stop']
     if (!hookEvents || typeof hookEvents !== 'object' || Array.isArray(hookEvents) ||
-        Object.keys(hookEvents).some((event) => event !== 'Stop') || !Array.isArray(hookEvents.Stop)) {
-      fail('HOOKS_STOP_ONLY', 'hooks/hooks.json must define only a Stop hook.')
+        Object.keys(hookEvents).some((event) => !allowedEvents.includes(event)) ||
+        allowedEvents.some((event) => !Array.isArray(hookEvents[event]))) {
+      fail('HOOKS_EVENTS', `${hooksFile} must define exactly the SessionStart, PreToolUse, and Stop hooks.`)
     } else {
-      const serializedHooks = JSON.stringify(hookEvents.Stop)
-      if (!serializedHooks.includes('--agent-os-hook=quality-ratchet') ||
-          !serializedHooks.includes('quality-delta.mjs')) {
-        fail('HOOKS_QUALITY_RATCHET', 'hooks/hooks.json must call the packaged quality-ratchet runner.')
-      }
-      const managedCommand = hookEvents.Stop
-        .flatMap((group) => Array.isArray(group?.hooks) ? group.hooks : [])
-        .find((entry) => entry?.type === 'command' &&
-          typeof entry.command === 'string' && entry.command.includes('--agent-os-hook=quality-ratchet'))
-      const windowsMatch = typeof managedCommand?.commandWindows === 'string'
-        ? /^powershell\.exe -NoProfile -NonInteractive -EncodedCommand ([A-Za-z0-9+/]+={0,2})$/.exec(
-            managedCommand.commandWindows
-          )
-        : null
-      let decodedWindowsCommand = null
-      if (windowsMatch) {
-        const encoded = windowsMatch[1]
-        const bytes = Buffer.from(encoded, 'base64')
-        if (bytes.toString('base64') === encoded) decodedWindowsCommand = bytes.toString('utf16le')
-      }
-      const expectedWindowsCommand =
-        "$runner = Join-Path $env:PLUGIN_ROOT 'skills\\quality-ratchet\\scripts\\quality-delta.mjs'; " +
-        'node $runner hook --agent-os-hook=quality-ratchet'
-      if (!managedCommand || !managedCommand.command.includes('${CLAUDE_PLUGIN_ROOT}') ||
-          typeof managedCommand.commandWindows !== 'string' ||
-          managedCommand.commandWindows.includes('"') || decodedWindowsCommand !== expectedWindowsCommand) {
-        fail('HOOKS_WINDOWS_COMMAND', 'hooks/hooks.json must define a Windows-safe Codex commandWindows hook.')
+      const expected = [
+        ['Stop', '--agent-os-hook=quality-ratchet', 'quality-delta.mjs'],
+        ['SessionStart', '--agent-os-hook=guards', 'guards.mjs'],
+        ['PreToolUse', '--agent-os-hook=guards', 'guards.mjs']
+      ]
+      for (const [event, marker, script] of expected) {
+        const entry = managedHook(hookEvents[event], marker)
+        if (!entry || !entry.command.includes(script) || !entry.command.includes('${CLAUDE_PLUGIN_ROOT}')) {
+          fail('HOOKS_RUNNER', `${hooksFile}: ${event} must call the packaged ${script} runner.`)
+          continue
+        }
+        const expectedWindows = `$runner = Join-Path $env:PLUGIN_ROOT 'skills\\quality-ratchet\\scripts\\${script}'; node $runner hook ${marker}`
+        if (typeof entry.commandWindows !== 'string' || entry.commandWindows.includes('"') ||
+            windowsCommand(entry) !== expectedWindows) {
+          fail('HOOKS_WINDOWS_COMMAND', `${hooksFile}: ${event} must define a Windows-safe Codex commandWindows hook.`)
+        }
       }
     }
   }
 
   const claudeMarketplace = json(path.join(root, '.claude-plugin/marketplace.json'), diagnostics, 'MARKETPLACE_CLAUDE_JSON')
   const codexMarketplace = json(path.join(root, '.agents/plugins/marketplace.json'), diagnostics, 'MARKETPLACE_CODEX_JSON')
-  if (claudeMarketplace?.plugins?.[0]?.name !== 'agent-os' || claudeMarketplace?.plugins?.[0]?.source !== './') {
-    fail('MARKETPLACE_CLAUDE', 'Claude marketplace must expose agent-os from ./.')
+  const listed = (plugins, source) => JSON.stringify((plugins ?? []).map((plugin) => [plugin?.name, source(plugin)]))
+  const expectedPlugins = JSON.stringify(Object.keys(packageRoots).map((name) => [name, `./plugins/${name}`]))
+  if (listed(claudeMarketplace?.plugins, (plugin) => plugin?.source) !== expectedPlugins) {
+    fail('MARKETPLACE_CLAUDE', 'Claude marketplace must expose agent-os-core and agent-os-dev from ./plugins/<name>.')
   }
-  const codexPlugin = codexMarketplace?.plugins?.[0]
-  if (codexPlugin?.name !== 'agent-os' || codexPlugin?.source?.source !== 'local' || codexPlugin?.source?.path !== './') {
-    fail('MARKETPLACE_CODEX', 'Codex marketplace must expose local agent-os from ./.')
+  if (listed(codexMarketplace?.plugins, (plugin) => plugin?.source?.source === 'local' ? plugin.source.path : null) !== expectedPlugins) {
+    fail('MARKETPLACE_CODEX', 'Codex marketplace must expose local agent-os-core and agent-os-dev from ./plugins/<name>.')
+  }
+
+  const policyText = read(path.join(root, 'policy.md')).replace(/\r\n/g, '\n')
+  if (!/^## Development workflows$/m.test(policyText)) {
+    fail('POLICY_DEV_SECTION', 'policy.md must keep its development rules under "## Development workflows".')
+  }
+  const policyCopy = path.join(root, 'plugins/agent-os-dev/skills/init-agent-os/policy.md')
+  if (!fs.existsSync(policyCopy) || read(policyCopy).replace(/\r\n/g, '\n') !== policyText) {
+    fail('POLICY_COPY_PARITY', 'plugins/agent-os-dev/skills/init-agent-os/policy.md must equal policy.md.')
   }
 
   const evalManifestFile = path.join(root, 'evals/cases/manifest.json')
@@ -525,9 +557,7 @@ export function validate(root = path.resolve(scriptDir, '..')) {
     path.join(root, 'README.md'),
     path.join(root, 'policy.md'),
     path.join(root, 'package.json'),
-    path.join(root, '.claude-plugin/plugin.json'),
-    path.join(root, '.codex-plugin/plugin.json'),
-    ...filesUnder(path.join(root, 'skills'), (file) => !file.includes(`${path.sep}agents${path.sep}`) || file.endsWith('.yaml')),
+    ...filesUnder(path.join(root, 'plugins'), (file) => !file.includes(`${path.sep}agents${path.sep}`) || file.endsWith('.yaml')),
     ...filesUnder(path.join(root, 'docs-site'), (file) =>
       !file.includes(`${path.sep}.vitepress${path.sep}`) && !file.includes(`${path.sep}node_modules${path.sep}`)),
     ...filesUnder(path.join(root, 'evals/cases'), (file) => true),
@@ -543,7 +573,7 @@ export function validate(root = path.resolve(scriptDir, '..')) {
     }
   }
 
-  checkContains(diagnostics, path.join(root, 'skills/deliver-work/SKILL.md'), [
+  checkContains(diagnostics, path.join(root, 'plugins/agent-os-dev/skills/deliver-work/SKILL.md'), [
     '**Outcome:**',
     '**Boundaries:**',
     '**Ground truth:**',
@@ -575,7 +605,7 @@ export function validate(root = path.resolve(scriptDir, '..')) {
     'Child success never closes'
   ], 'DELIVER_CONTRACT')
 
-  checkContains(diagnostics, path.join(root, 'skills/check-work/SKILL.md'), [
+  checkContains(diagnostics, path.join(root, 'plugins/agent-os-dev/skills/check-work/SKILL.md'), [
     'before reading repository code or the diff',
     'check-work report',
     'check-work fix',
@@ -588,17 +618,17 @@ export function validate(root = path.resolve(scriptDir, '..')) {
     'Required change',
     'Omit speculative and cosmetic findings.',
     'scope-guard',
-    'simplifier-review',
+    'simplify',
     'proportional-testing',
     'diagnose-before-fix',
     'verify-before-done',
     '`APPROVED`, `CHANGES_REQUESTED`, or `BLOCKED`'
   ], 'CHECK_WORK_CONTRACT')
 
-  checkContains(diagnostics, path.join(root, 'skills/plan-work/SKILL.md'), [
+  checkContains(diagnostics, path.join(root, 'plugins/agent-os-core/skills/plan-work/SKILL.md'), [
     'Own the coherent mission',
     'Choose planning depth internally',
-    'Use [understand-work]',
+    'Use [capture-intent]',
     'Use [explain-work]',
     'The plan is ready when delivery',
     'the decision ticket is canonical',
@@ -612,7 +642,7 @@ export function validate(root = path.resolve(scriptDir, '..')) {
     'Pending tracker updates'
   ], 'PLAN_WORK_CONTRACT')
 
-  checkContains(diagnostics, path.join(root, 'skills/plan-work/references/map.md'), [
+  checkContains(diagnostics, path.join(root, 'plugins/agent-os-core/skills/plan-work/references/map.md'), [
     'The map orients.',
     'Identity is `(origin map, ticket key)`',
     '## Claims',
@@ -629,7 +659,7 @@ export function validate(root = path.resolve(scriptDir, '..')) {
     'A selected branch in shaping keeps the map open.'
   ], 'PLAN_HANDOFF_CONTRACT')
 
-  checkContains(diagnostics, path.join(root, 'skills/shape-work/SKILL.md'), [
+  checkContains(diagnostics, path.join(root, 'plugins/agent-os-dev/skills/shape-work/SKILL.md'), [
     'references/implementation-issues.md',
     'create or reuse its implementation issues',
     'Multiple issues do not imply',
@@ -641,7 +671,7 @@ export function validate(root = path.resolve(scriptDir, '..')) {
     'aggregate verification',
     'A child issue does not authorize'
   ], 'SHAPE_IMPLEMENTATION_ISSUES')
-  checkContains(diagnostics, path.join(root, 'skills/shape-work/references/implementation-issues.md'), [
+  checkContains(diagnostics, path.join(root, 'plugins/agent-os-dev/skills/shape-work/references/implementation-issues.md'), [
     'A selected product branch is not `delivery-ready`',
     'Identity is `(origin, unit key)`',
     'Status: ready | blocked',
@@ -659,7 +689,7 @@ export function validate(root = path.resolve(scriptDir, '..')) {
     'Green child'
   ], 'IMPLEMENTATION_ISSUE_CONTRACT')
 
-  checkContains(diagnostics, path.join(root, 'skills/batch-work/references/manifest.md'), [
+  checkContains(diagnostics, path.join(root, 'plugins/agent-os-dev/skills/batch-work/references/manifest.md'), [
     'agent_os_batch: 2',
     'Statuses are `planned`, `running`, `reconciling`, `verifying`, `ready`, `delivered`, and `blocked`.',
     'manifest_hash: ""',
@@ -673,7 +703,7 @@ export function validate(root = path.resolve(scriptDir, '..')) {
     'canonical epic contract',
     'aggregate_checks'
   ], 'BATCH_MANIFEST_CONTRACT')
-  checkContains(diagnostics, path.join(root, 'skills/batch-work/SKILL.md'), [
+  checkContains(diagnostics, path.join(root, 'plugins/agent-os-dev/skills/batch-work/SKILL.md'), [
     'The request defines whether',
     'A planning-only request stops here;',
     'Each worker gets',
@@ -683,20 +713,20 @@ export function validate(root = path.resolve(scriptDir, '..')) {
     'missing coherent delivery structure to `plan-work`',
     'epic or feature\'s aggregate verification'
   ], 'BATCH_WORKFLOW_CONTRACT')
-  checkContains(diagnostics, path.join(root, 'skills/deliver-work/SKILL.md'), [
+  checkContains(diagnostics, path.join(root, 'plugins/agent-os-dev/skills/deliver-work/SKILL.md'), [
     '## Confirm one delivery unit',
     'one coherent implementation issue',
     'stop before mutation and return it for',
     'Do not choose `batch-work`'
   ], 'DELIVER_UNIT_CONTRACT')
-  checkContains(diagnostics, path.join(root, 'skills/dispatch-next/SKILL.md'), [
+  checkContains(diagnostics, path.join(root, 'plugins/agent-os-dev/skills/dispatch-next/SKILL.md'), [
     'one selected',
     'implementation-ready issue to `deliver-work`',
     'only when the developer',
     'issue count alone',
     'broad or mission-level planning to `plan-work`'
   ], 'DISPATCH_ROUTE_CONTRACT')
-  checkContains(diagnostics, path.join(root, 'skills/scope-guard/SKILL.md'), [
+  checkContains(diagnostics, path.join(root, 'plugins/agent-os-core/skills/scope-guard/SKILL.md'), [
     'Relation, required',
     'Relation, adjacent',
     'Relation, unrelated',
@@ -708,21 +738,21 @@ export function validate(root = path.resolve(scriptDir, '..')) {
     'A motivated split of required work goes',
     'Tracker readiness or an existing issue does not grant mutation authority'
   ], 'SCOPE_TWO_AXIS_CONTRACT')
-  checkContains(diagnostics, path.join(root, 'skills/deliver-work/SKILL.md'), [
+  checkContains(diagnostics, path.join(root, 'plugins/agent-os-dev/skills/deliver-work/SKILL.md'), [
     'The coordinator owns integration, aggregate review, and aggregate',
     'verification.'
   ], 'BATCH_DELIVERY_BOUNDARY')
-  checkContains(diagnostics, path.join(root, 'skills/batch-work/SKILL.md'), [
+  checkContains(diagnostics, path.join(root, 'plugins/agent-os-dev/skills/batch-work/SKILL.md'), [
     'Treat the integrated batch as material.',
     '../deliver-work/SKILL.md#review-gate'
   ], 'BATCH_REVIEW_GATE')
   for (const script of ['manifest-hash.mjs', 'test-manifest-hash.mjs']) {
-    if (!fs.existsSync(path.join(root, 'skills/batch-work/scripts', script))) {
-      fail('BATCH_HASH_SCRIPT', `skills/batch-work/scripts/${script} is required.`)
+    if (!fs.existsSync(path.join(root, 'plugins/agent-os-dev/skills/batch-work/scripts', script))) {
+      fail('BATCH_HASH_SCRIPT', `plugins/agent-os-dev/skills/batch-work/scripts/${script} is required.`)
     }
   }
   checkContains(diagnostics, path.join(root, '.github/workflows/validate.yml'), [
-    'node skills/batch-work/scripts/test-manifest-hash.mjs'
+    'node plugins/agent-os-dev/skills/batch-work/scripts/test-manifest-hash.mjs'
   ], 'BATCH_HASH_SCRIPT')
   if (!read(path.join(root, 'evals/cases/workflow-non-invocation.md')).includes('| W7 |') ||
       !read(path.join(root, 'evals/cases/workflow-non-invocation.md')).includes('| batch-work |')) {
@@ -739,7 +769,8 @@ export function validate(root = path.resolve(scriptDir, '..')) {
   const markdownRoots = [
     path.join(root, 'README.md'),
     path.join(root, 'policy.md'),
-    ...filesUnder(path.join(root, 'skills'), (file) => file.endsWith('.md')),
+    ...filesUnder(path.join(root, 'plugins'), (file) => file.endsWith('.md')),
+    ...filesUnder(path.join(root, '.agents/skills'), (file) => file.endsWith('.md')),
     ...filesUnder(path.join(root, 'docs-site'), (file) =>
       file.endsWith('.md') && !file.includes(`${path.sep}.vitepress${path.sep}`)),
     ...filesUnder(path.join(root, 'evals/cases'), (file) => file.endsWith('.md'))
@@ -749,6 +780,14 @@ export function validate(root = path.resolve(scriptDir, '..')) {
     for (const match of content.matchAll(/!?\[[^\]]*]\(([^)\s]+)(?:\s+["'][^"']*["'])?\)/g)) {
       if (!linkExists(file, match[1], root)) {
         fail('LINK_BROKEN', `${path.relative(root, file)} -> ${match[1]}`)
+      }
+      const owner = Object.values(packageRoots).find((pluginRoot) => file.startsWith(pluginRoot + path.sep))
+      const target = match[1].split('#')[0]
+      if (owner && target && !/^(https?:|mailto:|\/)/.test(target)) {
+        const resolved = path.resolve(path.dirname(file), decodeURIComponent(target))
+        if (!resolved.startsWith(owner + path.sep)) {
+          fail('LINK_CROSS_PACKAGE', `${path.relative(root, file)} -> ${match[1]} leaves its plugin; name the other skill instead.`)
+        }
       }
     }
   }

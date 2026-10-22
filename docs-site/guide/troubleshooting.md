@@ -74,7 +74,7 @@ If the attempt was abandoned, clear only its active lifecycle state:
 node "<installed quality-ratchet runner>" clear
 ```
 
-The checkout-relative `node skills/quality-ratchet/scripts/quality-delta.mjs ...` command applies
+The checkout-relative `node plugins/agent-os-dev/skills/quality-ratchet/scripts/quality-delta.mjs ...` command applies
 only during repository or native-plugin development where that file exists.
 
 Restart the host after a direct update. For Claude plugin development use `/reload-plugins` where
@@ -128,7 +128,7 @@ Nothing updates the installed blocks automatically when `policy.md` changes — 
 Check without writing:
 
 ```bash
-node skills/init-agent-os/scripts/policy-block.mjs --check
+node plugins/agent-os-dev/skills/init-agent-os/scripts/policy-block.mjs --check
 ```
 
 Exit `0` is in sync; `1` is drift or a missing block; `2` is malformed markers. On drift, run
@@ -145,8 +145,8 @@ This is the design for manual workflows, not a failure. Manual workflows carry
 `disable-model-invocation: true` (Claude) and `allow_implicit_invocation: false` (Codex), so
 resembling one never activates it. `check-work` is the automatic review-workflow exception and
 triggers for supported candidate-review requests. Invoke
-explicitly: `/<skill>` for direct Claude skills, `/agent-os:<skill>` for the Claude plugin, or
-`$<skill>` on Codex. The
+explicitly: `/<skill>` for direct Claude skills, `/agent-os-core:<skill>` or `/agent-os-dev:<skill>`
+for the Claude plugins, or `$<skill>` on Codex. The
 [non-invocation eval cases](/reference/evals) exist precisely to keep naive phrasings from
 triggering workflows implicitly.
 

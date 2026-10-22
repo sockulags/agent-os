@@ -1,22 +1,21 @@
 {
   "name": "@sockulags/agent-os",
   "version": "0.15.0",
-  "description": "A lightweight personal agent operating system with an npx installer for Claude Code and Codex.",
+  "description": "A lightweight agent operating system for Claude Code and Codex: agent-os-core for intent, planning, and evidence, and agent-os-dev for delivery, review, and guard hooks.",
   "type": "module",
   "bin": {
     "agent-os": "./cli/index.mjs"
   },
   "files": [
     "cli/",
-    "hooks/",
-    "policy.md",
-    "skills/"
+    "plugins/",
+    "policy.md"
   ],
   "engines": {
     "node": ">=18.18"
   },
   "scripts": {
-    "test": "node --test cli/index.test.mjs skills/quality-ratchet/scripts/quality-delta.test.mjs skills/quality-ratchet/scripts/project-controls.test.mjs skills/quality-ratchet/scripts/analyzers.test.mjs skills/simplifier-audit/scripts/audit-evidence.test.mjs",
+    "test": "node --test cli/index.test.mjs plugins/agent-os-dev/skills/quality-ratchet/scripts/quality-delta.test.mjs plugins/agent-os-dev/skills/quality-ratchet/scripts/project-controls.test.mjs plugins/agent-os-dev/skills/quality-ratchet/scripts/analyzers.test.mjs plugins/agent-os-dev/skills/quality-ratchet/scripts/guards.test.mjs plugins/agent-os-dev/skills/quality-ratchet/scripts/intent-files.test.mjs plugins/agent-os-dev/skills/simplify/scripts/audit-evidence.test.mjs",
     "test:evals": "node scripts/test-eval-agent-behavior.mjs",
     "validate": "node scripts/validate-agent-os.mjs",
     "verify:release": "node scripts/verify-release.mjs"

@@ -19,7 +19,7 @@ When the discipline is available, `deliver-work` runs:
 
 1. the loaded skill's `scripts/quality-delta.mjs begin` before the first mutation;
 2. the bounded implementation, including behavior-preserving improvement on the touched surface;
-3. the same installed runner's `check` command before `simplifier-review`;
+3. the same installed runner's `check` command before `simplify` review mode;
 4. the normal simplification, correctness, security, scope, independent-review, and verification
    gates;
 5. the same runner's `finish` command at delivery, which records a fresh check and closes the
@@ -72,13 +72,25 @@ blocking because `clear` always resolves it.
 Raw structural counts never block completion. New exception signals are advisory unless the project
 explicitly selects them as requirements.
 
+## Guard hooks
+
+The same skill directory carries `scripts/guards.mjs`, the runner behind the agent-os-dev guard
+hooks. It reads `.agent-os/guards.json` and runs no repository-declared command. SessionStart names
+the intent behind the current branch and any stale spec or plan; PreToolUse blocks edits to
+protected paths, to accepted intents and specs during delivery, and to locked tests, and blocks a
+`git commit` that adds a likely secret. The delivery Stop gate is this skill's own Stop hook: declare
+the ground truth as a `required` check in `.agent-os/quality.json`. See
+[Guard hooks](/reference/guards).
+
 ## Installation
 
-Native plugin installs use the packaged root `hooks/hooks.json` Stop hook. The same logical hook asset
+Native plugin installs use `plugins/agent-os-dev/hooks/hooks.json`, which registers the Stop hook and
+the SessionStart and PreToolUse guard hooks. The same logical hook asset
 is loaded by Claude Code and current Codex plugin discovery. Claude and Unix-like Codex use
 `${CLAUDE_PLUGIN_ROOT}`; Windows Codex uses a quote-free `commandWindows` with a UTF-16LE PowerShell
 `-EncodedCommand` payload that resolves `$env:PLUGIN_ROOT` at runtime. Node and PowerShell must be on
-PATH for native plugin hooks. Direct installs merge an Agent OS-owned Stop entry into:
+PATH for native plugin hooks. Direct installs with agent-os-dev merge Agent OS-owned Stop,
+SessionStart, and PreToolUse entries into:
 
 | Scope | Claude Code | Codex |
 |---|---|---|
@@ -93,7 +105,7 @@ The corresponding direct-install runners are:
 | Project | `<project>/.claude/skills/quality-ratchet/scripts/quality-delta.mjs` | `<project>/.agents/skills/quality-ratchet/scripts/quality-delta.mjs` |
 
 Run `node "<runner path>" begin`, `check`, `finish`, or `clear`. The checkout-relative
-`node skills/quality-ratchet/scripts/quality-delta.mjs ...` form is only for repository development
+`node plugins/agent-os-dev/skills/quality-ratchet/scripts/quality-delta.mjs ...` form is only for repository development
 or a native plugin working copy where that path actually exists.
 
 The direct installer uses the absolute Node executable and runner path, preserves unrelated keys,
@@ -109,7 +121,7 @@ manually if the integration must be disabled, preserving unrelated hooks.
 ## Structure before implementation
 
 Find existing behavior, contracts, schemas, and tests before creating parallel code. The canonical
-[structure guidance](https://github.com/sockulags/agent-os/blob/main/skills/quality-ratchet/references/structure.md)
+[structure guidance](https://github.com/sockulags/agent-os/blob/main/plugins/agent-os-dev/skills/quality-ratchet/references/structure.md)
 covers TypeScript schema/type ownership, React responsibilities, and Java object/module boundaries.
 Cohesive single-caller extractions are allowed; arbitrary file-size limits and mandatory classes are
 not. Local helpers stay near their domain until the responsibility is genuinely shared.
@@ -138,7 +150,7 @@ nothing, lists the untrusted commands, and blocks delivery. Stop lets the turn e
 instead of blocking, because only the developer can resolve it. `CI=true` runs the controls without a trust record. This is
 a visible prompt and a speed bump, not a tamper-proof boundary.
 
-See the [configuration and examples](https://github.com/sockulags/agent-os/blob/main/skills/quality-ratchet/references/project-controls.md)
+See the [configuration and examples](https://github.com/sockulags/agent-os/blob/main/plugins/agent-os-dev/skills/quality-ratchet/references/project-controls.md)
 for dependency-cruiser and ArchUnit commands, policy-change acknowledgement, and CI usage.
 
 Caching is opt-in for static checks with explicitly declared tool inputs. The first implementation

@@ -55,7 +55,10 @@ function normalizedFile(file) {
 
 function checkLocalRelease() {
   assert(packageJson.version === version, `package.json is ${packageJson.version}, expected ${version}`)
-  for (const file of ['.claude-plugin/plugin.json', '.codex-plugin/plugin.json']) {
+  for (const file of [
+    'plugins/agent-os-core/.claude-plugin/plugin.json', 'plugins/agent-os-core/.codex-plugin/plugin.json',
+    'plugins/agent-os-dev/.claude-plugin/plugin.json', 'plugins/agent-os-dev/.codex-plugin/plugin.json'
+  ]) {
     const manifest = JSON.parse(fs.readFileSync(path.join(root, file), 'utf8'))
     assert(manifest.version === version, `${file} is ${manifest.version}, expected ${version}`)
   }
