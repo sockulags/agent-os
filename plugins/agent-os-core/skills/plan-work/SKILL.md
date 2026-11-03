@@ -53,16 +53,18 @@ does not authorize product implementation, and an issue becoming ready does not 
 
 ## Settle the interface
 
-Design is part of the plan, not something delivery invents. List every new or changed screen or
-state in the spec's `## Interface` section, per role that sees it, or write `None` when nothing a
-person sees or does changes. A plan whose interface changes is ready only when each listed surface
-has a decision backed by a sketch, or the developer has explicitly deferred it with an owner. An
+Design is part of the plan, not something delivery invents. When the plan writes a spec, list every
+new or changed screen or state in its `## Interface` section, per role that sees it, or write
+`None` when nothing a person sees or does changes. A small, clear fix needs no spec; its request is
+its interface decision. A plan whose interface changes is ready only when each listed surface has a
+decision backed by a sketch, or the developer has explicitly deferred it with an owner. An
 unsketched surface is an open question, not a detail for delivery to fill in.
 
 When agent-os-dev is installed, continue into `design-work` to build the sketches in the project's
-component workshop and return here when it is done; the planning request already covers it. With
-agent-os-core alone, name the open interface decisions as the plan's remaining question instead of
-guessing a layout.
+component workshop and return here when it is done; the planning request already covers it. When
+no sketch is possible, because only agent-os-core is installed or the project has no component
+workshop, ask the developer for each open interface decision and record the answer they state;
+never guess a layout.
 
 ## Write the spec
 

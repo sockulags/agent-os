@@ -94,6 +94,11 @@ unresolved product decision: delivery stops before mutation and returns the unit
 shape-work. Delivery never edits an accepted intent, spec, or plan entry, and the guard hooks block
 such an edit while a delivery baseline is active.
 
+The spec's `## Interface` entries and their sketches are part of the contract. A screen whose entry
+is open or deferred is an unresolved product decision: delivery stops before mutating it and returns
+it to [`design-work`](/skills/design-work). Decided screens are built to match their sketch with
+production components, never by promoting the sketch's code.
+
 When the delivery target includes a pull request, the unit is claimed early: a branch named by the
 project policy, or `<intent-id>-<unit-key>` by default, and a draft pull request opened with the first
 commit. Its body carries `Intent-Unit: <intent-id>/<unit-key>`, the outcome, the ground truth, and,

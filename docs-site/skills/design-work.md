@@ -41,15 +41,28 @@ one plain-language question at a time. The outcome goes into the spec's `## Inte
 surface, the role, the sketch's location, the decision and its reason, and the rejected
 alternatives. A deferred decision names who settles it.
 
-The sketches are committed with the spec. Delivery builds the real view from the spec and uses the
-sketch as its visual reference; a sketch never becomes production code. The invocation authorizes
+A surface that is already decided is sketched again only when its decision is about to change, and
+a spec whose Interface section says `None` gets no sketches. Widths come from the policy, or else
+from common mobile, tablet, and desktop widths plus the application's own breakpoints. When the
+workshop's configuration does not pick up the sketch location, the skill pauses and says so instead
+of changing it.
+
+When the person cannot answer now, the skill commits the sketches with the spec, opens a draft pull
+request that lists each open decision with the address of its sketch, and waits. It never records
+its own recommendation as their decision.
+
+The sketches are committed with the spec. [`deliver-work`](/skills/deliver-work) builds decided
+screens to match them and stops at an open or deferred one; a sketch never becomes production code.
+After a spec's review has merged, every Interface edit is a reconsideration with a new `rev` and a
+decision log line, and plans built on the earlier revision are reshaped. The invocation authorizes
 sketch stories and the spec's Interface section, not production components, routes, or
 dependencies.
 
 ## Done when
 
 - every sketch story renders without render or console errors;
-- every behavior example with a visible result appears in a sketch, or the spec says why not;
+- every behavior example with a visible result on a sketched surface appears in a sketch, or the
+  spec says why not;
 - the sketches were inspected at the widths and states that matter; and
 - every surface in `## Interface` has a decision or an explicit deferral with an owner.
 
