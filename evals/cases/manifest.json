@@ -42,7 +42,11 @@
         "design-work.md#DW-P2 Real alternatives",
         "design-work.md#DW-P3 No workshop",
         "design-work.md#DW-P4 Missing component",
-        "design-work.md#DW-P5 Accepted spec"
+        "design-work.md#DW-P5 Accepted spec",
+        "design-work.md#DW-P6 Nothing to sketch",
+        "design-work.md#DW-P7 Settle deferred in accepted spec",
+        "design-work.md#DW-P8 Person unavailable",
+        "design-work.md#DW-P9 Decided surface"
       ],
       "negative": [
         "design-work.md#DW-N1 Build the screen",
@@ -92,7 +96,8 @@
         "deliver-work-sequence.md#Negative 1 \u2014 planning only",
         "deliver-work-sequence.md#Negative 2 \u2014 external boundary",
         "deliver-work-sequence.md#Negative 5 \u2014 undecomposed target",
-        "deliver-work-sequence.md#Negative 6 \u2014 epic membership"
+        "deliver-work-sequence.md#Negative 6 \u2014 epic membership",
+        "deliver-work-sequence.md#Negative 7 \u2014 open interface"
       ]
     },
     "explain-work": {

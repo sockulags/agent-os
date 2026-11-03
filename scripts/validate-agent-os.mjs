@@ -641,7 +641,7 @@ export function validate(root = path.resolve(scriptDir, '..')) {
     'No planning skill grants external write access',
     'Pending tracker updates',
     '## Settle the interface',
-    "spec's `## Interface` section",
+    'its `## Interface` section',
     'continue into `design-work`'
   ], 'PLAN_WORK_CONTRACT')
 
@@ -649,7 +649,8 @@ export function validate(root = path.resolve(scriptDir, '..')) {
   // shape-work hands open interface questions back instead of sketching them itself.
   checkContains(diagnostics, path.join(root, 'plugins/agent-os-core/skills/plan-work/references/spec-template.md'), [
     '## Interface',
-    'Write `None` when nothing a person sees or does changes. Never delete.'
+    'Write `None` when nothing a person sees or does',
+    'Never delete.'
   ], 'DESIGN_STEP_CONTRACT')
   checkContains(diagnostics, path.join(root, 'plugins/agent-os-dev/skills/design-work/SKILL.md'), [
     'When the policy names no workshop and the repository has none, stop',
@@ -657,8 +658,10 @@ export function validate(root = path.resolve(scriptDir, '..')) {
     'Render each screen inside the layout',
     'Do not decide a product preference for them.',
     "Write the outcome into the spec's `## Interface` section.",
-    'a sketch is never promoted to production code',
+    'a sketch is never promoted to',
     'every sketch story renders in the workshop without render errors or console errors',
+    'open a draft pull',
+    'Never record your',
     'Report a check you could not run instead of claiming it.'
   ], 'DESIGN_STEP_CONTRACT')
   checkContains(diagnostics, path.join(root, 'plugins/agent-os-dev/skills/shape-work/SKILL.md'), [

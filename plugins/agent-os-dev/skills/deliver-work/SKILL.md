@@ -21,8 +21,8 @@ requested delivery target is reached.
 
 Read the request, repository policy, relevant code, and working-tree state. Preserve existing work.
 Resolve discoverable facts yourself. When the unit comes from `intents/<id>/plan.md`, read its plan
-entry, spec, and intent: the unit's contract, the spec's boundaries, and its ground truth are the
-contract below. Before editing, know:
+entry, spec, and intent: the unit's contract, the spec's boundaries, its `## Interface` entries
+with their sketches, and its ground truth are the contract below. Before editing, know:
 
 - **Outcome:** the observable change requested.
 - **Boundaries:** explicit non-goals and the smallest plausible change surface.
@@ -37,6 +37,11 @@ A stale source is an unresolved product decision. When the spec's `built_on` rev
 its intent, or the plan's is older than its spec, stop before mutation and return the unit to
 `plan-work` or `shape-work` with the revisions that differ. Delivery never edits an accepted intent,
 spec, or plan entry; a needed change goes back through those workflows.
+
+An open or deferred interface surface is also an unresolved product decision. When the unit builds
+a screen whose `## Interface` entry is not decided, stop before mutating that screen and return it
+to `design-work`. Build decided screens to match their sketch, using production components rather
+than the sketch's code.
 
 ## Confirm one delivery unit
 

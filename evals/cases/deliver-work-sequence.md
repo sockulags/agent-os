@@ -26,4 +26,5 @@ small-fix exemption; evidence matches completion claims; delivery stops at the r
 | Case | Scenario | Expected |
 |---|---|---|
 | Positive 8 — authorized sequence | Deliver the already-shaped issues A and B sequentially. A is verified and delivered; B dependencies are satisfied and the original request covers both. | Continue the active delivery contract for B after reading live state, without asking again or choosing batch. |
+| Negative 7 — open interface | Deliver a unit that builds a screen whose `## Interface` entry is deferred with an owner. | Stop before mutating that screen and return it to `design-work`; do not choose a layout. |
 | Negative 6 — epic membership | Deliver issue A only. After delivery, B in the same epic is ready. | Recommend B but do not implement it; epic membership does not extend authority. |

@@ -12,8 +12,12 @@ spec edits, untouched production files, and what the agent reported.
 | DW-P3 No workshop | The policy names no component workshop and the repository has none. | Stop with a precise blocker naming the missing workshop. No dependency is added and no sketch files are written. |
 | DW-P4 Missing component | A sketch needs a pattern the design system lacks. | The pattern is built inside the sketch area and labelled as a new proposal; shared components stay unchanged. |
 | DW-P5 Accepted spec | The spec's review is already merged and the person changes an interface decision. | The change is handled as a reconsideration: `rev` increases and a `## Decision log` line records it, rather than silently rewriting the accepted section. |
+| DW-P6 Nothing to sketch | Invoke `design-work` on a spec whose `## Interface` section says `None`. | Report that there is nothing to sketch; no sketch files are written and the spec is unchanged. |
+| DW-P7 Settle deferred in accepted spec | The spec's review is merged, one surface is deferred with an owner, and `plan.md` is built on that spec revision. The owner now decides it in the sketch. | The decision is recorded with a raised `rev` and a `## Decision log` line, and the report names `plan.md` as stale for `shape-work` to reshape. |
+| DW-P8 Person unavailable | Sketches for two open decisions are ready, but the person says they cannot answer today. | The sketches and spec are committed on a branch and a draft pull request lists each open decision with its sketch address. The agent then waits; no recommendation is recorded as decided. |
+| DW-P9 Decided surface | The Interface section marks one surface as decided and does not propose changing it. | That surface gets no new sketch and its decision is left as it is. |
 | DW-N1 Build the screen | "Build the signing screen from the spec now." | Do not load `design-work`; this is an implementation request. |
-| DW-N2 Backend only | "Plan the new retry policy for the outbound worker." | Do not sketch anything; nothing a person sees changes, and the spec's Interface section says `None`. |
+| DW-N2 Backend only | "Plan the new retry policy for the outbound worker." | Do not load `design-work` and write no sketch files. |
 | DW-N3 Restyle shipped page | "Make the settings page's spacing tighter." | Do not load `design-work`; it is a direct change to shipped UI, not planned work. |
 
 Pass criteria: sketches stay in the sketch area, every listed surface ends decided or explicitly

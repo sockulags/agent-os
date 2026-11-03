@@ -22,31 +22,38 @@ product should be.
 
 When the policy names no workshop and the repository has none, stop and report that precisely. Do
 not add Storybook or another dependency on your own; that is a repository change for the person or
-`init-agent-os` to decide.
+`init-agent-os` to decide. When the workshop exists but its configuration does not pick up the
+sketch location, pause and tell the person what is missing instead of changing the configuration.
 
 ## Working surface
 
 The invocation authorizes sketch stories, the made-up data they need, and the spec's `## Interface`
-section. It does not authorize production components, routes, state, API, or dependency changes.
-When a sketch needs something the design system lacks, build it inside the sketch area and label it
-as a new proposal; never change a shared component to make a sketch work.
+section, plus its `rev` and `## Decision log` when the spec is already accepted. It does not
+authorize production components, routes, state, API, or dependency changes. When a sketch needs
+something the design system lacks, build it inside the sketch area and label it as a new proposal;
+never change a shared component to make a sketch work.
 
-A spec is open for edits until its review merges. After that, a changed interface decision is a
-reconsideration: a new `rev` and a `## Decision log` line, as `plan-work` describes.
+A spec is open for edits until its review merges. After that, every edit to `## Interface` is a
+reconsideration, including settling an open or deferred decision or adding a missing section: raise
+`rev` and add a `## Decision log` line, as `plan-work` describes. A plan built on the earlier spec
+revision is then stale and is reshaped by `shape-work`.
 
 ## Sketch
 
 Start from the spec's `## Interface` section: the surfaces it lists per role and the decisions it
-marks open. When the section is missing or empty, derive the surfaces from the spec's behavior
-examples and confirm the list with the person before sketching.
+marks open. A surface that is already decided is sketched only when the decision is about to
+change. When the section says `None`, report that there is nothing to sketch and write no files.
+When the section is missing or empty, derive the surfaces from the spec's behavior examples and
+confirm the list with the person before sketching.
 
 - **Real context.** Render each screen inside the layout the person will actually see, such as the
   application shell, navigation, and page frame, not as a lone component on a blank canvas.
 - **Own building blocks.** Use the project's components and tokens. Reuse established patterns, and
   mark anything new as new so nobody mistakes it for existing behavior.
 - **Every state that matters.** Show the states the behavior examples imply, such as empty,
-  loading, error, success, no permission, and long content, for each role that sees the screen. Show
-  the narrowest and widest widths the product supports when layout depends on them, and keyboard or
+  loading, error, success, no permission, and long content, for each role that sees the screen.
+  When layout depends on width, show the widths the policy names, or else common mobile, tablet,
+  and desktop widths together with the breakpoints the application itself defines. Show keyboard or
   focus behavior when it is in scope.
 - **Realistic made-up data.** Use plausible data in the product's own language. Never use real
   personal or customer data.
@@ -64,6 +71,9 @@ sketch. Present each open decision in plain language: what the person is looking
 your recommendation, and what changes if they choose otherwise. Ask one question at a time.
 
 Iterate in the sketches until every listed decision is made or the person explicitly defers it.
+When the person cannot answer now, commit the sketches with the spec on a branch, open a draft pull
+request that lists each open decision with the address of its sketch, and wait. Never record your
+own recommendation as their decision.
 
 ## Record
 
@@ -72,16 +82,17 @@ state, the sketch's location in the workshop, the decision and its reason, and t
 rejected. A deferred decision stays visible with who decides it and when it must be settled.
 
 The sketches belong with the spec: commit them in the same change as the spec when the request or
-the project's delivery defaults include committing. Delivery builds the real view from the spec and
-uses the sketch as its visual reference; a sketch is never promoted to production code.
+the project's delivery defaults include committing, or when waiting on the person as above.
+`deliver-work` reads the Interface section and its sketches; a sketch is never promoted to
+production code.
 
 ## Ground truth
 
 The work is done when:
 
 - every sketch story renders in the workshop without render errors or console errors;
-- every behavior example with a visible result appears in at least one sketch, or the Interface
-  section says why it is not visual;
+- every behavior example with a visible result on a sketched surface appears in at least one
+  sketch, or the Interface section says why it is not visual;
 - the sketches were inspected visually at the widths and states that matter, by you and by the
   person; and
 - every surface in `## Interface` has a decision or an explicit deferral with an owner.
@@ -93,5 +104,5 @@ static build, or its test runner. Report a check you could not run instead of cl
 
 Report which surfaces are settled, which are deferred, and where the sketches are. When this run
 continued from `plan-work`, return to it so the plan can be marked ready. When it started from a
-`shape-work` hand-back, the unit that waited on the interface can now be shaped. Planning or
-sketching never starts product implementation.
+`shape-work` hand-back, shaping continues from the current spec revision. Planning or sketching
+never starts product implementation.
