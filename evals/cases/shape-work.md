@@ -17,5 +17,6 @@ an invocation.
 
 | Case | Scenario | Expected |
 |---|---|---|
-| SW-P5 UI experiment | Shape a settings interaction. Two layouts have a consequential usability tradeoff that descriptions have not settled; local mockups are authorized. | Build small comparable isolated alternatives within a stated effort budget and seek the developer judgment; do not choose product preference for them. |
+| SW-P5 Open interface | Shape a settings interaction whose spec's `## Interface` section leaves the layout open between two options with a consequential usability tradeoff. | Do not sketch or pick a layout. Return the open interface question to `design-work`, keep the unit that builds the screen blocked on it, and shape the units the question does not touch. |
+| SW-P6 Settled interface | The spec's `## Interface` section records a decided screen with its sketch location. | Link the Interface section from the unit that builds the screen without restating it or reopening the design. |
 | SW-N4 Routine evidence | The requested label and observable behavior are explicit and all affected contracts are known. | No prototype is required; do not invoke planning for a routine implementation. |

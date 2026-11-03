@@ -142,6 +142,16 @@ try {
       '\nSee [shape-work](../../../agent-os-dev/skills/shape-work/SKILL.md).\n')
   }, 'LINK_CROSS_PACKAGE')
 
+  expectFailure('the spec template drops its Interface section', (target) => {
+    rewrite(path.join(target, 'plugins/agent-os-core/skills/plan-work/references/spec-template.md'),
+      (text) => text.replace(/## Interface\n[\s\S]*?(?=## Boundaries)/, ''))
+  }, 'DESIGN_STEP_CONTRACT')
+
+  expectFailure('shape-work sketches interfaces itself again', (target) => {
+    rewrite(path.join(target, 'plugins/agent-os-dev/skills/shape-work/SKILL.md'),
+      (text) => text.replace('return that interface question to `design-work`', 'sketch the interface yourself'))
+  }, 'DESIGN_STEP_CONTRACT')
+
   expectFailure('the dev plugin policy copy drifts from policy.md', (target) => {
     fs.appendFileSync(path.join(target, 'plugins/agent-os-dev/skills/init-agent-os/policy.md'), '\n- Extra rule.\n')
   }, 'POLICY_COPY_PARITY')

@@ -39,6 +39,13 @@ files, and enforces its most important rules with hooks.
   with review, audit, and apply modes. `notice-lesson` is part of `record-lesson`, which is now
   automatic. `explain-work` also shortens over-long explanations. `writing-skills` moved to the
   repository as a maintainer-only skill.
+- **Design as a planned step** — the spec template has a required `## Interface` section that lists
+  every new or changed screen per role, or says `None`. A plan whose interface changes is ready only
+  when each screen has a decision backed by a sketch. The new manual `design-work` skill sketches
+  the screens in the project's component workshop, Storybook by default, so anyone who can build
+  the frontend can judge them. `shape-work` no longer sketches: it links the Interface section and
+  returns open interface questions to `design-work`. The Frontend mockups reference page is
+  replaced by the [design-work](/skills/design-work) page.
 
 **Migration.** Direct installs update as usual with `npx @sockulags/agent-os@latest update`, which
 removes the retired skills and adds the guard hooks. Plugin users replace `agent-os` with

@@ -1,8 +1,8 @@
 # Workflow skills: non-invocation cases
 
 The manual workflow skills below are manual-only. Every case below must NOT activate any of
-`init-agent-os`, `plan-work`, `shape-work`, `batch-work`, `deliver-work`, `dispatch-next`,
-`capture-intent`, `explain-work`, `simplify` implicitly, on either platform.
+`init-agent-os`, `plan-work`, `design-work`, `shape-work`, `batch-work`, `deliver-work`,
+`dispatch-next`, `capture-intent`, `explain-work`, `simplify` implicitly, on either platform.
 Run each prompt in a fresh session and confirm the agent handles it directly without invoking
 or imitating a workflow skill.
 
@@ -19,6 +19,7 @@ or imitating a workflow skill.
 | W9 | "Ställ några frågor så vi förstår vad jag egentligen behöver." | capture-intent |
 | W10 | "Förklara planen enkelt utan tekniska ord." | explain-work |
 | W11 | "Gör den här koden enklare, den känns överbyggd." | simplify |
+| W12 | "Hur skulle den nya inloggningssidan kunna se ut?" | design-work |
 
 Pass criterion: the agent may mention that a workflow skill exists, but must not load or execute
 its procedure without an explicit `/agent-os:<skill>` (Claude) or `$<skill>` (Codex) invocation.

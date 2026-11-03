@@ -20,7 +20,7 @@ govern. They change only through a reviewed pull request, like code, and Git is 
 intents/
   2026-11-csv-export/
     intent.md   capture-intent: who needs what, why now, outcome, out of scope
-    spec.md     plan-work: summary, behavior, boundaries, decisions, ground truth
+    spec.md     plan-work: summary, behavior, interface, boundaries, decisions, ground truth
     plan.md     shape-work: delivery units and dependencies
 ```
 

@@ -23,13 +23,16 @@ decide. A pre-existing specification is a valid starting point; a plan-work run 
 A spec whose `built_on` revision is older than its intent is stale. Do not shape from it: return it
 to `plan-work` for reconsideration and report which revision changed.
 
-Use a diagram or mockup when it makes behavior, layout, states, or boundaries materially easier to
-judge. Frontend proposals follow [references/mockups.md](references/mockups.md). Do not create a
-visualization merely to satisfy the workflow.
+Shape-work does not settle the interface; the spec's `## Interface` section does. Link it from the
+units that build those screens instead of restating it. When that section lists a decision as
+open, is missing while the work changes what a person sees or does, or a unit would change a screen
+the section does not cover, return that interface question to `design-work` and keep the affected
+units blocked until it is settled. Units the open question does not touch can still be shaped. Use
+a diagram when it makes dependencies or boundaries materially easier to judge.
 
-When a solution-changing assumption needs observation, apply the
-[experiment decision](references/prototypes.md), including small technical experiments and
-comparable UI alternatives. Do not turn a question with sufficient evidence into a prototype.
+When a solution-changing technical assumption needs observation, apply the
+[experiment decision](references/prototypes.md). Do not turn a question with sufficient evidence
+into a prototype.
 
 Deliver the coherent product shape: outcome, boundaries, acceptance examples, affected seams,
 ground truth, settled decisions, and open risks. When the spec already holds these, link it instead

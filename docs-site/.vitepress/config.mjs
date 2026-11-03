@@ -84,6 +84,7 @@ export default withMermaid(defineConfig({
         {
           text: 'agent-os-dev',
           items: [
+            { text: 'design-work', link: '/skills/design-work' },
             { text: 'shape-work', link: '/skills/shape-work' },
             { text: 'deliver-work', link: '/skills/deliver-work' },
             { text: 'batch-work', link: '/skills/batch-work' },
@@ -111,7 +112,6 @@ export default withMermaid(defineConfig({
             { text: 'Prototype evidence', link: '/reference/prototypes' },
             { text: 'Proportional testing', link: '/reference/proportional-testing' },
             { text: 'Codex custom instructions', link: '/reference/codex-custom-instructions' },
-            { text: 'Frontend mockups', link: '/reference/mockups' },
             { text: 'Writing skills', link: '/reference/writing-skills' },
             { text: 'Evals', link: '/reference/evals' },
             { text: 'Release routine', link: '/reference/release' }
