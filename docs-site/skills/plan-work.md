@@ -68,8 +68,9 @@ does not start implementation; existing mandate continues across workflow bounda
 
 Design is part of the plan. When the plan writes a spec, every new or changed screen or state is
 listed in its `## Interface` section per role, or the section says `None`; a small, clear fix needs
-no spec. A plan whose interface changes is ready only when each listed surface has a decision backed
-by a sketch, or the developer has deferred it with an owner. With agent-os-dev installed, plan-work
+no spec. A plan whose interface changes is ready only when each listed surface has a decision,
+backed by a sketch where one is possible and stated by the developer where none is, or the
+developer has deferred it with an owner. With agent-os-dev installed, plan-work
 continues into [`design-work`](/skills/design-work), which sketches the screens in the project's
 component workshop. When no sketch is possible, because only agent-os-core is installed or the
 project has no workshop, plan-work asks the developer for each open interface decision and records

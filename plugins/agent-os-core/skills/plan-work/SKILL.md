@@ -57,8 +57,9 @@ Design is part of the plan, not something delivery invents. When the plan writes
 new or changed screen or state in its `## Interface` section, per role that sees it, or write
 `None` when nothing a person sees or does changes. A small, clear fix needs no spec; its request is
 its interface decision. A plan whose interface changes is ready only when each listed surface has a
-decision backed by a sketch, or the developer has explicitly deferred it with an owner. An
-unsketched surface is an open question, not a detail for delivery to fill in.
+decision, backed by a sketch where one is possible and stated by the developer where none is, or the
+developer has explicitly deferred it with an owner. An undecided surface is an open question, not a
+detail for delivery to fill in.
 
 When agent-os-dev is installed, continue into `design-work` to build the sketches in the project's
 component workshop and return here when it is done; the planning request already covers it. When
