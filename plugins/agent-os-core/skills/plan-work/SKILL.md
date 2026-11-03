@@ -17,7 +17,7 @@ Do not ask the developer to select a mode. Match the depth to scope and uncertai
 
 - A small, clear fix needs its outcome, boundaries, and verification, and no spec file.
 - A large but known change needs repository inspection and a coverage check across the relevant
-  flows, states, errors, and integrations.
+  flows, states, errors, integrations, and the screens each role sees.
 - A bounded open choice needs discoverable facts first, then only focused questions for choices
   that materially change behavior.
 - A broad initiative uses the decision map below when questions need independent ownership,
@@ -50,6 +50,19 @@ can proceed without inventing material product intent. The ready result may be:
 
 Exact code, a complete file list, and every technical work step do not need to be decided. A plan
 does not authorize product implementation, and an issue becoming ready does not authorize it.
+
+## Settle the interface
+
+Design is part of the plan, not something delivery invents. List every new or changed screen or
+state in the spec's `## Interface` section, per role that sees it, or write `None` when nothing a
+person sees or does changes. A plan whose interface changes is ready only when each listed surface
+has a decision backed by a sketch, or the developer has explicitly deferred it with an owner. An
+unsketched surface is an open question, not a detail for delivery to fill in.
+
+When agent-os-dev is installed, continue into `design-work` to build the sketches in the project's
+component workshop and return here when it is done; the planning request already covers it. With
+agent-os-core alone, name the open interface decisions as the plan's remaining question instead of
+guessing a layout.
 
 ## Write the spec
 

@@ -36,6 +36,20 @@
         "check-work.md#CW-N6 EN HO changed files"
       ]
     },
+    "design-work": {
+      "positive": [
+        "design-work.md#DW-P1 Sketch listed surfaces",
+        "design-work.md#DW-P2 Real alternatives",
+        "design-work.md#DW-P3 No workshop",
+        "design-work.md#DW-P4 Missing component",
+        "design-work.md#DW-P5 Accepted spec"
+      ],
+      "negative": [
+        "design-work.md#DW-N1 Build the screen",
+        "design-work.md#DW-N2 Backend only",
+        "design-work.md#DW-N3 Restyle shipped page"
+      ]
+    },
     "plan-work": {
       "positive": [
         "plan-work.md#PW-P1",
@@ -53,7 +67,10 @@
         "plan-work.md#PW-P13",
         "plan-work.md#PW-P14",
         "plan-work.md#PW-P15",
-        "plan-work.md#PW-P16"
+        "plan-work.md#PW-P16",
+        "plan-work.md#PW-P17",
+        "plan-work.md#PW-P18",
+        "plan-work.md#PW-P19"
       ],
       "negative": [
         "plan-work.md#PW-N1",
@@ -268,7 +285,8 @@
         "shape-work.md#SW-P2",
         "shape-work.md#SW-P3",
         "shape-work.md#SW-P4",
-        "shape-work.md#SW-P5 UI experiment"
+        "shape-work.md#SW-P5 Open interface",
+        "shape-work.md#SW-P6 Settled interface"
       ],
       "negative": [
         "shape-work.md#SW-N1",

@@ -29,8 +29,11 @@ Read the repository, policy, and linked decisions before asking questions. Resol
 facts yourself. Ask only about product choices that materially change the outcome, always with a
 recommendation and its consequence.
 
-Use a diagram or mockup only when it makes behavior, layout, states, or boundaries easier to judge.
-Frontend proposals follow [Frontend mockups](/reference/mockups).
+Shape-work does not settle the interface; the spec's `## Interface` section does. Units that build
+those screens link it. When the section leaves a decision open, is missing for work that changes
+what a person sees, or a unit would change a screen it does not cover, shape-work returns that
+question to [`design-work`](/skills/design-work) and keeps the affected units blocked until it is
+settled. Use a diagram when it makes dependencies or boundaries easier to judge.
 
 Deliver the coherent product shape: outcome, boundaries, acceptance examples, affected seams,
 ground truth, settled decisions, and open risks. Start from one coherent delivery unit and split
@@ -99,8 +102,8 @@ deliver-work per issue, or batch-work if you ask for an integrated batch.
 
 ## Experiments and continuation
 
-Use the [experiment decision](/reference/prototypes) for technical uncertainty or UI alternatives
-that need observation. Routine choices with sufficient evidence need no prototype. Recommend one
+Use the [experiment decision](/reference/prototypes) for technical uncertainty that needs
+observation; interface alternatives belong to design-work. Routine choices with sufficient evidence need no prototype. Recommend one
 concrete next action with a reason, not only the ready frontier. When the original request also
 covers the bounded implementation, continue into sequential delivery; planning alone stops with
 the recommendation.

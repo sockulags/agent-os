@@ -31,7 +31,7 @@ flowchart TD
 
 Plan-work chooses depth internally. A small clear fix needs only outcome, boundaries, and
 verification. A large known change gets repository inspection and coverage across flows, states,
-errors, and integrations. A bounded open choice gets facts first and focused questions. A broad
+errors, integrations, and the screens each role sees. A bounded open choice gets facts first and focused questions. A broad
 initiative uses the decision map only when independent ownership, separate evidence, or parallel
 treatment makes it worthwhile.
 
@@ -44,7 +44,8 @@ implementation request, and shape-work accepts an existing specification.
 ## The spec file
 
 When the work has an intent, the plan is written as `intents/<id>/spec.md` beside it: a plain
-language `## Summary`, `## Behavior` as given, when, then examples, boundaries and non-goals,
+language `## Summary`, `## Behavior` as given, when, then examples, `## Interface` with every new or
+changed screen per role (or `None`), boundaries and non-goals,
 decisions with rejected alternatives, ground truth, open risks, and a decision log. Its `built_on`
 names the intent revision it answers, such as `intent@2`. Acceptance examples live in the spec, and
 a tracker item links to the spec section instead of copying it. A spec built on an older intent
@@ -62,6 +63,16 @@ The plan is ready when implementation can proceed without inventing material pro
 be ready for direct delivery, ready for shape-work, or paused at one explicit question or evidence
 gap. Exact code, every file, and every internal work step do not need to be decided. Planning alone
 does not start implementation; existing mandate continues across workflow boundaries.
+
+## Settle the interface
+
+Design is part of the plan. Every new or changed screen or state is listed in the spec's
+`## Interface` section per role, or the section says `None`. A plan whose interface changes is ready
+only when each listed surface has a decision backed by a sketch, or the developer has deferred it
+with an owner. With agent-os-dev installed, plan-work continues into
+[`design-work`](/skills/design-work), which sketches the screens in the project's component
+workshop; with agent-os-core alone, the open interface decisions become the plan's remaining
+question.
 
 ## Decision-map mode
 

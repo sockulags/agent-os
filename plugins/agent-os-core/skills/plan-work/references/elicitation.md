@@ -17,7 +17,8 @@ observation and state uncertainty that could change the decision.
 
 Run the smallest bounded experiment when an unresolved assumption could change the solution and
 observing it is cheaper or more decisive than further discussion. When agent-os-dev is installed,
-the experiment decision in `shape-work` governs code and UI prototypes. Keep observed behavior
+`design-work` governs interface sketches and the experiment decision in `shape-work` governs
+technical prototypes. Keep observed behavior
 separate from the developer's judgment and stop when the question is settled or the bounded effort
 budget is exhausted.
 

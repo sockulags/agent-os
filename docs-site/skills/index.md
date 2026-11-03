@@ -64,6 +64,7 @@ Always on; no invocation.
 
 | Skill | Bucket | Invocation | Purpose |
 |---|---|---|---|
+| [`design-work`](/skills/design-work) | workflow | manual | Sketch new and changed screens in the component workshop before delivery |
 | [`shape-work`](/skills/shape-work) | workflow | manual | Shape a spec into delivery units in plan.md or tracker issues |
 | [`deliver-work`](/skills/deliver-work) | workflow | manual | Deliver one unit against its contract and claim it with a draft pull request |
 | [`batch-work`](/skills/batch-work) | workflow | manual | Run isolated ready units and verify the integrated result |

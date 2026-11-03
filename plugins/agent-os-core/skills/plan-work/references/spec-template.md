@@ -34,6 +34,12 @@ status: accepted
 
 <Acceptance examples in given, when, then form. One example per meaningful case, including errors.>
 
+## Interface
+
+<Every new or changed screen or state, per role that sees it: the sketch's location in the component
+workshop, the decision and its reason, and the alternatives rejected. A deferred decision names who
+settles it and by when. Write `None` when nothing a person sees or does changes. Never delete.>
+
 ## Boundaries and non-goals
 
 <What must stay unchanged, what is explicitly not part of this, and the smallest change surface.>

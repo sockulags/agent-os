@@ -56,7 +56,9 @@ is insufficient:
 Add a module only when inspection finds the corresponding concern. Resolve its material defaults and
 omit it entirely when inactive:
 
-- frontend/design/rendered QA;
+- frontend/design/rendered QA, which records where the design system lives, the component
+  workshop and the command that starts it, where `design-work` sketches live and how they are
+  named, and the widths a screen must work at;
 - package, release, or documentation publication;
 - CI or deployment;
 - authentication, security, billing, or external writes;

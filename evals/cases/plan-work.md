@@ -24,6 +24,9 @@ judge whether the plan covered the mission without inventing product intent.
 | PW-P14 | One discovery is useful but unnecessary and another has no relevant connection. | Distinguish adjacent from unrelated by mission value, not file placement; offer actionable adjacent follow-up only under mandate and do not manufacture unrelated work. |
 | PW-P15 | The same planning request is run again. | Reuse the same plan, canonical ticket, handoff, and implementation issues by stable identity; update idempotently without duplicate artifacts or competing specifications. |
 | PW-P16 | One child issue in an epic is delivered and green. | Do not close the epic or implement siblings from child authority; require the shared aggregate verification and final verification owner before calling the epic complete. |
+| PW-P17 | A feature adds a new screen for applicants and changes one for administrators; agent-os-dev is installed. | The spec's `## Interface` section lists each screen and state per role, the plan continues into `design-work` for the sketches, and the plan is not reported ready while a listed surface lacks a decision or an explicit deferral with an owner. |
+| PW-P18 | A backend change alters nothing a person sees or does. | The spec's `## Interface` section says `None`; no sketch is requested and no design question is invented. |
+| PW-P19 | A feature changes a screen and only agent-os-core is installed. | The surfaces are listed in `## Interface`, and the open interface decisions are reported as the plan's remaining question instead of a guessed layout. |
 
 ## Negative boundary cases
 

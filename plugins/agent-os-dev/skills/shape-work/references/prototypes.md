@@ -6,16 +6,16 @@ A prototype exists to settle a decision, not to become an accidental product imp
 
 Propose a prototype when an unresolved assumption could change the solution and executing the
 smallest experiment is cheaper or more decisive than further reading or discussion. Examples are
-uncertain transaction behavior, integration limits, a performance hypothesis, or competing UI
-interactions the developer needs to try. Existing evidence that already settles the question, a
-routine implementation, or a preference answerable directly needs no prototype.
+uncertain transaction behavior, integration limits, or a performance hypothesis. Existing evidence
+that already settles the question, a routine implementation, or a preference answerable directly
+needs no prototype. Competing screens or interactions are interface questions: sketch them with
+[design-work](../../design-work/SKILL.md) instead.
 
 Within an authorized planning or implementation task, run a small isolated local experiment when
-it can answer that question without new external effects or product changes. For UI choices, build
-comparable alternatives and ask the developer to judge them. Announce the question, smallest
-artifact, observation that would settle it, and a bounded effort budget before starting; no
-separate approval is needed inside existing authority. Ask before crossing that authority, not
-merely because the artifact is called a prototype.
+it can answer that question without new external effects or product changes. Announce the
+question, smallest artifact, observation that would settle it, and a bounded effort budget before
+starting; no separate approval is needed inside existing authority. Ask before crossing that
+authority, not merely because the artifact is called a prototype.
 
 Stop when the evidence is sufficient or the budget is exhausted. Inconclusive evidence leaves the
 decision open; report the remaining uncertainty and recommend the next action instead of silently
@@ -39,5 +39,4 @@ Record:
 - Open uncertainty:
 ```
 
-Keep the artifact inspectable while the decision depends on it. Frontend prototypes also follow the
-shared [mockup guidance](mockups.md).
+Keep the artifact inspectable while the decision depends on it.

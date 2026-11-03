@@ -37,8 +37,9 @@ plugins, `/<name>` for a direct Claude install, `$<name>` on Codex. Name which f
 differently per host.
 
 Close with the entry points for a person who has not named a skill: a new need starts at
-`capture-intent`, behavior and decisions at `plan-work`, delivery structure at `shape-work`, and a
-decision-complete unit at `deliver-work`; name the last two only when agent-os-dev is installed. Say plainly that automatic skills need no entry point
+`capture-intent`, behavior and decisions at `plan-work`, screens and their sketches at
+`design-work`, delivery structure at `shape-work`, and a decision-complete unit at `deliver-work`;
+name the last three only when agent-os-dev is installed. Say plainly that automatic skills need no entry point
 for an implicit trigger; mention an automatic workflow's explicit modes only when useful.
 
 ## Boundaries

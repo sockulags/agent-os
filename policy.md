@@ -58,9 +58,9 @@ Rules:
   technical ordering/readiness inside the authorized set, but not acceptance changes, new owners or
   deliveries, or closure. Without that mandate, keep corrections local and report the unsynced delta.
 - Decisions that outlive a session live in versioned files: `intents/<id>/intent.md` for what is
-  needed and why, and `spec.md` beside it for behavior, boundaries, decisions, and ground truth. They
-  change only through a reviewed change, and a file whose `built_on` revision is older than its
-  source is stale until it is reconsidered.
+  needed and why, and `spec.md` beside it for behavior, interface, boundaries, decisions, and
+  ground truth. They change only through a reviewed change, and a file whose `built_on` revision
+  is older than its source is stale until it is reconsidered.
 
 ## Preferences (seed defaults; project policy overrides)
 
@@ -73,9 +73,10 @@ Rules:
 ## Development workflows
 
 - Use the Git identity configured by the repository or current session. Never add AI attribution or `Co-Authored-By` trailers.
-- The development skills `shape-work`, `deliver-work`, `batch-work`, `dispatch-next`, `simplify`, and
-  `init-agent-os` are manual too (`/agent-os-dev:deliver-work` for the Claude plugin). Existing
-  authority may continue into the workflow a skill's exit contract names. Continuing sequentially
+- The development skills `design-work`, `shape-work`, `deliver-work`, `batch-work`, `dispatch-next`,
+  `simplify`, and `init-agent-os` are manual too (`/agent-os-dev:deliver-work` for the Claude
+  plugin). Existing authority may continue into the workflow a skill's exit contract names, as
+  `plan-work` does into `design-work`. Continuing sequentially
   through already shaped units is allowed when the active implementation request covers that bounded
   set; parallel batch execution still requires explicit selection. The automatic `check-work` review
   workflow is also available from supported implicit review requests; its report mode is read-only

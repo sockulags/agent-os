@@ -639,8 +639,32 @@ export function validate(root = path.resolve(scriptDir, '..')) {
     'Reconsideration',
     'confirmed or replaced',
     'No planning skill grants external write access',
-    'Pending tracker updates'
+    'Pending tracker updates',
+    '## Settle the interface',
+    "spec's `## Interface` section",
+    'continue into `design-work`'
   ], 'PLAN_WORK_CONTRACT')
+
+  // Design is a planned step: the spec always answers it, design-work owns the sketches, and
+  // shape-work hands open interface questions back instead of sketching them itself.
+  checkContains(diagnostics, path.join(root, 'plugins/agent-os-core/skills/plan-work/references/spec-template.md'), [
+    '## Interface',
+    'Write `None` when nothing a person sees or does changes. Never delete.'
+  ], 'DESIGN_STEP_CONTRACT')
+  checkContains(diagnostics, path.join(root, 'plugins/agent-os-dev/skills/design-work/SKILL.md'), [
+    'When the policy names no workshop and the repository has none, stop',
+    'never change a shared component',
+    'Render each screen inside the layout',
+    'Do not decide a product preference for them.',
+    "Write the outcome into the spec's `## Interface` section.",
+    'a sketch is never promoted to production code',
+    'every sketch story renders in the workshop without render errors or console errors',
+    'Report a check you could not run instead of claiming it.'
+  ], 'DESIGN_STEP_CONTRACT')
+  checkContains(diagnostics, path.join(root, 'plugins/agent-os-dev/skills/shape-work/SKILL.md'), [
+    'Shape-work does not settle the interface',
+    'return that interface question to `design-work`'
+  ], 'DESIGN_STEP_CONTRACT')
 
   checkContains(diagnostics, path.join(root, 'plugins/agent-os-core/skills/plan-work/references/map.md'), [
     'The map orients.',

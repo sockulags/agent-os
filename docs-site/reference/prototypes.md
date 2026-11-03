@@ -15,14 +15,15 @@ stable artifact, how it was exercised, the observation, the developer's decision
 open uncertainty.
 
 Keep observed behavior separate from judgment. Keep the artifact inspectable while the decision
-depends on it. Frontend prototypes also follow [Frontend mockups](/reference/mockups).
+depends on it.
 
 ## When to prototype
 
 Use an experiment when an unresolved assumption could change the solution and observation is
 cheaper or more decisive than further reading. Technical examples include transaction behavior,
-integration limits, and performance; UI alternatives may need the developer to try them. Skip
-experiments for clear routine tasks or questions settled by existing evidence.
+integration limits, and performance. Competing screens or interactions are interface questions
+for [`design-work`](/skills/design-work), not prototypes. Skip experiments for clear routine tasks
+or questions settled by existing evidence.
 
 Announce the question, artifact, decisive observation, and bounded effort budget. Isolated local
 experiments may run within existing planning or implementation authority. Stop when the question
