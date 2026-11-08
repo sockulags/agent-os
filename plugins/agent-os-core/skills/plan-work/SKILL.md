@@ -61,11 +61,10 @@ decision, backed by a sketch where one is possible and stated by the developer w
 developer has explicitly deferred it with an owner. An undecided surface is an open question, not a
 detail for delivery to fill in.
 
-When agent-os-dev is installed, continue into `design-work` to build the sketches in the project's
-component workshop and return here when it is done; the planning request already covers it. When
-no sketch is possible, because only agent-os-core is installed or the project has no component
-workshop, ask the developer for each open interface decision and record the answer they state;
-never guess a layout.
+When agent-os-dev is installed, continue into `design-work` to build the sketches in the medium the
+project chose and return here when it is done; the planning request already covers it. When only
+agent-os-core is installed, no sketch is possible: ask the developer for each open interface
+decision and record the answer they state; never guess a layout.
 
 ## Write the spec
 

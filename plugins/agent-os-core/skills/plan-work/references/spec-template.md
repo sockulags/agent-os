@@ -36,10 +36,11 @@ status: accepted
 
 ## Interface
 
-<Every new or changed screen or state, per role that sees it: the sketch's location in the component
-workshop when one was sketched, the decision and its reason, and the alternatives rejected. A
-deferred decision names who settles it and by when. Write `None` when nothing a person sees or does
-changes. Never delete.>
+<One bullet for every new or changed screen or state, per role that sees it, in one of these forms:
+- <role>, <screen or state>. Decided: <the decision and its reason>. Rejected: <alternatives>. Sketch: <location>.
+- <role>, <screen or state>. Deferred to <who> by <when>: <what is undecided>.
+- <role>, <screen or state>. Open: <the question>.
+Write `None` when nothing a person sees or does changes. Never delete.>
 
 ## Boundaries and non-goals
 

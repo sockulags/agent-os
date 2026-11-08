@@ -141,7 +141,9 @@ npx @sockulags/agent-os lint-intents --base origin/main --strict
 It checks folder names, required files, frontmatter fields and statuses, `built_on` references,
 `supersedes` targets, unique unit keys, and dependencies. For an accepted `source: files` plan it
 also warns about a ready unit that lacks a contract field, whose acceptance only points at the
-spec, or whose contract runs past 5,000 characters. Stale files and thin units are warnings, or errors with `--strict`. With `--base <ref>` it also fails when an accepted file's text changed without a higher
+spec, or whose contract runs past 5,000 characters. For an accepted spec it warns about a missing or
+empty `## Interface`, a surface without `Decided:`, `Deferred to <who> by <when>:`, or with `Open:`,
+and a named sketch file that is missing or exists only on one machine. Stale files and thin units are warnings, or errors with `--strict`. With `--base <ref>` it also fails when an accepted file's text changed without a higher
 `rev`; frontmatter-only changes, such as a status change or a confirmed `built_on`, need no new
 revision. `--allow-unchanged-rev` accepts a pure wording fix, for example when a pull request carries
 a `no-rev` label. [init-agent-os](/skills/init-agent-os) can add a `lint-intents` GitHub Actions

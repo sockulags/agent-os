@@ -147,6 +147,16 @@ try {
       (text) => text.replace(/## Interface\n[\s\S]*?(?=## Boundaries)/, ''))
   }, 'DESIGN_STEP_CONTRACT')
 
+  expectFailure('design-work locks onto one tool again', (target) => {
+    rewrite(path.join(target, 'plugins/agent-os-dev/skills/design-work/SKILL.md'),
+      (text) => text.replace('When the policy sets no medium, ask once', 'When the repository has no Storybook, stop'))
+  }, 'DESIGN_STEP_CONTRACT')
+
+  expectFailure('design-work allows a sketch location only one machine can open', (target) => {
+    rewrite(path.join(target, 'plugins/agent-os-dev/skills/design-work/SKILL.md'),
+      (text) => text.replace('never a path that exists only on this machine', 'or any local path'))
+  }, 'DESIGN_STEP_CONTRACT')
+
   expectFailure('shape-work sketches interfaces itself again', (target) => {
     rewrite(path.join(target, 'plugins/agent-os-dev/skills/shape-work/SKILL.md'),
       (text) => text.replace('return that interface question to `design-work`', 'sketch the interface yourself'))

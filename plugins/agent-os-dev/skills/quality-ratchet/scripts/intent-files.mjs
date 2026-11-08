@@ -158,7 +158,57 @@ export function staleness(folder) {
   return stale
 }
 
-function checkFile(folder, name, ids, problems) {
+// The body of a spec's `## Interface` section, or null when it has none.
+function interfaceSection(body) {
+  const lines = String(body).replace(/\r\n/g, '\n').split('\n')
+  const start = lines.findIndex((line) => /^##\s+Interface\s*$/.test(line))
+  if (start < 0) return null
+  const end = lines.findIndex((line, index) => index > start && /^##\s/.test(line))
+  return lines.slice(start + 1, end < 0 ? undefined : end).join('\n').trim()
+}
+
+function interfaceBullets(section) {
+  const bullets = []
+  for (const line of section.split('\n')) {
+    if (/^[-*]\s/.test(line)) bullets.push(line.replace(/^[-*]\s+/, ''))
+    else if (/^\s+\S/.test(line) && bullets.length > 0) bullets[bullets.length - 1] += ` ${line.trim()}`
+  }
+  return bullets
+}
+
+// Files named by inline code or a link, for the formats a sketch comes in. A story title or a URL
+// is not a file, so neither is checked.
+function sketchFiles(section) {
+  const references = [...section.matchAll(/`([^`\s]+)`|\]\(([^)\s]+)\)/g)].map((match) => match[1] ?? match[2])
+  return [...new Set(references)].filter((reference) => !/^[a-z][a-z0-9+.-]*:\/\//i.test(reference) &&
+    /\.(?:html?|png|jpe?g|gif|webp|svg|pdf|mdx)$|\.stories\.[jt]sx?$/i.test(reference))
+}
+
+function checkInterface(folder, file, root, warn) {
+  const section = interfaceSection(file.body)
+  if (section === null) return warn('needs a "## Interface" section; write None when nothing a person sees or does changes')
+  if (!section) return warn('"## Interface" is empty; list each surface or write None')
+  if (/^none\.?$/i.test(section)) return undefined
+  for (const bullet of interfaceBullets(section)) {
+    const label = bullet.length > 60 ? `${bullet.slice(0, 57)}...` : bullet
+    if (/\bDeferred to\b/.test(bullet)) {
+      if (!/\bDeferred to\s+\S.*?\s+by\s+\S/.test(bullet)) warn(`interface surface "${label}" is deferred without an owner and a date`)
+    } else if (/\bOpen:/.test(bullet)) warn(`interface surface "${label}" is still open`)
+    else if (!/\bDecided:/.test(bullet)) warn(`interface surface "${label}" has no Decided:, Deferred to, or Open:`)
+  }
+  const inside = (candidate) => !path.relative(root, candidate).startsWith('..')
+  for (const reference of sketchFiles(section)) {
+    const machinePath = /^(?:[A-Za-z]:[\\/]|[\\/~])/.test(reference)
+    const candidates = machinePath ? [] : [path.resolve(root, reference), path.resolve(folder.path, reference)]
+    if (candidates.some((candidate) => inside(candidate) && fs.existsSync(candidate))) continue
+    if (machinePath || !inside(path.resolve(root, reference))) {
+      warn(`interface names ${reference}, which exists only on one machine; use a repository path, a pull request image, or a URL`)
+    } else warn(`interface names ${reference}, which does not exist`)
+  }
+  return undefined
+}
+
+function checkFile(folder, name, ids, problems, root) {
   const file = folder.files[name]
   if (!file) return
   const error = (message) => problems.push({ level: 'error', file: file.relative, message })
@@ -179,6 +229,9 @@ function checkFile(folder, name, ids, problems) {
     if (builtOn === null) error(`built_on must look like ${kind}@<rev>`)
     else if (!upstream) error(`built_on names ${kind}@${builtOn}, but ${kind}.md is missing`)
     else if (current !== null && builtOn > current) error(`built_on ${kind}@${builtOn} is newer than ${kind}.md rev ${current}`)
+  }
+  if (name === 'spec.md' && data.status === 'accepted') {
+    checkInterface(folder, file, root, (message) => problems.push({ level: 'warning', file: file.relative, message }))
   }
   if (name === 'plan.md') {
     if (!['files', 'issues'].includes(data.source)) error('source must be files or issues')
@@ -255,7 +308,7 @@ export function lintIntents(root, { dir = INTENTS_DIR, base = null, allowUnchang
     if (!folder.files['intent.md']) {
       problems.push({ level: 'error', file: `${dir}/${folder.id}`, message: 'intent.md is missing' })
     }
-    for (const name of INTENT_FILES) checkFile(folder, name, ids, problems)
+    for (const name of INTENT_FILES) checkFile(folder, name, ids, problems, root)
     for (const item of staleness(folder)) {
       problems.push({
         level: 'warning',
