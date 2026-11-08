@@ -650,16 +650,26 @@ export function validate(root = path.resolve(scriptDir, '..')) {
   checkContains(diagnostics, path.join(root, 'plugins/agent-os-core/skills/plan-work/references/spec-template.md'), [
     '## Interface',
     'Write `None` when nothing a person sees or does',
+    'Deferred to <who> by <when>:',
     'Never delete.'
   ], 'DESIGN_STEP_CONTRACT')
   checkContains(diagnostics, path.join(root, 'plugins/agent-os-dev/skills/design-work/SKILL.md'), [
-    'When the policy names no workshop and the repository has none, stop',
+    'this skill is not tied to any tool',
+    'When the policy sets no medium, ask once',
+    'Do not add Storybook or another dependency on your own',
+    'Images are always available',
+    'must stand on its own',
+    'never a path that exists only on this machine',
+    'Offer to save the answer',
+    'is a proposal',
+    'scripts/render-sketch.mjs',
+    'Deferred to <who> by <when>:',
     'never change a shared component',
     'Render each screen inside the layout',
     'Do not decide a product preference for them.',
-    "Write the outcome into the spec's `## Interface` section.",
+    "Write the outcome into the spec's `## Interface` section,",
     'a sketch is never promoted to',
-    'every sketch story renders in the workshop without render errors or console errors',
+    'every sketch opens and renders without errors in its medium',
     'open a draft pull',
     'Never record your',
     'Report a check you could not run instead of claiming it.'

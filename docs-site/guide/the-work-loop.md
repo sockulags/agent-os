@@ -22,7 +22,7 @@ not need.
 |---|---|---|---|
 | Intent | `capture-intent` | `intents/<id>/intent.md` | the product owner merges the pull request |
 | Spec | `plan-work` | `intents/<id>/spec.md` | product owner and tech lead merge |
-| Design | `design-work` | sketch stories, the spec's `## Interface` section | merged with the spec |
+| Design | `design-work` | sketches in the project's chosen medium, the spec's `## Interface` section | merged with the spec |
 | Plan | `shape-work` | `intents/<id>/plan.md`, or tracker issues | tech lead, or no extra gate for a small plan |
 | Deliver | `deliver-work`, `batch-work` | code, tests, a draft pull request per unit | the developer steers |
 | Review | `check-work`, `simplify` | `REVIEW.md`, the pull request review | a person approves the pull request |

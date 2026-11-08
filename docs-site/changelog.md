@@ -51,8 +51,10 @@ files, and enforces its most important rules with hooks.
 - **Design as a planned step** — the spec template has a required `## Interface` section that lists
   every new or changed screen per role, or says `None`. A plan whose interface changes is ready only
   when each screen has a decision, backed by a sketch wherever the project can show one. The new
-  manual `design-work` skill sketches the screens in the project's component workshop, Storybook by
-  default, so anyone who can build the frontend can judge them. `shape-work` no longer sketches: it
+  manual `design-work` skill sketches the screens in the medium the project sets up: standalone HTML,
+  a component workshop, images, or anything else the policy describes. A bundled script renders
+  sketches to PNG with a browser already on the machine, and `lint-intents` warns about an interface
+  surface with no decision or owner and a sketch others cannot reach. `shape-work` no longer sketches: it
   links the Interface section and returns open interface questions to `design-work`, and
   `deliver-work` stops at a screen whose decision is still open. The Frontend mockups reference page
   is replaced by the [design-work](/skills/design-work) page.

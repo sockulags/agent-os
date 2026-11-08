@@ -23,7 +23,7 @@ Repository mode separates facts from preferences. A first run closes with how th
 in the repository and one recommended first action, after asking the working agreement in at most
 two rounds: who works here and approves, the default stopping point, the default path for a new
 feature, where units live, the language of artifacts, and, for frontend work, whether interfaces are
-sketched first. Evidence can recommend an answer but never settles a preference. "Use your
+sketched first, in which medium, and where the sketches live. Evidence can recommend an answer but never settles a preference. "Use your
 recommendations for the rest" is always available and holds for the whole run: a fact with no
 evidence goes under **Open setup questions** without being asked. In a repository with no policy
 surface it writes `policy.md` plus a `CLAUDE.md` and an `AGENTS.md` that make the hosts load it.

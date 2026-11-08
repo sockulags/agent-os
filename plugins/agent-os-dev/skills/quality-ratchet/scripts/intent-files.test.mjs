@@ -13,8 +13,8 @@ function git(root, ...args) {
 
 const intent = (rev = 1, body = '# Export\n') =>
   `---\nid: 2026-11-csv-export\nstatus: accepted\nrev: ${rev}\nsupersedes: null\n---\n${body}`
-const spec = (builtOn = 1, rev = 1) =>
-  `---\nintent: 2026-11-csv-export\nrev: ${rev}\nbuilt_on: intent@${builtOn}\nstatus: accepted\n---\n# Export\n`
+const spec = (builtOn = 1, rev = 1, face = '## Interface\n\nNone\n') =>
+  `---\nintent: 2026-11-csv-export\nrev: ${rev}\nbuilt_on: intent@${builtOn}\nstatus: accepted\n---\n# Export\n\n${face}`
 const plan = (units, sections = '') =>
   `---\nintent: 2026-11-csv-export\nrev: 1\nbuilt_on: spec@1\nstatus: accepted\nsource: files\n---\n## Units\n\n${units}\n\n${sections}`
 
@@ -62,6 +62,49 @@ test('a ready unit with a missing field or a bare acceptance pointer is a warnin
   assert.deepEqual(messages(lintIntents(root), 'warning'), [
     'intents/2026-11-csv-export/plan.md: unit U1 has no "Change surface:" field',
     'intents/2026-11-csv-export/plan.md: unit U1 acceptance only points at the spec; write out the checks'
+  ])
+})
+
+const interfaceWarnings = (face, extra = {}) => {
+  const root = repository({
+    'intents/2026-11-csv-export/intent.md': intent(),
+    'intents/2026-11-csv-export/spec.md': spec(1, 1, face),
+    ...extra
+  })
+  assert.deepEqual(messages(lintIntents(root), 'error'), [])
+  return messages(lintIntents(root), 'warning').map((line) => line.replace('intents/2026-11-csv-export/spec.md: ', ''))
+}
+
+test('a spec with decided surfaces and reachable sketches has no interface warnings', () => {
+  const face = '## Interface\n\n' +
+    '- Accountant, invoice list. Decided: export sits in the header, because they look there.\n' +
+    '  Rejected: filter bar. Sketch: `intents/2026-11-csv-export/sketches/list.html`.\n' +
+    '- Admin, settings. Deferred to Mira by 2026-12-01: where the limit is shown.\n' +
+    '- Accountant, empty list. Decided: no action. Sketch: [image](https://github.com/o/r/pull/1).\n\n## Boundaries\n'
+  assert.deepEqual(interfaceWarnings(face, { 'intents/2026-11-csv-export/sketches/list.html': 'x' }), [])
+})
+
+test('a missing or empty interface section is a warning, and None is enough', () => {
+  assert.deepEqual(interfaceWarnings(''), ['needs a "## Interface" section; write None when nothing a person sees or does changes'])
+  assert.deepEqual(interfaceWarnings('## Interface\n\n## Boundaries\n'), ['"## Interface" is empty; list each surface or write None'])
+  assert.deepEqual(interfaceWarnings('## Interface\n\nNone.\n'), [])
+})
+
+test('a surface without a decision or an owner is a warning', () => {
+  const warnings = interfaceWarnings('## Interface\n\n- Admin, settings. Open: where it goes.\n- Admin, list. Deferred to Mira: order.\n- Admin, page. Looks nice.\n')
+  assert.deepEqual(warnings, [
+    'interface surface "Admin, settings. Open: where it goes." is still open',
+    'interface surface "Admin, list. Deferred to Mira: order." is deferred without an owner and a date',
+    'interface surface "Admin, page. Looks nice." has no Decided:, Deferred to, or Open:'
+  ])
+})
+
+test('a sketch must exist and be reachable by others', () => {
+  const warnings = interfaceWarnings('## Interface\n\n- A, B. Decided: x. Sketch: `gone.png`, `../outbox/a.png`, `C:/Users/me/a.png`, `Sketches/Export/Header`.\n')
+  assert.deepEqual(warnings, [
+    'interface names gone.png, which does not exist',
+    'interface names ../outbox/a.png, which exists only on one machine; use a repository path, a pull request image, or a URL',
+    'interface names C:/Users/me/a.png, which exists only on one machine; use a repository path, a pull request image, or a URL'
   ])
 })
 

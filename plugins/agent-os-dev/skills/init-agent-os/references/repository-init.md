@@ -58,9 +58,10 @@ is insufficient:
 Add a module only when inspection finds the corresponding concern. Resolve its material defaults and
 omit it entirely when inactive:
 
-- frontend/design/rendered QA, which records where the design system lives, the component
-  workshop and the command that starts it, where `design-work` sketches live and how they are
-  named, and the widths a screen must work at;
+- frontend/design/rendered QA, which records where the design system lives and a `## Design`
+  section for `design-work`: `Sketch with` (`html`, a component workshop and the command that starts
+  it, `image`, or anything else the project describes), `Sketches live` (a path and naming, or
+  `not in the repository`), and `Widths`;
 - package, release, or documentation publication;
 - CI or deployment;
 - authentication, security, billing, or external writes;
