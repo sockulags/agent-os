@@ -1,7 +1,7 @@
 {
   "name": "agent-os-core",
   "description": "Agent OS core: capture intent, plan decisions, explain plainly, keep scope, and prove claims. Useful for any agent work, not only code.",
-  "version": "0.15.0",
+  "version": "0.16.0",
   "homepage": "https://sockulags.github.io/agent-os/",
   "repository": "https://github.com/sockulags/agent-os",
   "keywords": [

@@ -1,6 +1,6 @@
 {
   "name": "@sockulags/agent-os",
-  "version": "0.15.0",
+  "version": "0.16.0",
   "description": "A lightweight agent operating system for Claude Code and Codex: agent-os-core for intent, planning, and evidence, and agent-os-dev for delivery, review, and guard hooks.",
   "type": "module",
   "bin": {
