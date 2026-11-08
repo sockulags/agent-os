@@ -36,7 +36,7 @@ The Claude Code plugin manifests. The dev manifest looks like this, and the core
 {
   "name": "agent-os-dev",
   "description": "Agent OS development: shape plans, deliver against ground truth, review independently, and guard delivery with hooks. Requires agent-os-core.",
-  "version": "0.15.0",
+  "version": "0.16.0",
   "author": { "name": "Lucas Skog" },
   "homepage": "https://sockulags.github.io/agent-os/",
   "repository": "https://github.com/sockulags/agent-os",
@@ -75,7 +75,7 @@ site.
 ```json
 {
   "name": "agent-os-core",
-  "version": "0.15.0",
+  "version": "0.16.0",
   "homepage": "https://sockulags.github.io/agent-os/",
   "repository": "https://github.com/sockulags/agent-os",
   "skills": "./skills/",
@@ -129,7 +129,7 @@ installation.
 ~~~json
 {
   "name": "@sockulags/agent-os",
-  "version": "0.15.0",
+  "version": "0.16.0",
   "type": "module",
   "bin": {
     "agent-os": "./cli/index.mjs"

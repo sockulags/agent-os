@@ -8,7 +8,7 @@ description: What changed in each agent-os release, in plain terms.
 One entry per release: what changed, and what it means for how you work. Full commit-level history
 lives on [GitHub](https://github.com/sockulags/agent-os/commits/main).
 
-## Unreleased
+## 0.16.0 — 2026-11-08
 
 The core and dev release: Agent OS splits into two plugins, carries decisions in versioned intent
 files, and enforces its most important rules with hooks.
