@@ -143,7 +143,9 @@ $init-agent-os global                 # Codex
 ```
 
 The skill runs the bundled deterministic Node writer and shows the resulting diff. Never edit
-inside the managed markers by hand — see [Global policy](/guide/global-policy) for why.
+inside the managed markers by hand — see [Global policy](/guide/global-policy) for why. Run it once
+after installing even when the installer synced the policy: it also asks your personal preferences,
+such as how much the agent explains, and keeps them outside the managed block.
 
 Re-run either the npm update with policy sync enabled or `init-agent-os global` after a release that
 changes `policy.md`. The installed blocks do not update themselves.
@@ -151,9 +153,11 @@ changes `policy.md`. The installed blocks do not update themselves.
 ## 3. Initialize a repository
 
 In the repository you want to work in, invoke `init-agent-os` without `global`. It reads the repo
-first and asks only about missing material defaults: delivery, verification, design-system
-location, where intents live, whether units live in `plan.md` or a tracker, stable identities, batch
-execution, and durable conventions. Every question arrives with a recommendation. It writes the
+first and asks how you want to work there: who approves, where the agent stops, the default path for
+a new feature, and where units live. Then it asks only about missing facts: verification,
+design-system location, where intents live, stable identities, batch execution, and durable
+conventions. Every question arrives with a recommendation. Run it again at any time: it shows what
+is set and asks what you want to change. It writes the
 smallest useful policy, `.agent-os/guards.json`, `.agent-os/quality.json` with the main test command
 as a required check, `REVIEW.md`, and, for GitHub Actions repositories, the `lint-intents` and
 `agent-review` workflows, and shows the resulting diff.

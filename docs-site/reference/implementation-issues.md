@@ -20,18 +20,22 @@ Parked and rejected branches need no implementation issue.
 
 ## Required issue contract
 
+Every unit is a self-contained work order. It cites the spec for its source and writes out what it
+is accountable for, so someone holding only the unit and the repository can start without guessing.
 Every issue has a stable `(origin, unit key)` identity and records:
 
 - ready or blocked state, read from dependencies, pull requests, and an explicit `blocked:` note rather
   than a status field written during delivery;
 - one coherent independently useful or assessable delivery unit;
 - boundaries and non-goals;
-- acceptance examples;
+- the change surface: the modules, interfaces, and existing code to extend;
+- acceptance written out as concrete checks, each citing its spec example, with a shared example
+  stating exactly this unit's part;
 - ground truth that can verify the outcome;
-- dependencies and their current state;
-- linked evidence and settled decisions;
+- dependencies, their current state, and what this unit consumes from each;
+- only the settled decisions a worker could otherwise get wrong, with links;
 - the requested delivery target;
-- open risks without unresolved product choices.
+- at most three open risks, without unresolved product choices.
 
 Do not split a unit merely because its parts could use separate commits, sessions, files, or
 technical layers. Split for an independently useful or assessable result, different ownership, a

@@ -18,6 +18,10 @@ const spec = (builtOn = 1, rev = 1) =>
 const plan = (units, sections = '') =>
   `---\nintent: 2026-11-csv-export\nrev: 1\nbuilt_on: spec@1\nstatus: accepted\nsource: files\n---\n## Units\n\n${units}\n\n${sections}`
 
+const contract = (heading, acceptance = '- Given a filter, when exported, then the CSV holds the filtered rows (spec example 1).') =>
+  `### ${heading}\n\nOutcome: x\nBoundaries: x\nChange surface: x\nAcceptance:\n${acceptance}\nGround truth: x\nDependencies: none\n` +
+  'Evidence and settled decisions: none\nDelivery target: pull request\nOpen risks: none\n\n'
+
 function repository(files) {
   const root = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'agent-os-intents-')))
   for (const [relative, content] of Object.entries(files)) {
@@ -42,7 +46,51 @@ test('a consistent intent folder passes', () => {
   const root = repository({
     'intents/2026-11-csv-export/intent.md': intent(),
     'intents/2026-11-csv-export/spec.md': spec(),
-    'intents/2026-11-csv-export/plan.md': plan('- [U1] Endpoint\n- [U2] Button — depends on U1', '### U1 Endpoint\n\n### U2 Button\n')
+    'intents/2026-11-csv-export/plan.md': plan('- [U1] Endpoint\n- [U2] Button — depends on U1', contract('U1 Endpoint') + contract('U2 Button'))
+  })
+  assert.deepEqual(lintIntents(root), [])
+})
+
+test('a ready unit with a missing field or a bare acceptance pointer is a warning, not an error', () => {
+  const thin = contract('U1 Endpoint', 'behaviors 14 to 17, 20, 23 (server side).').replace('Change surface: x\n', '')
+  const root = repository({
+    'intents/2026-11-csv-export/intent.md': intent(),
+    'intents/2026-11-csv-export/spec.md': spec(),
+    'intents/2026-11-csv-export/plan.md': plan('- [U1] Endpoint', thin)
+  })
+  assert.deepEqual(messages(lintIntents(root), 'error'), [])
+  assert.deepEqual(messages(lintIntents(root), 'warning'), [
+    'intents/2026-11-csv-export/plan.md: unit U1 has no "Change surface:" field',
+    'intents/2026-11-csv-export/plan.md: unit U1 acceptance only points at the spec; write out the checks'
+  ])
+})
+
+test('a field label may carry a parenthetical qualifier', () => {
+  const qualified = contract('U1 Endpoint').replace('Acceptance:', 'Acceptance (all with the mock server):')
+  const root = repository({
+    'intents/2026-11-csv-export/intent.md': intent(),
+    'intents/2026-11-csv-export/spec.md': spec(),
+    'intents/2026-11-csv-export/plan.md': plan('- [U1] Endpoint', qualified)
+  })
+  assert.deepEqual(lintIntents(root), [])
+})
+
+test('an overlong unit is a warning that names its length', () => {
+  const longCheck = `- Given a filter, when exported, then the CSV holds the filtered rows (spec example 1). ${'x'.repeat(5000)}`
+  const root = repository({
+    'intents/2026-11-csv-export/intent.md': intent(),
+    'intents/2026-11-csv-export/spec.md': spec(),
+    'intents/2026-11-csv-export/plan.md': plan('- [U1] Endpoint', contract('U1 Endpoint', longCheck))
+  })
+  assert.deepEqual(messages(lintIntents(root), 'error'), [])
+  assert.match(messages(lintIntents(root), 'warning').join('\n'), /unit U1 contract is \d+ characters; cut what retells the spec or split it/)
+})
+
+test('a blocked unit is not held to the ready contract', () => {
+  const root = repository({
+    'intents/2026-11-csv-export/intent.md': intent(),
+    'intents/2026-11-csv-export/spec.md': spec(),
+    'intents/2026-11-csv-export/plan.md': plan('- [U1] Endpoint — blocked: which format', '### U1 Endpoint\n\nOutcome: x\n')
   })
   assert.deepEqual(lintIntents(root), [])
 })

@@ -676,6 +676,19 @@ test('switching from all packages to core removes dev skills and every managed h
   assert.doesNotMatch(fs.readFileSync(hookFile, 'utf8'), /--agent-os-hook=/)
 })
 
+test('a direct install names the setup command, and a core-only install does not', async () => {
+  const install = async (extra) => {
+    const root = temporaryRoot()
+    let text = ''
+    await executeInstall({
+      command: 'install', platform: 'claude', method: 'direct', scope: 'user', policy: false, ...extra
+    }, { output: { write(chunk) { text += chunk } }, homeDir: path.join(root, 'home'), cwd: root })
+    return text
+  }
+  assert.match(await install({}), /Next: run \/init-agent-os global once for your personal preferences, then \/init-agent-os in each repository/)
+  assert.doesNotMatch(await install({ package: 'core' }), /init-agent-os/)
+})
+
 test('lint-intents reports errors with a failing exit code and warnings only under --strict', async () => {
   const root = temporaryRoot()
   const folder = path.join(root, 'intents', '2026-11-export')

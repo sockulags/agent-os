@@ -182,7 +182,13 @@
         "init-agent-os.md#IA-P4",
         "init-agent-os.md#IA-P5",
         "init-agent-os.md#IA-P6",
-        "init-agent-os.md#IA-P7"
+        "init-agent-os.md#IA-P7",
+        "init-agent-os.md#IA-P8 First run preferences",
+        "init-agent-os.md#IA-P9 Return run",
+        "init-agent-os.md#IA-P10 Return check only",
+        "init-agent-os.md#IA-P11 Older setup",
+        "init-agent-os.md#IA-P12 Personal preferences",
+        "init-agent-os.md#IA-P13 Clean repository"
       ],
       "negative": [
         "init-agent-os.md#IA-N1",
@@ -291,13 +297,17 @@
         "shape-work.md#SW-P3",
         "shape-work.md#SW-P4",
         "shape-work.md#SW-P5 Open interface",
-        "shape-work.md#SW-P6 Settled interface"
+        "shape-work.md#SW-P6 Settled interface",
+        "shape-work.md#SW-P7 Self-contained unit",
+        "shape-work.md#SW-P8 Shared example",
+        "shape-work.md#SW-P9 Bounded unit"
       ],
       "negative": [
         "shape-work.md#SW-N1",
         "shape-work.md#SW-N2",
         "shape-work.md#SW-N3",
-        "shape-work.md#SW-N4 Routine evidence"
+        "shape-work.md#SW-N4 Routine evidence",
+        "shape-work.md#SW-N5 One-line unit"
       ]
     },
     "verify-before-done": {

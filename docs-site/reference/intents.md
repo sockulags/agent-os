@@ -101,11 +101,17 @@ the project policy asks for them.
 
 ### U1 Export endpoint
 
-Outcome: ...
-Boundaries: ...
-Acceptance: Behavior examples 1 to 3 in spec.md
-Ground truth: npm test -- export
+Outcome: `GET /reports/:id/export` returns the active filtered result as CSV.
+Boundaries: no UI (U2), no Excel (U3).
+Change surface: the report query in `reports/service.ts`, a new route beside `reports/routes.ts`.
+Acceptance:
+- Given a filter matching 3 rows, when exported, then the CSV holds those 3 rows (spec example 1).
+- Given a user without report access, when exporting, then the response is 403 (spec example 2).
+Ground truth: `npm test -- export`, including the 403 case.
+Dependencies: none
+Evidence and settled decisions: synchronous up to 10,000 rows, because no queue exists (spec Decisions).
 Delivery target: pull request
+Open risks: none
 ```
 
 Each unit line is `- [<KEY>] <title>`, optionally followed by ` — depends on <KEY>, <KEY>` and
@@ -133,8 +139,9 @@ npx @sockulags/agent-os lint-intents --base origin/main --strict
 ```
 
 It checks folder names, required files, frontmatter fields and statuses, `built_on` references,
-`supersedes` targets, unique unit keys, and dependencies. Stale files are warnings, or errors with
-`--strict`. With `--base <ref>` it also fails when an accepted file's text changed without a higher
+`supersedes` targets, unique unit keys, and dependencies. For an accepted `source: files` plan it
+also warns about a ready unit that lacks a contract field, whose acceptance only points at the
+spec, or whose contract runs past 5,000 characters. Stale files and thin units are warnings, or errors with `--strict`. With `--base <ref>` it also fails when an accepted file's text changed without a higher
 `rev`; frontmatter-only changes, such as a status change or a confirmed `built_on`, need no new
 revision. `--allow-unchanged-rev` accepts a pure wording fix, for example when a pull request carries
 a `no-rev` label. [init-agent-os](/skills/init-agent-os) can add a `lint-intents` GitHub Actions

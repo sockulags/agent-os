@@ -6,7 +6,8 @@ description: Record repository-specific commands, boundaries, conventions, and d
 # Project policy
 
 Project policy holds repository-specific facts that should not be hardcoded into reusable skills.
-It lives in the repo's existing `CLAUDE.md`, `AGENTS.md`, or a small `policy.md`.
+It lives in the repo's existing `CLAUDE.md`, `AGENTS.md`, or a small `policy.md` that those files
+point to, because a host loads only its own file.
 
 `init-agent-os` inspects the repository before asking questions. Before writing, every live
 host-consumed policy surface must have unambiguous ownership and precedence. Shared identical content
@@ -37,8 +38,11 @@ behavior; absence does not imply permission for merge, deploy, destructive clean
 effects. Tracker readiness is not authorization: tracker maintenance needs an explicit mandate and
 does not silently change acceptance, owners, delivery scope, or closure.
 
-`init-agent-os` asks one unresolved material question at a time, with a recommendation and
-consequence, and records explicit deferrals under **Open setup questions**. It does not write
+`init-agent-os` asks the `## Working agreement` every first run, because preferences cannot be read
+from a repository, and then asks one unresolved material fact at a time, with a recommendation and
+consequence. It records explicit deferrals under **Open setup questions**. Run it again later to
+change something: it shows what is set, flags drift, asks what you want to change, and writes only
+that. It does not write
 `N/A` fields, interview history, or the completeness ledger. It writes the smallest useful policy,
 preserves unrelated instructions, and shows all changed policy surfaces in the resulting diff; the
 invocation itself authorizes that setup write.
