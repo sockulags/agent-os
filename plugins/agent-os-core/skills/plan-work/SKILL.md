@@ -71,8 +71,9 @@ never guess a layout.
 
 When the work has an intent, write `spec.md` in the same `intents/<id>/` folder from
 [references/spec-template.md](references/spec-template.md). Its `built_on` names the intent revision
-it answers, such as `intent@2`. Acceptance examples live in the spec, not in a tracker item; a
-tracker item links to the spec section instead of copying it.
+it answers, such as `intent@2`. Acceptance examples originate in the spec. A delivery unit written
+by `shape-work` states the ones it is accountable for and cites the spec section; the spec stays the
+authority.
 
 A new spec has `rev: 1` and `status: accepted`; merging its review is the acceptance. Commit it and
 open the review only when the request or the project's delivery defaults include that. Never merge

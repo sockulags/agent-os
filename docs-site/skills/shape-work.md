@@ -42,11 +42,23 @@ boundary. Separate commits, sessions, files, or technical layers are not enough.
 UI, configuration, errors, and verification with the behavior they support. Then write the units:
 `intents/<id>/plan.md` beside the spec by default, or tracker issues when the project policy makes
 the tracker the source of truth for units (`source: issues`, with `plan.md` holding only the keys).
-Link real dependencies and expose the first claimable frontier.
+Link real dependencies and report the first claimable frontier to the developer; it is derived from
+the plan and is not written into it.
+
+Each unit is a self-contained work order: someone holding only the unit and the repository knows
+what to change, where, what done means, and how to prove it. The spec stays the authority. A unit
+writes out what it is accountable for and cites its source, and when the two disagree the spec wins.
+`built_on` marks restated text stale when the spec changes. Before publishing, shape-work reads each
+unit as a worker who has only it and the repository, adds whatever that worker would have to guess,
+and removes whatever would not change what they build or check. A unit is a work order, not a design
+document: a one-line change gets one-line fields, a typical unit fits in about 4,000 characters, it
+carries only the decisions a worker could otherwise get wrong and at most three risks, and it holds
+no code or implementation steps.
 
 `plan.md` lists each unit as `- [U1] title`, optionally followed by ` — depends on U1` and
 ` — blocked: reason`, and gives each unit a `### U1 title` section with its outcome, boundaries,
-acceptance, ground truth, and delivery target. Unit keys never change. Delivery status is never
+change surface, written-out acceptance, ground truth, what it consumes from each dependency, settled
+decisions, delivery target, and open risks. Unit keys never change. Delivery status is never
 written into the plan: a draft pull request with `Intent-Unit: <intent-id>/<unit-key>` claims a unit,
 and its merge delivers it. A spec built on an older intent revision is not shaped; it goes back to
 plan-work. A plan built on an older spec revision is reshaped with stable keys. See

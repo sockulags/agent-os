@@ -47,8 +47,8 @@ When the work has an intent, the plan is written as `intents/<id>/spec.md` besid
 language `## Summary`, `## Behavior` as given, when, then examples, `## Interface` with every new or
 changed screen per role (or `None`), boundaries and non-goals,
 decisions with rejected alternatives, ground truth, open risks, and a decision log. Its `built_on`
-names the intent revision it answers, such as `intent@2`. Acceptance examples live in the spec, and
-a tracker item links to the spec section instead of copying it. A spec built on an older intent
+names the intent revision it answers, such as `intent@2`. Acceptance examples originate in the spec;
+a delivery unit states the ones it is accountable for and cites the spec section. A spec built on an older intent
 revision is stale and is reconsidered before anything is shaped or delivered from it. The format is
 in [Intent, spec, and plan files](/reference/intents).
 

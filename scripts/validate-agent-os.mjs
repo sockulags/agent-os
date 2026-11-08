@@ -686,6 +686,19 @@ export function validate(root = path.resolve(scriptDir, '..')) {
     'A selected branch in shaping keeps the map open.'
   ], 'PLAN_HANDOFF_CONTRACT')
 
+  checkContains(diagnostics, path.join(root, 'plugins/agent-os-dev/skills/init-agent-os/SKILL.md'), [
+    'evidence may recommend an answer but does not settle one',
+    '## Working agreement',
+    'Use your recommendations for the rest',
+    'holds for the whole run',
+    'so the hosts load it',
+    'it never repeats the interview',
+    'what do you want to change?',
+    'Write only the chosen areas',
+    '## My working preferences',
+    'never grant merge, deploy, or external-effect'
+  ], 'INIT_ONBOARDING_CONTRACT')
+
   checkContains(diagnostics, path.join(root, 'plugins/agent-os-dev/skills/shape-work/SKILL.md'), [
     'references/implementation-issues.md',
     'create or reuse its implementation issues',
@@ -696,7 +709,14 @@ export function validate(root = path.resolve(scriptDir, '..')) {
     'separate commit, session, file, or technical layer',
     'epic contract',
     'aggregate verification',
-    'A child issue does not authorize'
+    'A child issue does not authorize',
+    'A unit is a self-contained work order',
+    '**Change surface:**',
+    'is not acceptance',
+    'read each unit as a worker',
+    'not a design document',
+    'at most three risks',
+    'Whatever would not change what they build or check comes out.'
   ], 'SHAPE_IMPLEMENTATION_ISSUES')
   checkContains(diagnostics, path.join(root, 'plugins/agent-os-dev/skills/shape-work/references/implementation-issues.md'), [
     'A selected product branch is not `delivery-ready`',
@@ -704,6 +724,7 @@ export function validate(root = path.resolve(scriptDir, '..')) {
     'Status: ready | blocked',
     '## Outcome',
     '## Boundaries',
+    '## Change surface',
     '## Acceptance',
     '## Ground truth',
     '## Dependencies',

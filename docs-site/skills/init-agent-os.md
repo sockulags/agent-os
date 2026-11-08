@@ -1,7 +1,7 @@
 ---
 title: init-agent-os
 description: Install shared agent-os policy or initialize one repository's living defaults.
-skill-description: Sets up agent-os globally on a machine, or initializes a repo's living project policy through an interview. User-invoked only, at machine setup or when onboarding a repo. Not for ordinary tasks.
+skill-description: Sets up agent-os globally on a machine with personal preferences, or initializes and later adjusts a repo's living project policy through an interview. User-invoked only, at machine setup, when onboarding a repo, or when changing how a repo works. Not for ordinary tasks.
 summary: Managed policy setup or repository defaults
 ---
 
@@ -14,9 +14,26 @@ Sets up managed global policy or seeds one repository's project policy.
 `global` verifies plugin visibility, checks drift, and applies the managed policy blocks through the
 deterministic script. The explicit invocation authorizes those setup writes. Each block starts with
 an `<!-- agent-os version X -->` line, so `npx @sockulags/agent-os@latest doctor` can show which
-release wrote it.
+release wrote it. It then settles your personal preferences in a `## My working preferences` section
+outside the managed block: whether the agent asks early or decides and reports, how much it explains,
+and anything it should always or never do. On a later run it shows them and asks what to change.
+They are style only, yield to project policy, and never grant merge, deploy, or external authority.
 
-Repository mode is facts-first: it inspects instruction and policy surfaces, project docs, build and
+Repository mode separates facts from preferences. A first run closes with how the agent will work
+in the repository and one recommended first action, after asking the working agreement in at most
+two rounds: who works here and approves, the default stopping point, the default path for a new
+feature, where units live, the language of artifacts, and, for frontend work, whether interfaces are
+sketched first. Evidence can recommend an answer but never settles a preference. "Use your
+recommendations for the rest" is always available and holds for the whole run: a fact with no
+evidence goes under **Open setup questions** without being asked. In a repository with no policy
+surface it writes `policy.md` plus a `CLAUDE.md` and an `AGENTS.md` that make the hosts load it.
+
+A return run starts when the repository already has a `## Working agreement` or an `.agent-os/`
+directory. It never repeats the interview. It summarizes what is set today, flags drift between
+policy and repository and anything the policy does not cover yet, and asks what you want to change.
+It writes only the areas you choose; "nothing" writes nothing.
+
+For facts, repository mode inspects instruction and policy surfaces, project docs, build and
 test configuration, CI, and evidence of conditional concerns before asking anything. Before writing,
 every live host-consumed policy surface has unambiguous ownership and precedence; shared identical
 content or a clear canonical cross-reference is sufficient, while leaving conflicting applicable

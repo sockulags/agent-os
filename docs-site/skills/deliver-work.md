@@ -88,10 +88,10 @@ implementation choices belong to the implementer.
 
 ## Intent units and claims
 
-When the unit comes from `intents/<id>/plan.md`, the plan entry, the spec, and the intent are the
-contract. A spec built on an older intent revision, or a plan built on an older spec revision, is an
+When the unit comes from `intents/<id>/plan.md`, or from a tracker issue whose `Origin` names an
+intent, the plan entry or issue, the spec, and the intent are the contract. A spec built on an older intent revision, or a plan built on an older spec revision, is an
 unresolved product decision: delivery stops before mutation and returns the unit to plan-work or
-shape-work. Delivery never edits an accepted intent, spec, or plan entry, and the guard hooks block
+shape-work. A unit that contradicts the spec it cites goes back the same way, because the spec wins. Delivery never edits an accepted intent, spec, or plan entry, and the guard hooks block
 such an edit while a delivery baseline is active.
 
 The spec's `## Interface` entries and their sketches are part of the contract. A screen whose entry

@@ -17,6 +17,10 @@ const UPSTREAM = { 'spec.md': 'intent', 'plan.md': 'spec' }
 const UNIT_LINE = /^-\s+\[([A-Za-z0-9][A-Za-z0-9._/-]*)\]\s+(.+)$/
 const DEPENDS = /^depends on\s+(.+)$/i
 const BLOCKED = /^blocked:\s*(.+)$/i
+const UNIT_FIELDS = ['Outcome', 'Boundaries', 'Change surface', 'Acceptance', 'Ground truth', 'Dependencies', 'Evidence and settled decisions', 'Delivery target', 'Open risks']
+const UNIT_FIELD_LINE = new RegExp(`^(${UNIT_FIELDS.join('|')})(?:\\s*\\([^)]*\\))?:\\s*(.*)$`)
+const UNIT_LENGTH_WARNING = 5000
+const POINTER_WORD =/^(?:spec|behaviou?rs?|examples?|sections?|headings?|lines?|rules?|see|the|in|and|to|of|all|first|second|third)$/i
 
 // Frontmatter is a flat `key: value` block between two `---` lines; values stay strings.
 export function parseFrontmatter(text) {
@@ -63,8 +67,50 @@ export function parseUnits(body) {
   return units
 }
 
-export function unitSections(body) {
-  return new Set([...String(body).replace(/\r\n/g, '\n').matchAll(/^###\s+(\S+)/gm)].map((match) => match[1]))
+// Each `### KEY title` section mapped to its contract fields. A field value runs until the next field.
+export function unitContracts(body) {
+  const contracts = new Map()
+  let fields = null
+  let field = null
+  for (const line of String(body).replace(/\r\n/g, '\n').split('\n')) {
+    const heading = /^###\s+(\S+)/.exec(line)
+    if (heading) {
+      fields = {}
+      field = null
+      contracts.set(heading[1], fields)
+      continue
+    }
+    if (/^##\s/.test(line)) fields = null
+    if (!fields) continue
+    const label = UNIT_FIELD_LINE.exec(line)
+    if (label) {
+      field = label[1]
+      fields[field] = label[2]
+    } else if (field) {
+      fields[field] += `\n${line}`
+    }
+  }
+  return contracts
+}
+
+// Acceptance that names only spec locations, such as "behaviors 1 to 3 (server side)". Parentheses,
+// quotes, numbers, and file paths are citations; fewer than three other words cannot state a check.
+function isBarePointer(acceptance) {
+  const words = acceptance.replace(/\([^)]*\)|"[^"]*"|`[^`]*`/g, ' ').match(/[A-Za-z][\w/-]*(?:\.\w+)*/g) ?? []
+  return words.filter((word) => !POINTER_WORD.test(word) && !/\.md$/i.test(word)).length < 3
+}
+
+function checkUnitContract(unit, fields, warn) {
+  for (const name of UNIT_FIELDS) {
+    if (!fields[name]?.trim()) warn(`unit ${unit.key} has no "${name}:" field`)
+  }
+  if (fields.Acceptance?.trim() && isBarePointer(fields.Acceptance)) {
+    warn(`unit ${unit.key} acceptance only points at the spec; write out the checks`)
+  }
+  const length = Object.values(fields).join('').length
+  if (length > UNIT_LENGTH_WARNING) {
+    warn(`unit ${unit.key} contract is ${length} characters; cut what retells the spec or split it to stay under ${UNIT_LENGTH_WARNING}`)
+  }
 }
 
 function readFile(file) {
@@ -144,12 +190,15 @@ function checkFile(folder, name, ids, problems) {
       keys.add(unit.key)
     }
     if (data.source === 'files') {
-      const sections = unitSections(file.body)
+      const contracts = unitContracts(file.body)
+      const warn = (message) => problems.push({ level: 'warning', file: file.relative, message })
       for (const unit of units) {
         for (const dependency of unit.depends) {
           if (!keys.has(dependency)) error(`unit ${unit.key} depends on unknown unit ${dependency}`)
         }
-        if (!sections.has(unit.key)) error(`unit ${unit.key} needs a "### ${unit.key} <title>" section with its contract`)
+        const fields = contracts.get(unit.key)
+        if (!fields) error(`unit ${unit.key} needs a "### ${unit.key} <title>" section with its contract`)
+        else if (data.status === 'accepted' && !unit.blocked) checkUnitContract(unit, fields, warn)
       }
     }
   }

@@ -115,8 +115,9 @@ The result is `spec.md` built on `intent@1`. Its summary, written by `explain-wo
 - [U3] End-to-end download check — depends on U1, U2
 ```
 
-Each unit has its own section with outcome, boundaries, the spec examples it satisfies, and ground
-truth such as an API contract test, a rendered download flow, and an unauthorized request test.
+Each unit has its own section that a worker can start from alone: outcome, boundaries, the code to
+extend, acceptance written out with its spec citations, and ground truth
+such as an API contract test, a rendered download flow, and an unauthorized request test.
 **Ground truth** is the observation that can decide the claim. “The build passes” is not ground truth
 for a browser download.
 

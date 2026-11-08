@@ -13,6 +13,15 @@ lives on [GitHub](https://github.com/sockulags/agent-os/commits/main).
 The core and dev release: Agent OS splits into two plugins, carries decisions in versioned intent
 files, and enforces its most important rules with hooks.
 
+- **A setup that asks how you work** — `init-agent-os` now asks a short working agreement on a first
+  run, and on a later run shows what is set and asks what you want to change, writing only that.
+  `init-agent-os global` also keeps your personal preferences, and the installer names the setup
+  command as the next step.
+- **Self-contained delivery units** — `shape-work` now writes each unit as a work order someone can
+  start from alone: the code to extend, acceptance written out with spec citations, and what it
+  consumes from each dependency, in about 4,000 characters. `lint-intents` warns about a ready unit
+  that lacks a field, only points at the spec for acceptance, or runs past 5,000 characters. A
+  `deliver-work` run on a tracker issue now reads the spec too.
 - **Two packages** — `agent-os-core` holds intent, planning, explanation, scope, evidence, and lesson
   skills for any agent work; `agent-os-dev` holds delivery, review, testing, simplification, setup,
   and the hooks, and requires core. The installer takes `--package core|all`, and a core-only install

@@ -369,6 +369,21 @@ try {
       text.replace('Shape-work is complete only when', 'Shape-work should usually continue until'))
   }, 'SHAPE_IMPLEMENTATION_ISSUES')
 
+  expectFailure('shape-work accepts a bare pointer as acceptance', (target) => {
+    rewrite(path.join(target, 'plugins/agent-os-dev/skills/shape-work/SKILL.md'), (text) =>
+      text.replace('is not acceptance', 'is enough'))
+  }, 'SHAPE_IMPLEMENTATION_ISSUES')
+
+  expectFailure('init-agent-os repeats the interview on a return run', (target) => {
+    rewrite(path.join(target, 'plugins/agent-os-dev/skills/init-agent-os/SKILL.md'), (text) =>
+      text.replace('Write only the chosen areas', 'Rewrite every area'))
+  }, 'INIT_ONBOARDING_CONTRACT')
+
+  expectFailure('shape-work no longer bounds a unit', (target) => {
+    rewrite(path.join(target, 'plugins/agent-os-dev/skills/shape-work/SKILL.md'), (text) =>
+      text.replace('at most three risks', 'every risk'))
+  }, 'SHAPE_IMPLEMENTATION_ISSUES')
+
   expectFailure('implementation issue identity missing', (target) => {
     rewrite(path.join(target, 'plugins/agent-os-dev/skills/shape-work/references/implementation-issues.md'), (text) =>
       text.replace('Identity is `(origin, unit key)`', 'Use a descriptive issue title'))

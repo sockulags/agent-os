@@ -51,13 +51,19 @@ source: files
 
 ### U1 <title>
 
-Outcome: <the observable change>
-Boundaries: <non-goals and the smallest change surface>
-Acceptance: <the spec examples this unit satisfies, by heading or number>
-Ground truth: <commands or observations>
-Delivery target: <pull request, commit, or local change>
-Open risks: <or none>
+Outcome:
+Boundaries:
+Change surface:
+Acceptance:
+Ground truth:
+Dependencies:
+Evidence and settled decisions:
+Delivery target:
+Open risks:
 ```
+
+What each field must hold is the unit contract in `SKILL.md`. A field value may run over several
+lines, and Acceptance is usually a list.
 
 Rules:
 
@@ -73,7 +79,7 @@ Rules:
   and it is delivered when that pull request merges.
 - `built_on` names the spec revision. A plan built on an older spec revision is stale.
 
-With `source: issues`, each tracker issue carries the same contract:
+With `source: issues`, each tracker issue carries the same fields as headings:
 
 ```text
 ## Implementation issue
@@ -83,6 +89,7 @@ Status: ready | blocked
 
 ## Outcome
 ## Boundaries
+## Change surface
 ## Acceptance
 ## Ground truth
 ## Dependencies

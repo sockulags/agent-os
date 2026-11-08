@@ -13,6 +13,44 @@ its own meaningful boundary; technical layers are not delivery units by themselv
 Read [references/implementation-issues.md](references/implementation-issues.md) before shaping. It
 defines `plan.md`, the unit line format, and the tracker alternative.
 
+## Unit contract
+
+A unit is a self-contained work order, not a design document: someone holding only the unit and the
+repository knows what to change, where, what done means, and how to prove it, and nothing more. The
+spec stays the authority. A unit writes out what it is accountable for and cites its source, and
+when the two disagree the spec wins. `built_on` already marks restated text stale when the spec
+changes.
+
+Every unit carries these fields, in its `plan.md` section or its tracker issue. Write `none` only
+where that is the true answer:
+
+- **Outcome:** the observable change once this unit is delivered, for a person or a caller, in a
+  sentence or two.
+- **Boundaries:** the non-goals a worker would plausibly cross, and what neighboring units own
+  instead.
+- **Change surface:** the modules, interfaces, and existing code to extend, found by reading the
+  repository, in a few lines. It names seams and does not list steps or every file.
+- **Acceptance:** the checks that decide done, written out in the unit as given, when, then or as
+  assertions, one line each, each citing its spec example. Cover the behaviors this unit owns, not
+  every variation. A spec example shared between units states exactly this unit's part. A bare
+  pointer such as "behaviors 1 to 3" is not acceptance.
+- **Ground truth:** the commands to run and the named cases or observations they must show.
+- **Dependencies:** for each dependency, what this unit consumes from it, in a line.
+- **Evidence and settled decisions:** only the decisions a worker could otherwise get wrong, one
+  line each with its link. Do not retell the spec's decisions.
+- **Delivery target:** pull request, commit, or local change.
+- **Open risks:** at most three risks that could change this unit's approach, each with what to do.
+  Routine engineering concerns are not risks.
+
+Match depth to the unit: a one-line change gets one-line fields, and a typical unit fits in about
+4,000 characters. A longer unit is too broad or is retelling the spec or the architecture: cut it,
+or split it for one of the concrete reasons below. Do not write code or implementation steps;
+choices the implementer can reverse stay with the implementer.
+
+Before publishing, read each unit as a worker who has only it and the repository. Whatever they
+would have to guess, or look up in the spec to know what done means, is missing from the unit.
+Whatever would not change what they build or check comes out.
+
 ## Loop
 
 Read the repository, project policy, the intent and spec when they exist, and any linked `plan-work`
@@ -35,10 +73,11 @@ When a solution-changing technical assumption needs observation, apply the
 into a prototype.
 
 Deliver the coherent product shape: outcome, boundaries, acceptance examples, affected seams,
-ground truth, settled decisions, and open risks. When the spec already holds these, link it instead
-of restating it. Then write the delivery units: `intents/<id>/plan.md` by default, or
+ground truth, settled decisions, and open risks. Then write the delivery units to the unit
+contract: `intents/<id>/plan.md` by default, or
 create or reuse its implementation issues on the tracker when the project policy makes the tracker the source
-of truth for units. Link real dependencies and expose the first claimable delivery frontier.
+of truth for units. Link real dependencies and report the first claimable delivery frontier to the
+developer; it is derived from the plan and is not written into it.
 
 Start from one coherent delivery unit. Split only for a concrete reason such as an independently
 usable or assessable result, different ownership, a separate migration, a delivery boundary, or a

@@ -87,6 +87,15 @@ export const PLATFORM_CONFIG = Object.freeze({
   })
 })
 
+// init-agent-os ships in agent-os-dev, so a core-only install has no setup step to point at.
+function setupNextStep(platform, method, command, packages) {
+  if (!packages.includes('dev')) return ''
+  const invoke = platform === 'codex' ? '$init-agent-os' : method === 'plugin' ? '/agent-os-dev:init-agent-os' : '/init-agent-os'
+  return command === 'update'
+    ? 'To see what is new for a repository, run ' + invoke + ' in it.\n'
+    : 'Next: run ' + invoke + ' global once for your personal preferences, then ' + invoke + ' in each repository you work in.\n'
+}
+
 export class CliError extends Error {}
 
 function valueAfter(args, index, flag) {
@@ -891,6 +900,7 @@ function applyDirectInstall(options, plan, {
       ' ' + plan.skillNames.length + ' managed skills in ' + target.root + '...\n')
     replaceManagedSkills(target, plan.sources, plan.skillNames, plan.manifests[index], fsImpl, plan.packages)
     output.write('Done. Start a new ' + config.label + ' session to load the skills.\n')
+    output.write(setupNextStep(target.platform, 'direct', options.command, plan.packages))
   })
 }
 
@@ -978,6 +988,7 @@ function executePlugin(options, { output, execute, exists }) {
       assertSuccess(execute(config.command, pluginArgs), config.command, pluginArgs)
     }
     output.write('Done. ' + config.nextStep + '\n')
+    output.write(setupNextStep(name, 'plugin', options.command, packages))
   }
 }
 

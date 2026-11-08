@@ -1,8 +1,9 @@
 # Repository initialization contract
 
-Repository mode is a facts-first onboarding pass, not a fixed questionnaire. Inspect the
-repository and conversation, then use an internal transient ledger to make omissions visible while
-keeping the written policy small.
+Repository mode inspects before it asks. Facts come from the repository and conversation, and an
+internal transient ledger makes omissions visible while keeping the written policy small. The
+working agreement in `SKILL.md` is the one fixed set of questions, because preferences cannot be
+read from a repository.
 
 ## Inspect and choose ownership
 
@@ -15,8 +16,9 @@ Before writing, inventory every live host-consumed policy surface and give each 
 and precedence. Shared identical content or a clear canonical cross-reference is sufficient; do not
 mandate duplication. Selecting one file while leaving conflicting applicable rules elsewhere is
 forbidden. If ownership or the write target cannot be resolved, ask one ownership question and block
-the write. A clean repository with no policy surface may receive a new `policy.md`; otherwise update
-the resolved canonical surface and preserve unrelated content.
+the write. A clean repository with no policy surface receives a new `policy.md`, with a `CLAUDE.md`
+holding `@policy.md` and an `AGENTS.md` that says to read it, because a host loads only its own file.
+Otherwise update the resolved canonical surface and preserve unrelated content.
 
 ## Completeness ledger
 
@@ -76,7 +78,8 @@ unresolved.
 
 Besides the policy, repository mode writes these files when they are absent, from the templates in
 this skill's `references/` and `templates/` directories, and shows each in the diff. An existing
-file is updated only where it lacks a field the policy now depends on.
+file is updated only where it lacks a field the policy now depends on, and on a return run only when
+an area the developer chose needs it.
 
 - **`.agent-os/guards.json`** from [guards.md](guards.md): protected paths found by inspection
   (migrations, CI workflows, generated or vendored code), the default frozen intent and spec globs,
@@ -95,7 +98,8 @@ Propose, but do not write, a `CODEOWNERS` entry that names who approves `intents
 
 ## Write contract
 
-Write only durable behavior-changing defaults and relevant active sections. Keep the policy sparse:
+Write only durable behavior-changing defaults, a one-line-per-item `## Working agreement`, and
+relevant active sections. Keep the policy sparse:
 do not add a schema, checklist, or interview transcript. Preserve existing unrelated instructions.
 The explicit `init-agent-os` invocation authorizes this setup write, so do not ask for a second
 approval. Show the resulting diff.
