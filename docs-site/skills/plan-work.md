@@ -68,12 +68,15 @@ does not start implementation; existing mandate continues across workflow bounda
 
 Design is part of the plan. When the plan writes a spec, every new or changed screen or state is
 listed in its `## Interface` section per role, or the section says `None`; a small, clear fix needs
-no spec. A plan whose interface changes is ready only when each listed surface has a decision,
-backed by a sketch where one is possible and stated by the developer where none is, or the
-developer has deferred it with an owner. With agent-os-dev installed, plan-work
-continues into [`design-work`](/skills/design-work), which sketches the screens in the medium the
-project chose. When only agent-os-core is installed, no sketch is possible, so plan-work asks the
-developer for each open interface decision and records the stated answer. When the developer
+no spec. A plan whose interface changes is ready when each listed surface is decided,
+left to delivery by the developer's choice, or deferred with an owner.
+
+Sketching is the developer's choice and never a required step. With agent-os-dev installed and a
+surface still open, plan-work recommends [`design-work`](/skills/design-work) with its reason and
+asks once whether to sketch now, after the screen is built, or not at all; a `When` entry in the
+policy's `## Design` section answers that without asking. On "now" it continues into design-work.
+Otherwise it asks the developer for each open interface decision and records the stated answer, or
+records the surface as `Left to delivery:` with what delivery may decide. When the developer
 explicitly hands those decisions to the agent for the run, it decides, records each as
 `Decided: (delegated)` with its reason, and lists them in the review for the developer to overturn.
 

@@ -96,8 +96,10 @@ such an edit while a delivery baseline is active.
 
 The spec's `## Interface` entries and their sketches are part of the contract. A screen whose entry
 is open or deferred is an unresolved product decision: delivery stops before mutating it and returns
-it to [`design-work`](/skills/design-work). Decided screens are built to match their sketch with
-production components, never by promoting the sketch's code.
+it to the developer through [`plan-work`](/skills/plan-work). A screen left to delivery is built
+inside the entry's constraints and the project's established patterns, and the built screen is shown
+with the delivery so the developer can judge it. Decided screens are built to match their sketch
+when one exists, with production components, never by promoting the sketch's code.
 
 When the delivery target includes a pull request, the unit is claimed early: a branch named by the
 project policy, or `<intent-id>-<unit-key>` by default, and a draft pull request opened with the first

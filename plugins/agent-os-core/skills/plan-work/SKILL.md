@@ -53,20 +53,24 @@ does not authorize product implementation, and an issue becoming ready does not 
 
 ## Settle the interface
 
-Design is part of the plan, not something delivery invents. When the plan writes a spec, list every
-new or changed screen or state in its `## Interface` section, per role that sees it, or write
-`None` when nothing a person sees or does changes. A small, clear fix needs no spec; its request is
-its interface decision. A plan whose interface changes is ready only when each listed surface has a
-decision, backed by a sketch where one is possible and stated by the developer where none is, or the
-developer has explicitly deferred it with an owner. An undecided surface is an open question, not a
-detail for delivery to fill in.
+Design is part of the plan, not something delivery invents by accident. When the plan writes a
+spec, list every new or changed screen or state in its `## Interface` section, per role that sees
+it, or write `None` when nothing a person sees or does changes. A small, clear fix needs no spec;
+its request is its interface decision. A plan whose interface changes is ready when each listed
+surface is decided, left to delivery by the developer's choice, or explicitly deferred with an
+owner. An undecided surface is an open question, not a detail for delivery to fill in.
 
-When agent-os-dev is installed, continue into `design-work` to build the sketches in the medium the
-project chose and return here when it is done; the planning request already covers it. When only
-agent-os-core is installed, no sketch is possible: ask the developer for each open interface
-decision and record the answer they state; never guess a layout. A developer who explicitly hands
-those decisions to you for this run is the exception: decide, record each as
-`Decided: (delegated)` with its reason, and list them in the review for the developer to overturn.
+Sketching is the developer's choice and never a required step. They may sketch before any spec
+exists to find out what they are trying to solve, before delivery to settle a screen, after delivery
+to reconsider one that was left to it, or not at all. When agent-os-dev is installed and a surface
+is still open, recommend `design-work` in one line with the reason and ask once whether to sketch
+now, after the screen is built, or not at all; a `When` entry in the policy's `## Design` section
+answers this without asking. On "now", continue into `design-work` and return here when it is done.
+Otherwise ask the developer for each open decision and record the answer they state, or record the
+surface as `Left to delivery:` with what delivery may decide when they say so; never guess a
+layout. Start from sketches the developer already made. A developer who explicitly hands those
+decisions to you for this run is the exception: decide, record each as `Decided: (delegated)` with
+its reason, and list them in the review for the developer to overturn.
 
 ## Write the spec
 

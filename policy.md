@@ -76,7 +76,7 @@ Rules:
 - The development skills `design-work`, `shape-work`, `deliver-work`, `batch-work`, `dispatch-next`,
   `simplify`, and `init-agent-os` are manual too (`/agent-os-dev:deliver-work` for the Claude
   plugin). Existing authority may continue into the workflow a skill's exit contract names, as
-  `plan-work` does into `design-work`. Continuing sequentially
+  `plan-work` does into `design-work` once the developer chose to sketch. Continuing sequentially
   through already shaped units is allowed when the active implementation request covers that bounded
   set; parallel batch execution still requires explicit selection. The automatic `check-work` review
   workflow is also available from supported implicit review requests; its report mode is read-only

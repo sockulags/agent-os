@@ -1,20 +1,34 @@
 ---
 title: design-work
 description: Sketch new and changed screens in the medium the project chose and record the decisions in the spec.
-skill-description: Sketches the user-facing interface of planned work in the medium the project has chosen, such as standalone HTML, a component workshop, or images, inside the real layout with the project's own look, and records the decisions in the spec's Interface section. User-invoked, or continued into from plan-work when a spec changes what a person sees or does. Not for production UI implementation, polish of shipped screens, or work with no user-facing change.
-summary: Sketch new and changed screens in the project's chosen medium before delivery
+skill-description: Sketches the user-facing interface of planned work in the medium the project has chosen, such as standalone HTML, a component workshop, or images, inside the real layout with the project's own look, and records the decisions in the spec's Interface section. User-invoked at any point, or continued into from plan-work when the developer chooses to sketch; no workflow requires it. Not for production UI implementation, polish of shipped screens, or work with no user-facing change.
+summary: Sketch new and changed screens in the project's chosen medium, when the developer wants them
 ---
 
 # design-work
 
 **Bucket:** workflow · **Invocation:** manual · `/design-work` (direct Claude), `/agent-os-dev:design-work` (Claude plugin), or `$design-work` (Codex)
 
-Settles what people will see and do before delivery starts, in the medium the project chose. No
-design tool is needed, and someone without a checkout can judge the sketches from images.
+Sketches what people will see and do, in the medium the project chose, so a decision can be made by
+looking. No design tool is needed, and someone without a checkout can judge the sketches from images.
+
+Sketching is a choice, not a step every change must pass. `plan-work` recommends it when a screen is
+still open and asks once whether to sketch now, after the screen is built, or not at all. People
+sketch at different points for different reasons:
+
+- **Before a spec exists**, to find out what they are trying to solve. Nothing is written to a spec;
+  the skill reports what the sketches settled, and `capture-intent` or `plan-work` starts from that.
+- **Before delivery**, to settle a screen, or because they already know exactly how it should look.
+- **After delivery**, to reconsider a screen that the spec left to delivery.
+- **Not at all.** The spec records the surface as `Left to delivery:` with what delivery may decide,
+  and the built screen is judged in the pull request.
+
+A `When` entry in the policy's `## Design` section (`before delivery`, `after delivery`, `ask`, or
+`never`) sets the project's default, so the question is not asked each time.
 
 ```mermaid
 flowchart TD
-    A[Spec with an Interface section, or plan-work continuing] --> B[Read policy, design system,<br>and nearby views]
+    A[A request, a spec with an Interface section,<br>or plan-work when the developer chose to sketch] --> B[Read policy, design system,<br>and nearby views]
     B --> C[Sketch each surface per role<br>inside the real layout]
     C --> D{Real design choice?}
     D -->|yes| E[Two or three alternatives,<br>one recommendation]

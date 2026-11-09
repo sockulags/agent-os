@@ -37,7 +37,8 @@ status: accepted
 ## Interface
 
 <One bullet for every new or changed screen or state, per role that sees it, in one of these forms:
-- <role>, <screen or state>. Decided: <the decision and its reason>. Rejected: <alternatives>. Sketch: <location>.
+- <role>, <screen or state>. Decided: <the decision and its reason>. Rejected: <alternatives>. Sketch: <location, when one was made>.
+- <role>, <screen or state>. Left to delivery: <what delivery may decide, and any constraint it must keep>.
 - <role>, <screen or state>. Deferred to <who> by <when>: <what is undecided>.
 - <role>, <screen or state>. Open: <the question>.
 Write `None` when nothing a person sees or does changes. Never delete.>

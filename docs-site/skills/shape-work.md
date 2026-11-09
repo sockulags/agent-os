@@ -32,8 +32,9 @@ recommendation and its consequence.
 Shape-work does not settle the interface; the spec's `## Interface` section does. Units that build
 those screens link it. When the section leaves a decision open, is missing for work that changes
 what a person sees, or a unit would change a screen it does not cover, shape-work returns that
-question to [`design-work`](/skills/design-work) and keeps the affected units blocked until it is
-settled. Use a diagram when it makes dependencies or boundaries easier to judge.
+question to [`plan-work`](/skills/plan-work), where the developer decides it, sketches it with
+[`design-work`](/skills/design-work), or leaves it to delivery, and keeps the affected units blocked
+until it is settled. A surface left to delivery blocks nothing. Use a diagram when it makes dependencies or boundaries easier to judge.
 
 Deliver the coherent product shape: outcome, boundaries, acceptance examples, affected seams,
 ground truth, settled decisions, and open risks. Start from one coherent delivery unit and split
