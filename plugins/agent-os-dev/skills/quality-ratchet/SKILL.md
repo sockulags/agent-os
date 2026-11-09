@@ -84,9 +84,10 @@ that file is absent:
 
 - **SessionStart** names the intent behind the current branch, its spec revision, and any spec or
   plan whose `built_on` revision is stale.
-- **PreToolUse** blocks edits to paths under `protectedPaths`, edits to accepted intents and specs
-  under `frozen` while a delivery baseline is active, and edits to a test locked by `lock-test`. With
-  `secretScan` on, it also blocks a `git commit` whose staged diff contains a likely secret.
+- **PreToolUse** asks before an edit to a path under `protectedPaths` (Codex has no ask decision
+  and blocks it), and blocks edits to accepted intents, specs, and plans under `frozen` while a
+  delivery baseline is active and edits to a test locked by `lock-test`. With `secretScan` on, it
+  also blocks a `git commit` whose staged diff contains a likely secret.
 
 The delivery Stop gate is this skill's own Stop hook. Declare the ground truth as a `required`
 check in `.agent-os/quality.json`: `check` then runs it after the developer has trusted the

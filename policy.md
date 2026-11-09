@@ -39,9 +39,9 @@ Rules:
 - Explanations belong in prose; tables only for short enumerable facts.
 - Calibrate tone to the topic: playfulness is fine, neutral and factual the moment the subject is serious. When in doubt, it is serious.
 - Orchestration is opt-in: manual agent-os skills such as `capture-intent`, `plan-work`,
-  `explain-work`, `record-lesson`, and `list-skills` run only when invoked through the name the host
-  exposes (`/plan-work` for direct Claude skills, `/agent-os-core:plan-work` for the Claude plugin,
-  or `$plan-work` for Codex). Never self-invoke them or any other manual agent-os skill. Planning
+  `explain-work`, and `list-skills` run only when invoked through the name the host exposes
+  (`/plan-work` for direct Claude skills, `/agent-os-core:plan-work` for the Claude plugin, or
+  `$plan-work` for Codex). Never self-invoke them or any other manual agent-os skill. Planning
   depth is chosen internally by plan-work, and its use does not add a general summary approval gate.
   Planning alone never starts implementation.
 - Always recommend one concrete next action when planning or a delivery unit ends, with the reason
