@@ -64,8 +64,10 @@ to `plan-work` for reconsideration and report which revision changed.
 Shape-work does not settle the interface; the spec's `## Interface` section does. Link it from the
 units that build those screens instead of restating it. When that section lists a decision as
 open, is missing while the work changes what a person sees or does, or a unit would change a screen
-the section does not cover, return that interface question to `design-work` and keep the affected
-units blocked until it is settled. Units the open question does not touch can still be shaped. Use
+the section does not cover, return that interface question to `plan-work`, where the developer
+decides it, sketches it with `design-work`, or leaves it to delivery, and keep the affected units
+blocked until it is settled. A surface left to delivery blocks nothing: name in its unit what
+delivery may decide. Units the open question does not touch can still be shaped. Use
 a diagram when it makes dependencies or boundaries materially easier to judge.
 
 When a solution-changing technical assumption needs observation, apply the

@@ -642,18 +642,22 @@ export function validate(root = path.resolve(scriptDir, '..')) {
     'Pending tracker updates',
     '## Settle the interface',
     'its `## Interface` section',
-    'continue into `design-work`'
+    'continue into `design-work`',
+    'never a required step',
+    'Left to delivery:'
   ], 'PLAN_WORK_CONTRACT')
 
-  // Design is a planned step: the spec always answers it, design-work owns the sketches, and
-  // shape-work hands open interface questions back instead of sketching them itself.
+  // The spec always answers the interface. Sketching is the developer's choice: design-work owns
+  // the sketches when they want them, and shape-work hands open questions back instead of sketching.
   checkContains(diagnostics, path.join(root, 'plugins/agent-os-core/skills/plan-work/references/spec-template.md'), [
     '## Interface',
     'Write `None` when nothing a person sees or does',
     'Deferred to <who> by <when>:',
+    'Left to delivery:',
     'Never delete.'
   ], 'DESIGN_STEP_CONTRACT')
   checkContains(diagnostics, path.join(root, 'plugins/agent-os-dev/skills/design-work/SKILL.md'), [
+    'requires this skill.',
     'this skill is not tied to any tool',
     'When the policy sets no medium, ask once',
     'Do not add Storybook or another dependency on your own',
@@ -676,7 +680,8 @@ export function validate(root = path.resolve(scriptDir, '..')) {
   ], 'DESIGN_STEP_CONTRACT')
   checkContains(diagnostics, path.join(root, 'plugins/agent-os-dev/skills/shape-work/SKILL.md'), [
     'Shape-work does not settle the interface',
-    'return that interface question to `design-work`'
+    'return that interface question to `plan-work`',
+    'A surface left to delivery blocks nothing'
   ], 'DESIGN_STEP_CONTRACT')
 
   checkContains(diagnostics, path.join(root, 'plugins/agent-os-core/skills/plan-work/references/map.md'), [

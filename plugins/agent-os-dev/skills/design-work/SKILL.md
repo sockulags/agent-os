@@ -1,14 +1,17 @@
 ---
 name: design-work
-description: Sketches the user-facing interface of planned work in the medium the project has chosen, such as standalone HTML, a component workshop, or images, inside the real layout with the project's own look, and records the decisions in the spec's Interface section. User-invoked, or continued into from plan-work when a spec changes what a person sees or does. Not for production UI implementation, polish of shipped screens, or work with no user-facing change.
+description: Sketches the user-facing interface of planned work in the medium the project has chosen, such as standalone HTML, a component workshop, or images, inside the real layout with the project's own look, and records the decisions in the spec's Interface section. User-invoked at any point, or continued into from plan-work when the developer chooses to sketch; no workflow requires it. Not for production UI implementation, polish of shipped screens, or work with no user-facing change.
 disable-model-invocation: true
 ---
 
 # Design work
 
-Settle what people will see and do before delivery starts. The result is a set of sketches in the
-medium the project chose, and a spec whose `## Interface` section says, for every new or changed
-screen and state, what was decided and why. A product owner or account manager should be able to
+Sketch what people will see and do, so the person can decide it by looking. When is their choice:
+before a spec exists, to find out what they are trying to solve; before delivery, to settle a
+screen; after delivery, to reconsider a screen that was left to it; or not at all. No workflow
+requires this skill. The result is a set of sketches in the medium the project chose and, when a
+spec exists, an `## Interface` section that says for each sketched screen and state what was decided
+and why. A product owner or account manager should be able to
 judge the sketches without a design tool or a checkout; when the person deciding has no checkout,
 give them images.
 
@@ -16,7 +19,8 @@ give them images.
 
 Read the project policy, the intent and spec when they exist, and the request. The policy's
 `## Design` section names how sketches are made (`Sketch with`), where they live (`Sketches live`),
-and the widths that matter. Then inspect the tokens, the shared components, and the nearest existing
+the widths that matter, and optionally when the project sketches (`When`: `before delivery`,
+`after delivery`, `ask`, or `never`). Then inspect the tokens, the shared components, and the nearest existing
 views. Resolve these facts yourself; ask the person only about what the product should be.
 
 ## Medium
@@ -68,7 +72,10 @@ Start from the spec's `## Interface` section: the surfaces it lists per role and
 marks open. A surface that is already decided is sketched only when the decision is about to
 change. When the section says `None`, report that there is nothing to sketch and write no files.
 When the section is missing or empty, derive the surfaces from the spec's behavior examples and
-confirm the list with the person before sketching.
+confirm the list with the person before sketching. With no spec yet, sketch from the request and
+write no spec: report what the sketches settled, so `capture-intent` or `plan-work` can start from
+them. A surface marked `Left to delivery:` is sketched only when the person asks, and its decision
+then replaces that entry.
 
 - **Real context.** Render each screen inside the layout the person will actually see, such as the
   application shell, navigation, and page frame, not as a lone component on a blank canvas.
@@ -117,7 +124,8 @@ nothing.
 Write the outcome into the spec's `## Interface` section, one bullet per surface: the role and the
 screen or state, then `Decided:` with the decision, its reason, the alternatives rejected, and the
 sketch's location; `Deferred to <who> by <when>:` with what is undecided; or `Open:` with the question
-while it waits on the person. The text must stand on its own: a reader who can no longer open the
+while it waits on the person. Leave a `Left to delivery:` entry the person did not ask to sketch
+as it is. The text must stand on its own: a reader who can no longer open the
 sketch still knows what was decided.
 
 A sketch's location must be reachable by everyone who reads the spec: a repository path, a pull

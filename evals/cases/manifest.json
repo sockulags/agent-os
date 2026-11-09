@@ -54,7 +54,11 @@
         "design-work.md#DW-P14 Save the medium",
         "design-work.md#DW-P15 Invented wording",
         "design-work.md#DW-P16 Reachable location",
-        "design-work.md#DW-P17 Rendered images"
+        "design-work.md#DW-P17 Rendered images",
+        "design-work.md#DW-P18 Person delegates",
+        "design-work.md#DW-P19 Before a spec",
+        "design-work.md#DW-P20 Left to delivery",
+        "design-work.md#DW-P21 After delivery"
       ],
       "negative": [
         "design-work.md#DW-N1 Build the screen",
@@ -82,7 +86,10 @@
         "plan-work.md#PW-P16",
         "plan-work.md#PW-P17",
         "plan-work.md#PW-P18",
-        "plan-work.md#PW-P19"
+        "plan-work.md#PW-P19",
+        "plan-work.md#PW-P20",
+        "plan-work.md#PW-P21",
+        "plan-work.md#PW-P22"
       ],
       "negative": [
         "plan-work.md#PW-N1",
@@ -98,7 +105,8 @@
         "deliver-work-sequence.md#Positive 4 \u2014 risk-focused review",
         "deliver-work-sequence.md#Positive 6 \u2014 no review mechanism",
         "deliver-work-sequence.md#Positive 7 \u2014 ready implementation issue",
-        "deliver-work-sequence.md#Positive 8 \u2014 authorized sequence"
+        "deliver-work-sequence.md#Positive 8 \u2014 authorized sequence",
+        "deliver-work-sequence.md#Positive 9 \u2014 left to delivery"
       ],
       "negative": [
         "deliver-work-sequence.md#Negative 1 \u2014 planning only",

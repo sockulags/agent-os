@@ -51,9 +51,9 @@ These are the preferences a repository records, under `## Working agreement` in 
 - the default path for a new feature: deliver directly, spec first, or intent, spec, and plan;
 - where delivery units live: `plan.md` or a tracker;
 - the language of commits, docs, and issues;
-- with the frontend module active, whether interfaces are sketched before they are built and, if
-  so, in which medium and where the sketches live, recommending a workshop the repository already
-  has and `html` otherwise.
+- with the frontend module active, when interfaces are sketched (before delivery, after it, asked
+  each time, or never) and, unless never, in which medium and where the sketches live,
+  recommending asking each time, a workshop the repository already has, and `html` otherwise.
 
 Ask them in at most two rounds of at most four questions, through the host's structured question
 tool when it has one. Each question leads with its recommended answer and states the consequence of

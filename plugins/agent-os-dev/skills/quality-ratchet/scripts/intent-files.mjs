@@ -194,7 +194,7 @@ function checkInterface(folder, file, root, warn) {
     if (/\bDeferred to\b/.test(bullet)) {
       if (!/\bDeferred to\s+\S.*?\s+by\s+\S/.test(bullet)) warn(`interface surface "${label}" is deferred without an owner and a date`)
     } else if (/\bOpen:/.test(bullet)) warn(`interface surface "${label}" is still open`)
-    else if (!/\bDecided:/.test(bullet)) warn(`interface surface "${label}" has no Decided:, Deferred to, or Open:`)
+    else if (!/\b(?:Decided|Left to delivery):/.test(bullet)) warn(`interface surface "${label}" has no Decided:, Left to delivery:, Deferred to, or Open:`)
   }
   const inside = (candidate) => !path.relative(root, candidate).startsWith('..')
   for (const reference of sketchFiles(section)) {

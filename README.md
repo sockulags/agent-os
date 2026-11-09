@@ -34,7 +34,7 @@ small fix needs none of them. See the
 
 | Skill | Bucket | Invocation | Purpose |
 |---|---|---|---|
-| `design-work` | workflow | manual | Sketch new and changed screens in the project's chosen medium before delivery |
+| `design-work` | workflow | manual | Sketch new and changed screens in the project's chosen medium, when the developer wants them |
 | `shape-work` | workflow | manual | Shape a spec into delivery units in plan.md or tracker issues |
 | `deliver-work` | workflow | manual | Deliver one unit against its contract and claim it with a draft pull request |
 | `batch-work` | workflow | manual | Run isolated ready units and verify the integrated result |

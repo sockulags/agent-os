@@ -157,9 +157,14 @@ try {
       (text) => text.replace('never a path that exists only on this machine', 'or any local path'))
   }, 'DESIGN_STEP_CONTRACT')
 
+  expectFailure('plan-work makes sketching a required step again', (target) => {
+    rewrite(path.join(target, 'plugins/agent-os-core/skills/plan-work/SKILL.md'),
+      (text) => text.replace('never a required step', 'always the next step'))
+  }, 'PLAN_WORK_CONTRACT')
+
   expectFailure('shape-work sketches interfaces itself again', (target) => {
     rewrite(path.join(target, 'plugins/agent-os-dev/skills/shape-work/SKILL.md'),
-      (text) => text.replace('return that interface question to `design-work`', 'sketch the interface yourself'))
+      (text) => text.replace('return that interface question to `plan-work`', 'sketch the interface yourself'))
   }, 'DESIGN_STEP_CONTRACT')
 
   expectFailure('the dev plugin policy copy drifts from policy.md', (target) => {

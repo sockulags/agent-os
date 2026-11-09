@@ -61,7 +61,8 @@ omit it entirely when inactive:
 - frontend/design/rendered QA, which records where the design system lives and a `## Design`
   section for `design-work`: `Sketch with` (`html`, a component workshop and the command that starts
   it, `image`, or anything else the project describes), `Sketches live` (a path and naming, or
-  `not in the repository`), and `Widths`;
+  `not in the repository`), `Widths`, and `When` (`before delivery`, `after delivery`, `ask`, or
+  `never`; `ask` when the developer states no default);
 - package, release, or documentation publication;
 - CI or deployment;
 - authentication, security, billing, or external writes;

@@ -41,9 +41,12 @@ cites goes back the same way, because the spec wins. Delivery never edits an acc
 spec, or plan entry; a needed change goes back through those workflows.
 
 An open or deferred interface surface is also an unresolved product decision. When the unit builds
-a screen whose `## Interface` entry is not decided, stop before mutating that screen and return it
-to `design-work`. Build decided screens to match their sketch, using production components rather
-than the sketch's code.
+a screen whose `## Interface` entry is open or deferred, stop before mutating that screen and return
+it to the developer through `plan-work`. A screen left to delivery is yours to build inside the
+entry's constraints and the project's established patterns; show the built screen with the
+delivery, as an image when the developer has no checkout, so they can judge it. Build decided
+screens to match their sketch when one exists, using production components rather than the sketch's
+code.
 
 ## Confirm one delivery unit
 

@@ -84,6 +84,11 @@ test('a spec with decided surfaces and reachable sketches has no interface warni
   assert.deepEqual(interfaceWarnings(face, { 'intents/2026-11-csv-export/sketches/list.html': 'x' }), [])
 })
 
+test('a surface left to delivery needs no sketch and no warning', () => {
+  const face = '## Interface\n\n- Admin, settings. Left to delivery: the layout, inside the existing settings page.\n\n## Boundaries\n'
+  assert.deepEqual(interfaceWarnings(face), [])
+})
+
 test('a missing or empty interface section is a warning, and None is enough', () => {
   assert.deepEqual(interfaceWarnings(''), ['needs a "## Interface" section; write None when nothing a person sees or does changes'])
   assert.deepEqual(interfaceWarnings('## Interface\n\n## Boundaries\n'), ['"## Interface" is empty; list each surface or write None'])
@@ -95,7 +100,7 @@ test('a surface without a decision or an owner is a warning', () => {
   assert.deepEqual(warnings, [
     'interface surface "Admin, settings. Open: where it goes." is still open',
     'interface surface "Admin, list. Deferred to Mira: order." is deferred without an owner and a date',
-    'interface surface "Admin, page. Looks nice." has no Decided:, Deferred to, or Open:'
+    'interface surface "Admin, page. Looks nice." has no Decided:, Left to delivery:, Deferred to, or Open:'
   ])
 })
 
