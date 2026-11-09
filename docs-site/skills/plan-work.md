@@ -73,7 +73,9 @@ backed by a sketch where one is possible and stated by the developer where none 
 developer has deferred it with an owner. With agent-os-dev installed, plan-work
 continues into [`design-work`](/skills/design-work), which sketches the screens in the medium the
 project chose. When only agent-os-core is installed, no sketch is possible, so plan-work asks the
-developer for each open interface decision and records the stated answer.
+developer for each open interface decision and records the stated answer. When the developer
+explicitly hands those decisions to the agent for the run, it decides, records each as
+`Decided: (delegated)` with its reason, and lists them in the review for the developer to overturn.
 
 ## Decision-map mode
 

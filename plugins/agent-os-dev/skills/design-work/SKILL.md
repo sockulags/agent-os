@@ -105,6 +105,13 @@ When the person cannot answer now, commit the spec on a branch, with the sketche
 committed, open a draft pull request that lists each open decision with the address or image of its
 sketch, and wait. Never record your own recommendation as their decision.
 
+The one exception is a person who explicitly hands the open decisions to you for this run, for
+example so that work can continue while they are away. Then still build each sketch, choose your
+recommendation, and record it as `Decided: (delegated)` with the reason and the rejected
+alternatives. List every delegated decision in the pull request so the person can overturn it
+there; merging the review is still their acceptance. A person who is only unavailable has delegated
+nothing.
+
 ## Record
 
 Write the outcome into the spec's `## Interface` section, one bullet per surface: the role and the

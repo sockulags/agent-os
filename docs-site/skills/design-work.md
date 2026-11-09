@@ -83,6 +83,12 @@ When the person cannot answer now, the skill commits the spec, with the sketches
 committed, opens a draft pull request that lists each open decision with the address or image of its
 sketch, and waits. It never records its own recommendation as their decision.
 
+The exception is a person who explicitly hands the open decisions to the agent for the run, for
+example so that work can continue while they are away. The skill then still builds each sketch,
+chooses its recommendation, records it as `Decided: (delegated)` with the reason and the rejected
+alternatives, and lists every delegated decision in the pull request, where the person can overturn
+it. Merging the review is still their acceptance. Being unavailable delegates nothing.
+
 Sketches that can be committed go with the spec. [`deliver-work`](/skills/deliver-work) builds decided
 screens to match them and stops at an open or deferred one; a sketch never becomes production code.
 After a spec's review has merged, every Interface edit is a reconsideration with a new `rev` and a
