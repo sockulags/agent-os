@@ -127,6 +127,8 @@ A unit is claimed by a draft pull request whose body carries:
 Intent-Unit: 2026-11-csv-export/U2
 ```
 
+The line stands on a line of its own, so a tool can find it without reading the rest of the body.
+
 A unit with an open pull request carrying its line is claimed, a unit whose pull request merged is
 delivered, and a unit whose dependencies are delivered and whose line has no `blocked:` note is
 ready. Status is read from pull requests, so parallel deliveries never conflict in `plan.md`.

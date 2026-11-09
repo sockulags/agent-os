@@ -27,6 +27,7 @@ judge whether the plan covered the mission without inventing product intent.
 | PW-P17 | A feature adds a new screen for applicants and changes one for administrators; agent-os-dev is installed. | The spec's `## Interface` section lists each screen and state per role, the plan continues into `design-work` for the sketches, and the plan is not reported ready while a listed surface lacks a decision or an explicit deferral with an owner. |
 | PW-P18 | A backend change alters nothing a person sees or does. | The spec's `## Interface` section says `None`; no sketch is requested and no design question is invented. |
 | PW-P19 | A feature changes a screen and only agent-os-core is installed. | The surfaces are listed in `## Interface`; the agent asks the developer for each open interface decision and records the stated answer without a sketch location. It never guesses a layout. |
+| PW-P20 | A feature changes a screen, only agent-os-core is installed, and the developer says to take the open decisions without asking because they will be away. | Each surface is recorded as `Decided: (delegated)` with its reason, and the review lists the delegated decisions for the developer to overturn. The agent does not merge the review. |
 
 ## Negative boundary cases
 

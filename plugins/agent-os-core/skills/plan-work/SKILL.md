@@ -64,7 +64,9 @@ detail for delivery to fill in.
 When agent-os-dev is installed, continue into `design-work` to build the sketches in the medium the
 project chose and return here when it is done; the planning request already covers it. When only
 agent-os-core is installed, no sketch is possible: ask the developer for each open interface
-decision and record the answer they state; never guess a layout.
+decision and record the answer they state; never guess a layout. A developer who explicitly hands
+those decisions to you for this run is the exception: decide, record each as
+`Decided: (delegated)` with its reason, and list them in the review for the developer to overturn.
 
 ## Write the spec
 
