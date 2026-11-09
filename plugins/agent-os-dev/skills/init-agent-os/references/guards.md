@@ -9,15 +9,16 @@ nothing.
 {
   "schema": 1,
   "protectedPaths": ["migrations/**", ".github/workflows/**"],
-  "frozen": ["intents/*/intent.md", "intents/*/spec.md"],
+  "frozen": ["intents/*/intent.md", "intents/*/spec.md", "intents/*/plan.md"],
   "secretScan": true
 }
 ```
 
-- `protectedPaths`: globs relative to the repository root. An agent edit to a matching path is
-  blocked with a message asking the agent to get the developer's explicit go-ahead. `*` matches within
-  one path segment and `**` across segments.
-- `frozen`: globs for accepted intent and spec files. While a quality-ratchet delivery baseline is
+- `protectedPaths`: globs relative to the repository root. An agent edit to a matching path asks
+  the developer in Claude Code. Codex has no ask decision, so there the edit is blocked with a
+  message asking the agent to get the developer's explicit go-ahead. `*` matches within one path
+  segment and `**` across segments.
+- `frozen`: globs for accepted intent, spec, and plan files. While a quality-ratchet delivery baseline is
   active in the session, an edit to a matching file whose frontmatter `status` is `accepted` is
   blocked, because delivery never changes the decisions it delivers. Planning sessions, which have no
   delivery baseline, can still change them through a review.
