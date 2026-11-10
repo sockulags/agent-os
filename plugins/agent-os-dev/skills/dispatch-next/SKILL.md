@@ -25,7 +25,8 @@ dependent work at reasonable effort. When observation would settle an open decis
 bounded experiment through plan-work or shape-work; a ready coding task need not always win.
 
 Route broad or mission-level planning to `plan-work`, a bounded open delivery choice to
-`shape-work`, and one selected implementation-ready issue to `deliver-work`. Route to `batch-work`
+`shape-work`, and one selected implementation-ready issue to `deliver-work`, which also takes an
+intent the developer asks to finish. Route to `batch-work`
 only when the developer
 explicitly asks to execute an existing ready issue graph as an integrated batch; issue count alone
 does not choose the workflow.

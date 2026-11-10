@@ -66,7 +66,7 @@ Always on; no invocation.
 |---|---|---|---|
 | [`design-work`](/skills/design-work) | workflow | manual | Sketch new and changed screens in the project's chosen medium, when the developer wants them |
 | [`shape-work`](/skills/shape-work) | workflow | manual | Shape a spec into delivery units in plan.md or tracker issues |
-| [`deliver-work`](/skills/deliver-work) | workflow | manual | Deliver one unit against its contract and claim it with a draft pull request |
+| [`deliver-work`](/skills/deliver-work) | workflow | manual | Deliver one unit, or a whole intent unit by unit, against its contract |
 | [`batch-work`](/skills/batch-work) | workflow | manual | Run isolated ready units and verify the integrated result |
 | [`dispatch-next`](/skills/dispatch-next) | workflow | manual | Pick or dispatch one action according to the request |
 | [`simplify`](/skills/simplify) | workflow | manual | Review, audit, or remove unnecessary code and solution layers |

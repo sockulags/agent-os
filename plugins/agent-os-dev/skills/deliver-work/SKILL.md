@@ -1,6 +1,6 @@
 ---
 name: deliver-work
-description: Delivers one decision-ready change against explicit boundaries and ground truth. User-invoked for implementation, including as a batch worker. Not for exploration or specification-only work.
+description: Delivers one decision-ready change, or every unit of a finished intent in sequence, against explicit boundaries and ground truth. User-invoked for implementation, including as a batch worker. Not for exploration or specification-only work.
 disable-model-invocation: true
 ---
 
@@ -54,7 +54,8 @@ Before editing each unit, verify that it is one coherent implementation issue or
 bounded direct request: one observable outcome, one reviewable change boundary, explicit ground
 truth, and satisfied dependencies. If an unshaped target contains several separately closable outcomes,
 different delivery targets, or unresolved product choices, stop before mutation and return it for
-shaping into implementation-ready issues. Do not choose `batch-work`; execution strategy belongs to
+shaping into implementation-ready issues, unless the request is to finish a whole intent, which
+covers that shaping. Do not choose `batch-work`; execution strategy belongs to
 the developer.
 
 Skip a unit that already has an open pull request carrying its `Intent-Unit` line: someone else has
@@ -70,6 +71,33 @@ The same rule applies when the request names a planned feature or epic: delivery
 authorized result, not merely whichever child happens to be green. When the request covers an epic,
 run its aggregate verification and report the final verification owner. Child success never closes
 the parent or grants authority over its siblings.
+
+## Finish a whole intent
+
+When the request is to finish an intent, the target is every unit of its plan, and the request
+covers that bounded set and the shaping it needs. Nothing else changes: each unit still goes
+through the work loop and the review gate.
+
+- **Before anything.** The intent and spec must be accepted and current, and no `## Interface`
+  surface may be `Open:` or `Deferred to`. Otherwise stop with the file and the question. A surface
+  left to delivery does not stop the run.
+- **Plan.** With no plan, or a plan built on an older spec revision, shape the units with
+  `shape-work` first and commit the plan with the work; it needs no separate review. A unit that
+  shaping must block on a product choice stays blocked while the others proceed.
+- **Units.** Deliver ready units one at a time in dependency order, as the sequence rule above
+  describes. A unit delivered earlier in this run counts as delivered for the units that depend on
+  it. Running units in parallel is `batch-work` and stays the developer's explicit choice.
+- **One candidate.** Unless the project policy asks for a pull request per unit, work on one branch
+  named `<intent-id>` and one draft pull request. Each unit's commits carry its `Intent-Unit` line,
+  and the pull request body carries one line per delivered unit.
+- **Finish.** After the last unit, run the spec's ground truth and any epic's aggregate
+  verification on the whole result, apply the review gate to the complete candidate, set the
+  intent's and plan's `status: done`, and mark the pull request ready. Never merge unless the
+  request or project policy includes it.
+- **Stop and resume.** Stop when what remains is blocked, when ground truth fails and the fix is
+  outside the unit, or when a finding needs a product decision. Report the units delivered, the
+  units left, and the exact blocker. A later run reads what is delivered from the `Intent-Unit`
+  lines on the branch and the pull request, never from notes.
 
 ## Work loop
 

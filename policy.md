@@ -78,7 +78,7 @@ Rules:
   plugin). Existing authority may continue into the workflow a skill's exit contract names, as
   `plan-work` does into `design-work` once the developer chose to sketch. Continuing sequentially
   through already shaped units is allowed when the active implementation request covers that bounded
-  set; parallel batch execution still requires explicit selection. The automatic `check-work` review
+  set, and a request to finish an intent covers shaping its plan and delivering every unit; parallel batch execution still requires explicit selection. The automatic `check-work` review
   workflow is also available from supported implicit review requests; its report mode is read-only
   and its fix mode requires explicit authority.
 - `plan.md` beside a spec lists delivery units and dependencies only. Delivery status is never

@@ -157,6 +157,11 @@ try {
       (text) => text.replace('never a path that exists only on this machine', 'or any local path'))
   }, 'DESIGN_STEP_CONTRACT')
 
+  expectFailure('finishing an intent may merge on its own', (target) => {
+    rewrite(path.join(target, 'plugins/agent-os-dev/skills/deliver-work/SKILL.md'),
+      (text) => text.replace('Never merge unless the', 'Merge when the'))
+  }, 'DELIVER_UNIT_CONTRACT')
+
   expectFailure('plan-work makes sketching a required step again', (target) => {
     rewrite(path.join(target, 'plugins/agent-os-core/skills/plan-work/SKILL.md'),
       (text) => text.replace('never a required step', 'always the next step'))

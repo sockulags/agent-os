@@ -1,8 +1,8 @@
 ---
 title: deliver-work
 description: Implement one decision-ready change against explicit boundaries and ground truth.
-skill-description: Delivers one decision-ready change against explicit boundaries and ground truth. User-invoked for implementation, including as a batch worker. Not for exploration or specification-only work.
-summary: Deliver one unit against its contract and claim it with a draft pull request
+skill-description: Delivers one decision-ready change, or every unit of a finished intent in sequence, against explicit boundaries and ground truth. User-invoked for implementation, including as a batch worker. Not for exploration or specification-only work.
+summary: Deliver one unit, or a whole intent unit by unit, against its contract
 ---
 
 # deliver-work
@@ -85,6 +85,37 @@ self-review is not presented as independent review.
 
 Ask only when an unresolved product decision would materially change the outcome. Reversible
 implementation choices belong to the implementer.
+
+## Finish a whole intent
+
+Once an intent and its spec are accepted, and the screens are decided or left to delivery, one
+request can carry the intent to the end: "finish intent 2026-11-csv-export".
+
+```mermaid
+flowchart TD
+    A[Intent and spec accepted and current,<br>no open or deferred screen] --> B{Plan exists<br>and is current?}
+    B -->|no| C[shape-work writes the plan]
+    B -->|yes| D[Next ready unit]
+    C --> D
+    D --> E[Work loop and review gate]
+    E --> F{Units left?}
+    F -->|ready| D
+    F -->|only blocked| G([Stop: units left and the blocker])
+    F -->|none| H[Ground truth on the whole result,<br>review of the complete candidate]
+    H --> I([Intent and plan done,<br>pull request ready for review])
+```
+
+The request covers shaping the plan and delivering every unit, one at a time in dependency order;
+the plan needs no separate review. A unit delivered earlier in the run counts as delivered for the
+units that depend on it, so nothing waits for a merge in between. By default the whole intent is one
+branch and one draft pull request whose body carries an `Intent-Unit` line per delivered unit; a
+project policy can ask for a pull request per unit instead.
+
+The run stops when what remains is blocked, when ground truth fails and the fix lies outside the
+unit, or when a finding needs a product decision. It reports what is delivered, what is left, and
+the blocker. Asking again later resumes from the `Intent-Unit` lines on the branch and the pull
+request. It never merges unless the request or the project policy says so, and running units in
+parallel remains [`batch-work`](/skills/batch-work), chosen explicitly.
 
 ## Intent units and claims
 
