@@ -36,7 +36,7 @@ small fix needs none of them. See the
 |---|---|---|---|
 | `design-work` | workflow | manual | Sketch new and changed screens in the project's chosen medium, when the developer wants them |
 | `shape-work` | workflow | manual | Shape a spec into delivery units in plan.md or tracker issues |
-| `deliver-work` | workflow | manual | Deliver one unit against its contract and claim it with a draft pull request |
+| `deliver-work` | workflow | manual | Deliver one unit, or a whole intent unit by unit, against its contract |
 | `batch-work` | workflow | manual | Run isolated ready units and verify the integrated result |
 | `dispatch-next` | workflow | manual | Pick or dispatch one action according to the request |
 | `simplify` | workflow | manual | Review, audit, or remove unnecessary code and solution layers |

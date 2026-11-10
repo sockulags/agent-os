@@ -780,7 +780,12 @@ export function validate(root = path.resolve(scriptDir, '..')) {
     '## Confirm one delivery unit',
     'one coherent implementation issue',
     'stop before mutation and return it for',
-    'Do not choose `batch-work`'
+    'Do not choose `batch-work`',
+    '## Finish a whole intent',
+    'surface may be `Open:` or `Deferred to`',
+    'it needs no separate review',
+    'stays the developer\'s explicit choice',
+    'Never merge unless the'
   ], 'DELIVER_UNIT_CONTRACT')
   checkContains(diagnostics, path.join(root, 'plugins/agent-os-dev/skills/dispatch-next/SKILL.md'), [
     'one selected',

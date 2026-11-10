@@ -128,6 +128,8 @@ Intent-Unit: 2026-11-csv-export/U2
 ```
 
 The line stands on a line of its own, so a tool can find it without reading the rest of the body.
+A pull request that delivers several units, such as one that finishes a whole intent, carries one
+line per unit.
 
 A unit with an open pull request carrying its line is claimed, a unit whose pull request merged is
 delivered, and a unit whose dependencies are delivered and whose line has no `blocked:` note is

@@ -106,14 +106,17 @@
         "deliver-work-sequence.md#Positive 6 \u2014 no review mechanism",
         "deliver-work-sequence.md#Positive 7 \u2014 ready implementation issue",
         "deliver-work-sequence.md#Positive 8 \u2014 authorized sequence",
-        "deliver-work-sequence.md#Positive 9 \u2014 left to delivery"
+        "deliver-work-sequence.md#Positive 9 \u2014 left to delivery",
+        "deliver-work-sequence.md#Positive 10 \u2014 finish an intent",
+        "deliver-work-sequence.md#Positive 11 \u2014 resume an intent"
       ],
       "negative": [
         "deliver-work-sequence.md#Negative 1 \u2014 planning only",
         "deliver-work-sequence.md#Negative 2 \u2014 external boundary",
         "deliver-work-sequence.md#Negative 5 \u2014 undecomposed target",
         "deliver-work-sequence.md#Negative 6 \u2014 epic membership",
-        "deliver-work-sequence.md#Negative 7 \u2014 open interface"
+        "deliver-work-sequence.md#Negative 7 \u2014 open interface",
+        "deliver-work-sequence.md#Negative 8 \u2014 intent with an open screen"
       ]
     },
     "explain-work": {
