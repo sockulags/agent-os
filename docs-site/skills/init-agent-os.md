@@ -20,6 +20,8 @@ what happens when a step of a route ends (`ask` whether to start the next step, 
 the planning steps and ask before delivery, or only `recommend`; `ask` is recommended), and anything
 it should always or never do. On a later run it shows them and asks what to change.
 They are style only, yield to project policy, and never grant merge, deploy, or external authority.
+The one exception is `Next step: continue`, which lets planning go on into `shape-work`, so new issues
+are created without a question first.
 
 Repository mode separates facts from preferences. A first run closes with how the agent will work
 in the repository and one recommended first action, after asking the working agreement in at most

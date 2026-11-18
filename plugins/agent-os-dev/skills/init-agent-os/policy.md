@@ -48,9 +48,9 @@ Rules:
   `.agent-os/workflow.md` when the project policy points to one, else from a default path the policy
   states, else from the default routes; with agent-os-core alone, name the next installed step. Then
   follow the `Next step:` line in the person's `## My working preferences`: `ask`, the default, asks
-  once whether to start the next step; `continue` starts the next planning step and asks before
-  delivery; `recommend` only recommends. Never skip a step, decide an open product question, merge,
-  or deploy on that basis.
+  once whether to start the next step; `continue` starts the next planning step, including the
+  issues `shape-work` creates, and asks before delivery; `recommend` only recommends. Never skip a
+  step, decide an open product question, merge, or deploy on that basis.
 - Recommend one concrete next action with its reason and any blocker. Authority persists across unit
   boundaries but never expands to unrelated backlog work; when nothing useful remains, say so.
 - Sort discoveries with `scope-guard`: required work the mandate covers stays in scope, adjacent work

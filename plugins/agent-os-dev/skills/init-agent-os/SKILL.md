@@ -30,7 +30,8 @@ Invoked as `init-agent-os global`.
    `recommend` (only recommend), recommending `ask`; and anything the agent should always or never
    do. When it exists, show it and ask what to change; "nothing" writes nothing. These are
    style only: they yield to project policy and never grant merge, deploy, or external-effect
-   authority.
+   authority. The one exception is `Next step: continue`, which lets a planning workflow go on into
+   `shape-work` and so lets it create its new issues without asking first.
 
 ## Mode: repo init (default)
 
