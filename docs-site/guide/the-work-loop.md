@@ -37,17 +37,22 @@ the entry point from your situation.
 | Review | `check-work`, `simplify` | `REVIEW.md`, the pull request review | a person approves the pull request |
 | Lesson | `record-lesson` | the project policy | the developer agrees to each lesson |
 
-Each file is versioned in Git and changes only through a pull request. A spec names the intent
+The files belong to initiatives only. Smaller work skips them, as the next section shows. Each file
+is versioned in Git and changes only through a pull request. A spec names the intent
 revision it answers, and a plan names the spec revision, so a changed intent marks everything built
 on it as stale until it is reconsidered. See [Intent, spec, and plan files](/reference/intents).
 
 ## Ceremony follows size
 
-| Work | Steps |
-|---|---|
-| A bug without a product question | deliver, review, lesson |
-| A feature | intent, spec, deliver, review, lesson |
-| An initiative with several pull requests | every step |
+| Work | Steps | Record |
+|---|---|---|
+| A bug or a clear small change | deliver, review, lesson | the pull request |
+| A feature, one or a few pull requests | shape, deliver, review, lesson | tracker issues |
+| An initiative: several pull requests and decisions someone else must agree to | every step | intent, spec, and plan files |
+
+A feature can still use `capture-intent` or `plan-work` to settle an unclear need or open
+decisions. They then report the result instead of writing a file, and `shape-work` puts it into the
+issues. You or the project policy can ask for files on smaller work too.
 
 Use `capture-intent` when a need is new or still moving. Use `plan-work` when behavior, decisions, or
 ground truth need settling; it chooses its own depth, from a small outcome contract to a decision map
@@ -86,6 +91,10 @@ Status is never written into the files during delivery. A draft pull request wit
 plan in parallel without conflicts.
 
 ## Worked example: filtered CSV export
+
+This example runs as an initiative, because the product owner must agree to what large customers
+get. Without that need, the same work would start at `shape-work` and end as three tracker issues
+with no files.
 
 The journey begins before the request exists:
 

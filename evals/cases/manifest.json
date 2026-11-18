@@ -159,7 +159,8 @@
         "capture-intent.md#CI-P3 No premature solution",
         "capture-intent.md#CI-P4 Intent file",
         "capture-intent.md#CI-P5 Existing intent",
-        "capture-intent.md#CI-P6 Small fix"
+        "capture-intent.md#CI-P6 Small fix",
+        "capture-intent.md#CI-P7 Feature, no file"
       ],
       "negative": [
         "capture-intent.md#CI-N1 Repository fact",
@@ -319,7 +320,9 @@
         "shape-work.md#SW-P6 Settled interface",
         "shape-work.md#SW-P7 Self-contained unit",
         "shape-work.md#SW-P8 Shared example",
-        "shape-work.md#SW-P9 Bounded unit"
+        "shape-work.md#SW-P9 Bounded unit",
+        "shape-work.md#SW-P10 Issues only",
+        "shape-work.md#SW-P11 No writable tracker"
       ],
       "negative": [
         "shape-work.md#SW-N1",

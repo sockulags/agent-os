@@ -30,11 +30,14 @@ product repository when work often spans several code repositories.
 
 ## Ceremony follows size
 
-| Work | Files |
+| Work | Record |
 |---|---|
-| A bug without a product question | none; the pull request carries the contract |
-| A feature | `intent.md` and `spec.md` |
-| An initiative with several pull requests | all three |
+| A bug or a clear small change | none; the pull request carries the contract |
+| A feature, one or a few pull requests | tracker issues from `shape-work`; no files |
+| An initiative: several pull requests and decisions someone else must agree to | `intent.md`, `spec.md`, and `plan.md` |
+
+You or the project policy can ask for files on smaller work too. Without that, no skill writes an
+intent or spec file only to give issues a home.
 
 ## Frontmatter
 

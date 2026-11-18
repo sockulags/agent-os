@@ -1,7 +1,7 @@
 ---
 title: plan-work
 description: Plan a coherent mission with adaptive depth, code-informed coverage, canonical decisions, reconsideration, and stable handoffs.
-skill-description: Plans a coherent mission from outcome through coverage, decisions, feasibility, and verification with adaptive depth, and writes the result as a versioned spec beside its intent. User-invoked when the developer wants a plan or a spec, or the work needs one. Not required for an already clear implementation request or a substitute for shape-work delivery structure.
+skill-description: Plans a coherent mission from outcome through coverage, decisions, feasibility, and verification with adaptive depth, and writes the result as a versioned spec beside an initiative's intent, or as a contract a tracker issue can carry. User-invoked when the developer wants a plan or a spec, or the work needs one. Not required for an already clear implementation request or a substitute for shape-work delivery structure.
 summary: Plan a mission and write it as a versioned spec
 ---
 
@@ -42,6 +42,11 @@ gate. Planning is not mandatory before an already clear
 implementation request, and shape-work accepts an existing specification.
 
 ## The spec file
+
+A spec file is written only when the work has an intent, which makes it an initiative, or when you
+or the project policy ask for one. For anything smaller, the settled contract, with behavior,
+interface decisions, boundaries, and ground truth, is reported in a form a tracker issue can carry,
+and [`shape-work`](/skills/shape-work) or [`deliver-work`](/skills/deliver-work) takes it from there.
 
 When the work has an intent, the plan is written as `intents/<id>/spec.md` beside it: a plain
 language `## Summary`, `## Behavior` as given, when, then examples, `## Interface` with every new or

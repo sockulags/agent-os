@@ -64,10 +64,11 @@ but not written, because it changes who must review other people's work.
 
 ## Tracker mandate
 
-When a tracker holds delivery units (`source: issues` in `plan.md`), the policy gets a
+`shape-work` may create the new issues it shapes in the project's tracker without a mandate. When
+the agent should do more there, such as update or comment on other issues, the policy gets a
 `## Tracker mandate` section that names what the agent may create, update, and comment on. It always
 states that the agent never changes priority, assignee, or acceptance, and never closes items.
-Without that section, no skill writes to a tracker; corrections stay local and the unsynced delta is
+Without that section, no skill writes to a tracker beyond those new issues; corrections stay local and the unsynced delta is
 reported. Team-specific tracker conventions, such as how Jira keys map to units, belong in the
 project policy or a team's own plugin, not in Agent OS.
 

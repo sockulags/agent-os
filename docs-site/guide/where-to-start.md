@@ -14,7 +14,7 @@ it is `$<skill>`.
 flowchart TD
     A{"What do you have?"} -->|"a vague idea, a problem,<br>or someone else's wish"| B["capture-intent"]
     A -->|"a clear need, but behavior<br>or decisions are not settled"| C["plan-work"]
-    A -->|"a settled spec that several<br>pull requests will deliver"| D["shape-work"]
+    A -->|"work that should become<br>tracker issues"| D["shape-work"]
     A -->|"a clear task or a ready unit"| E["deliver-work"]
     A -->|"a bug"| F["Describe the bug,<br>no skill needed"]
     A -->|"a diff or a pull request"| G["Ask for a review,<br>check-work starts by itself"]
@@ -28,26 +28,30 @@ lose little, so pick the nearest match and go.
 
 **"I have an idea, a complaint from a customer, or a wish, and I am not sure what is really
 needed."** Use [`capture-intent`](/skills/capture-intent). It asks one question at a time until the
-need is clear and writes it down as an intent, a short file that says who needs what and why.
+need is clear. For an initiative, work that several pull requests deliver and whose decisions
+someone else must agree to, it writes the need down as an intent file. For anything smaller it
+hands you the settled need, ready to become an issue.
 
 **"I know what we need, but not exactly how it should behave, or there are choices nobody has made
 yet."** Use [`plan-work`](/skills/plan-work). It reads the code, asks only the questions the code
-cannot answer, and writes a spec: the behavior, the boundaries, the decisions, and how to prove the
-result works. It picks its own depth, so a small change gets a short spec.
+cannot answer, and settles the behavior, the boundaries, the decisions, and how to prove the result
+works. For an initiative it writes this as a spec file; for anything smaller it reports it for the
+issues or for delivery.
 
 **"I want to see the screens before anyone builds them."** Use [`design-work`](/skills/design-work).
 `plan-work` also offers it when a screen is still undecided.
 
-**"The spec is settled and the work is too big for one pull request."** Use
-[`shape-work`](/skills/shape-work). It splits the spec into delivery units, each one a work order
-that a person or an agent can start from alone. It does not settle product questions; it sends
-those back to `plan-work`.
+**"I want this as issues in the tracker," or "this is too big for one pull request."** Use
+[`shape-work`](/skills/shape-work). It splits the work into delivery units and creates each one as
+a tracker issue: a work order that a person or an agent can start from alone. No intent or spec
+file is needed. It asks the product questions that remain; a large open question goes back to
+`plan-work`.
 
 ## Build it
 
 **"The task is clear. Build it."** Use [`deliver-work`](/skills/deliver-work). It builds the change,
 tests it, has it reviewed by a separate agent, and stops at the boundary you asked for, such as a
-local change or a pull request. Give it a unit from a plan, a tracker issue, or the task in your own
+local change or a pull request. Give it a tracker issue, a unit from a plan, or the task in your own
 words.
 
 **"Finish this whole intent."** Also `deliver-work`, with the intent's id, for example

@@ -45,11 +45,14 @@ is insufficient:
    whether external writes, publication, or other effects require a separate explicit request.
 3. **Verification:** exact useful commands and the ground truth they establish; record what must be
    inspected manually or otherwise checked when commands are insufficient.
-4. **Planning:** where intents live (`intents/` in this repository by default, or a named product
-   repository), whether units live in `plan.md` (`source: files`) or a tracker (`source: issues`),
+4. **Planning:** which tracker holds issues (the repository host's issue tracker by default), where
+   intents live for initiatives (`intents/` in this repository by default, or a named product
+   repository), whether an initiative's units live in `plan.md` (`source: files`) or the tracker
+   (`source: issues`),
    the branch naming convention, stable plan and decision-ticket identities, epic ownership, and
-   dependency conventions. When a tracker is used, write a `## Tracker mandate` section that names
-   what the agent may create, update, and comment on, and state that it never changes priority,
+   dependency conventions. `shape-work` may create its own new issues without a mandate. When the agent
+   should do more in the tracker, write a `## Tracker mandate` section that names what it may
+   create, update, and comment on, and state that it never changes priority,
    assignee, or acceptance, and never closes items.
 5. **Maintenance:** where durable lessons, recurring gotchas, and policy changes are recorded.
 

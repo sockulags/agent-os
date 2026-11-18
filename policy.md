@@ -55,11 +55,15 @@ Rules:
   external action. Risk guides implementation and verification and can reveal a missing decision;
   risk-area membership does not grant permission. Required covered work normally stays in scope,
   while adjacent work is a follow-up and unrelated work gets no invented proposal.
-- No skill grants external tracker write access automatically. An explicit tracker mandate in the
+- No skill grants external tracker write access automatically, except that an invoked `shape-work`
+  may create the new issues its own shape needs. An explicit tracker mandate in the
   request or the project policy's `## Tracker mandate` section may include implementation detail and
   technical ordering/readiness inside the authorized set, but not acceptance changes, new owners or
   deliveries, or closure. Without that mandate, keep corrections local and report the unsynced delta.
-- Decisions that outlive a session live in versioned files: `intents/<id>/intent.md` for what is
+- Ceremony follows size. Most work keeps its decisions in tracker issues and its pull requests,
+  with no intent or spec file. Only an initiative, work that several pull requests deliver and whose
+  product decisions someone other than the requester must agree to, or work where the person or the
+  project policy asks for files, keeps them in versioned files: `intents/<id>/intent.md` for what is
   needed and why, and `spec.md` beside it for behavior, interface, boundaries, decisions, and
   ground truth. They change only through a reviewed change, and a file whose `built_on` revision
   is older than its source is stale until it is reconsidered.
@@ -85,6 +89,7 @@ Rules:
   and its fix mode requires explicit authority.
 - `plan.md` beside a spec lists delivery units and dependencies only. Delivery status is never
   written into it: a unit is claimed by a draft pull request whose body carries
-  `Intent-Unit: <intent-id>/<unit-key>`, and status is read from open and merged pull requests.
+  `Intent-Unit: <intent-id>/<unit-key>`, and status is read from open and merged pull requests. An
+  issue without an intent is claimed by a draft pull request that links it.
 - Agent OS hooks read `.agent-os/guards.json`. A hook block is a boundary, not an obstacle: change
   course or ask, and never work around it by another tool or path.

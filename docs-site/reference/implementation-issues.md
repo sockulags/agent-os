@@ -1,6 +1,6 @@
 ---
 title: Implementation issues
-description: The delivery units shape-work writes to plan.md or a tracker, and the developer-owned execution choice.
+description: The delivery units shape-work writes as tracker issues or into an initiative's plan.md, and the developer-owned execution choice.
 ---
 
 # Implementation issues
@@ -9,10 +9,14 @@ description: The delivery units shape-work writes to plan.md or a tracker, and t
 > [`plugins/agent-os-dev/skills/shape-work/references/implementation-issues.md`](https://github.com/sockulags/agent-os/blob/main/plugins/agent-os-dev/skills/shape-work/references/implementation-issues.md).
 
 Research, grilling, and prototypes provide decision evidence. The durable output of shaping is one
-or more implementation-ready units. By default they live in `intents/<id>/plan.md` beside the spec
-(`source: files`), with one `### <KEY>` section per unit holding its contract. When the project policy
-makes a tracker the source of truth for units (`source: issues`), the tracker issues hold the contract
-and `plan.md` lists only their keys. The line format, claims, and status rules are in
+or more implementation-ready units. For work without an intent they are tracker issues and nothing
+else: each issue opens with why the work is needed and holds the whole contract, and no intent,
+spec, or plan file is written. Invoking shape-work allows it to create those new issues; other
+tracker writes need the project policy's `## Tracker mandate`, and with no writable tracker the issue
+texts come back in the reply. An initiative, work that has an intent, keeps its units in
+`intents/<id>/plan.md` beside the spec (`source: files`), with one `### <KEY>` section per unit holding
+its contract, or as tracker issues whose keys `plan.md` lists when the project policy makes the
+tracker the source of truth (`source: issues`). The line format, claims, and status rules are in
 [Intent, spec, and plan files](/reference/intents).
 
 Shape-work is not complete, and a selected branch is not delivery-ready, until those issues exist.
@@ -20,7 +24,7 @@ Parked and rejected branches need no implementation issue.
 
 ## Required issue contract
 
-Every unit is a self-contained work order. It cites the spec for its source and writes out what it
+Every unit is a self-contained work order. When there is a spec, the unit cites it for its source and writes out what it
 is accountable for, so someone holding only the unit and the repository can start without guessing.
 Every issue has a stable `(origin, unit key)` identity and records:
 

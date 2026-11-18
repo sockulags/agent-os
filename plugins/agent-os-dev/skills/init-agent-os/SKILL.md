@@ -48,8 +48,10 @@ These are the preferences a repository records, under `## Working agreement` in 
 
 - who works here and who approves: solo, or a team and its reviewer;
 - the default stopping point: local change, pull request, merge, or deployment;
-- the default path for a new feature: deliver directly, spec first, or intent, spec, and plan;
-- where delivery units live: `plan.md` or a tracker;
+- the default path for a new feature: deliver directly, or shape it into tracker issues with no
+  intent or spec files, recommending issues; intent, spec, and plan stay for initiatives unless the
+  developer wants them for every feature;
+- which tracker holds issues, and where an initiative's units live: `plan.md` or that tracker;
 - the language of commits, docs, and issues;
 - with the frontend module active, when interfaces are sketched (before delivery, after it, asked
   each time, or never) and, unless never, in which medium and where the sketches live,

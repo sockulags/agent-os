@@ -1,6 +1,6 @@
 ---
 name: shape-work
-description: Shapes a bounded mission or accepted spec into coherent delivery units with dependencies, written as plan.md beside the spec or as implementation-ready tracker issues, backed by settled product decisions. User-invoked when delivery structure or an epic contract still needs shaping. Not for small fixes or work whose outcome and delivery unit are already clear.
+description: Shapes a request, bounded mission, or accepted spec into coherent delivery units with dependencies, written as implementation-ready tracker issues, or as plan.md beside an initiative's spec, backed by settled product decisions. User-invoked when delivery structure or an epic contract still needs shaping. Not for small fixes or work whose outcome and delivery unit are already clear.
 disable-model-invocation: true
 ---
 
@@ -11,7 +11,11 @@ product intent. A delivery unit is the smallest independently useful or assessab
 its own meaningful boundary; technical layers are not delivery units by themselves.
 
 Read [references/implementation-issues.md](references/implementation-issues.md) before shaping. It
-defines `plan.md`, the unit line format, and the tracker alternative.
+defines where units live, the issue format, and `plan.md` for an initiative.
+
+Work without an intent is shaped into tracker issues only: the issue is the whole record, and no
+intent, spec, or plan file is written. Only an initiative, work that already has an intent, gets a
+`plan.md` beside its spec.
 
 ## Unit contract
 
@@ -21,7 +25,7 @@ spec stays the authority. A unit writes out what it is accountable for and cites
 when the two disagree the spec wins. `built_on` already marks restated text stale when the spec
 changes.
 
-Every unit carries these fields, in its `plan.md` section or its tracker issue. Write `none` only
+Every unit carries these fields, in its tracker issue or its `plan.md` section. Write `none` only
 where that is the true answer:
 
 - **Outcome:** the observable change once this unit is delivered, for a person or a caller, in a
@@ -61,8 +65,10 @@ decide. A pre-existing specification is a valid starting point; a plan-work run 
 A spec whose `built_on` revision is older than its intent is stale. Do not shape from it: return it
 to `plan-work` for reconsideration and report which revision changed.
 
-Shape-work does not settle the interface; the spec's `## Interface` section does. Link it from the
-units that build those screens instead of restating it. When that section lists a decision as
+Without a spec, a screen whose layout or flow is still open is a material product question: ask
+it while shaping, recommend `design-work` in one line when sketching would help, and write the
+answer into the unit. With a spec, the spec decides. Shape-work does not settle the interface; the
+spec's `## Interface` section does. Link it from the units that build those screens instead of restating it. When that section lists a decision as
 open, is missing while the work changes what a person sees or does, or a unit would change a screen
 the section does not cover, return that interface question to `plan-work`, where the developer
 decides it, sketches it with `design-work`, or leaves it to delivery, and keep the affected units
@@ -76,10 +82,10 @@ into a prototype.
 
 Deliver the coherent product shape: outcome, boundaries, acceptance examples, affected seams,
 ground truth, settled decisions, and open risks. Then write the delivery units to the unit
-contract: `intents/<id>/plan.md` by default, or
-create or reuse its implementation issues on the tracker when the project policy makes the tracker the source
-of truth for units. Link real dependencies and report the first claimable delivery frontier to the
-developer; it is derived from the plan and is not written into it.
+contract. For work without an intent, create or reuse its implementation issues on the tracker. For
+an initiative, write `intents/<id>/plan.md`, with its units as tracker issues when the project policy
+makes the tracker the source of truth. Link real dependencies and report the first claimable delivery frontier to the
+developer; it is derived from the issues or the plan and is not written into them.
 
 Start from one coherent delivery unit. Split only for a concrete reason such as an independently
 usable or assessable result, different ownership, a separate migration, a delivery boundary, or a
@@ -110,10 +116,12 @@ A plan built on an older spec revision is stale. Reshape it from the current spe
 `rev`, and keep unit keys stable so delivered work and open pull requests still point at the right
 unit.
 
-Planning-surface writes do not grant product implementation or external tracker authority. Commit
-`plan.md` and open its review only when the request or the project's delivery defaults include
-that. Creating tracker issues needs the project policy's `## Tracker mandate`; keep it within the
-requested set and do not silently change acceptance, ownership, delivery scope, or closure. A ready
+Planning-surface writes do not grant product implementation. Commit `plan.md` and open its review
+only when the request or the project's delivery defaults include that. The invocation authorizes
+creating the new issues this shape needs, and updating the ones it created for the same origin on a
+retry. Any other tracker write needs the project policy's `## Tracker mandate`; keep it within the
+requested set and do not silently change acceptance, ownership, delivery scope, or closure. When no
+tracker can be written, return the issue texts in the reply and write no file. A ready
 unit is not an authorization. Without that mandate, keep corrections local and report the pending
 tracker delta.
 

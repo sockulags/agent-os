@@ -1,6 +1,6 @@
 ---
 name: capture-intent
-description: Captures what is needed and why as a versioned intent file, questioning out the need behind a stated wish one load-bearing question at a time. User-invoked when a new need, feature request, or tracker item should become an intent, or as the questioning stage of plan-work. Not for requests whose goal is already articulated, small fixes, or facts the repository answers.
+description: Captures what is needed and why, questioning out the need behind a stated wish one load-bearing question at a time, and writes a versioned intent file when the work is an initiative. User-invoked when a new need, feature request, or tracker item needs its goal settled, or as the questioning stage of plan-work. Not for requests whose goal is already articulated, small fixes, or facts the repository answers.
 disable-model-invocation: true
 ---
 
@@ -29,9 +29,11 @@ Questioning ends when the person says it is done or when further answers stop ch
 
 ## Write the intent
 
-Write a file when the need outlives this session, needs an owner's agreement, or will be planned
-and delivered in more than one step. A small fix or a question settled in the conversation needs no
-file: report the settled understanding directly.
+Write a file only for an initiative: work that several pull requests will deliver and whose product
+decisions someone other than the requester, such as a product owner, must agree to. Also write one
+when the person or the project policy asks for it. Everything else needs no file: report the settled
+understanding directly, written so it can open a tracker issue, and recommend `shape-work` when the
+work should become issues. A feature that one or a few pull requests deliver is not an initiative.
 
 1. Choose the location. Use `intents/` at the repository root unless the project policy names
    another intent location, such as a separate product repository.

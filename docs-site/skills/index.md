@@ -60,7 +60,7 @@ Always on; no invocation.
 | Skill | Bucket | Invocation | Purpose |
 |---|---|---|---|
 | [`design-work`](/skills/design-work) | workflow | manual | Sketch new and changed screens in the project's chosen medium, when the developer wants them |
-| [`shape-work`](/skills/shape-work) | workflow | manual | Shape a spec into delivery units in plan.md or tracker issues |
+| [`shape-work`](/skills/shape-work) | workflow | manual | Shape work into delivery units as tracker issues, or plan.md for an initiative |
 | [`deliver-work`](/skills/deliver-work) | workflow | manual | Deliver one unit, or a whole intent unit by unit, against its contract |
 | [`batch-work`](/skills/batch-work) | workflow | manual | Run isolated ready units and verify the integrated result |
 | [`dispatch-next`](/skills/dispatch-next) | workflow | manual | Pick or dispatch one action according to the request |

@@ -15,7 +15,8 @@ Read project policy, queue conventions, the units in `intents/*/plan.md`, issues
 CI. A unit's status comes from pull requests, never from the plan: a unit with an open pull request
 carrying its `Intent-Unit: <intent-id>/<unit-key>` line is claimed, one whose pull request merged is
 delivered, and one whose dependencies are delivered and whose line carries no `blocked:` note is
-ready. A spec or plan whose `built_on` revision is older than its source is not ready; route it to
+ready. An issue without an intent is claimed by an open pull request that links it and delivered
+when that pull request merges. A spec or plan whose `built_on` revision is older than its source is not ready; route it to
 `plan-work` or `shape-work`. Prioritize work already in
 flight when it has an actionable review or failure. Select one target using the repository's
 priority rules and explain why it wins.
