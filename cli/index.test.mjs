@@ -111,6 +111,16 @@ test('prints scoped npm commands and explains the direct default', async () => {
   assert.match(help, /--method <name>\s+direct \(default\) or plugin/)
 })
 
+test('runs when invoked through a bin symlink as npm and npx do', { skip: process.platform === 'win32' }, () => {
+  const binDir = path.join(temporaryRoot(), 'node_modules', '.bin')
+  fs.mkdirSync(binDir, { recursive: true })
+  const bin = path.join(binDir, 'agent-os')
+  fs.symlinkSync(path.join(packageRootForTest(), 'cli', 'index.mjs'), bin)
+  const result = spawnSync(process.execPath, [bin, '--version'], { encoding: 'utf8' })
+  assert.equal(result.status, 0, result.stderr)
+  assert.equal(result.stdout.trim(), VERSION)
+})
+
 test('rejects conflicting policy flags and direct local scope', async () => {
   assert.throws(() => parseArgs(['install', '--policy', '--no-policy']), /one of --policy and --no-policy/)
   await assert.rejects(

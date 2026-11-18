@@ -6,7 +6,7 @@ import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
 import { createInterface } from 'node:readline'
-import { fileURLToPath, pathToFileURL } from 'node:url'
+import { fileURLToPath } from 'node:url'
 import {
   HOOK_TIMEOUT_SECONDS,
   QUALITY_HOOK_MARKER
@@ -1189,7 +1189,18 @@ export async function run(argv = process.argv.slice(2), dependencies = {}) {
   return 0
 }
 
-if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+// npm and npx start the CLI through a bin symlink. Node resolves symlinks for import.meta.url but
+// leaves process.argv[1] as the symlink path, so compare real paths.
+function isMainModule() {
+  if (!process.argv[1]) return false
+  try {
+    return fs.realpathSync(process.argv[1]) === fs.realpathSync(fileURLToPath(import.meta.url))
+  } catch {
+    return false
+  }
+}
+
+if (isMainModule()) {
   run().then((code) => {
     process.exitCode = code
   }).catch((error) => {
