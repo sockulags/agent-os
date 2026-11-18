@@ -32,6 +32,8 @@ Read `REVIEW.md` at the repository root when it exists. It is the repository's r
 areas, severity tiers, what counts as a blocking finding, and limits such as a cap on minor
 findings. It narrows and ranks findings; it never turns a speculative concern into a supported one.
 
+When the candidate links a tracker issue with no intent behind it, that issue is the contract:
+review against its outcome, boundaries, acceptance, and ground truth.
 When the candidate carries `Intent-Unit: <intent-id>/<unit-key>`, read that unit in
 `intents/<intent-id>/plan.md` and the spec beside it. The spec's behavior, boundaries, and ground
 truth are the review contract: report a candidate that misses an acceptance example, crosses a

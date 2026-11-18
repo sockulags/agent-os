@@ -70,6 +70,11 @@ to a tracker need to be named.
 **Manual skill.** A skill that runs only when you call it by name, such as `plan-work` or
 `deliver-work`. The agent may suggest one, but never starts it by itself.
 
+**Next step preference.** A `Next step:` line in your personal preferences, set by
+`init-agent-os global`, that decides what follows a route line: `ask` (the default) asks once
+whether to start the next step, `continue` starts the next planning step and asks before delivery,
+and `recommend` only recommends.
+
 **Plan.** The file `intents/<id>/plan.md` of an initiative, written by
 [`shape-work`](/skills/shape-work). It lists the delivery units and their dependencies, never their
 status.

@@ -13,7 +13,7 @@ ceremony proportional to the work. It ships as two packages from one source:
 ## Skills
 
 Most work lives in tracker issues: `shape-work` writes each delivery unit as an issue that holds its
-whole contract, and a small fix needs not even that. Only an initiative, work that several pull
+whole contract, even for a bug with a known fix, so every change can be traced. Only an initiative, work that several pull
 requests deliver and whose product decisions someone else must agree to, keeps versioned files:
 `intents/<id>/intent.md` for what is needed and why, `spec.md` for behavior, boundaries, and ground
 truth, and `plan.md` for delivery units. See the

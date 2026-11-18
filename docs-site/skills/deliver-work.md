@@ -149,8 +149,10 @@ parallel remains [`batch-work`](/skills/batch-work), chosen explicitly.
 Delivery follows the route for the kind of work, from the project's
 [workflow file](/reference/workflow-file) or the global policy's defaults. Every default route gives
 the work an issue first, so when the route puts `shape-work` before delivery and the work has no
-issue, delivery stops before changing code and recommends `shape-work`. Say "skip the issue" to
-deliver without one.
+issue, delivery says so and recommends `shape-work`. In a project with a workflow file and a
+tracker the agent can write to, it also stops before changing code; say "skip the issue" to deliver
+without one. Without a workflow file it recommends and continues, so a project that has not run
+`init-agent-os` since this change keeps working as before.
 
 When the work is complete, delivery runs the finishing tasks the workflow file lists for that kind
 of work, usually after the last unit of an initiative. A task in the repository, such as a

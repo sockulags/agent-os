@@ -48,7 +48,8 @@ candidate before delivery, resolves supported findings, and reruns affected aggr
 Definition drift invalidates an affected result. Merge, deploy, destructive cleanup, and external
 effects follow the request or project policy.
 
-A unit taken from a `plan.md` keeps its `Intent-Unit: <intent-id>/<unit-key>` line in the commit or
+A unit that is a tracker issue without an intent keeps the tracker's closing reference to it. A
+unit taken from a `plan.md` keeps its `Intent-Unit: <intent-id>/<unit-key>` line in the commit or
 pull request that delivers it, so the plan's status can be read from history.
 
 See [Batch manifests](/reference/batches).

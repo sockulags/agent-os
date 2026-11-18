@@ -32,8 +32,8 @@ row or add rows for kinds of work the team knows:
 
 Every default route gives the work an issue before delivery, so each change can be traced from the
 tracker to its pull request. `deliver-work` follows the route: when the route puts `shape-work`
-first and the work has no issue, it stops before changing code and recommends `shape-work`, unless
-you say to skip the issue. When `plan-work` finishes and the next step is `shape-work`, it asks once
+first and the work has no issue, it recommends `shape-work`, and when this file exists and the
+tracker can be written, it also stops before changing code unless you say to skip the issue. When `plan-work` finishes and the next step is `shape-work`, it asks once
 whether to create the issues now, unless your `Next step:` preference says otherwise.
 
 ## Route line

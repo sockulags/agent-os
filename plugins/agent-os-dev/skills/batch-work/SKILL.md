@@ -33,6 +33,7 @@ invoke it. Use this workflow only when the developer explicitly requests an inte
 3. Reconcile the manifest with live Git and worktree state before every dispatch wave.
 4. Dispatch the open frontier into isolated workspaces within project concurrency. Each worker gets
    one current task definition and returns a commit SHA, changed files, checks, and uncertainty.
+   A unit that is a tracker issue without an intent keeps the tracker's closing reference to it.
    A unit taken from a plan keeps its `Intent-Unit: <intent-id>/<unit-key>` line in the commit or
    pull request that delivers it, so the plan's status can be read from history.
 5. Integrate completed tasks in dependency order. Detect already-contained commits, rerun relevant
