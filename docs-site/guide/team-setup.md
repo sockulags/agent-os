@@ -32,6 +32,9 @@ npx @sockulags/agent-os@latest doctor
   Each block starts with a `<!-- agent-os version X -->` line;
 - whether the quality-ratchet Stop hook and the guard hooks are configured where agent-os-dev is
   installed;
+- in a repository that `init-agent-os` set up, whether `.agent-os/workflow.md` exists, has a
+  `## Routes` section, and is pointed to by the project policy. These are warnings, so they do not
+  change the exit code;
 - whether a newer version is published on npm. `--offline` skips that lookup.
 
 Each finding says how to fix it. For a plugin-only user whose policy block is old, that is the

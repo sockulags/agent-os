@@ -14,6 +14,9 @@ that uses another tracker or documents its work somewhere else can say so in one
 > The canonical template agents load is
 > [`workflow-template.md`](https://github.com/sockulags/agent-os/blob/main/plugins/agent-os-dev/skills/init-agent-os/references/workflow-template.md).
 
+`npx @sockulags/agent-os@latest doctor`, run inside the repository, warns when the file is missing,
+has no `## Routes` section, or is not pointed to by the project policy.
+
 The file is project policy. A route, a tracker rule, or a finishing task written here counts as the
 project policy including it. Change it through a pull request, or run `init-agent-os` again and
 choose "routes and finishing tasks".

@@ -122,7 +122,9 @@ uninstall command yet.
 `npx @sockulags/agent-os@latest doctor` is a read-only report of every installed version and package,
 retired or missing skills, duplicate direct and plugin installs, an old single `agent-os` plugin that
 must be replaced by `agent-os-core` and `agent-os-dev`, the global policy blocks (each carries an
-`<!-- agent-os version X -->` line), and the hooks, with the command that fixes each difference.
+`<!-- agent-os version X -->` line), and the hooks, with the command that fixes each difference. Run
+inside a repository that `init-agent-os` set up, it also warns when `.agent-os/workflow.md` is
+missing, has no routes, or is not pointed to by the project policy.
 Team update, migration, governance, and removal steps are in the
 [team setup guide](https://sockulags.github.io/agent-os/guide/team-setup).
 
