@@ -34,7 +34,7 @@ Every default route gives the work an issue before delivery, so each change can 
 tracker to its pull request. `deliver-work` follows the route: when the route puts `shape-work`
 first and the work has no issue, it stops before changing code and recommends `shape-work`, unless
 you say to skip the issue. When `plan-work` finishes and the next step is `shape-work`, it asks once
-whether to create the issues now.
+whether to create the issues now, unless your `Next step:` preference says otherwise.
 
 ## Route line
 
@@ -45,6 +45,12 @@ left, and the exact command that resumes the work. For example:
 > continue, run `/deliver-work #42`.
 
 The line makes it easy to pick the work up the next day, or for a colleague to take it over.
+
+What happens after the line is a personal preference, set by `init-agent-os global` as a
+`Next step:` line in your `## My working preferences`. With `ask`, the default, the agent asks once
+whether to start the next step. With `continue`, it starts the next planning step on its own and
+asks once before delivery. With `recommend`, it only names the next step. None of them skips a step,
+decides an open product question, merges, or deploys.
 
 ## Tracker
 

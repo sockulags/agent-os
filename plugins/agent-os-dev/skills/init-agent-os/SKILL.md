@@ -22,10 +22,13 @@ Invoked as `init-agent-os global`.
    The npm installer imports this writer, so both share one marker contract. Each block starts with
    an `<!-- agent-os version X -->` line taken from the installed release.
 4. Settle personal preferences in a `## My working preferences` section outside the managed block
-   of each target file. When the section is absent, ask three things with a recommendation each:
+   of each target file. When the section is absent, ask four things with a recommendation each:
    when unsure, ask early or decide and report (recommend decide and report for reversible choices);
-   explanations short or walked through (recommend short); and anything the agent should always or
-   never do. When it exists, show it and ask what to change; "nothing" writes nothing. These are
+   explanations short or walked through (recommend short); what happens when a step of a route
+   ends, written as a `Next step:` line with `ask` (ask once whether to start the next step),
+   `continue` (start the next planning step without asking and ask once before delivery), or
+   `recommend` (only recommend), recommending `ask`; and anything the agent should always or never
+   do. When it exists, show it and ask what to change; "nothing" writes nothing. These are
    style only: they yield to project policy and never grant merge, deploy, or external-effect
    authority.
 

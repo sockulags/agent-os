@@ -143,8 +143,9 @@ and report the unsynced updates. If the information must survive the session, ad
 plan.
 
 Recommend one concrete next action at exit, with the reason it wins and any blocker, and end with
-the route line. When the route's next step is `shape-work` and agent-os-dev is installed, ask once
-whether to create the issues now; on yes, continue into `shape-work` with the settled contract, so
-the decisions reach the tracker before the session ends. Continue into an authorized next workflow
+the route line. When the route's next step is `shape-work` and agent-os-dev is installed, follow the
+person's `Next step:` preference, which by default asks once whether to create the issues now; on
+yes, or with `continue`, go on into `shape-work` with the settled contract, so the decisions reach
+the tracker before the session ends. Continue into an authorized next workflow
 without adding an approval ceremony; stop when the plan is ready and the request does not include
 implementation.

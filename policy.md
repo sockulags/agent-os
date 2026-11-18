@@ -50,6 +50,11 @@ Rules:
   left in plain words, and the exact command that resumes the work, such as `/deliver-work #42`, so
   the person or a colleague can continue the next day. Take the route from the project's
   `.agent-os/workflow.md` when the project policy points to one, otherwise from the default routes.
+  What happens next follows the `Next step:` line in the person's `## My working preferences`:
+  `ask` asks once whether to start the next step; `continue` starts the next planning step without
+  asking and asks once before delivery; `recommend` only recommends. Without that line, ask.
+  Continuing never skips a step of the route, decides an open product question, or merges or
+  deploys.
 - Always recommend one concrete next action when planning or a delivery unit ends, with the reason
   it wins and any blocker. Existing authority persists across unit boundaries, but never expands to
   unrelated backlog work. If the goal is complete and no useful next action remains, say so instead

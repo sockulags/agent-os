@@ -80,7 +80,9 @@ for short enumerable facts. Tone tracks the topic, and when it is unclear whethe
 it is.
 
 Every workflow ends with a route line: the kind of work, the steps done and left, and the command
-that continues it. The development section holds the default routes: a bug with a known fix gets
+that continues it. The `Next step:` line in your personal preferences decides what follows: `ask`
+(the default) asks once whether to start the next step, `continue` starts the next planning step and
+asks before delivery, and `recommend` only recommends. The development section holds the default routes: a bug with a known fix gets
 one issue from `shape-work` and then `deliver-work`; a small change, or a bug whose fix holds a
 choice, goes through `plan-work`, `shape-work`, and `deliver-work`; a feature through `shape-work`
 and `deliver-work`, with `plan-work` first when anything is unclear; and an initiative through every

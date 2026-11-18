@@ -16,7 +16,9 @@ deterministic script. The explicit invocation authorizes those setup writes. Eac
 an `<!-- agent-os version X -->` line, so `npx @sockulags/agent-os@latest doctor` can show which
 release wrote it. It then settles your personal preferences in a `## My working preferences` section
 outside the managed block: whether the agent asks early or decides and reports, how much it explains,
-and anything it should always or never do. On a later run it shows them and asks what to change.
+what happens when a step of a route ends (`ask` whether to start the next step, `continue` through
+the planning steps and ask before delivery, or only `recommend`; `ask` is recommended), and anything
+it should always or never do. On a later run it shows them and asks what to change.
 They are style only, yield to project policy, and never grant merge, deploy, or external authority.
 
 Repository mode separates facts from preferences. A first run closes with how the agent will work
