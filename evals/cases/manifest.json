@@ -89,7 +89,8 @@
         "plan-work.md#PW-P19",
         "plan-work.md#PW-P20",
         "plan-work.md#PW-P21",
-        "plan-work.md#PW-P22"
+        "plan-work.md#PW-P22",
+        "plan-work.md#PW-P23 Route continuation"
       ],
       "negative": [
         "plan-work.md#PW-N1",
@@ -108,7 +109,9 @@
         "deliver-work-sequence.md#Positive 8 \u2014 authorized sequence",
         "deliver-work-sequence.md#Positive 9 \u2014 left to delivery",
         "deliver-work-sequence.md#Positive 10 \u2014 finish an intent",
-        "deliver-work-sequence.md#Positive 11 \u2014 resume an intent"
+        "deliver-work-sequence.md#Positive 11 \u2014 resume an intent",
+        "deliver-work-sequence.md#Positive 12 \u2014 route asks for an issue",
+        "deliver-work-sequence.md#Positive 13 \u2014 finishing tasks"
       ],
       "negative": [
         "deliver-work-sequence.md#Negative 1 \u2014 planning only",
@@ -208,7 +211,8 @@
         "init-agent-os.md#IA-P10 Return check only",
         "init-agent-os.md#IA-P11 Older setup",
         "init-agent-os.md#IA-P12 Personal preferences",
-        "init-agent-os.md#IA-P13 Clean repository"
+        "init-agent-os.md#IA-P13 Clean repository",
+        "init-agent-os.md#IA-P14 Workflow file"
       ],
       "negative": [
         "init-agent-os.md#IA-N1",

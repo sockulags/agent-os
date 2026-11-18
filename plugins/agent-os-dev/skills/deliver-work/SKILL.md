@@ -92,8 +92,9 @@ through the work loop and the review gate.
   named `<intent-id>` and one draft pull request. Each unit's commits carry its `Intent-Unit` line,
   and the pull request body carries one line per delivered unit.
 - **Finish.** After the last unit, run the spec's ground truth and any epic's aggregate
-  verification on the whole result, apply the review gate to the complete candidate, set the
-  intent's and plan's `status: done`, and mark the pull request ready. Never merge unless the
+  verification on the whole result, run the initiative's finishing tasks, apply the review gate to
+  the complete candidate, set the intent's and plan's `status: done`, and mark the pull request
+  ready. Never merge unless the
   request or project policy includes it.
 - **Stop and resume.** Stop when what remains is blocked, when ground truth fails and the fix is
   outside the unit, or when a finding needs a product decision. Report the units delivered, the
@@ -133,6 +134,24 @@ intent the tracker's closing reference such as `Closes #12` and a branch named a
 the outcome, the ground truth, and, as delivery proceeds, the evidence and review record. Mark it ready for review only after the
 final verification. In the pull request that delivers the last open unit of a plan, also set the
 intent's and plan's `status: done`. Never write delivery progress into `plan.md`.
+
+## Route and finishing tasks
+
+Read the route for this kind of work from `.agent-os/workflow.md` when the project policy points to
+one, otherwise from the global policy's default routes. When the route puts `shape-work` before
+delivery and the work has no issue or plan unit, stop before mutation, say that the route gives this
+work an issue first, and recommend `shape-work`, unless the request says to skip the issue.
+
+Finishing tasks come from the workflow file's `## Finishing tasks` section, under the heading for
+this kind of work, and run when the work is complete: for an initiative, in the pull request that
+delivers its last unit. A task inside the repository, such as a changelog entry, belongs to that
+pull request and goes through the review gate with it. A task in an external system runs when the
+session has a tool that can write there, because the workflow file is project policy; otherwise
+write the finished text and report it as a handoff with its destination. Report every task as done
+or handed off. A finishing task never merges, deploys, or closes anything unless it says so.
+
+End with the route line from the global policy, naming the issue or unit and the command that
+resumes the work.
 
 Ground truth governs the loop; no prescribed implementation sequence substitutes for it.
 

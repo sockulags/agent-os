@@ -16,7 +16,7 @@ flowchart TD
     A -->|"a clear need, but behavior<br>or decisions are not settled"| C["plan-work"]
     A -->|"work that should become<br>tracker issues"| D["shape-work"]
     A -->|"a clear task or a ready unit"| E["deliver-work"]
-    A -->|"a bug"| F["Describe the bug,<br>no skill needed"]
+    A -->|"a bug with a known fix"| D
     A -->|"a diff or a pull request"| G["Ask for a review,<br>check-work starts by itself"]
 ```
 
@@ -58,9 +58,11 @@ words.
 `/deliver-work finish intent 2026-11-csv-export`. It shapes the plan if there is none and delivers
 the units one after another.
 
-**"There is a bug."** Describe it. No skill is needed: with agent-os-dev installed, the disciplines
-that always run make the agent reproduce the bug and find its cause before it changes code, and add a test that fails
-without the fix. Use `deliver-work` when you also want its pull request and review steps.
+**"There is a bug."** Describe it first, and the agent reproduces it and finds its cause before it
+changes any code; with agent-os-dev installed that happens without a skill. When the fix is known,
+use `shape-work` to give it one issue and then `deliver-work`, so the fix can be traced from the
+tracker. When the fix holds a choice, such as what the user should see instead, start with
+`plan-work`.
 
 **"Run several ready units at the same time."** Use [`batch-work`](/skills/batch-work). It runs only
 when you ask for it by name, because running in parallel is your decision, not the agent's.
@@ -88,6 +90,13 @@ next action with the reason.
 
 **"What can Agent OS do here?"** Use [`list-skills`](/skills/list-skills). It lists what is
 installed and how to call it.
+
+## Where you are
+
+Every workflow ends with a line that names the kind of work, the steps that are done, the steps
+that are left, and the exact command that continues, such as `/deliver-work #42`. Copy that command
+the next day, or hand it to a colleague. The steps for each kind of work are set per project in the
+[workflow file](/reference/workflow-file).
 
 ## When you do not name a skill
 

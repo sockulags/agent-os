@@ -140,7 +140,8 @@ a new feature, and where units live. Then it asks only about missing facts: veri
 design-system location, where intents live, stable identities, batch execution, and durable
 conventions. Every question arrives with a recommendation. Run it again at any time: it shows what
 is set and asks what you want to change. It writes the
-smallest useful policy, `.agent-os/guards.json`, `.agent-os/quality.json` with the main test command
+smallest useful policy, `.agent-os/workflow.md` with the route for each kind of work and the tasks
+that finish an initiative, `.agent-os/guards.json`, `.agent-os/quality.json` with the main test command
 as a required check, `REVIEW.md`, and, for GitHub Actions repositories, the `lint-intents` and
 `agent-review` workflows, and shows the resulting diff.
 

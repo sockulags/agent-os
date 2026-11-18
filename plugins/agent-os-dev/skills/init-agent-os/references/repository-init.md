@@ -50,10 +50,12 @@ is insufficient:
    repository), whether an initiative's units live in `plan.md` (`source: files`) or the tracker
    (`source: issues`),
    the branch naming convention, stable plan and decision-ticket identities, epic ownership, and
-   dependency conventions. `shape-work` may create its own new issues without a mandate. When the agent
-   should do more in the tracker, write a `## Tracker mandate` section that names what it may
-   create, update, and comment on, and state that it never changes priority,
-   assignee, or acceptance, and never closes items.
+   dependency conventions. The routes, the tracker, where information goes, and the finishing tasks
+   go into `.agent-os/workflow.md`, not the policy. `shape-work` may create its own new issues without
+   a mandate. When the agent should do more in the tracker, write a `## Tracker mandate` section in
+   the workflow file that names what it may create, update, and comment on, and state that it never
+   changes priority, assignee, or acceptance, and never closes items. An existing `## Tracker mandate`
+   in the policy stays valid; a return run offers to move it.
 5. **Maintenance:** where durable lessons, recurring gotchas, and policy changes are recorded.
 
 ## Evidence-gated modules
@@ -86,6 +88,9 @@ this skill's `references/` and `templates/` directories, and shows each in the d
 file is updated only where it lacks a field the policy now depends on, and on a return run only when
 an area the developer chose needs it.
 
+- **`.agent-os/workflow.md`** from [workflow-template.md](workflow-template.md): the routes, the
+  tracker, where information goes, and the finishing tasks, with a one-line pointer to it in the
+  policy.
 - **`.agent-os/guards.json`** from [guards.md](guards.md): protected paths found by inspection
   (migrations, CI workflows, generated or vendored code), the default frozen intent and spec globs,
   and `secretScan: true`.

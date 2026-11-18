@@ -79,6 +79,14 @@ cross-reference a label invented earlier in the same text. Explanations belong i
 for short enumerable facts. Tone tracks the topic, and when it is unclear whether a topic is serious,
 it is.
 
+Every workflow ends with a route line: the kind of work, the steps done and left, and the command
+that continues it. The development section holds the default routes: a bug with a known fix gets
+one issue from `shape-work` and then `deliver-work`; a small change, or a bug whose fix holds a
+choice, goes through `plan-work`, `shape-work`, and `deliver-work`; a feature through `shape-work`
+and `deliver-work`, with `plan-work` first when anything is unclear; and an initiative through every
+step and the project's finishing tasks. A project's [workflow file](/reference/workflow-file)
+overrides them.
+
 The invocation rule: orchestration is opt-in. Manual skills such as `capture-intent`, `plan-work`,
 and `explain-work` in core, and `shape-work` and `deliver-work` in dev, run only when invoked. So
 that a person who does not know the skills can still find them, the agent suggests a manual skill

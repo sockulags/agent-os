@@ -144,6 +144,21 @@ the blocker. Asking again later resumes from the `Intent-Unit` lines on the bran
 request. It never merges unless the request or the project policy says so, and running units in
 parallel remains [`batch-work`](/skills/batch-work), chosen explicitly.
 
+## Route and finishing tasks
+
+Delivery follows the route for the kind of work, from the project's
+[workflow file](/reference/workflow-file) or the global policy's defaults. Every default route gives
+the work an issue first, so when the route puts `shape-work` before delivery and the work has no
+issue, delivery stops before changing code and recommends `shape-work`. Say "skip the issue" to
+deliver without one.
+
+When the work is complete, delivery runs the finishing tasks the workflow file lists for that kind
+of work, usually after the last unit of an initiative. A task in the repository, such as a
+changelog entry, goes into the final pull request and is reviewed with it. A task in an external
+system, such as a wiki page, runs when the session has a tool that can write there; otherwise the
+finished text is handed over with its destination. The report lists every task as done or handed
+off, and the run ends with the route line and the command that continues the work.
+
 ## Issues, intent units, and claims
 
 A tracker issue with no intent behind it is the whole contract: its need, outcome, boundaries,
