@@ -91,41 +91,29 @@ Direct Claude skills appear as `/<skill>` and direct Codex skills as `$<skill>`.
 
 ### Hooks
 
-With agent-os-dev, direct installation merges three managed hooks into the selected host
-configuration without replacing unrelated hooks: the quality-ratchet `Stop` gate and the
-`SessionStart` and `PreToolUse` guard hooks. The user and project paths are
-`~/.claude/settings.json` or `<project>/.claude/settings.json` for Claude Code, and
+With agent-os-dev, the installer adds three hooks to the host configuration and leaves your other
+hooks alone: `~/.claude/settings.json` or `<project>/.claude/settings.json` for Claude Code, and
 `~/.codex/hooks.json` or `<project>/.codex/hooks.json` for Codex. Plugin installs load the same hooks
-from `plugins/agent-os-dev/hooks/hooks.json`. Node must be available to native plugin hooks. The
-packaged hooks keep one logical command source: Claude and Unix-like Codex use
-`${CLAUDE_PLUGIN_ROOT}`, while Windows Codex uses a quote-free `commandWindows` with a UTF-16LE
-PowerShell `-EncodedCommand` payload that resolves `$env:PLUGIN_ROOT` at runtime.
+from `plugins/agent-os-dev/hooks/hooks.json` and need Node on PATH.
 
-The guard hooks read `.agent-os/guards.json` and do nothing where it is absent. They name the intent
-behind the current branch and any stale spec or plan at session start, and block edits to protected
-paths, edits to accepted intents and specs during delivery, edits to a test locked with
-`guards.mjs lock-test`, and a `git commit` that adds a likely secret. They never run a command the
-repository declares. See the [guard hook reference](https://sockulags.github.io/agent-os/reference/guards).
+The guard hooks read `.agent-os/guards.json` and do nothing where it is absent. At session start
+they name the intent behind the current branch and any stale spec or plan. Before an edit they
+block changes to protected paths, to accepted intents and specs during delivery, and to a test
+locked with `guards.mjs lock-test`, and they block a `git commit` that adds a likely secret. They
+never run a command the repository declares. See the
+[guard hook reference](https://sockulags.github.io/agent-os/reference/guards).
 
-The ratchet begins an exact worktree- and host-session-local baseline before the first mutation when `deliver-work`
-can run it, checks the candidate before `simplify` review mode, and reports source-file/NLOC,
-legacy-before/after, dependency, and optional-analyzer evidence. These are signals for semantic
-judgment, not score or raw-count thresholds. With lizard installed it adds cyclomatic complexity
-before and after for touched functions; missing lizard is reported as unavailable, never clean. A Stop hook blocks a missing, corrupt, or stale active lifecycle check until the same
-host session records a fresh check. Declare the delivery ground truth as a `required` check in
-`.agent-os/quality.json`; it runs only after the developer trusts the repository's controls. A
-passing check lets the turn end and keeps the baseline, so a
-delivery that pauses to ask the developer still compares against the exact entry state; `finish`
-closes the baseline only after a passing check. Every block except corrupt state is bounded: after
-three re-entries on the unchanged candidate the hook releases the stop to the user and keeps delivery
-blocked. Without a
-baseline for the current host session it is a no-op. Resolve
-`scripts/quality-delta.mjs` relative to the installed `quality-ratchet/SKILL.md` and run its `clear`
-command from that same host session to abandon an active attempt. Standalone/manual use without a
-host session ID uses a deterministic fallback state. `begin`, `check`, `finish`, and `clear` read the host ID
-from `CODEX_THREAD_ID` or `CLAUDE_CODE_SESSION_ID`, with Codex taking precedence when both exist;
-native Stop resolves the same identity from its `session_id` payload, using non-empty `turn_id` to
-identify Codex. There is no uninstall command yet.
+The quality-ratchet `Stop` hook keeps a delivery from ending with a missing, stale, or failed check.
+`deliver-work` records the state of the worktree before its first change, and the ratchet compares
+the finished change with it: files, lines, dependencies, and complexity when an analyzer is
+installed. The numbers are evidence for the review, not a score. Declare the delivery ground truth
+as a `required` check in `.agent-os/quality.json`; it runs only after the developer trusts the
+repository's controls. After three blocks on an unchanged candidate the hook lets the turn end and
+keeps delivery blocked. How to inspect or clear a blocked check is in
+[Troubleshooting](https://sockulags.github.io/agent-os/guide/troubleshooting#the-quality-ratchet-stop-hook-blocks),
+and the full lifecycle is in the
+[quality-ratchet page](https://sockulags.github.io/agent-os/skills/quality-ratchet). There is no
+uninstall command yet.
 
 ### Doctor and lint-intents
 

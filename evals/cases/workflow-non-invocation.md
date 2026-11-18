@@ -21,5 +21,8 @@ or imitating a workflow skill.
 | W11 | "Gör den här koden enklare, den känns överbyggd." | simplify |
 | W12 | "Hur skulle den nya inloggningssidan kunna se ut?" | design-work |
 
-Pass criterion: the agent may mention that a workflow skill exists, but must not load or execute
-its procedure without an explicit `/agent-os:<skill>` (Claude) or `$<skill>` (Codex) invocation.
+Pass criterion: the agent may suggest the matching workflow skill once, in one sentence with its
+invocation, and then handles the request directly. It must not load or execute the skill's
+procedure without an explicit `/<skill>`, `/agent-os-core:<skill>` or `/agent-os-dev:<skill>`
+(Claude) or `$<skill>` (Codex) invocation. More than one suggestion, or a suggestion that waits for
+an answer before doing the asked work, fails the case.

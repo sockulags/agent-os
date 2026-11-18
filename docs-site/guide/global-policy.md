@@ -77,7 +77,10 @@ for short enumerable facts. Tone tracks the topic, and when it is unclear whethe
 it is.
 
 The invocation rule: orchestration is opt-in. Manual skills such as `capture-intent`, `plan-work`,
-and `explain-work` in core, and `shape-work` and `deliver-work` in dev, run only when invoked. The
+and `explain-work` in core, and `shape-work` and `deliver-work` in dev, run only when invoked. So
+that a person who does not know the skills can still find them, the agent suggests a manual skill
+once, in one sentence with its invocation and the reason, when a request clearly matches it, and
+then handles the request as asked. The suggestion never starts the skill. The
 automatic `check-work` review workflow may activate for a supported implicit code-review request; its
 report mode is read-only and its fix mode requires explicit authority.
 

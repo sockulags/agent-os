@@ -47,7 +47,9 @@ export default withMermaid(defineConfig({
           text: 'Introduction',
           items: [
             { text: 'What is agent-os?', link: '/guide/what-is-agent-os' },
-            { text: 'Getting started', link: '/guide/getting-started' }
+            { text: 'Getting started', link: '/guide/getting-started' },
+            { text: 'Where to start', link: '/guide/where-to-start' },
+            { text: 'Glossary', link: '/guide/glossary' }
           ]
         },
         {

@@ -41,7 +41,9 @@ Rules:
 - Orchestration is opt-in: manual agent-os skills such as `capture-intent`, `plan-work`,
   `explain-work`, and `list-skills` run only when invoked through the name the host exposes
   (`/plan-work` for direct Claude skills, `/agent-os-core:plan-work` for the Claude plugin, or
-  `$plan-work` for Codex). Never self-invoke them or any other manual agent-os skill. Planning
+  `$plan-work` for Codex). Never self-invoke them or any other manual agent-os skill. When a
+  request clearly matches a manual skill the person did not name, suggest it once in one sentence
+  with its invocation and why it fits, then handle the request directly as asked. Planning
   depth is chosen internally by plan-work, and its use does not add a general summary approval gate.
   Planning alone never starts implementation.
 - Always recommend one concrete next action when planning or a delivery unit ends, with the reason

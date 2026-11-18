@@ -8,13 +8,22 @@ description: Carry a need from intent through spec, plan, delivery, review, and 
 Enter at the lowest step that still has unresolved work, and leave out the steps a small change does
 not need.
 
-<figure class="agent-os-diagram">
-  <a href="/diagrams/agent-os-planning-delivery-flow.svg" target="_blank" rel="noopener" aria-label="Open the Agent OS planning and delivery flow at full size">
-    <img class="diagram-light" src="/diagrams/agent-os-planning-delivery-flow.svg" alt="">
-    <img class="diagram-dark" src="/diagrams/agent-os-planning-delivery-flow-dark.svg" alt="">
-  </a>
-  <figcaption>Uncertainty determines the planning entry point. The developer's explicit selection determines whether delivery runs one ready unit or a batch. The diagram predates the intent files. Select the diagram to open it at full size.</figcaption>
-</figure>
+```mermaid
+flowchart LR
+    I["Intent<br>capture-intent"] --> S["Spec<br>plan-work"]
+    S -.->|"when wanted"| D["Sketches<br>design-work"]
+    D -.-> S
+    S --> P["Plan<br>shape-work"]
+    S -->|"one unit is enough"| W
+    P --> W["Delivery<br>deliver-work or batch-work"]
+    W --> R["Review<br>check-work"]
+    R --> L["Lesson<br>record-lesson"]
+    F(["A bug or a clear small task"]) --> W
+```
+
+Each box is a step you can enter directly. A bug or a clear task starts at delivery and skips the
+files; a large initiative passes every step. [Where to start](/guide/where-to-start) helps you pick
+the entry point from your situation.
 
 ## The steps
 

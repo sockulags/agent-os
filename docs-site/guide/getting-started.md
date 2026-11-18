@@ -43,16 +43,8 @@ The direct installer writes to these locations:
 | User | `~/.claude/skills` | `~/.codex/skills` |
 | Project | `<project>/.claude/skills` | `<project>/.agents/skills` |
 
-These are the locations managed and verified by the current Agent OS installer. OpenAI's general
-Codex documentation now also lists `~/.agents/skills` for user-level authoring. Agent OS keeps its
-existing managed user location for backward compatibility; it will not move an installation until
-both discovery and update behavior have been verified as one migration.
-
-It records the Agent OS-owned directories in `.agent-os-install.json`. An update replaces only
-those directories, removes managed skills that disappeared from the release, and leaves unrelated
-skills alone. Schema 1 manifests remain readable; new installs record the installed packages and the
-managed hook integration in schema 2. It refuses to overwrite a same-name directory that it did not
-install.
+An update replaces only the skills Agent OS installed, removes skills a release retired, and leaves
+your other skills alone. It never overwrites a skill directory it did not install.
 
 With agent-os-dev, direct installs also merge three Agent OS-owned hooks without replacing unrelated
 host hooks: the quality-ratchet `Stop` gate and the `SessionStart` and `PreToolUse` guard hooks
@@ -63,10 +55,7 @@ described in [Guard hooks](/reference/guards). They go into:
 | User | `~/.claude/settings.json` | `~/.codex/hooks.json` |
 | Project | `<project>/.claude/settings.json` | `<project>/.codex/hooks.json` |
 
-Malformed or ambiguous managed hook configuration aborts before skill or hook mutation. The direct
-command uses absolute paths to the Node executable and the runner copied into the selected skill
-root. Start a new session after updating;
-there is no uninstall command yet.
+Start a new session after updating. There is no uninstall command yet.
 
 Codex runs a non-managed hook only after you trust it, and it records that trust against the hook's
 hash. After a Codex install, or an update that changes the hooks, open Codex, run `/hooks`, and trust
@@ -104,16 +93,9 @@ claude plugin install agent-os-core@agent-os-marketplace
 claude plugin install agent-os-dev@agent-os-marketplace
 ~~~
 
-Native plugin mode loads the hooks in `plugins/agent-os-dev/hooks/hooks.json`
-through `CLAUDE_PLUGIN_ROOT` on Unix-like hosts and Codex's quote-free
-`commandWindows` with a UTF-16LE PowerShell `-EncodedCommand` payload on Windows. The decoded script
-resolves `$env:PLUGIN_ROOT` at runtime. Node and PowerShell must be on PATH.
-
-For development against a clone, Claude can run
-`claude --plugin-dir plugins/agent-os-core --plugin-dir plugins/agent-os-dev`. Codex can register the
-working copy with `codex plugin marketplace add /path/to/agent-os`. A local Codex marketplace is
-already the source, so the updater skips the Git-only marketplace upgrade step and reinstalls the
-plugin directly.
+Plugin hooks need Node on PATH, and PowerShell as well on Windows. How the installer records what
+it owns, how the hooks are wired on each host, and how to run Agent OS from a clone are described in
+[Plugin manifests](/reference/plugin-manifests#installer-details).
 
 ### Verify the install
 
@@ -167,25 +149,17 @@ The result is the repository's [project policy](/guide/project-policy), a living
 
 ## Your first run
 
-For a new need that is not yet clear, invoke `capture-intent`; it writes `intents/<id>/intent.md`.
-For a coherent mission whose planning depth or coverage is not yet settled, invoke `plan-work`; with
-an intent, it writes `spec.md` beside it.
-For a bounded change with open product questions, invoke `shape-work` with the task. For work whose
-decisions are already made, use `deliver-work`. For a completed implementation or diff, use
-`/check-work report|fix` in direct Claude, `/agent-os-dev:check-work report|fix` in the Claude plugin, or
-`$check-work report|fix` in Codex; report is read-only, while fix authorizes supported fixes. Use
-`batch-work` only when you explicitly want
-several implementation-ready, dependency-mapped issues executed and integrated as one batch.
-
-When you want help planning a mission or cannot yet say what you want, invoke `plan-work`. For example:
+[Where to start](/guide/where-to-start) matches the situation you are in to the skill that fits, and
+the [glossary](/guide/glossary) explains the words the skills use. When you cannot yet say what you
+want, describe the problem to `capture-intent`:
 
 ```text
-/plan-work Something about this project feels off and I don't know where to start
+/capture-intent Something about this project feels off and I don't know where to start
 ```
 
-That example uses a direct Claude install. Use `/agent-os-core:plan-work` in the Claude plugin or
-`$plan-work` in Codex. The workflow adapts its depth: it may question the need, inspect the
-repository, resolve a bounded choice, or open a decision map before continuing into shaping.
+That example uses a direct Claude install. Use `/agent-os-core:capture-intent` in the Claude plugin
+or `$capture-intent` in Codex. It asks one question at a time until the need is clear, and then
+`plan-work` can turn it into a spec.
 
 Nothing forces you to use a workflow. The disciplines are active in every session: the agent
 reproduces before it patches, keeps unrelated cleanup out of your diff, and shows command output
