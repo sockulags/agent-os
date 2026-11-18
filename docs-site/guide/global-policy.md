@@ -49,7 +49,7 @@ Evidence comes before claims. Scope and diffs stay narrow. Only unresolved produ
 materially change the outcome are escalated; reversible implementation choices stay with the
 implementer.
 
-Scope control uses two axes: relation to the mission (required, adjacent, or unrelated) and mandate
+Scope control, which the policy hands to the automatic [`scope-guard`](/skills/scope-guard) skill, uses two axes: relation to the mission (required, adjacent, or unrelated) and mandate
 (covered by the request and policy, or requiring a new decision or external action). Risk guides
 implementation and verification and can reveal a missing decision, but risk-area membership does
 not grant permission. Required covered work normally stays in scope; adjacent work is a follow-up,
@@ -97,9 +97,9 @@ then handles the request as asked. The suggestion never starts the skill. The
 automatic `check-work` review workflow may activate for a supported implicit code-review request; its
 report mode is read-only and its fix mode requires explicit authority.
 
-The development section also says that `plan.md` lists units and dependencies only, that a draft
-pull request with `Intent-Unit: <intent-id>/<unit-key>` claims a unit, and that a hook block is a
-boundary the agent never routes around.
+The development section also says that delivery status is never written into `plan.md`, that a
+draft pull request claims a unit by its `Intent-Unit: <intent-id>/<unit-key>` line or by linking its
+issue, and that a hook block is a boundary the agent never routes around.
 
 ## Preferences
 
