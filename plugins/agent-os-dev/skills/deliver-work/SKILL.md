@@ -144,16 +144,12 @@ unit, say so in one sentence and recommend `shape-work`. Stop before mutation on
 has a workflow file, a tracker can be written, and the request does not say to skip the issue;
 otherwise continue with the delivery.
 
-Finishing tasks come from the workflow file's `## Finishing tasks` section, under the heading for
-this kind of work, and run when the work is complete: for an initiative, in the pull request that
-delivers its last unit. A task inside the repository, such as a changelog entry, belongs to that
-pull request and goes through the review gate with it. A task in an external system runs when the
-session has a tool that can write there, because the workflow file is project policy; otherwise
-write the finished text and report it as a handoff with its destination. Report every task as done
-or handed off. A finishing task never merges, deploys, or closes anything unless it says so.
-
-End with the route line from the global policy, naming the issue or unit and the command that
-resumes the work.
+When the work is complete, run the workflow file's `## Finishing tasks` for this kind of work; for
+an initiative, in the pull request that delivers its last unit. A repository task, such as a
+changelog entry, joins that pull request and its review gate. An external task runs when a tool can
+write there, since the workflow file is project policy; otherwise hand over the finished text with
+its destination. Report each task as done or handed off; none merges, deploys, or closes anything
+unless it says so. End with the route line, naming the issue or unit and the resume command.
 
 Ground truth governs the loop; no prescribed implementation sequence substitutes for it.
 
@@ -221,33 +217,17 @@ because a necessary detail was discovered late. Continue independent authorized 
 partial block. A context or session limit calls for a compact continuation record, not a new
 product issue. Changing workflow names is not itself a new approval step.
 
-No workflow grants tracker write access automatically. Tracker maintenance is allowed only when the
-request or project policy grants it, and then only for implementation detail and technical
-ordering/readiness inside the authorized set. It does not include changing acceptance, owners,
-delivery scope, adding unrequested work, or closing an issue. A ready issue is not authorization.
-Without tracker mandate, keep corrections local and report the delta. If it must survive a session,
-use the work record's existing sections and add `Pending tracker updates` only when needed; record
-the unsynced delta, never a copied plan.
+No workflow grants tracker write access automatically; the global policy's tracker rule decides
+what a mandate covers, and a ready issue is not authorization. Without a mandate, keep corrections
+local and report the delta, in the work record's `Pending tracker updates` when it must survive the
+session.
 
 ## Resume only when useful
 
 Ordinary work needs no workflow record, and a draft pull request is the record for claimed units.
-For work expected to span sessions without a pull request, keep a compact
-`.agent-os/work/<slug>.md`:
-
-```yaml
----
-agent_os_work: 2
-title: <work title>
-status: active
-next_action: <concrete continuation>
----
-```
-
-Record only Outcome, Boundaries, Ground truth, Decisions, and Evidence. Use `blocked`, `verified`, or
-`delivered` when those words help the next session resume accurately. Add `Pending tracker updates`
-only when an authorized or reported tracker delta needs to survive the session. The record is working memory,
-not an approval ledger, plan copy, or audit receipt.
+For work expected to span sessions without a pull request, keep a compact `.agent-os/work/<slug>.md`
+in the [work record format](references/work-records.md). The record is working memory, not an
+approval ledger, plan copy, or audit receipt.
 
 ## Batch workers
 
