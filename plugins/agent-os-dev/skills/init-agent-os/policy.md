@@ -38,45 +38,31 @@ Rules:
 - Never force the reader to cross-reference labels or numbering invented earlier in the text; say what you mean in place.
 - Explanations belong in prose; tables only for short enumerable facts.
 - Calibrate tone to the topic: playfulness is fine, neutral and factual the moment the subject is serious. When in doubt, it is serious.
-- Orchestration is opt-in: manual agent-os skills such as `capture-intent`, `plan-work`,
-  `explain-work`, and `list-skills` run only when invoked through the name the host exposes
-  (`/plan-work` for direct Claude skills, `/agent-os-core:plan-work` for the Claude plugin, or
-  `$plan-work` for Codex). Never self-invoke them or any other manual agent-os skill. When a
-  request clearly matches a manual skill the person did not name, suggest it once in one sentence
-  with its invocation and why it fits, then handle the request directly as asked. Planning
-  depth is chosen internally by plan-work, and its use does not add a general summary approval gate.
-  Planning alone never starts implementation.
-- End every agent-os workflow with a route line: the kind of work, the steps done and the steps
-  left in plain words, and the exact command that resumes the work, such as `/deliver-work #42`, so
-  the person or a colleague can continue the next day. Take the route from the project's
-  `.agent-os/workflow.md` when the project policy points to one, otherwise from a default path the
-  project policy states, otherwise from the default routes; with agent-os-core alone, name the next
-  installed step. What happens next follows the `Next step:` line in the person's `## My working preferences`:
-  `ask` asks once whether to start the next step; `continue` starts the next planning step without
-  asking and asks once before delivery; `recommend` only recommends. Without that line, ask.
-  Continuing never skips a step of the route, decides an open product question, or merges or
-  deploys.
-- Always recommend one concrete next action when planning or a delivery unit ends, with the reason
-  it wins and any blocker. Existing authority persists across unit boundaries, but never expands to
-  unrelated backlog work. If the goal is complete and no useful next action remains, say so instead
-  of manufacturing work.
-- Scope has two independent axes: classify discoveries as required, adjacent, or unrelated to the
-  mission, then classify the work as covered by the existing mandate or requiring a new decision or
-  external action. Risk guides implementation and verification and can reveal a missing decision;
-  risk-area membership does not grant permission. Required covered work normally stays in scope,
-  while adjacent work is a follow-up and unrelated work gets no invented proposal.
-- No skill grants external tracker write access automatically, except that an invoked `shape-work`
-  may create the new issues its own shape needs. An explicit tracker mandate in the
-  request or the project policy's `## Tracker mandate` section may include implementation detail and
-  technical ordering/readiness inside the authorized set, but not acceptance changes, new owners or
-  deliveries, or closure. Without that mandate, keep corrections local and report the unsynced delta.
-- Ceremony follows size. Most work keeps its decisions in tracker issues and its pull requests,
-  with no intent or spec file. Only an initiative, work that several pull requests deliver and whose
-  product decisions someone other than the requester must agree to, or work where the person or the
-  project policy asks for files, keeps them in versioned files: `intents/<id>/intent.md` for what is
-  needed and why, and `spec.md` beside it for behavior, interface, boundaries, decisions, and
-  ground truth. They change only through a reviewed change, and a file whose `built_on` revision
-  is older than its source is stale until it is reconsidered.
+- Orchestration is opt-in: manual agent-os skills run only when the person invokes them by the name
+  the host exposes (`/plan-work`, `/agent-os-core:plan-work`, or `$plan-work`). Never self-invoke one.
+  When a request clearly matches a manual skill the person did not name, suggest it once in one
+  sentence with its invocation and why it fits, then do what was asked. Planning alone never starts
+  implementation.
+- End every agent-os workflow with a route line: the kind of work, the steps done and left, and the
+  exact command that resumes it, such as `/deliver-work #42`. Take the route from the project's
+  `.agent-os/workflow.md` when the project policy points to one, else from a default path the policy
+  states, else from the default routes; with agent-os-core alone, name the next installed step. Then
+  follow the `Next step:` line in the person's `## My working preferences`: `ask`, the default, asks
+  once whether to start the next step; `continue` starts the next planning step and asks before
+  delivery; `recommend` only recommends. Never skip a step, decide an open product question, merge,
+  or deploy on that basis.
+- Recommend one concrete next action with its reason and any blocker. Authority persists across unit
+  boundaries but never expands to unrelated backlog work; when nothing useful remains, say so.
+- Sort discoveries with `scope-guard`: required work the mandate covers stays in scope, adjacent work
+  is a follow-up, unrelated work gets no proposal, and risk never grants permission by itself.
+- Tracker writes need a tracker mandate in the request or the project policy's `## Tracker mandate`,
+  except the new issues an invoked `shape-work` creates. A mandate never covers acceptance, owners,
+  new deliveries, or closure. Without one, keep corrections local and report the unsynced delta.
+- Only an initiative, work that several pull requests deliver and whose product decisions someone
+  other than the requester must agree to, or work the person or project policy asks files for, gets
+  `intents/<id>/intent.md` and `spec.md`. Other work lives in tracker issues and pull requests. Those
+  files change only through review, and one whose `built_on` revision is older than its source is
+  stale until it is reconsidered.
 
 ## Preferences (seed defaults; project policy overrides)
 
@@ -89,25 +75,17 @@ Rules:
 ## Development workflows
 
 - Use the Git identity configured by the repository or current session. Never add AI attribution or `Co-Authored-By` trailers.
-- The development skills `design-work`, `shape-work`, `deliver-work`, `batch-work`, `dispatch-next`,
-  `simplify`, and `init-agent-os` are manual too (`/agent-os-dev:deliver-work` for the Claude
-  plugin). Existing authority may continue into the workflow a skill's exit contract names, as
-  `plan-work` does into `design-work` once the developer chose to sketch. Continuing sequentially
-  through already shaped units is allowed when the active implementation request covers that bounded
-  set, and a request to finish an intent covers shaping its plan and delivering every unit; parallel batch execution still requires explicit selection. The automatic `check-work` review
-  workflow is also available from supported implicit review requests; its report mode is read-only
-  and its fix mode requires explicit authority.
-- Default routes, used when the project has no workflow file or no row for the kind of work: a bug
-  with a known fix goes through `shape-work` for one issue and then `deliver-work`; a small change,
-  or a bug whose fix holds a choice, through `plan-work`, `shape-work`, and `deliver-work`; a feature
-  through `shape-work` and `deliver-work`, with `plan-work` first when anything is unclear; an
-  initiative through `capture-intent`, `plan-work`, `shape-work`, `deliver-work`, and the project's
-  finishing tasks. Every route gives the work an issue before delivery, for traceability, unless the
-  request says to skip it. Routes guide the agent-os workflows; a request made without one is done
-  as asked, with at most the one-sentence suggestion of a matching skill.
-- `plan.md` beside a spec lists delivery units and dependencies only. Delivery status is never
-  written into it: a unit is claimed by a draft pull request whose body carries
-  `Intent-Unit: <intent-id>/<unit-key>`, and status is read from open and merged pull requests. An
-  issue without an intent is claimed by a draft pull request that links it.
+- The development skills are manual too. Authority may continue into the workflow a skill's exit
+  contract names. A request that covers a bounded set of shaped units, or finishing an intent, covers
+  delivering them one at a time; parallel batch execution needs explicit selection. `check-work` may
+  start from an implicit review request; its report mode is read-only and its fix mode needs explicit
+  authority.
+- Default routes: a bug with a known fix, `shape-work` for one issue and then `deliver-work`; a small
+  change or a bug whose fix holds a choice, `plan-work`, `shape-work`, and `deliver-work`; a feature,
+  the same with `plan-work` only when something is unclear; an initiative, every step and the
+  project's finishing tasks. Each route gives the work an issue unless the request skips it, and
+  routes guide only agent-os workflows: a request made without one is done as asked.
+- Delivery status is never written into `plan.md`: a draft pull request claims a unit, by its
+  `Intent-Unit: <intent-id>/<unit-key>` line or by linking its issue, and its merge delivers it.
 - Agent OS hooks read `.agent-os/guards.json`. A hook block is a boundary, not an obstacle: change
   course or ask, and never work around it by another tool or path.
