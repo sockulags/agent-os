@@ -1,5 +1,6 @@
 // Read-only installation report: which Agent OS versions this machine and project run, whether
-// they match this CLI, and whether the managed policy blocks and hooks are current. It never
+// they match this CLI, whether the managed policy blocks and hooks are current, and whether the
+// current repository's workflow file is in place. It never
 // writes, and a broken or unexpected file becomes a finding instead of a crash.
 
 import { spawnSync } from 'node:child_process'
@@ -225,6 +226,48 @@ function checkPolicy(homeDir, { version, packageName, policy, installed, fsImpl,
   }
 }
 
+const INIT_COMMAND = 'run init-agent-os in this repository (/init-agent-os, /agent-os-dev:init-agent-os, or $init-agent-os)'
+
+function repositoryRoot(cwd, fsImpl) {
+  let dir = path.resolve(cwd)
+  for (;;) {
+    if (fsImpl.existsSync(path.join(dir, '.git'))) return dir
+    const parent = path.dirname(dir)
+    if (parent === dir) return null
+    dir = parent
+  }
+}
+
+// The repository's own setup: a project that init-agent-os set up has .agent-os/, and its work routes,
+// tracker, and finishing tasks live in .agent-os/workflow.md, which the project policy points to.
+// Missing repository setup is a warning, never drift, so an onboarding script's exit code stays about installs.
+function checkRepository(cwd, { fsImpl, report }) {
+  const root = repositoryRoot(cwd, fsImpl)
+  if (!root || !fsImpl.existsSync(path.join(root, '.agent-os'))) return
+  const label = `repository ${root}`
+  const workflow = readText(path.join(root, '.agent-os', 'workflow.md'), fsImpl)
+  if (workflow.state === 'absent') {
+    report('warn', label, 'no .agent-os/workflow.md, so the default work routes apply and deliver-work only recommends an issue ' +
+      `instead of requiring one. To add the routes, tracker, and finishing tasks: ${INIT_COMMAND} and choose routes and finishing tasks.`)
+    return
+  }
+  if (workflow.state === 'invalid') {
+    report('warn', label, `cannot read .agent-os/workflow.md: ${workflow.error}`)
+    return
+  }
+  if (!/^## Routes\b/m.test(workflow.text)) {
+    report('warn', label, `.agent-os/workflow.md has no "## Routes" section, so the default routes apply. To fix it: ${INIT_COMMAND}.`)
+  }
+  const pointed = ['CLAUDE.md', 'AGENTS.md', 'policy.md'].some((name) =>
+    readText(path.join(root, name), fsImpl).text.includes('.agent-os/workflow.md'))
+  if (!pointed) {
+    report('warn', label, 'the project policy does not point to .agent-os/workflow.md, so agents may not read it. ' +
+      `Add the line "Work routes, tracker, and finishing tasks: .agent-os/workflow.md." to the policy, or ${INIT_COMMAND}.`)
+  } else if (/^## Routes\b/m.test(workflow.text)) {
+    report('ok', label, '.agent-os/workflow.md is present and the project policy points to it')
+  }
+}
+
 export function latestPublishedVersion(packageName, { spawn = spawnSync } = {}) {
   if (!/^@?[a-z0-9][a-z0-9._/-]*$/.test(packageName)) return null
   // npm is a .cmd shim on Windows, which needs a shell; one fixed command string avoids argument joining.
@@ -295,6 +338,7 @@ export function collectDoctorReport({
   }
 
   checkPolicy(homeDir, { version, packageName, policy, installed, fsImpl, report })
+  checkRepository(cwd, { fsImpl, report })
   return { entries, drift: entries.some((entry) => entry.level === 'drift') }
 }
 

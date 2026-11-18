@@ -767,6 +767,36 @@ test('doctor finds no installation and suggests install', async () => {
   assert.match(text, /no Agent OS installation found/)
 })
 
+test('doctor reports the repository workflow file without counting it as drift', async () => {
+  const root = temporaryRoot()
+  const homeDir = path.join(root, 'home')
+  const repo = path.join(root, 'repo')
+  const cwd = path.join(repo, 'src')
+  fs.mkdirSync(cwd, { recursive: true })
+  fs.mkdirSync(path.join(repo, '.git'))
+
+  const outside = await runDoctor(homeDir, cwd)
+  assert.doesNotMatch(outside.text, /repository /)
+
+  fs.mkdirSync(path.join(repo, '.agent-os'))
+  const missing = await runDoctor(homeDir, cwd)
+  assert.equal(missing.code, 0)
+  assert.match(missing.text, /WARN {2}repository .*no \.agent-os\/workflow\.md.*init-agent-os/)
+
+  fs.writeFileSync(path.join(repo, '.agent-os', 'workflow.md'), '# How we work\n\n## Routes\n')
+  const unpointed = await runDoctor(homeDir, cwd)
+  assert.match(unpointed.text, /WARN {2}repository .*does not point to \.agent-os\/workflow\.md/)
+
+  fs.writeFileSync(path.join(repo, 'CLAUDE.md'), 'Work routes, tracker, and finishing tasks: .agent-os/workflow.md.\n')
+  const ready = await runDoctor(homeDir, cwd)
+  assert.match(ready.text, /OK {4}repository .*workflow\.md is present and the project policy points to it/)
+
+  fs.writeFileSync(path.join(repo, '.agent-os', 'workflow.md'), '# How we work\n')
+  const noRoutes = await runDoctor(homeDir, cwd)
+  assert.match(noRoutes.text, /WARN {2}repository .*no "## Routes" section/)
+  assert.doesNotMatch(noRoutes.text, /OK {4}repository/)
+})
+
 function snapshotTree(root) {
   const entries = []
   const visit = (dir) => {
