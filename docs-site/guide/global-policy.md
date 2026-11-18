@@ -53,10 +53,13 @@ Scope control uses two axes: relation to the mission (required, adjacent, or unr
 (covered by the request and policy, or requiring a new decision or external action). Risk guides
 implementation and verification and can reveal a missing decision, but risk-area membership does
 not grant permission. Required covered work normally stays in scope; adjacent work is a follow-up,
-and unrelated work gets no invented proposal. No skill grants tracker write access automatically.
+and unrelated work gets no invented proposal. No skill grants tracker write access automatically,
+except that an invoked `shape-work` may create the new issues its own shape needs.
 
-Decisions that outlive a session live in versioned files: `intents/<id>/intent.md` and `spec.md`
-beside it. They change only through a reviewed change, and a file whose `built_on` revision is older
+Ceremony follows size. Most work keeps its decisions in tracker issues and pull requests, with no
+intent or spec file. Only an initiative, work that several pull requests deliver and whose product
+decisions someone other than the requester must agree to, or work where you or the project policy
+ask for files, keeps them in `intents/<id>/intent.md` and `spec.md` beside it. Those files change only through a reviewed change, and a file whose `built_on` revision is older
 than its source is stale until it is reconsidered. A tracker mandate lives in the project policy's
 `## Tracker mandate` section.
 

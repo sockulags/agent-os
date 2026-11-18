@@ -22,7 +22,8 @@ They are style only, yield to project policy, and never grant merge, deploy, or 
 Repository mode separates facts from preferences. A first run closes with how the agent will work
 in the repository and one recommended first action, after asking the working agreement in at most
 two rounds: who works here and approves, the default stopping point, the default path for a new
-feature, where units live, the language of artifacts, and, for frontend work, when interfaces are
+feature (recommended: tracker issues, with intent and spec files kept for initiatives), which
+tracker holds issues and where an initiative's units live, the language of artifacts, and, for frontend work, when interfaces are
 sketched (before delivery, after it, asked each time, or never), in which medium, and where the sketches live. Evidence can recommend an answer but never settles a preference. "Use your
 recommendations for the rest" is always available and holds for the whole run: a fact with no
 evidence goes under **Open setup questions** without being asked. In a repository with no policy

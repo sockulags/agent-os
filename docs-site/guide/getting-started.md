@@ -159,7 +159,7 @@ want, describe the problem to `capture-intent`:
 
 That example uses a direct Claude install. Use `/agent-os-core:capture-intent` in the Claude plugin
 or `$capture-intent` in Codex. It asks one question at a time until the need is clear, and then
-`plan-work` can turn it into a spec.
+`shape-work` can turn it into tracker issues.
 
 Nothing forces you to use a workflow. The disciplines are active in every session: the agent
 reproduces before it patches, keeps unrelated cleanup out of your diff, and shows command output

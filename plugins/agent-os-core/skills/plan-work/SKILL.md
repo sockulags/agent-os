@@ -1,6 +1,6 @@
 ---
 name: plan-work
-description: Plans a coherent mission from outcome through coverage, decisions, feasibility, and verification with adaptive depth, and writes the result as a versioned spec beside its intent. User-invoked when the developer wants a plan or a spec, or the work needs one. Not required for an already clear implementation request or a substitute for shape-work delivery structure.
+description: Plans a coherent mission from outcome through coverage, decisions, feasibility, and verification with adaptive depth, and writes the result as a versioned spec beside an initiative's intent, or as a contract a tracker issue can carry. User-invoked when the developer wants a plan or a spec, or the work needs one. Not required for an already clear implementation request or a substitute for shape-work delivery structure.
 disable-model-invocation: true
 ---
 
@@ -16,6 +16,9 @@ request. Shape-work may also start from an existing specification.
 Do not ask the developer to select a mode. Match the depth to scope and uncertainty separately:
 
 - A small, clear fix needs its outcome, boundaries, and verification, and no spec file.
+- Work that is not an initiative needs no spec file, whatever its size. Its settled contract
+  goes into the tracker issues that `shape-work` writes, or straight into delivery when one pull
+  request is enough.
 - A large but known change needs repository inspection and a coverage check across the relevant
   flows, states, errors, integrations, and the screens each role sees.
 - A bounded open choice needs discoverable facts first, then only focused questions for choices
@@ -24,7 +27,8 @@ Do not ask the developer to select a mode. Match the depth to scope and uncertai
   separate evidence work, or parallel treatment.
 
 Use [capture-intent](../capture-intent/SKILL.md) when the outcome is still moving or cannot be
-stated, or when no intent exists for work that needs one. Use [explain-work](../explain-work/SKILL.md)
+stated, or when an initiative has no intent yet. An initiative is work that several pull requests
+deliver and whose product decisions someone other than the requester must agree to. Use [explain-work](../explain-work/SKILL.md)
 for the plain-language summary at the top of the spec and whenever an actual decision needs one. A
 summary is not a general approval gate: existing authority continues across workflow boundaries,
 and planning alone never starts implementation.
@@ -74,7 +78,11 @@ its reason, and list them in the review for the developer to overturn.
 
 ## Write the spec
 
-When the work has an intent, write `spec.md` in the same `intents/<id>/` folder from
+Write a spec file only when the work has an intent, or when the person or the project policy asks
+for one. Otherwise report the settled contract, with its behavior, interface decisions, boundaries,
+and ground truth, in the form a tracker issue can carry, and recommend `shape-work` or
+`deliver-work` as the next action. When the work has an intent, write `spec.md` in the same
+`intents/<id>/` folder from
 [references/spec-template.md](references/spec-template.md). Its `built_on` names the intent revision
 it answers, such as `intent@2`. Acceptance examples originate in the spec. A delivery unit written
 by `shape-work` states the ones it is accountable for and cites the spec section; the spec stays the

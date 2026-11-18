@@ -23,7 +23,8 @@ Read the request, repository policy, relevant code, and working-tree state. Pres
 Resolve discoverable facts yourself. When the unit comes from `intents/<id>/plan.md`, or from a
 tracker issue whose `Origin` names an intent, read its plan entry or issue, spec, and intent: the
 unit's contract, the spec's boundaries, its `## Interface` entries with their sketches, and its
-ground truth are the contract below. Before editing, know:
+ground truth are the contract below. A tracker issue with no intent behind it is itself the whole
+contract: its need, outcome, boundaries, acceptance, and ground truth. Before editing, know:
 
 - **Outcome:** the observable change requested.
 - **Boundaries:** explicit non-goals and the smallest plausible change surface.
@@ -58,8 +59,8 @@ shaping into implementation-ready issues, unless the request is to finish a whol
 covers that shaping. Do not choose `batch-work`; execution strategy belongs to
 the developer.
 
-Skip a unit that already has an open pull request carrying its `Intent-Unit` line: someone else has
-claimed it. When the request explicitly covers a bounded set of already shaped issues, deliver one ready unit
+Skip a unit that already has an open pull request carrying its `Intent-Unit` line, or for an issue
+without an intent, an open pull request that links the issue: someone else has claimed it. When the request explicitly covers a bounded set of already shaped issues, deliver one ready unit
 at a time and continue sequentially within that authority. Re-read dependencies and project state
 after each unit; stop for a material unresolved decision or an exhausted ready frontier. This repeats
 the active delivery contract, not `dispatch-next` or an implicit batch. An undecomposed epic still
@@ -127,8 +128,9 @@ through the work loop and the review gate.
 
 When the delivery target includes a pull request, claim the unit early: work on a branch named by
 the project policy, or `<intent-id>-<unit-key>` by default, and open a draft pull request with the
-first commit. Its body carries `Intent-Unit: <intent-id>/<unit-key>`, the outcome, the ground truth,
-and, as delivery proceeds, the evidence and review record. Mark it ready for review only after the
+first commit. Its body carries `Intent-Unit: <intent-id>/<unit-key>`, or for an issue without an
+intent the tracker's closing reference such as `Closes #12` and a branch named after the issue, then
+the outcome, the ground truth, and, as delivery proceeds, the evidence and review record. Mark it ready for review only after the
 final verification. In the pull request that delivers the last open unit of a plan, also set the
 intent's and plan's `status: done`. Never write delivery progress into `plan.md`.
 

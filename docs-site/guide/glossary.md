@@ -23,8 +23,9 @@ it made larger, smaller, or more complex.
 written from, for example `built_on: intent@2`. When the source file gets a higher revision, the
 spec or plan is *stale*.
 
-**Claim.** A sign that someone is working on a unit: a draft pull request whose body carries the
-unit's `Intent-Unit` line. A claimed unit is skipped by everyone else.
+**Claim.** A sign that someone is working on a unit: a draft pull request that links the unit's
+issue, such as `Closes #42`, or for a unit of an initiative's plan carries its `Intent-Unit` line. A
+claimed unit is skipped by everyone else.
 
 **Decision map.** The deepest planning level of [`plan-work`](/skills/plan-work), used for a large
 initiative: a list of decision tickets with owners and dependencies, so several people can settle
@@ -49,8 +50,12 @@ test. See [Guard hooks](/reference/guards).
 **Handoff.** The summary `plan-work` passes to `shape-work` when one part of a large plan is ready
 to be split into units.
 
+**Initiative.** Work that several pull requests deliver and whose product decisions someone other
+than the requester, such as a product owner, must agree to. Only initiatives get intent, spec, and
+plan files; smaller work lives in tracker issues.
+
 **Intent.** A short file, `intents/<id>/intent.md`, that says who needs what and why. Written by
-[`capture-intent`](/skills/capture-intent). See [Intent, spec, and plan files](/reference/intents).
+[`capture-intent`](/skills/capture-intent) for an initiative. See [Intent, spec, and plan files](/reference/intents).
 
 **`Intent-Unit`.** The line `Intent-Unit: <intent-id>/<unit-key>` in a pull request body. It ties
 the pull request to a unit, and it is how Agent OS knows which units are claimed or delivered.
@@ -62,8 +67,9 @@ the pull request to a unit, and it is how Agent OS knows which units are claimed
 plan allows planning files; a request to build allows code changes; merging, deploying, and writing
 to a tracker need to be named.
 
-**Plan.** The file `intents/<id>/plan.md`, written by [`shape-work`](/skills/shape-work). It lists the
-delivery units and their dependencies, never their status.
+**Plan.** The file `intents/<id>/plan.md` of an initiative, written by
+[`shape-work`](/skills/shape-work). It lists the delivery units and their dependencies, never their
+status.
 
 **Project policy.** The repository's own rules for the agent, in `CLAUDE.md` or `AGENTS.md`. It is
 written by [`init-agent-os`](/skills/init-agent-os) and grows with `record-lesson`. See
@@ -76,7 +82,7 @@ is missing or out of date. See [`quality-ratchet`](/skills/quality-ratchet).
 **Revision (`rev`).** The version number of an intent, spec, or plan. An accepted file changes only
 through a new review that raises `rev` by one and adds a line to its decision log.
 
-**Spec.** The file `intents/<id>/spec.md`, written by [`plan-work`](/skills/plan-work). It holds the
+**Spec.** The file `intents/<id>/spec.md` of an initiative, written by [`plan-work`](/skills/plan-work). It holds the
 behavior, the screens, the boundaries, the decisions, and the ground truth. When a unit and the spec
 disagree, the spec wins.
 
@@ -84,9 +90,9 @@ disagree, the spec wins.
 delivered from it until someone checks it again.
 
 **Tracker mandate.** A section in the project policy that allows the agent to write to an issue
-tracker such as GitHub Issues or Jira. Without it, the agent reports tracker changes instead of making
-them.
+tracker such as GitHub Issues or Jira beyond the new issues `shape-work` creates. Without it, the
+agent reports other tracker changes instead of making them.
 
 **Unit.** One piece of delivery: the smallest result that is useful or can be checked on its own,
-usually one pull request. A unit names its outcome, boundaries, the code to change, acceptance, and
+usually one tracker issue and one pull request. A unit names its outcome, boundaries, the code to change, acceptance, and
 ground truth.

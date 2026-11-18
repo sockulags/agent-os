@@ -19,10 +19,14 @@ and review gate below, and none of them merges unless you or the project policy 
 - **A task in your own words**, such as `/deliver-work add a CSV export to the report page`. It
   builds that one change. If the task turns out to hold several separate results or an open product
   question, it stops before changing anything and says what needs deciding or shaping first.
-- **One unit from a plan or a tracker issue**, such as `/deliver-work 2026-11-csv-export/U1` or an
-  issue link. It reads the unit, its spec, and its intent, claims the unit with a draft pull request,
-  and delivers it. A unit someone else has already claimed is skipped.
-- **A set of shaped units**, such as `/deliver-work U1 and U2 of 2026-11-csv-export`. It delivers
+- **One tracker issue**, such as `/deliver-work #42` or an issue link. The issue is the whole
+  contract. It claims the issue with a draft pull request that links it, such as `Closes #42`, and
+  delivers it. An issue someone else has already claimed is skipped.
+- **One unit of an initiative's plan**, such as `/deliver-work 2026-11-csv-export/U1`. It reads the
+  unit, its spec, and its intent, claims the unit with a draft pull request carrying its
+  `Intent-Unit` line, and delivers it.
+- **A set of shaped units**, such as `/deliver-work #41 and #42` or
+  `/deliver-work U1 and U2 of 2026-11-csv-export`. It delivers
   them one at a time in dependency order and checks after each one that the next is still ready.
 - **A whole intent**, such as `/deliver-work finish intent 2026-11-csv-export`. It writes the plan
   first if there is none, delivers every unit on one branch and one draft pull request, and checks
@@ -140,7 +144,12 @@ the blocker. Asking again later resumes from the `Intent-Unit` lines on the bran
 request. It never merges unless the request or the project policy says so, and running units in
 parallel remains [`batch-work`](/skills/batch-work), chosen explicitly.
 
-## Intent units and claims
+## Issues, intent units, and claims
+
+A tracker issue with no intent behind it is the whole contract: its need, outcome, boundaries,
+acceptance, and ground truth. It is claimed by a draft pull request that links it with the tracker's
+closing reference, such as `Closes #42`, on a branch named after the issue, and delivered when that
+pull request merges.
 
 When the unit comes from `intents/<id>/plan.md`, or from a tracker issue whose `Origin` names an
 intent, the plan entry or issue, the spec, and the intent are the contract. A spec built on an older intent revision, or a plan built on an older spec revision, is an

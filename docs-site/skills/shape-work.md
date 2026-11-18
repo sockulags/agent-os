@@ -1,20 +1,27 @@
 ---
 title: shape-work
 description: Turn a bounded mission into coherent delivery units, dependencies, and implementation-ready issues.
-skill-description: Shapes a bounded mission or accepted spec into coherent delivery units with dependencies, written as plan.md beside the spec or as implementation-ready tracker issues, backed by settled product decisions. User-invoked when delivery structure or an epic contract still needs shaping. Not for small fixes or work whose outcome and delivery unit are already clear.
-summary: Shape a spec into delivery units in plan.md or tracker issues
+skill-description: Shapes a request, bounded mission, or accepted spec into coherent delivery units with dependencies, written as implementation-ready tracker issues, or as plan.md beside an initiative's spec, backed by settled product decisions. User-invoked when delivery structure or an epic contract still needs shaping. Not for small fixes or work whose outcome and delivery unit are already clear.
+summary: Shape work into delivery units as tracker issues, or plan.md for an initiative
 ---
 
 # shape-work
 
 **Bucket:** workflow · **Invocation:** manual · `/shape-work` (direct Claude), `/agent-os-dev:shape-work` (Claude plugin), or `$shape-work` (Codex)
 
-Shapes a bounded mission into coherent delivery units and implementation-ready issues backed by
-settled product decisions.
+Shapes a request, a bounded mission, or a spec into coherent delivery units and implementation-ready
+issues backed by settled product decisions.
+
+Most work needs nothing but the issues. When the work has no intent, shape-work writes its units
+straight into the project's tracker and nothing else: no `intent.md`, `spec.md`, or `plan.md`. Each
+issue opens with why the work is needed and holds the whole contract. Only an initiative, work that
+already has an intent and spec, also gets a `plan.md`. Invoking shape-work allows it to create the
+new issues it shapes; changing anything else in the tracker needs the project policy's
+`## Tracker mandate`. When no tracker can be written, it returns the issue texts in the reply.
 
 ```mermaid
 flowchart TD
-    A[Bounded mission or existing specification] --> B[Read repo, policy, linked plan decisions]
+    A[Request, bounded mission, or spec] --> B[Read repo, policy, linked plan decisions]
     B --> C{Material product choice left?}
     C -->|recommend + one question| D[Developer decides]
     D --> C
@@ -29,7 +36,10 @@ Read the repository, policy, and linked decisions before asking questions. Resol
 facts yourself. Ask only about product choices that materially change the outcome, always with a
 recommendation and its consequence.
 
-Shape-work does not settle the interface; the spec's `## Interface` section does. Units that build
+Without a spec, an open screen layout or flow is a product question that shape-work asks while
+shaping, recommending [`design-work`](/skills/design-work) when sketching would help, and the answer
+goes into the unit. With a spec, shape-work does not settle the interface; the spec's
+`## Interface` section does. Units that build
 those screens link it. When the section leaves a decision open, is missing for work that changes
 what a person sees, or a unit would change a screen it does not cover, shape-work returns that
 question to [`plan-work`](/skills/plan-work), where the developer decides it, sketches it with
@@ -41,13 +51,14 @@ ground truth, settled decisions, and open risks. Start from one coherent deliver
 only for an independent result, ownership, migration, delivery, or material risk and verification
 boundary. Separate commits, sessions, files, or technical layers are not enough. Keep schema, API,
 UI, configuration, errors, and verification with the behavior they support. Then write the units:
-`intents/<id>/plan.md` beside the spec by default, or tracker issues when the project policy makes
-the tracker the source of truth for units (`source: issues`, with `plan.md` holding only the keys).
-Link real dependencies and report the first claimable frontier to the developer; it is derived from
-the plan and is not written into it.
+tracker issues for work without an intent, and for an initiative `intents/<id>/plan.md` beside the
+spec, or tracker issues listed by key in `plan.md` when the project policy makes the tracker the
+source of truth (`source: issues`). Link real dependencies and report the first claimable frontier
+to the developer; it is derived from the issues or the plan and is not written into them.
 
 Each unit is a self-contained work order: someone holding only the unit and the repository knows
-what to change, where, what done means, and how to prove it. The spec stays the authority. A unit
+what to change, where, what done means, and how to prove it. When there is a spec, it stays the
+authority. A unit
 writes out what it is accountable for and cites its source, and when the two disagree the spec wins.
 `built_on` marks restated text stale when the spec changes. Before publishing, shape-work reads each
 unit as a worker who has only it and the repository, adds whatever that worker would have to guess,
@@ -56,12 +67,13 @@ document: a one-line change gets one-line fields, a typical unit fits in about 4
 carries only the decisions a worker could otherwise get wrong and at most three risks, and it holds
 no code or implementation steps.
 
-`plan.md` lists each unit as `- [U1] title`, optionally followed by ` — depends on U1` and
+For an initiative, `plan.md` lists each unit as `- [U1] title`, optionally followed by ` — depends on U1` and
 ` — blocked: reason`, and gives each unit a `### U1 title` section with its outcome, boundaries,
 change surface, written-out acceptance, ground truth, what it consumes from each dependency, settled
 decisions, delivery target, and open risks. Unit keys never change. Delivery status is never
 written into the plan: a draft pull request with `Intent-Unit: <intent-id>/<unit-key>` claims a unit,
-and its merge delivers it. A spec built on an older intent revision is not shaped; it goes back to
+and its merge delivers it. An issue without an intent is claimed by a draft pull request that links
+it, such as `Closes #12`. A spec built on an older intent revision is not shaped; it goes back to
 plan-work. A plan built on an older spec revision is reshaped with stable keys. See
 [Intent, spec, and plan files](/reference/intents).
 

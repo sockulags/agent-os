@@ -12,9 +12,11 @@ ceremony proportional to the work. It ships as two packages from one source:
 
 ## Skills
 
-Decisions that outlive a session live in versioned files: `intents/<id>/intent.md` for what is needed
-and why, `spec.md` for behavior, boundaries, and ground truth, and `plan.md` for delivery units. A
-small fix needs none of them. See the
+Most work lives in tracker issues: `shape-work` writes each delivery unit as an issue that holds its
+whole contract, and a small fix needs not even that. Only an initiative, work that several pull
+requests deliver and whose product decisions someone else must agree to, keeps versioned files:
+`intents/<id>/intent.md` for what is needed and why, `spec.md` for behavior, boundaries, and ground
+truth, and `plan.md` for delivery units. See the
 [intent file reference](https://sockulags.github.io/agent-os/reference/intents).
 
 ### agent-os-core
@@ -35,7 +37,7 @@ small fix needs none of them. See the
 | Skill | Bucket | Invocation | Purpose |
 |---|---|---|---|
 | `design-work` | workflow | manual | Sketch new and changed screens in the project's chosen medium, when the developer wants them |
-| `shape-work` | workflow | manual | Shape a spec into delivery units in plan.md or tracker issues |
+| `shape-work` | workflow | manual | Shape work into delivery units as tracker issues, or plan.md for an initiative |
 | `deliver-work` | workflow | manual | Deliver one unit, or a whole intent unit by unit, against its contract |
 | `batch-work` | workflow | manual | Run isolated ready units and verify the integrated result |
 | `dispatch-next` | workflow | manual | Pick or dispatch one action according to the request |

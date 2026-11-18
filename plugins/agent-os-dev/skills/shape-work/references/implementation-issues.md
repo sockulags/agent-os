@@ -6,18 +6,29 @@ can choose to run with `deliver-work` or `batch-work`.
 
 ## Where units live
 
-- **`source: files` (default).** `intents/<id>/plan.md` beside the spec lists every unit and holds
-  each unit's contract.
-- **`source: issues`.** When the project policy makes a tracker the source of truth for units,
-  `plan.md` lists the units by tracker key and the tracker issues hold each unit's contract. The
-  plan then contains links, never copies.
+Choose from the size of the work. Never create an intent, spec, or plan file only to give units a
+place to live.
 
-With no intent folder, write a minimal `intent.md` with the settled outcome first, following
-`capture-intent`'s template, so the plan has a place and a revision to build on.
+- **Issues only (the default).** Work without an intent: a feature, change, or fix that one or a few
+  pull requests deliver. Each unit is an issue in the project's tracker, and the issue is the whole
+  record. No `intent.md`, `spec.md`, or `plan.md` is written. Origin is the request or the issue the
+  work came from, dependencies are the tracker's issue links or a `Depends on` line, and an epic
+  contract goes in a parent issue.
+- **Intent plan.** Work that already has an intent, which is an initiative. `intents/<id>/plan.md`
+  beside the spec lists every unit. With `source: files` it holds each unit's contract; with
+  `source: issues`, set when the project policy makes a tracker the source of truth for units, it
+  lists the tracker keys and the issues hold the contracts. The plan contains links, never copies.
+
+The tracker is the one the project policy names, otherwise the repository host's issue tracker when
+the session can write to it, such as GitHub Issues. Invoking `shape-work` authorizes creating new
+issues there, and updating the issues it created for the same origin when shaping is retried. Any
+other tracker write, such as editing, commenting on, relabeling, or closing other issues, still
+needs the project policy's `## Tracker mandate`. When no tracker can be written, return each
+issue's text in the reply for the person to create, and write no file.
 
 When a plan-work run supplied a plain-language summary for an actual decision, it is the spec's
-`## Summary`. Do not turn summary approval into a second gate or copy the plan into a competing
-specification.
+`## Summary`, or on the issues-only path the opening of the first issue. Do not turn summary
+approval into a second gate or copy the plan into a competing specification.
 
 ## Completion invariant
 
@@ -79,14 +90,20 @@ Rules:
   and it is delivered when that pull request merges.
 - `built_on` names the spec revision. A plan built on an older spec revision is stale.
 
-With `source: issues`, each tracker issue carries the same fields as headings:
+## Issues
+
+A tracker issue carries the same fields as headings, on both paths. On the issues-only path it also
+opens with the need in one or two sentences, because no intent holds it, and it is claimed by a
+draft pull request that links it with the tracker's closing reference, such as `Closes #12` on
+GitHub. It is delivered when that pull request merges.
 
 ```text
 ## Implementation issue
-Origin: <intent id and plan link>
+Origin: <intent id and plan link, or the request or issue the work came from>
 Unit key: <stable key>
 Status: ready | blocked
 
+## Why (issues-only path)
 ## Outcome
 ## Boundaries
 ## Change surface
@@ -106,8 +123,8 @@ vocabulary.
 
 ## Epic contract
 
-When one shared end result needs an owner, add an epic contract to the plan instead of splitting
-every technical layer into a child:
+When one shared end result needs an owner, add an epic contract to the plan, or to a parent issue
+on the issues-only path, instead of splitting every technical layer into a child:
 
 ```text
 ## Epic contract

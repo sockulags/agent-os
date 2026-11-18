@@ -1,7 +1,7 @@
 ---
 title: capture-intent
 description: Question out the need behind a stated wish and record it as a versioned intent file.
-skill-description: Captures what is needed and why as a versioned intent file, questioning out the need behind a stated wish one load-bearing question at a time. User-invoked when a new need, feature request, or tracker item should become an intent, or as the questioning stage of plan-work. Not for requests whose goal is already articulated, small fixes, or facts the repository answers.
+skill-description: Captures what is needed and why, questioning out the need behind a stated wish one load-bearing question at a time, and writes a versioned intent file when the work is an initiative. User-invoked when a new need, feature request, or tracker item needs its goal settled, or as the questioning stage of plan-work. Not for requests whose goal is already articulated, small fixes, or facts the repository answers.
 summary: Capture the need behind a wish as a versioned intent
 ---
 
@@ -24,8 +24,11 @@ a specific question. No technical solution is proposed while the goal is still m
 
 ## The intent file
 
-A file is written when the need outlives the session, needs an owner's agreement, or will be
-planned and delivered in more than one step. A small fix needs no file.
+A file is written only for an initiative: work that several pull requests will deliver and whose
+product decisions someone other than the requester, such as a product owner, must agree to. It is
+also written when you or the project policy ask for one. Anything smaller needs no file: the settled
+understanding is reported in a form that can open a tracker issue, and
+[`shape-work`](/skills/shape-work) can turn it into issues.
 
 - Location: `intents/<id>/intent.md`, or the intent location the project policy names, such as a
   separate product repository.

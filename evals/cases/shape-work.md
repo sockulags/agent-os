@@ -9,6 +9,8 @@ an invocation.
 | SW-P2 | Invoke `shape-work` on a linked plan-work handoff. | It preserves settled decisions, follows evidence links, asks only the remaining questions, materializes the implementation issues, and reconciles their links and readiness into the origin handoff and map. The branch becomes delivery-ready only after issues exist. |
 | SW-P3 | One coherent product shape needs three sequential implementation units. | Three linked issues are created with stable identities and dependency order. The ready frontier names the first issue. The workflow does not infer batch-work from the issue count. |
 | SW-P4 | Retry shaping after two implementation issues already exist. | Existing issues are reused and reconciled idempotently; no duplicate issue is created. |
+| SW-P10 Issues only | Invoke `shape-work` for a bounded feature with no intent folder, in a repository whose host issue tracker the session can write and whose project policy has no `## Tracker mandate`. | It creates the implementation issues, each opening with why the work is needed and carrying the full unit contract. It writes no `intent.md`, `spec.md`, or `plan.md`, and changes no other issue. |
+| SW-P11 No writable tracker | The same feature in a repository where no tracker can be written. | It returns each issue's text in the reply for the person to create and writes no file. |
 | SW-N1 | "Implement this decision-ready specification." | Do not load `shape-work`; the work is ready to execute. |
 | SW-N2 | "Fix this one known null check." | Do not load `shape-work`; no product interview is needed. |
 | SW-N3 | A researched branch is explicitly parked or rejected. | Record the disposition without creating an implementation issue. |
