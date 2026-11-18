@@ -8,6 +8,57 @@ description: What changed in each agent-os release, in plain terms.
 One entry per release: what changed, and what it means for how you work. Full commit-level history
 lives on [GitHub](https://github.com/sockulags/agent-os/commits/main).
 
+## 0.17.0 — 2026-11-18
+
+The everyday release: smaller work lives in tracker issues instead of intent and spec files, every
+piece of work follows a route that says where it stands, and the documentation starts from the
+situation you are in.
+
+- **Issues instead of files:** `shape-work` turns work without an intent into tracker issues and
+  writes no `intent.md`, `spec.md`, or `plan.md`. Invoking it allows it to create those new issues;
+  any other tracker write still needs a `## Tracker mandate`, and with no writable tracker the issue
+  texts come back in the reply. `capture-intent` and `plan-work` write files only for an initiative,
+  work that several pull requests deliver and whose product decisions someone other than the
+  requester must agree to, or when you ask for files. `deliver-work`, `dispatch-next`, `check-work`,
+  and `batch-work` treat an issue without an intent as the whole contract, claimed by a draft pull
+  request that links it.
+- **Routes and the workflow file:** `init-agent-os` writes `.agent-os/workflow.md` with the route
+  for each kind of work, the tracker, where information goes, and finishing tasks such as a
+  changelog entry or a wiki summary after an initiative. The default routes give every kind of work
+  an issue before delivery, including a bug with a known fix. In a project with a workflow file and a
+  writable tracker, `deliver-work` stops for a missing issue unless you say to skip it; elsewhere it
+  recommends `shape-work` and continues.
+- **Route lines and the Next step preference:** every workflow ends with a line that names the kind
+  of work, the steps done and left, and the command that continues it. `init-agent-os global` asks a
+  new `Next step:` preference: `ask` (the default), `continue`, or `recommend`. With `continue`,
+  planning goes on into `shape-work` and creates its issues without asking first.
+- **Finish a whole intent:** a request to finish an intent now covers shaping its plan and
+  delivering every unit in dependency order on one branch and one pull request, then verifying and
+  reviewing the whole result. It stops on an open screen, on work that is only blocked, or on a
+  finding that needs a product decision, and resumes from the `Intent-Unit` lines.
+- **Design as a recommendation:** `plan-work` recommends `design-work` and asks once when to sketch,
+  and a `When` entry in the policy's `## Design` section sets the default. A screen can be left to
+  delivery, which blocks nothing. A person who explicitly hands open interface decisions to the agent
+  gets them recorded as `Decided: (delegated)` and listed for review.
+- **Easier to find your way:** a new [Where to start](/guide/where-to-start) page matches your
+  situation to a skill, and a [glossary](/guide/glossary) explains the terms. The agent may suggest a
+  matching manual skill once, in one sentence, and then does what you asked; it still never starts
+  one by itself. Installer internals moved from the guides to the reference pages, the outdated
+  diagrams are replaced, and the [deliver-work](/skills/deliver-work) page opens with the ways to
+  invoke it.
+- **`doctor` checks the repository:** inside a repository that `init-agent-os` set up, `doctor`
+  warns when `.agent-os/workflow.md` is missing, has no routes, or is not pointed to by the project
+  policy. These are warnings and do not change the exit code.
+- **A shorter policy:** the managed global policy block goes from about 9,200 to 7,000 characters.
+  Rules a skill already carries now point to that skill. The policy and guard texts also say what
+  the code does: `record-lesson` is automatic, and a protected path asks in Claude Code and blocks in
+  Codex.
+
+**Migration.** Run `npx @sockulags/agent-os@latest update`, then `init-agent-os global` to set the
+`Next step:` preference and refresh the policy block, and `init-agent-os` in each repository to get
+`.agent-os/workflow.md`. A repository that is not set up again keeps working: the default routes
+apply and `deliver-work` only recommends an issue. Existing intent and spec files stay valid.
+
 ## 0.16.0 — 2026-11-08
 
 The core and dev release: Agent OS splits into two plugins, carries decisions in versioned intent
