@@ -15,13 +15,8 @@ Within each package, workflows are invoked by hand, except `check-work`, which i
 review workflow. Disciplines trigger themselves from the situation, and the meta skill lists what is
 installed.
 
-<figure class="agent-os-diagram">
-  <a href="/diagrams/agent-os-workflow-overview.svg" target="_blank" rel="noopener" aria-label="Open the Agent OS workflow overview at full size">
-    <img class="diagram-light" src="/diagrams/agent-os-workflow-overview.svg" alt="">
-    <img class="diagram-dark" src="/diagrams/agent-os-workflow-overview-dark.svg" alt="">
-  </a>
-  <figcaption>The manual workflows grouped by the uncertainty or operational need they resolve. Enter at the lowest layer that still has unresolved work. The diagram predates the core and dev split and the intent files. Select the diagram to open it at full size.</figcaption>
-</figure>
+To pick a skill from the situation you are in rather than from this list, see
+[Where to start](/guide/where-to-start).
 
 ## The intent chain
 

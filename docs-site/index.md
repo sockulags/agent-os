@@ -15,6 +15,9 @@ hero:
       text: Get started
       link: /guide/getting-started
     - theme: alt
+      text: Where to start
+      link: /guide/where-to-start
+    - theme: alt
       text: What is agent-os?
       link: /guide/what-is-agent-os
     - theme: alt

@@ -38,9 +38,11 @@ differently per host.
 
 Close with the entry points for a person who has not named a skill: a new need starts at
 `capture-intent`, behavior and decisions at `plan-work`, screens and their sketches at
-`design-work`, delivery structure at `shape-work`, and a decision-complete unit at `deliver-work`;
-name the last three only when agent-os-dev is installed. Say plainly that automatic skills need no entry point
-for an implicit trigger; mention an automatic workflow's explicit modes only when useful.
+`design-work`, delivery structure at `shape-work`, a decision-complete unit at `deliver-work`, a bug
+needs only its description, and a diff to review only a request in the person's own words; name the
+last five only when agent-os-dev is installed. Say plainly that automatic skills need no entry point
+for an implicit trigger; mention an automatic workflow's explicit modes only when useful. End with
+the page that matches situations to skills, https://sockulags.github.io/agent-os/guide/where-to-start.
 
 ## Boundaries
 

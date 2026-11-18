@@ -148,6 +148,23 @@ one logical source: Claude and Unix-like Codex use `CLAUDE_PLUGIN_ROOT`, while W
 quote-free `commandWindows` with a UTF-16LE PowerShell `-EncodedCommand` payload that resolves
 `$env:PLUGIN_ROOT`; Node and PowerShell on PATH are required for the native path.
 
+### Installer details
+
+The direct installer writes skills to `~/.claude/skills` and `~/.codex/skills` at user scope. OpenAI's
+general Codex documentation now also lists `~/.agents/skills` for user-level authoring. Agent OS
+keeps its existing managed user location for backward compatibility and will not move an
+installation until both discovery and update behavior have been verified as one migration.
+
+`.agent-os-install.json` records the owned skill directories. Schema 1 manifests remain readable;
+new installs record the installed packages and the managed hook integration in schema 2. Malformed
+or ambiguous managed hook configuration aborts the install before any skill or hook changes.
+
+For development against a clone, Claude can run
+`claude --plugin-dir plugins/agent-os-core --plugin-dir plugins/agent-os-dev`. Codex can register the
+working copy with `codex plugin marketplace add /path/to/agent-os`. A local Codex marketplace is
+already the source, so the updater skips the Git-only marketplace upgrade step and reinstalls the
+plugin directly.
+
 ## Per-skill invocation gating
 
 Manual invocation is expressed differently on each platform, and both files must exist for every

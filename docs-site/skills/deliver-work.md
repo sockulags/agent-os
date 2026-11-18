@@ -11,6 +11,29 @@ summary: Deliver one unit, or a whole intent unit by unit, against its contract
 
 Delivers one decision-ready change against explicit boundaries and ground truth.
 
+## Ways to ask for it
+
+What you write after `/deliver-work` decides how much it does. Every form runs the same work loop
+and review gate below, and none of them merges unless you or the project policy says so.
+
+- **A task in your own words**, such as `/deliver-work add a CSV export to the report page`. It
+  builds that one change. If the task turns out to hold several separate results or an open product
+  question, it stops before changing anything and says what needs deciding or shaping first.
+- **One unit from a plan or a tracker issue**, such as `/deliver-work 2026-11-csv-export/U1` or an
+  issue link. It reads the unit, its spec, and its intent, claims the unit with a draft pull request,
+  and delivers it. A unit someone else has already claimed is skipped.
+- **A set of shaped units**, such as `/deliver-work U1 and U2 of 2026-11-csv-export`. It delivers
+  them one at a time in dependency order and checks after each one that the next is still ready.
+- **A whole intent**, such as `/deliver-work finish intent 2026-11-csv-export`. It writes the plan
+  first if there is none, delivers every unit on one branch and one draft pull request, and checks
+  the whole result at the end. See [Finish a whole intent](#finish-a-whole-intent).
+
+Two more uses are not typed by you. [`batch-work`](/skills/batch-work) starts `deliver-work` as a
+worker for each unit in a parallel run, and work that spans sessions without a pull request can
+resume from a [work record](/reference/work-records).
+
+## The work loop
+
 ```mermaid
 flowchart TD
     A[One ready issue or bounded request] --> B[Contract: outcome, boundaries,<br>ground truth, delivery target]
