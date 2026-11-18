@@ -15,13 +15,14 @@ flowchart TD
     A{"What do you have?"} -->|"a vague idea, a problem,<br>or someone else's wish"| B["capture-intent"]
     A -->|"a clear need, but behavior<br>or decisions are not settled"| C["plan-work"]
     A -->|"work that should become<br>tracker issues"| D["shape-work"]
-    A -->|"a clear task or a ready unit"| E["deliver-work"]
+    A -->|"a ready issue or unit"| E["deliver-work"]
     A -->|"a bug with a known fix"| D
     A -->|"a diff or a pull request"| G["Ask for a review,<br>check-work starts by itself"]
 ```
 
 If you start one step too early, the skill notices that the earlier question is already settled and
-moves on. If you start one step too late, it stops and names the step you skipped. Either way you
+moves on. If you start one step too late, it names the step you skipped, and in a project with a
+workflow file it stops until that step is done or you say to skip it. Either way you
 lose little, so pick the nearest match and go.
 
 ## Figure out what to build
@@ -49,7 +50,8 @@ file is needed. It asks the product questions that remain; a large open question
 
 ## Build it
 
-**"The task is clear. Build it."** Use [`deliver-work`](/skills/deliver-work). It builds the change,
+**"The task is clear. Build it."** Use [`deliver-work`](/skills/deliver-work). By default every
+change gets an issue first, so give it the issue, or say "skip the issue". It builds the change,
 tests it, has it reviewed by a separate agent, and stops at the boundary you asked for, such as a
 local change or a pull request. Give it a tracker issue, a unit from a plan, or the task in your own
 words.
