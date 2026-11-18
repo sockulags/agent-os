@@ -43,6 +43,7 @@ ends with exactly `APPROVED`, `CHANGES_REQUESTED`, or `BLOCKED`.
 
 `REVIEW.md` at the repository root is the repository's review policy: focus areas, severity tiers,
 what blocks, and limits such as a cap on minor findings. check-work reads it in every mode. When the
+candidate links a tracker issue with no intent behind it, that issue is the review contract. When the
 candidate carries `Intent-Unit: <intent-id>/<unit-key>`, the unit in `plan.md` and the spec beside it
 are the review contract, so a missed acceptance example, a crossed non-goal, or an edit to an
 accepted intent or spec is a finding.

@@ -49,8 +49,9 @@ Rules:
 - End every agent-os workflow with a route line: the kind of work, the steps done and the steps
   left in plain words, and the exact command that resumes the work, such as `/deliver-work #42`, so
   the person or a colleague can continue the next day. Take the route from the project's
-  `.agent-os/workflow.md` when the project policy points to one, otherwise from the default routes.
-  What happens next follows the `Next step:` line in the person's `## My working preferences`:
+  `.agent-os/workflow.md` when the project policy points to one, otherwise from a default path the
+  project policy states, otherwise from the default routes; with agent-os-core alone, name the next
+  installed step. What happens next follows the `Next step:` line in the person's `## My working preferences`:
   `ask` asks once whether to start the next step; `continue` starts the next planning step without
   asking and asks once before delivery; `recommend` only recommends. Without that line, ask.
   Continuing never skips a step of the route, decides an open product question, or merges or
@@ -102,7 +103,8 @@ Rules:
   through `shape-work` and `deliver-work`, with `plan-work` first when anything is unclear; an
   initiative through `capture-intent`, `plan-work`, `shape-work`, `deliver-work`, and the project's
   finishing tasks. Every route gives the work an issue before delivery, for traceability, unless the
-  request says to skip it.
+  request says to skip it. Routes guide the agent-os workflows; a request made without one is done
+  as asked, with at most the one-sentence suggestion of a matching skill.
 - `plan.md` beside a spec lists delivery units and dependencies only. Delivery status is never
   written into it: a unit is claimed by a draft pull request whose body carries
   `Intent-Unit: <intent-id>/<unit-key>`, and status is read from open and merged pull requests. An

@@ -1,6 +1,6 @@
 ---
 name: shape-work
-description: Shapes a request, bounded mission, or accepted spec into coherent delivery units with dependencies, written as implementation-ready tracker issues, or as plan.md beside an initiative's spec, backed by settled product decisions. User-invoked when delivery structure or an epic contract still needs shaping. Not for small fixes or work whose outcome and delivery unit are already clear.
+description: Shapes a request, bounded mission, or accepted spec into coherent delivery units with dependencies, written as implementation-ready tracker issues, or as plan.md beside an initiative's spec, backed by settled product decisions. User-invoked when delivery structure or an epic contract still needs shaping. Not for work whose delivery unit is already shaped; a known fix that needs an issue gets one without an interview.
 disable-model-invocation: true
 ---
 
@@ -46,7 +46,7 @@ where that is the true answer:
 - **Open risks:** at most three risks that could change this unit's approach, each with what to do.
   Routine engineering concerns are not risks.
 
-Match depth to the unit: a one-line change gets one-line fields, and a typical unit fits in about
+Match depth to the unit: a known fix becomes one issue without questions, a one-line change gets one-line fields, and a typical unit fits in about
 4,000 characters. A longer unit is too broad or is retelling the spec or the architecture: cut it,
 or split it for one of the concrete reasons below. Do not write code or implementation steps;
 choices the implementer can reverse stay with the implementer.

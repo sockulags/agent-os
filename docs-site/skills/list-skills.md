@@ -28,8 +28,8 @@ agent-os-dev is not installed. The card names which form it is showing.
 
 It closes with entry points for a person who has not named a skill: a new need starts at
 `capture-intent`, behavior and decisions at `plan-work`, screens and their sketches at
-`design-work`, delivery structure at `shape-work`, a decision-complete unit at `deliver-work`, a bug
-needs only its description, and a diff to review only a request in your own words, the last five
+`design-work`, delivery structure at `shape-work`, a decision-complete unit at `deliver-work`, a bug with
+a known fix at `shape-work` for one issue, and a diff to review only a request in your own words, the last five
 only when agent-os-dev is installed. It ends with a link to [Where to start](/guide/where-to-start).
 Automatic skills need no entry point for an implicit trigger. It is read-only: it
 never runs, stages, or offers to run what it lists. Choosing the next action is

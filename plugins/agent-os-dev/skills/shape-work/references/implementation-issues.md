@@ -96,7 +96,9 @@ Rules:
 A tracker issue carries the same fields as headings, on both paths. On the issues-only path it also
 opens with the need in one or two sentences, because no intent holds it, and it is claimed by a
 draft pull request that links it with the tracker's closing reference, such as `Closes #12` on
-GitHub. It is delivered when that pull request merges.
+GitHub. It is delivered when that pull request merges. Its origin is not a stable file, so before
+creating issues on this path, search the tracker's open issues for ones that already cover the same
+outcome and reuse them instead of creating duplicates.
 
 ```text
 ## Implementation issue

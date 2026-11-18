@@ -1,7 +1,7 @@
 ---
 title: shape-work
 description: Turn a bounded mission into coherent delivery units, dependencies, and implementation-ready issues.
-skill-description: Shapes a request, bounded mission, or accepted spec into coherent delivery units with dependencies, written as implementation-ready tracker issues, or as plan.md beside an initiative's spec, backed by settled product decisions. User-invoked when delivery structure or an epic contract still needs shaping. Not for small fixes or work whose outcome and delivery unit are already clear.
+skill-description: Shapes a request, bounded mission, or accepted spec into coherent delivery units with dependencies, written as implementation-ready tracker issues, or as plan.md beside an initiative's spec, backed by settled product decisions. User-invoked when delivery structure or an epic contract still needs shaping. Not for work whose delivery unit is already shaped; a known fix that needs an issue gets one without an interview.
 summary: Shape work into delivery units as tracker issues, or plan.md for an initiative
 ---
 

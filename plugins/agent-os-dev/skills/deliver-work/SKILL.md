@@ -138,9 +138,11 @@ intent's and plan's `status: done`. Never write delivery progress into `plan.md`
 ## Route and finishing tasks
 
 Read the route for this kind of work from `.agent-os/workflow.md` when the project policy points to
-one, otherwise from the global policy's default routes. When the route puts `shape-work` before
-delivery and the work has no issue or plan unit, stop before mutation, say that the route gives this
-work an issue first, and recommend `shape-work`, unless the request says to skip the issue.
+one, otherwise from a default path the project policy states, otherwise from the global policy's
+default routes. When the route puts `shape-work` before delivery and the work has no issue or plan
+unit, say so in one sentence and recommend `shape-work`. Stop before mutation only when the project
+has a workflow file, a tracker can be written, and the request does not say to skip the issue;
+otherwise continue with the delivery.
 
 Finishing tasks come from the workflow file's `## Finishing tasks` section, under the heading for
 this kind of work, and run when the work is complete: for an initiative, in the pull request that
