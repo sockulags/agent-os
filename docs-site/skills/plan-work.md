@@ -115,8 +115,10 @@ keep corrections local and report what needs syncing. If the information must su
 the compact [work record](/reference/work-records) and add `Pending tracker updates` only when
 needed, as an unsynced delta rather than a plan copy.
 
-Planning recommends one concrete next action and why it wins. The developer chooses whether to
-continue into delivery or an explicit batch.
+Planning recommends one concrete next action and why it wins, and ends with the route line. When
+the next step of the route is [`shape-work`](/skills/shape-work), it asks once whether to create
+the issues now, so the decisions reach the tracker before the session ends. The developer chooses
+whether to continue into delivery or an explicit batch.
 
 ## Transcript: small work and broad work share one entry
 

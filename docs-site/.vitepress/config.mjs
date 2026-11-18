@@ -106,6 +106,7 @@ export default withMermaid(defineConfig({
           items: [
             { text: 'Plugin manifests', link: '/reference/plugin-manifests' },
             { text: 'Intent, spec, and plan files', link: '/reference/intents' },
+            { text: 'Workflow file', link: '/reference/workflow-file' },
             { text: 'Guard hooks', link: '/reference/guards' },
             { text: 'Work records', link: '/reference/work-records' },
             { text: 'Batch manifests', link: '/reference/batches' },

@@ -48,10 +48,12 @@ These are the preferences a repository records, under `## Working agreement` in 
 
 - who works here and who approves: solo, or a team and its reviewer;
 - the default stopping point: local change, pull request, merge, or deployment;
-- the default path for a new feature: deliver directly, or shape it into tracker issues with no
-  intent or spec files, recommending issues; intent, spec, and plan stay for initiatives unless the
-  developer wants them for every feature;
+- the routes: show the default route for each kind of work (a bug with a known fix, a small change,
+  a feature, an initiative) and ask what to change, recommending the defaults, where every route
+  gives the work an issue before delivery and only initiatives get intent and spec files;
 - which tracker holds issues, and where an initiative's units live: `plan.md` or that tracker;
+- where an initiative is documented when it is finished, beyond its pull request, such as a
+  changelog or a wiki page, recommending the changelog when the repository has one;
 - the language of commits, docs, and issues;
 - with the frontend module active, when interfaces are sketched (before delivery, after it, asked
   each time, or never) and, unless never, in which medium and where the sketches live,
@@ -95,7 +97,9 @@ An answer that settles a core field is written once.
    instruction surface. When none exists, write a new `policy.md`, plus a `CLAUDE.md` holding
    `@policy.md` and an `AGENTS.md` that says to read it, so the hosts load it. Preserve unrelated
    instructions, show the resulting diff, and do not request a second approval for this setup write.
-7. Write the Agent OS repository files the reference lists: `.agent-os/guards.json`,
+7. Write `.agent-os/workflow.md` from [workflow-template.md](references/workflow-template.md) with the
+   routes, tracker, tracker mandate, where information goes, and finishing tasks, and point to it
+   from the policy in one line. Write the other Agent OS repository files the reference lists: `.agent-os/guards.json`,
    `.agent-os/quality.json`, `REVIEW.md`, and, for GitHub Actions repositories, the `lint-intents` and `agent-review` workflows. Propose a
    `CODEOWNERS` entry for intents and specs without writing it.
 8. Close with how you will work here, in at most six plain lines, and one recommended first action.
@@ -106,11 +110,11 @@ A return run adjusts a setup; it never repeats the interview.
 
 1. Inspect as in the first run, and resolve policy ownership the same way.
 2. Show a short plain-language summary of what is set today: working agreement, delivery,
-   verification, and planning. Under it, flag only what needs attention: drift where the policy
+   verification, planning, and the workflow file's routes and finishing tasks. Under it, flag only what needs attention: drift where the policy
    contradicts the repository, such as a command that no longer exists; any core field, working
    agreement item, or active module the policy does not cover; and **Open setup questions**.
 3. Ask one question: what do you want to change? Offer working agreement, delivery, verification,
-   planning, and what the summary flagged, plus "nothing, this was a check".
+   planning, routes and finishing tasks, and what the summary flagged, plus "nothing, this was a check".
 4. Ask only about the chosen areas, under the first run's question rules.
 5. Write only the chosen areas and show the diff; everything else stays byte for byte. Agent OS
    repository files change only when a chosen area needs it. "Nothing" writes nothing and leaves any

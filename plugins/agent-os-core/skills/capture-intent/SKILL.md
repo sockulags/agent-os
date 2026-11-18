@@ -62,6 +62,7 @@ to `status: superseded` in the same review.
 ## Exit
 
 Report the intent path and id, the choices made with their reasons, the ruled-out directions, and
-the questions that remain open. Recommend one next action: usually `plan-work` when behavior,
-decisions, or ground truth still need settling. Under plan-work, this stage informs the spec and
+the questions that remain open. Name the kind of work, which decides its route, and end with the
+route line. Recommend one next action: usually `plan-work` when behavior, decisions, or ground truth
+still need settling, otherwise the next step of the route. Under plan-work, this stage informs the spec and
 adds no separate approval gate.

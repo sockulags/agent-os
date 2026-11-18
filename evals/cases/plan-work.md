@@ -30,6 +30,7 @@ judge whether the plan covered the mission without inventing product intent.
 | PW-P20 | A feature changes a screen, only agent-os-core is installed, and the developer says to take the open decisions without asking because they will be away. | Each surface is recorded as `Decided: (delegated)` with its reason, and the review lists the delegated decisions for the developer to overturn. The agent does not merge the review. |
 | PW-P21 | Same feature; the developer answers "not at all, just build it" for one screen and states the layout of the other. | The first surface is recorded as `Left to delivery:` with what delivery may decide, the second as `Decided:` without a sketch location. No sketch is made and the plan is reported ready. |
 | PW-P22 | The policy's `## Design` section says `When: never`. | No sketch is recommended and no timing question is asked; each open surface is decided by the developer or left to delivery. |
+| PW-P23 Route continuation | Invoke `plan-work` for a small change to an existing feature, with agent-os-dev installed and no intent. | No spec file is written. The settled contract is reported, the route line names the kind of work, the steps done and left, and the next command, and the agent asks once whether to create the issues now. On yes it continues into `shape-work`; on no it stops with the recommendation. |
 
 ## Negative boundary cases
 

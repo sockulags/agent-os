@@ -19,7 +19,8 @@ place to live.
   `source: issues`, set when the project policy makes a tracker the source of truth for units, it
   lists the tracker keys and the issues hold the contracts. The plan contains links, never copies.
 
-The tracker is the one the project policy names, otherwise the repository host's issue tracker when
+The tracker is the one `.agent-os/workflow.md` or the project policy names, with the labels or board
+the workflow file asks for, otherwise the repository host's issue tracker when
 the session can write to it, such as GitHub Issues. Invoking `shape-work` authorizes creating new
 issues there, and updating the issues it created for the same origin when shaping is retried. Any
 other tracker write, such as editing, commenting on, relabeling, or closing other issues, still

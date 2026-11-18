@@ -126,7 +126,8 @@ unit is not an authorization. Without that mandate, keep corrections local and r
 tracker delta.
 
 Recommend one concrete next action with its reason and blocker, weighing uncertainty and downstream
-work unlocked as well as project priority. A ready frontier alone is not enough guidance. Continue
+work unlocked as well as project priority, and end with the route line naming the issues created and
+the `deliver-work` command that takes the first one. A ready frontier alone is not enough guidance. Continue
 into authorized sequential delivery only when the request includes that bounded implementation;
 otherwise finish with the recommendation.
 

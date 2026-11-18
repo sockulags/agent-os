@@ -25,8 +25,9 @@ Record only durable behavior-changing defaults:
 - canonical policy ownership and instruction surfaces;
 - delivery boundary, stopping point, and external-effect conventions;
 - verification commands and ground truth, including manual checks when commands are insufficient;
-- where intents live (`intents/` by default, or a named product repository), whether units live in
-  `plan.md` or a tracker, branch naming, stable plan and decision-ticket identities, dependencies,
+- a one-line pointer to `.agent-os/workflow.md`, which holds the routes, the tracker, where
+  information goes, and the finishing tasks (see [Workflow file](/reference/workflow-file));
+- branch naming, stable plan and decision-ticket identities, dependencies,
   and epic ownership;
 - maintenance location for durable lessons and gotchas;
 - only conditional sections supported by repository evidence: frontend/rendered QA,
@@ -51,6 +52,8 @@ invocation itself authorizes that setup write.
 
 Repository mode also writes, when absent and shown in the diff:
 
+- `.agent-os/workflow.md`: how work moves through the repository, in its own file so the policy
+  stays short;
 - `.agent-os/guards.json`: protected paths, frozen intent and spec globs, and the secret scan for the
   [guard hooks](/reference/guards);
 - `.agent-os/quality.json`: the main test command as a `required` check, which quality-ratchet's Stop
@@ -65,12 +68,12 @@ but not written, because it changes who must review other people's work.
 ## Tracker mandate
 
 `shape-work` may create the new issues it shapes in the project's tracker without a mandate. When
-the agent should do more there, such as update or comment on other issues, the policy gets a
-`## Tracker mandate` section that names what the agent may create, update, and comment on. It always
+the agent should do more there, such as update or comment on other issues, the workflow file gets a
+`## Tracker mandate` section, which may also sit in the policy itself, that names what the agent may create, update, and comment on. It always
 states that the agent never changes priority, assignee, or acceptance, and never closes items.
 Without that section, no skill writes to a tracker beyond those new issues; corrections stay local and the unsynced delta is
 reported. Team-specific tracker conventions, such as how Jira keys map to units, belong in the
-project policy or a team's own plugin, not in Agent OS.
+workflow file or a team's own plugin, not in Agent OS.
 
 Keep the policy alive by updating facts that repeatedly affect work. Do not turn one-off preferences
 or speculative guardrails into permanent process.

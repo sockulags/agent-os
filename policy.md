@@ -46,6 +46,10 @@ Rules:
   with its invocation and why it fits, then handle the request directly as asked. Planning
   depth is chosen internally by plan-work, and its use does not add a general summary approval gate.
   Planning alone never starts implementation.
+- End every agent-os workflow with a route line: the kind of work, the steps done and the steps
+  left in plain words, and the exact command that resumes the work, such as `/deliver-work #42`, so
+  the person or a colleague can continue the next day. Take the route from the project's
+  `.agent-os/workflow.md` when the project policy points to one, otherwise from the default routes.
 - Always recommend one concrete next action when planning or a delivery unit ends, with the reason
   it wins and any blocker. Existing authority persists across unit boundaries, but never expands to
   unrelated backlog work. If the goal is complete and no useful next action remains, say so instead
@@ -87,6 +91,13 @@ Rules:
   set, and a request to finish an intent covers shaping its plan and delivering every unit; parallel batch execution still requires explicit selection. The automatic `check-work` review
   workflow is also available from supported implicit review requests; its report mode is read-only
   and its fix mode requires explicit authority.
+- Default routes, used when the project has no workflow file or no row for the kind of work: a bug
+  with a known fix goes through `shape-work` for one issue and then `deliver-work`; a small change,
+  or a bug whose fix holds a choice, through `plan-work`, `shape-work`, and `deliver-work`; a feature
+  through `shape-work` and `deliver-work`, with `plan-work` first when anything is unclear; an
+  initiative through `capture-intent`, `plan-work`, `shape-work`, `deliver-work`, and the project's
+  finishing tasks. Every route gives the work an issue before delivery, for traceability, unless the
+  request says to skip it.
 - `plan.md` beside a spec lists delivery units and dependencies only. Delivery status is never
   written into it: a unit is claimed by a draft pull request whose body carries
   `Intent-Unit: <intent-id>/<unit-key>`, and status is read from open and merged pull requests. An

@@ -44,15 +44,22 @@ on it as stale until it is reconsidered. See [Intent, spec, and plan files](/ref
 
 ## Ceremony follows size
 
-| Work | Steps | Record |
+| Work | Route | Record |
 |---|---|---|
-| A bug or a clear small change | deliver, review, lesson | the pull request |
-| A feature, one or a few pull requests | shape, deliver, review, lesson | tracker issues |
-| An initiative: several pull requests and decisions someone else must agree to | every step | intent, spec, and plan files |
+| A bug with a known fix | shape (one issue), deliver | one issue and its pull request |
+| A small change, or a bug whose fix holds a choice | plan, shape, deliver | issues and pull requests |
+| A feature | plan when anything is unclear, shape, deliver | issues and pull requests |
+| An initiative: several pull requests and decisions someone else must agree to | every step, then the finishing tasks | intent, spec, and plan files |
 
-A feature can still use `capture-intent` or `plan-work` to settle an unclear need or open
-decisions. They then report the result instead of writing a file, and `shape-work` puts it into the
-issues. You or the project policy can ask for files on smaller work too.
+These are the default routes. Every one gives the work an issue before delivery, so each change can
+be traced from the tracker to its pull request. A project can change them in its
+[workflow file](/reference/workflow-file), which also lists the tasks that finish an initiative,
+such as a changelog entry or a wiki summary. Every workflow ends with a route line that says which
+steps are done and which command continues the work.
+
+Below an initiative, `capture-intent` and `plan-work` report their result instead of writing a
+file, and `shape-work` puts it into the issues. `plan-work` asks once whether to create the issues
+right away, so the decisions reach the tracker before the session ends. You or the project policy can ask for files on smaller work too.
 
 Use `capture-intent` when a need is new or still moving. Use `plan-work` when behavior, decisions, or
 ground truth need settling; it chooses its own depth, from a small outcome contract to a decision map

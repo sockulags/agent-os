@@ -25,7 +25,8 @@ Within those priorities, prefer the action that removes a consequential uncertai
 dependent work at reasonable effort. When observation would settle an open decision, recommend a
 bounded experiment through plan-work or shape-work; a ready coding task need not always win.
 
-Route broad or mission-level planning to `plan-work`, a bounded open delivery choice to
+Follow the route for the kind of work from `.agent-os/workflow.md`, or the global policy's default
+routes, and end with the route line. Route broad or mission-level planning to `plan-work`, a bounded open delivery choice to
 `shape-work`, and one selected implementation-ready issue to `deliver-work`, which also takes an
 intent the developer asks to finish. Route to `batch-work`
 only when the developer

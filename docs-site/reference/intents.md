@@ -32,8 +32,7 @@ product repository when work often spans several code repositories.
 
 | Work | Record |
 |---|---|
-| A bug or a clear small change | none; the pull request carries the contract |
-| A feature, one or a few pull requests | tracker issues from `shape-work`; no files |
+| A bug, a small change, or a feature | tracker issues from `shape-work`; no files |
 | An initiative: several pull requests and decisions someone else must agree to | `intent.md`, `spec.md`, and `plan.md` |
 
 You or the project policy can ask for files on smaller work too. Without that, no skill writes an

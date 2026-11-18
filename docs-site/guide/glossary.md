@@ -37,6 +37,9 @@ keeping to scope or showing evidence before saying something is done.
 **Epic.** A unit with several child units that together deliver one shared result. It has its own
 acceptance and an owner for checking the whole result.
 
+**Finishing tasks.** Tasks in the [workflow file](/reference/workflow-file) that run when a piece
+of work is complete, such as writing a changelog entry or a wiki summary after an initiative.
+
 **Frontier.** The units, or decision tickets, that can be started now because everything they depend
 on is done.
 
@@ -60,12 +63,12 @@ plan files; smaller work lives in tracker issues.
 **`Intent-Unit`.** The line `Intent-Unit: <intent-id>/<unit-key>` in a pull request body. It ties
 the pull request to a unit, and it is how Agent OS knows which units are claimed or delivered.
 
-**Manual skill.** A skill that runs only when you call it by name, such as `plan-work` or
-`deliver-work`. The agent may suggest one, but never starts it by itself.
-
 **Mandate.** What the current request and the project policy allow the agent to do. A request to
 plan allows planning files; a request to build allows code changes; merging, deploying, and writing
 to a tracker need to be named.
+
+**Manual skill.** A skill that runs only when you call it by name, such as `plan-work` or
+`deliver-work`. The agent may suggest one, but never starts it by itself.
 
 **Plan.** The file `intents/<id>/plan.md` of an initiative, written by
 [`shape-work`](/skills/shape-work). It lists the delivery units and their dependencies, never their
@@ -82,6 +85,13 @@ is missing or out of date. See [`quality-ratchet`](/skills/quality-ratchet).
 **Revision (`rev`).** The version number of an intent, spec, or plan. An accepted file changes only
 through a new review that raises `rev` by one and adds a line to its decision log.
 
+**Route.** The steps one kind of work takes, such as plan-work, shape-work, and deliver-work for a
+small change. The defaults are in the global policy, and a project changes them in its
+[workflow file](/reference/workflow-file).
+
+**Route line.** The last line of every workflow: the kind of work, the steps done and left, and the
+command that continues the work.
+
 **Spec.** The file `intents/<id>/spec.md` of an initiative, written by [`plan-work`](/skills/plan-work). It holds the
 behavior, the screens, the boundaries, the decisions, and the ground truth. When a unit and the spec
 disagree, the spec wins.
@@ -96,3 +106,6 @@ agent reports other tracker changes instead of making them.
 **Unit.** One piece of delivery: the smallest result that is useful or can be checked on its own,
 usually one tracker issue and one pull request. A unit names its outcome, boundaries, the code to change, acceptance, and
 ground truth.
+
+**Workflow file.** `.agent-os/workflow.md`, the per-project file with the routes, the tracker, where
+information goes, and the finishing tasks. Written by `init-agent-os`.
