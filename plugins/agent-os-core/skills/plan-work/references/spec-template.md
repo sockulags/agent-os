@@ -53,7 +53,9 @@ Write `None` when nothing a person sees or does changes. Never delete.>
 
 ## Ground truth
 
-<The commands or observations that prove the outcome, such as `npm test -- export` or a named manual check.>
+<The commands or observations that prove the outcome, such as `npm test -- export` or a named manual check.
+Acceptance examples define the behavior, not the number of tests: name where they are proven, such as
+one table-driven test, an end-to-end step, or an observation.>
 
 ## Open risks
 

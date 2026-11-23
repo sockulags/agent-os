@@ -39,6 +39,8 @@ where that is the true answer:
   every variation. A spec example shared between units states exactly this unit's part. A bare
   pointer such as "behaviors 1 to 3" is not acceptance.
 - **Ground truth:** the commands to run and the named cases or observations they must show.
+  Acceptance lines define the behavior, not the number of tests: several can be proven by one
+  table-driven test, an end-to-end step, or an observation.
 - **Dependencies:** for each dependency, what this unit consumes from it, in a line.
 - **Evidence and settled decisions:** only the decisions a worker could otherwise get wrong, one
   line each with its link. Do not retell the spec's decisions.
