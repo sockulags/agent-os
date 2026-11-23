@@ -21,10 +21,10 @@ write that test first, as a case in the existing test for the same rule when one
 shape [proportional-testing](../proportional-testing/SKILL.md) keeps, and confirm it fails for the
 diagnosed reason. In a delivery that commits, commit the failing test before the fix, and when
 agent-os-dev guards are installed run `guards.mjs lock-test <path>` from the quality-ratchet skill's
-`scripts/` so the test cannot be bent to fit the fix. The lock covers the whole file, so tidy other
-cases in it after unlocking. Once evidence supports a cause, implement the smallest fix. Re-run the original
-failing path, then `guards.mjs unlock-test <path>`. Changing a locked test needs the developer's
-explicit agreement, because it changes what counts as fixed.
+`scripts/` so the test cannot be bent to fit the fix. Once evidence supports a cause, implement the
+smallest fix. Re-run the original failing path, then `guards.mjs unlock-test <path>`. The lock
+covers the whole file, so tidy other cases in it after unlocking. Changing a locked test needs the
+developer's explicit agreement, because it changes what counts as fixed.
 
 If the failure cannot be reproduced or competing explanations cannot be distinguished, report the
 bounded uncertainty and the next discriminating check. Do not turn a plausible hypothesis into a

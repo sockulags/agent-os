@@ -77,13 +77,15 @@ Agent OS does not suppress pre-existing analyzer failures or equate tool success
 
 ## New exceptions and policy changes
 
-The runner reports new source lines matching `type-escape` (common `: any`/`as any` annotations and casts, TypeScript suppression comments),
-`lint-disable` (ESLint suppression and Java `@SuppressWarnings`), `test-skip` (common test skips,
-focused tests, and Java `@Disabled`), and `project-mock` (`vi.mock` or `jest.mock` of a relative
-path or an `@/`, `~/`, or `#/` alias, which couples a test to the project's own module structure). It subtracts existing occurrences per file, ignoring simple
-line movement. These lexical signals can match comments or strings and can reappear on rename;
-they do not establish a semantic defect. Review them or delegate exact rules to the project's linter.
-Only rules explicitly listed in `blockSignals` block delivery. Raw LOC and structural counts never do.
+The runner reports new source lines matching `type-escape` (common `: any`/`as any` annotations and
+casts, TypeScript suppression comments), `lint-disable` (ESLint suppression and Java
+`@SuppressWarnings`), `test-skip` (common test skips, focused tests, and Java `@Disabled`), and
+`project-mock` (`vi.mock` or `jest.mock` of a relative path or an `@/`, `~/`, or `#/` alias, which
+couples a test to the project's own module structure). It subtracts existing occurrences per file,
+ignoring simple line movement. These lexical signals can match comments or strings and can reappear
+on rename; they do not establish a semantic defect. Review them or delegate exact rules to the
+project's linter. Only rules explicitly listed in `blockSignals` block delivery. Raw LOC and
+structural counts never do.
 
 ## Complexity threshold
 

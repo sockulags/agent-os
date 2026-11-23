@@ -36,15 +36,15 @@ Extract a named responsibility when it makes the touched code easier to understa
 invariant, even with one caller. This is allowed local improvement, not automatic scope expansion.
 Do not force inheritance, shared utils, or extra layers merely to reduce file size.
 
-The check reports added, changed, and deleted source files, test files included, touched-source
-NLOC before/after, the before/after status of source paths that were already present at entry, package dependency deltas,
-and optional analyzer capability. When lizard is installed, it also reports cyclomatic complexity
-before and after for touched functions, ranked by increase. That value counts paths through a
-function, not readability; it is best effort, can miss functions in unusual formatting, and has
-before values only for files that were clean at entry. Raw file, function, line, or complexity
-counts are signals only. There is no aggregate score and no threshold gate unless the project sets
-one. Missing lizard is reported as unavailable rather than clean; jscpd is detected but not
-integrated into the delta. The core Node evidence remains usable without either.
+The check reports added, changed, and deleted source files, test files included, touched-source NLOC
+before/after, the before/after status of source paths that were already present at entry, package
+dependency deltas, and optional analyzer capability. When lizard is installed, it also reports
+cyclomatic complexity before and after for touched functions, ranked by increase. That value counts
+paths through a function, not readability; it is best effort, can miss functions in unusual
+formatting, and has before values only for files that were clean at entry. Raw file, function, line,
+or complexity counts are signals only. There is no aggregate score and no threshold gate unless the
+project sets one. Missing lizard is reported as unavailable rather than clean; jscpd is detected but
+not integrated into the delta. The core Node evidence remains usable without either.
 
 Use existing project checks for enforceable rules and report structural signals as advisory.
 When configuring external checks, read [references/project-controls.md](references/project-controls.md).

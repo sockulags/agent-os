@@ -21,8 +21,8 @@ diagnosed reason. It goes into the existing test for the same rule when one exis
 test is committed before the fix and, with agent-os-dev guard hooks installed, locked with
 `guards.mjs lock-test <path>` from quality-ratchet's `scripts/`, so the test cannot be bent to fit
 the fix. It is unlocked with `unlock-test` once the fix passes. The lock covers the whole file, so
-other cases in it are tidied after unlocking. Changing a locked test needs the developer's explicit agreement. See
-[Guard hooks](/reference/guards).
+other cases in it are tidied after unlocking. Changing a locked test needs the developer's explicit
+agreement. See [Guard hooks](/reference/guards).
 
 Once evidence supports a cause, implement the smallest fix and rerun the original failing path. When
 the cause cannot be distinguished, report bounded uncertainty and the next useful check rather than
