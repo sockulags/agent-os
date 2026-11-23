@@ -8,6 +8,30 @@ description: What changed in each agent-os release, in plain terms.
 One entry per release: what changed, and what it means for how you work. Full commit-level history
 lives on [GitHub](https://github.com/sockulags/agent-os/commits/main).
 
+## 0.18.0 — 2026-11-23
+
+Tests are treated as code to maintain, not only as evidence for a change. In one project the agents'
+test suite had grown almost as large as the product code, with about six test cases added for every
+one removed.
+
+- **Evidence or lasting guard:** `proportional-testing` commits a test only when it protects
+  observable behavior that no existing test, type, or lint rule already covers, and survives a
+  behavior-preserving refactor, so it mocks none of the project's own modules. Other checks run as
+  evidence and stay out of the suite. A touched test file is left no worse: cases for one rule merge
+  into a table-driven test named by that rule, and redundant assertions go.
+- **Review counts unneeded tests:** the `REVIEW.md` template and `check-work` treat a new test that
+  duplicates an existing one, asserts internal calls, or copies shared setup as a Should fix finding,
+  next to changed behavior that nothing protects. An existing `REVIEW.md` keeps its old text until
+  you update it.
+- **Verification and diagnosis:** `verify-before-done` reports a missing strongest check as a gap
+  instead of covering it with more unit tests. `diagnose-before-fix` puts the reproducing case into
+  the existing test for the same rule and tidies the rest of that file after `unlock-test`.
+- **Acceptance is behavior, not test count:** specs and delivery units name where acceptance
+  examples are proven, such as one table-driven test, an end-to-end step, or an observation.
+- **quality-ratchet:** a touched test file is part of the surface the ratchet improves, and a new
+  advisory `project-mock` signal reports a new `vi.mock` or `jest.mock` of a project module. List it
+  in `blockSignals` to block on it.
+
 ## 0.17.1 — 2026-11-18
 
 `npx @sockulags/agent-os` works on macOS and Linux. Since 0.9.0 the CLI exited without output or
