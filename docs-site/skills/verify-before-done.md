@@ -16,7 +16,9 @@ required checks in `.agent-os/quality.json`, or the project's documented accepta
 agent-os-dev installed, a quality-ratchet Stop block for a stale check or a failed required check is
 this discipline enforced. Inspect
 what each result actually proves: a build cannot establish rendered behavior, and a narrow unit test
-cannot establish an end-to-end flow.
+cannot establish an end-to-end flow. When the strongest layer is unavailable, that gap is reported
+rather than covered with more unit tests. A check that proves a claim does not have to become a
+committed test; [proportional-testing](/skills/proportional-testing) decides what stays.
 
 Lead with the verified outcome and cite decisive checks compactly. When a material check cannot run,
 name the unverified claim and its impact instead of calling the whole result complete.
