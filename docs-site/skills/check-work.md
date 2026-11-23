@@ -58,7 +58,9 @@ never replaces the human approval that branch protection requires.
 
 The shared [finding contract](https://github.com/sockulags/agent-os/blob/main/plugins/agent-os-dev/skills/check-work/references/findings.md)
 requires a triggering condition, concrete consequence, and supporting evidence for blocking findings.
-Material maintenance costs can qualify; line counts and equivalent designs do not. Implementers may
+Material maintenance costs can qualify; line counts and equivalent designs do not. Tests count as
+maintained code: unprotected changed behavior and a new test that duplicates an existing case or
+asserts internal calls are both findings. Implementers may
 reject unsupported findings with a reason, but cannot dismiss an introduced defect or failed required
 check as scope creep. Re-review covers fixes and plausible regressions. Optional follow-ups alone
 do not prevent `APPROVED`; missing necessary evidence or decisions means `BLOCKED`.

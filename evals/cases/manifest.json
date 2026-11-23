@@ -25,7 +25,8 @@
         "check-work.md#CW-P7 EN pre-push look",
         "check-work.md#CW-P8 EN pull request review",
         "check-work.md#CW-P9 EN last commit",
-        "check-work.md#CW-P10 EN HO auth changes"
+        "check-work.md#CW-P10 EN HO auth changes",
+        "check-work.md#CW-P11 Unneeded test"
       ],
       "negative": [
         "check-work.md#CW-N1 Test-only request",

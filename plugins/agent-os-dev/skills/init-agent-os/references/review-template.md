@@ -21,8 +21,10 @@ or public API compatibility, each with one sentence on why.>
 
 - **Blocking:** incorrect behavior, a missed acceptance example from the spec, a security or data
   loss risk, a broken public contract, or an edit to an accepted intent or spec.
-- **Should fix:** a defect with limited impact, a missing regression test for changed behavior, or
-  complexity the change does not need.
+- **Should fix:** a defect with limited impact; changed behavior that no existing test, type, or lint
+  rule protects; a new test that duplicates an existing one, asserts internal calls or module
+  structure instead of behavior, or copies setup a shared fixture already covers; or complexity the
+  change does not need.
 - **Minor:** naming, comments, or local readability. Report at most <three> minor findings per review.
 
 ## Out of scope for review

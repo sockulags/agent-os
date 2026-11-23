@@ -4,7 +4,9 @@ A blocking finding needs a location, triggering condition, concrete consequence,
 the candidate fails a requirement or imposes a material maintenance cost. Security and data-loss
 risks need a credible path, not a production incident. Duplicated rules that can diverge or mixed
 responsibilities that make the requested behavior unsafe to change can justify simplification;
-line count, personal style, and an equally valid design alternative cannot.
+line count, personal style, and an equally valid design alternative cannot. Tests are code to
+maintain: changed behavior that nothing protects and a new test that `proportional-testing` would
+not keep, such as one duplicating an existing case or asserting internal calls, are both findings.
 
 Separate required corrections from useful nonblocking follow-ups. Omit cosmetic preferences and
 speculative hardening. No findings is a valid result. Do not manufacture work to justify review.
