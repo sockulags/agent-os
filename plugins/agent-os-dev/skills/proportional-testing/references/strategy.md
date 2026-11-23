@@ -22,7 +22,7 @@ Existing coverage may already be sufficient.
 Test externally observable behavior and contracts. A behavior-preserving refactor should not force
 large test rewrites. Avoid tests whose main value is asserting internal calls, exact call sequences
 when ordering is not contractual, trivial delegation, getters, constructors, framework boilerplate,
-private structure, or mocks that reproduce the implementation.
+private structure, mocks of the project's own modules, or mocks that reproduce the implementation.
 
 Before adding coverage, search for an existing behavioral test. Prefer extending it, adding a case
 to a table-driven test, and reusing its fixtures. One strong regression test is better than several
@@ -83,5 +83,5 @@ Coverage is adequate when the intended behavior is verified, plausible affected 
 important justified edge cases have been considered, relevant existing tests pass, and the chosen
 test level is proportional to the risk.
 
-Before adding another test, ask: **What realistic regression would this catch that existing tests
-would not?** If there is no clear answer, do not add it.
+Before adding another test, ask: **What realistic regression would this catch that existing tests,
+types, and lint rules would not?** If there is no clear answer, do not add it.

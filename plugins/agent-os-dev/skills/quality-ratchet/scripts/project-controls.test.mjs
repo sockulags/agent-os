@@ -80,6 +80,26 @@ test('advisory failures and new exception signals do not gate delivery', t => {
   assert.deepEqual(hook(f.root), {})
 })
 
+test('new mocks of project modules are advisory signals; package mocks are not', t => {
+  const f = fixture(t)
+  f.write('source.test.ts', "vi.mock('@/lib/db')\n")
+  begin(f.root, options)
+  f.write('source.test.ts', [
+    "vi.mock('@/lib/db')",
+    "vi.mock('@/lib/mail')",
+    "jest.mock('../store', () => ({}))",
+    'vi.doMock("./clock")',
+    "vi.mock('@scope/package')",
+    "vi.mock('node:fs')"
+  ].join('\n'))
+  const result = check(f.root, options)
+  assert.equal(result.status, 'ok')
+  assert.deepEqual(result.sourceFiles.changed, ['source.test.ts'])
+  assert.deepEqual(result.controls.signals.map(s => [s.rule, s.line]),
+    [['project-mock', 2], ['project-mock', 3], ['project-mock', 4]])
+  assert.deepEqual(hook(f.root), {})
+})
+
 test('an explicit project exception rule blocks only additions since entry', t => {
   const f = fixture(t, [], { blockSignals: ['test-skip'] })
   f.write('source.ts', "test.skip('old', () => {})")

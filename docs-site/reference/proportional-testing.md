@@ -19,8 +19,9 @@ regressions, and integration boundaries the change actually crosses. New functio
 files, components, or AI-generated code do not automatically require new tests.
 
 Prefer externally observable contracts over internal calls, non-contractual call order, trivial
-delegation, framework boilerplate, private structure, or mocks that reproduce the implementation.
-A behavior-preserving refactor should not force broad test rewrites.
+delegation, framework boilerplate, private structure, mocks of the project's own modules, or mocks
+that reproduce the implementation. A behavior-preserving refactor should not force broad test
+rewrites.
 
 ## Reuse before adding
 
@@ -28,8 +29,8 @@ Search before writing. Prefer extending an existing behavioral test, adding a ta
 and reusing existing setup. One strong regression test is better than several tests that protect the
 same behavior with slightly different wording or fixtures.
 
-Before adding another test, ask: **What realistic regression would this catch that existing tests
-would not?** If there is no clear answer, do not add it.
+Before adding another test, ask: **What realistic regression would this catch that existing tests,
+types, and lint rules would not?** If there is no clear answer, do not add it.
 
 ## Use the cheapest sufficient level
 

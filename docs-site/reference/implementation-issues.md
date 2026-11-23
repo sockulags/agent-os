@@ -35,7 +35,9 @@ Every issue has a stable `(origin, unit key)` identity and records:
 - the change surface: the modules, interfaces, and existing code to extend;
 - acceptance written out as concrete checks, each citing its spec example, with a shared example
   stating exactly this unit's part;
-- ground truth that can verify the outcome;
+- ground truth that can verify the outcome and names where the acceptance is proven, such as one
+  table-driven test, an end-to-end step, or an observation, since acceptance lines define behavior
+  rather than the number of tests;
 - dependencies, their current state, and what this unit consumes from each;
 - only the settled decisions a worker could otherwise get wrong, with links;
 - the requested delivery target;

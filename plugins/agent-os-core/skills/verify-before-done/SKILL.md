@@ -24,7 +24,9 @@ Use the strongest practical layer:
 4. Static inspection only when execution is impossible and the limitation is explicit.
 
 Passing a weaker layer does not prove a stronger claim. Stale or second-hand results are context, not
-verification.
+verification. When the strongest layer is unavailable, report that gap instead of compensating with
+more unit tests at a weaker layer. A check that proves a claim does not have to become a committed
+test; with agent-os-dev installed, proportional-testing decides what stays.
 
 When agent-os-dev is installed, a quality-ratchet Stop block saying the check is stale or a required
 check failed is this discipline enforced: rerun the check, or name the claim as unverified.

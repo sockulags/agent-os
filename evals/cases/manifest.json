@@ -25,7 +25,8 @@
         "check-work.md#CW-P7 EN pre-push look",
         "check-work.md#CW-P8 EN pull request review",
         "check-work.md#CW-P9 EN last commit",
-        "check-work.md#CW-P10 EN HO auth changes"
+        "check-work.md#CW-P10 EN HO auth changes",
+        "check-work.md#CW-P11 Unneeded test"
       ],
       "negative": [
         "check-work.md#CW-N1 Test-only request",
@@ -261,6 +262,7 @@
         "proportional-testing.md#Positive 1",
         "proportional-testing.md#Positive 2",
         "proportional-testing.md#Positive 3 \u2014 cross-service journey",
+        "proportional-testing.md#Positive 4 — evidence, not guard",
         "proportional-testing.md#Positive EN1",
         "proportional-testing.md#Positive EN2",
         "proportional-testing.md#Positive EN3",
@@ -282,6 +284,7 @@
         "quality-ratchet.md#Positive 4 \u2014 cohesive React boundary",
         "quality-ratchet.md#Positive 5 \u2014 required command failure",
         "quality-ratchet.md#Positive 6 \u2014 authorized policy update",
+        "quality-ratchet.md#Positive 7 \u2014 touched test file",
         "quality-ratchet.md#Positive EN1",
         "quality-ratchet.md#Positive EN2",
         "quality-ratchet.md#Positive EN3",
