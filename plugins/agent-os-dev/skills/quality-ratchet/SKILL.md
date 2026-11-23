@@ -25,7 +25,8 @@ independent-review, and verification steps still decide delivery.
 Use three zones:
 
 1. A bounded, behavior-preserving improvement on the implementation surface already being
-   touched is allowed when it makes the requested change clearer or safer.
+   touched is allowed when it makes the requested change clearer or safer. A touched test file is
+   part of that surface; `proportional-testing` says what it keeps.
 2. Report at most one concrete adjacent structural opportunity when it materially constrains the
    requested change, but leave it out of the patch unless the boundary expands.
 3. Ignore unrelated debt. `scope-guard` owns drift; do not turn a ratchet signal into a cleanup
@@ -35,8 +36,8 @@ Extract a named responsibility when it makes the touched code easier to understa
 invariant, even with one caller. This is allowed local improvement, not automatic scope expansion.
 Do not force inheritance, shared utils, or extra layers merely to reduce file size.
 
-The check reports added, changed, and deleted source files, touched-source NLOC before/after, the
-before/after status of source paths that were already present at entry, package dependency deltas,
+The check reports added, changed, and deleted source files, test files included, touched-source
+NLOC before/after, the before/after status of source paths that were already present at entry, package dependency deltas,
 and optional analyzer capability. When lizard is installed, it also reports cyclomatic complexity
 before and after for touched functions, ranked by increase. That value counts paths through a
 function, not readability; it is best effort, can miss functions in unusual formatting, and has

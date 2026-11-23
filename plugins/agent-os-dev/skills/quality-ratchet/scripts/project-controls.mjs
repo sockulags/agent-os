@@ -9,7 +9,8 @@ export const DEFAULT_TRUST_STORE = path.join(os.homedir(), '.agent-os', 'trusted
 const SIGNALS = {
   'type-escape': /@ts-(?:ignore|nocheck|expect-error)\b|:\s*any\b|\bas\s+any\b/,
   'lint-disable': /eslint-disable|@SuppressWarnings\b/,
-  'test-skip': /\b(?:it|test|describe)\s*\.\s*(?:skip|todo|only)\s*\(|\b[fx](?:it|describe)\s*\(|@Disabled\b/
+  'test-skip': /\b(?:it|test|describe)\s*\.\s*(?:skip|todo|only)\s*\(|\b[fx](?:it|describe)\s*\(|@Disabled\b/,
+  'project-mock': /\b(?:vi|jest)\s*\.\s*(?:mock|doMock)\s*\(\s*['"`](?:\.{1,2}\/|[@~#]\/)/
 }
 const hash = value => createHash('sha256').update(value).digest('hex')
 const identity = value => hash(JSON.stringify(value))

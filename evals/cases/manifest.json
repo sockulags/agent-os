@@ -284,6 +284,7 @@
         "quality-ratchet.md#Positive 4 \u2014 cohesive React boundary",
         "quality-ratchet.md#Positive 5 \u2014 required command failure",
         "quality-ratchet.md#Positive 6 \u2014 authorized policy update",
+        "quality-ratchet.md#Positive 7 \u2014 touched test file",
         "quality-ratchet.md#Positive EN1",
         "quality-ratchet.md#Positive EN2",
         "quality-ratchet.md#Positive EN3",

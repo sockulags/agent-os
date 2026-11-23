@@ -34,8 +34,8 @@ may be reported, while unrelated debt remains out of scope.
 
 ## Evidence and lifecycle
 
-The check reports added, changed, and deleted source files, touched-source NLOC before/after, the
-before/after status of source paths that already existed at entry, package dependency additions and
+The check reports added, changed, and deleted source files, test files included, touched-source
+NLOC before/after, the before/after status of source paths that already existed at entry, package dependency additions and
 removals, and optional analyzer capability. When lizard is installed, `check` also reports cyclomatic
 complexity before and after for touched functions, ranked by increase. It counts paths through a
 function rather than readability, can miss functions in unusual formatting, and has before values
@@ -69,8 +69,9 @@ candidate and shows the reason to the user. Claude Code's own continuation cap r
 agent calls a tool, so it cannot end such a loop by itself. The baseline stays active after a
 release, so `finish` still refuses delivery until a passing check. Corrupt or foreign state keeps
 blocking because `clear` always resolves it.
-Raw structural counts never block completion. New exception signals are advisory unless the project
-explicitly selects them as requirements.
+Raw structural counts never block completion. New exception signals, including a new `vi.mock` or
+`jest.mock` of the project's own modules (`project-mock`), are advisory unless the project explicitly
+selects them as requirements.
 
 ## Guard hooks
 
