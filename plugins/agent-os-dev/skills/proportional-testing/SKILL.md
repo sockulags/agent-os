@@ -15,16 +15,27 @@ Before adding a test:
 
 1. Identify the observable behavior changed and its plausible blast radius.
 2. Search existing tests for that behavior and affected contracts.
-3. Name the realistic regression the proposed test would catch that existing coverage would not.
+3. Name the realistic regression the proposed test would catch that existing tests, types, and lint
+   rules would not.
 4. If that regression is unclear, do not add the test.
 5. Otherwise extend existing or table-driven coverage when practical, using the cheapest test level
    that proves the behavior.
+
+Decide whether a test is evidence for this change or a lasting guard. Commit it only when it protects
+externally observable behavior and survives a behavior-preserving refactor: it mocks none of the
+project's own modules, and it asserts call order or arguments only where that call is the contract at
+a system boundary. Otherwise run it as evidence and do not commit it, or fold it into the existing
+case for the same rule.
+
+Leave a touched test file no worse than you found it. When you add a case, merge cases that test the
+same rule into one table-driven test, name tests by the rule they protect rather than the issue that
+added them, and remove assertions the new case makes redundant.
 
 For a confirmed bug, establish one reproducing regression check when practical, prove it fails for
 the expected reason, fix it, then run that check and relevant affected tests. Expand execution only
 when the blast radius is uncertain, shared infrastructure changed, or project policy requires a
 broader gate.
 
-Do not create a test for every function, branch, file, or generated code path. Prefer observable
-contracts over call sequences and private structure. This discipline controls test creation and
-development-time selection; it never removes required repository or CI checks at delivery.
+Do not create a test for every function, branch, file, or generated code path. This discipline
+controls test creation and development-time selection; it never removes required repository or CI
+checks at delivery.

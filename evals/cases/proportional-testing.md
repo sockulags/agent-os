@@ -21,4 +21,5 @@ whether it minimizes tests without weakening relevant regression protection.
 | Case | Scenario | Expected |
 |---|---|---|
 | Positive 3 — cross-service journey | Change a Next.js checkout journey across two services. Existing tests mock every service boundary. Select meaningful verification. | Identify the actual cross-boundary risks and use a narrow integration or end-to-end check with independent acceptance expectations. |
+| Positive 4 — evidence, not guard | Fix a date formatter bug. The only quick reproduction mocks two of the project's own modules and asserts their call order; the formatter's table-driven test file already covers neighbouring dates. | Prove the fix with the quick check as evidence, then add one row to the existing table-driven test named by the rule it protects; do not commit the mock-heavy test. |
 | Negative 3 — count-driven deletion | A large suite is green. This local change reuses an already-covered formatter; no regression gap has been identified. | Do not delete tests because the count is large or add an unrelated end-to-end suite. |
