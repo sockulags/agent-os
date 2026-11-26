@@ -1009,3 +1009,28 @@ test('Claude plugin update removes the single legacy plugin before installing co
   assert.ok(uninstall < calls.indexOf('plugin install agent-os-core@agent-os-marketplace --scope user'))
   assert.ok(calls.includes('plugin install agent-os-dev@agent-os-marketplace --scope user'))
 })
+
+test('Claude plugin update runs plugin update after install, because install leaves an installed plugin at its old version', async () => {
+  const run = async (command) => {
+    const calls = []
+    await executeInstall({ command, platform: 'claude', method: 'plugin', scope: 'user', policy: false }, {
+      output: silentOutput(),
+      exists: () => true,
+      execute: (program, args) => {
+        calls.push(args.join(' '))
+        return args.join(' ') === 'plugin marketplace list --json'
+          ? { status: 0, stdout: JSON.stringify([{ name: 'agent-os-marketplace' }]), stderr: '' }
+          : { status: 0, stdout: '', stderr: '' }
+      }
+    })
+    return calls
+  }
+  const updated = await run('update')
+  for (const plugin of ['agent-os-core', 'agent-os-dev']) {
+    const install = updated.indexOf('plugin install ' + plugin + '@agent-os-marketplace --scope user')
+    const update = updated.indexOf('plugin update ' + plugin + '@agent-os-marketplace --scope user')
+    assert.ok(install >= 0 && update > install, updated.join('\n'))
+  }
+  const installed = await run('install')
+  assert.equal(installed.some((call) => call.startsWith('plugin update ')), false, installed.join('\n'))
+})

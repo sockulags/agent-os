@@ -80,7 +80,8 @@ applies after `/reload-plugins` or a restart. Without auto-update, run
 `claude plugin marketplace update agent-os-marketplace` and then
 `claude plugin update agent-os-core@agent-os-marketplace` and
 `claude plugin update agent-os-dev@agent-os-marketplace`, adding `--scope project` or
-`--scope local` for those installs. Sources, read 2026-10-17: the `extraKnownMarketplaces` entry in the Claude Code
+`--scope local` for those installs.
+`npx @sockulags/agent-os@latest update --method plugin --platform claude` runs the same commands. Sources, read 2026-10-17: the `extraKnownMarketplaces` entry in the Claude Code
 [settings reference](https://code.claude.com/docs/en/settings-reference),
 [plugins for organizations](https://code.claude.com/docs/en/plugins/org), and
 [turning on auto-update](https://code.claude.com/docs/en/plugins/host-marketplace#turn-on-auto-update).

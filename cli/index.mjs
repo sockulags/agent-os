@@ -62,8 +62,9 @@ export function managedHookEntries(skillsRoot, nodePath = process.execPath) {
   ]
 }
 
-const pluginInstall = (packages, marketplace, extra = []) =>
-  packages.map((name) => ['plugin', 'install', PACKAGES[name].plugin + '@' + marketplace, ...extra])
+const pluginCommands = (verb, packages, marketplace, extra = []) =>
+  packages.map((name) => ['plugin', verb, PACKAGES[name].plugin + '@' + marketplace, ...extra])
+const PLUGIN_VERB_LABEL = Object.freeze({ install: 'Installing ', add: 'Installing ', update: 'Updating ' })
 
 export const PLATFORM_CONFIG = Object.freeze({
   claude: Object.freeze({
@@ -72,7 +73,10 @@ export const PLATFORM_CONFIG = Object.freeze({
     marketplace: 'agent-os-marketplace',
     installArgs: ['plugin', 'marketplace', 'add', MARKETPLACE_SOURCE],
     refreshArgs: ['plugin', 'marketplace', 'update', 'agent-os-marketplace'],
-    pluginArgs: (scope, packages = ['core', 'dev']) => pluginInstall(packages, 'agent-os-marketplace', ['--scope', scope]),
+    pluginArgs: (scope, packages = ['core', 'dev'], command = 'install') => [
+      ...pluginCommands('install', packages, 'agent-os-marketplace', ['--scope', scope]),
+      ...(command === 'update' ? pluginCommands('update', packages, 'agent-os-marketplace', ['--scope', scope]) : [])
+    ],
     nextStep: 'Restart Claude Code or run /reload-plugins.'
   }),
   codex: Object.freeze({
@@ -81,8 +85,7 @@ export const PLATFORM_CONFIG = Object.freeze({
     marketplace: 'agent-os',
     installArgs: ['plugin', 'marketplace', 'add', MARKETPLACE_SOURCE],
     refreshArgs: ['plugin', 'marketplace', 'upgrade', 'agent-os'],
-    pluginArgs: (scope, packages = ['core', 'dev']) =>
-      packages.map((name) => ['plugin', 'add', PACKAGES[name].plugin + '@agent-os']),
+    pluginArgs: (scope, packages = ['core', 'dev']) => pluginCommands('add', packages, 'agent-os'),
     nextStep: 'Start a new Codex session so the refreshed plugins are loaded. ' + CODEX_HOOK_TRUST_NOTICE
   })
 })
@@ -308,15 +311,19 @@ export function buildPlan(options, pathOptions = {}) {
         description: 'Refresh the Agent OS Git marketplace when applicable.'
       })
     }
-    for (const args of config.pluginArgs(scope, packages)) {
+    for (const args of config.pluginArgs(scope, packages, command)) {
       steps.push({
         platform: name,
-        kind: 'install-plugin',
+        kind: args[1] === 'update' ? 'update-plugin' : 'install-plugin',
         command: config.command,
         args,
-        description: command === 'update'
-          ? 'Install the current Agent OS plugin snapshot.'
-          : 'Install the Agent OS plugin.'
+        description: args[1] === 'update'
+          ? 'Update the installed Agent OS plugin to the refreshed marketplace version.'
+          : command !== 'update'
+            ? 'Install the Agent OS plugin.'
+            : args[1] === 'install'
+              ? 'Install the Agent OS plugin when it is not installed yet.'
+              : 'Install the current Agent OS plugin snapshot.'
       })
     }
   }
@@ -982,9 +989,8 @@ function executePlugin(options, { output, execute, exists }) {
       }
     }
 
-    for (const pluginArgs of config.pluginArgs(options.scope, selectedPackages(options.package ?? 'all'))) {
-      output.write((options.command === 'update' ? 'Installing the current snapshot of ' : 'Installing ') +
-        pluginArgs[2] + '...\n')
+    for (const pluginArgs of config.pluginArgs(options.scope, selectedPackages(options.package ?? 'all'), options.command)) {
+      output.write(PLUGIN_VERB_LABEL[pluginArgs[1]] + pluginArgs[2] + '...\n')
       assertSuccess(execute(config.command, pluginArgs), config.command, pluginArgs)
     }
     output.write('Done. ' + config.nextStep + '\n')
