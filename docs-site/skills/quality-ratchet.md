@@ -1,8 +1,8 @@
 ---
 title: quality-ratchet
-description: Keep implementation quality from regressing without turning delivery into cleanup.
+description: Decide the shape the change needs and keep implementation quality from regressing without turning delivery into cleanup.
 skill-description: Quality ratchet for code you are implementing or about to deliver, so the touched code ends up in the shape the change needs and no worse than it was. Decides that shape before the first edit instead of repeating the existing pattern, records the entry state, compares the candidate with it, and keeps cleanup bounded to the code the change touches. Use when adding a feature or changing existing code, when reviewing your own implementation or candidate before delivery, and when the user says things like don't make it worse, keep it at least as clean as it is now, no quality regressions compared with main, tidy it up while you're there but only what you touch, check the candidate, or this has too many layers. Not for repository-wide tech-debt hunts, reviewing someone else's pull request, or cutting line counts.
-summary: Compare exact entry and candidate evidence without score gates
+summary: Decide the shape first, then compare entry and candidate evidence without score gates
 ---
 
 # quality-ratchet
