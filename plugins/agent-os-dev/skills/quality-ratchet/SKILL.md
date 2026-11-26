@@ -1,17 +1,52 @@
 ---
 name: quality-ratchet
-description: Quality ratchet for code you are implementing or about to deliver, so the touched code ends up no worse than it was. Records the entry state before the first edit, compares the candidate with it, and keeps cleanup bounded to the code the change touches. Use when adding a feature or changing existing code, when reviewing your own implementation or candidate before delivery, and when the user says things like don't make it worse, keep it at least as clean as it is now, no quality regressions compared with main, tidy it up while you're there but only what you touch, check the candidate, or this has too many layers. Not for repository-wide tech-debt hunts, reviewing someone else's pull request, or cutting line counts.
+description: Quality ratchet for code you are implementing or about to deliver, so the touched code ends up in the shape the change needs and no worse than it was. Decides that shape before the first edit instead of repeating the existing pattern, records the entry state, compares the candidate with it, and keeps cleanup bounded to the code the change touches. Use when adding a feature or changing existing code, when reviewing your own implementation or candidate before delivery, and when the user says things like don't make it worse, keep it at least as clean as it is now, no quality regressions compared with main, tidy it up while you're there but only what you touch, check the candidate, or this has too many layers. Not for repository-wide tech-debt hunts, reviewing someone else's pull request, or cutting line counts.
 ---
 
 # Quality ratchet
 
-Keep the smallest set of concepts and machinery needed for the current change. The ratchet is an
-evidence layer, not a score or replacement for semantic review. Explicit project rules may gate delivery.
+Decide the shape the touched code should have, then keep the smallest set of concepts and machinery
+that shape needs. The runner is an evidence layer, not a score or replacement for semantic review.
+Explicit project rules may gate delivery.
 
-Before choosing the implementation, find the nearest existing behavior, contract, and tests. Reuse
-or extend their owner before adding a parallel implementation. For TypeScript, React, or Java
-changes, read [references/structure.md](references/structure.md) for contract ownership and cohesive
-boundaries. Make this a code decision, not a mandatory planning artifact.
+## Decide the shape first
+
+Before the first edit, find the nearest existing behavior, contract, and tests, and decide the shape
+the touched code should have with this change in it. An existing pattern shows what fit when it was
+written; it is not a rule to repeat. Ask what you would build if this requirement had been there
+from the start:
+
+- When the existing design still fits, extend its owner instead of adding a parallel implementation.
+- When it does not, reshape the touched code to the design that fits and move its callers in the
+  same change. Do not bolt the new case onto the old design or leave the old path beside the new one.
+
+Remove before you add: delete what the change makes dead, such as the old path, its unused helpers
+and options, and tests that protect only the replaced implementation, then build on what is left.
+A unit's `Target shape` is this decision already made. Follow it. When the code shows a better shape
+inside the same outcome and boundaries, build that one and state the difference and the reason in
+the report. Return the unit to `shape-work` only when the shape changes its outcome or boundaries.
+
+The decision covers the code the change touches and the callers it must move. A reshape that needs
+more than that is the one adjacent opportunity to report, not part of the patch. For TypeScript,
+React, or Java changes, read [references/structure.md](references/structure.md) for contract
+ownership and cohesive boundaries. Make this a code decision, not a mandatory planning artifact.
+
+## Comments
+
+A comment that explains the project's own code is a defect in that code. That covers a comment that
+says why the code is odd, what it works around, or that it must not be changed, narration of what
+the next lines do, commented-out code, and a lint or type suppression whose rule guards correctness
+or safety. Add none. In the code the change touches, delete every such comment and fix what it
+points at in the same change: reshape or rename until the behavior is obvious, fix the suppressed
+error, or encode a `do not change` constraint as a type, test, or lint rule. When that fix reaches
+beyond the touched code, still delete the comment, make the smallest fix that fits, and report the
+symbol and what remains as an open item. When unsure whether a comment may stay, it goes.
+
+Only these stay: license headers, documentation of a public contract, a link to an issue or
+specification for a constraint the code cannot express, a suppression of a rule that is only
+stylistic, and a note on behavior that an external dependency, platform, or protocol forces.
+
+## Baseline and check
 
 Resolve `scripts/quality-delta.mjs` relative to this loaded `SKILL.md`; do not assume the current
 worktree contains an Agent OS checkout. Before the first mutation in a Git worktree, run that
@@ -22,10 +57,13 @@ delivery, run `finish`: it records a fresh check and closes the baseline only wh
 Use its `clear` command only when abandoning the attempt. The normal correctness, security, scope,
 independent-review, and verification steps still decide delivery.
 
+## Zones
+
 Use three zones:
 
-1. A bounded, behavior-preserving improvement on the implementation surface already being
-   touched is allowed when it makes the requested change clearer or safer. A touched test file is
+1. The shape decision, and a bounded improvement on the implementation surface already being
+   touched that makes the requested change clearer or safer, belong in the patch. Behavior the
+   request does not change stays the same. A touched test file is
    part of that surface; `proportional-testing` says what it keeps.
 2. Report at most one concrete adjacent structural opportunity when it materially constrains the
    requested change, but leave it out of the patch unless the boundary expands.
@@ -35,6 +73,8 @@ Use three zones:
 Extract a named responsibility when it makes the touched code easier to understand or protects an
 invariant, even with one caller. This is allowed local improvement, not automatic scope expansion.
 Do not force inheritance, shared utils, or extra layers merely to reduce file size.
+
+## Evidence
 
 The check reports added, changed, and deleted source files, test files included, touched-source NLOC
 before/after, the before/after status of source paths that were already present at entry, package
@@ -99,7 +139,7 @@ check.
 `unlock-test <path>` once the fix passes. A block is a boundary: change course or ask, and never
 reach the same edit through another tool or path.
 
-Exit with the smallest complete implementation, the quality evidence, semantic review findings,
+Exit with the smallest complete implementation of the decided shape, the quality evidence, semantic review findings,
 and fresh verification. Do not remove a legitimate abstraction merely because it increases a raw
 count: multiple providers, runtime selection, compatibility, or a real trust boundary can justify
 the machinery and belongs to semantic judgment.

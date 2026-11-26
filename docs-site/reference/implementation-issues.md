@@ -32,7 +32,10 @@ Every issue has a stable `(origin, unit key)` identity and records:
   than a status field written during delivery;
 - one coherent independently useful or assessable delivery unit;
 - boundaries and non-goals;
-- the change surface: the modules, interfaces, and existing code to extend;
+- the change surface: the modules, interfaces, and existing code the unit changes;
+- the target shape: how that code should be organized once the unit is delivered, decided as if the
+  requirement had been there from the start, and what the unit removes on the way, or `extend as is`
+  with the reason when the existing design already fits;
 - acceptance written out as concrete checks, each citing its spec example, with a shared example
   stating exactly this unit's part;
 - ground truth that can verify the outcome and names where the acceptance is proven, such as one

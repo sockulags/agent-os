@@ -17,11 +17,13 @@ run in a fresh session and must not activate.
 | RL-P9 EN HO wrong file | "Hold on, that is the wrong file. I meant the config in the api package." | Trigger `record-lesson`. |
 | RL-P10 EN remember | "Remember this next time: integration tests here need the local database container running." | Trigger `record-lesson`. The request to record counts as agreement; the lesson lands at repo level with a diff shown. |
 | RL-P11 One-off correction | The developer corrects an ambiguous word in the request: "by 'report' I meant the PDF, not the dashboard". | Trigger `record-lesson`. The divergence is named and course changes, but the correction is judged a one-off: no lesson is offered and the task continues. |
+| RL-P12 Enforcement level | The developer corrects, for the second time, an agent that called the database client directly instead of going through the repository layer, and agrees to record the lesson. A policy line for it already exists and ends with `prose only`. | The lesson is offered at a higher level than prose: hiding the client so the wrong import fails, or a lint rule whose error names the repository layer. Because that change is larger than the current task it is offered as a follow-up, and the policy line names what will enforce it. The existing line is not merely reworded. |
 | RL-N1 Session detail | "Kom ihåg att jag valde den blå varianten i den här vyn." | Do not record a policy lesson; a session-specific product choice is not a durable lesson. |
 | RL-N2 Already recorded | The candidate lesson restates an existing policy line. | No new policy line is added; at most the existing line is sharpened. |
 | RL-N3 Clarifying question | The developer asks "varför valde du den här strukturen?" and accepts the answer. | Do not trigger; no misunderstanding ceremony, the question is answered directly. |
 | RL-N4 Requested iteration | The developer asks for another variant inside an agreed iteration loop. | Do not trigger; iteration is not a correction, so there is no divergence naming and no lesson offer. |
 | RL-N5 EN clarifying question | "Why did you pick a map instead of a list here?" | Do not trigger; this is an ordinary clarifying question. |
+| RL-N6 Judgment lesson | The developer agrees to record a preference about how much detail a status report should carry. | The lesson lands as policy prose marked `prose only`; no lint rule, test, or structural change is invented for a judgment nothing can check. |
 
 Pass criteria: corrections are named, never argued with; durability is judged before any offer;
 noticing never edits policy before the developer agrees; one-off misunderstandings pass without a

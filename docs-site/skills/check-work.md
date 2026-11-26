@@ -60,7 +60,9 @@ The shared [finding contract](https://github.com/sockulags/agent-os/blob/main/pl
 requires a triggering condition, concrete consequence, and supporting evidence for blocking findings.
 Material maintenance costs can qualify; line counts and equivalent designs do not. Tests count as
 maintained code: unprotected changed behavior and a new test that duplicates an existing case or
-asserts internal calls are both findings. Implementers may
+asserts internal calls are both findings. So is structure the candidate leaves behind: an old path
+kept beside its replacement, a unit's target shape not reached with no reason stated, and a comment in the code the candidate touches that
+[quality-ratchet](/skills/quality-ratchet) would not keep. Implementers may
 reject unsupported findings with a reason, but cannot dismiss an introduced defect or failed required
 check as scope creep. Re-review covers fixes and plausible regressions. Optional follow-ups alone
 do not prevent `APPROVED`; missing necessary evidence or decisions means `BLOCKED`.

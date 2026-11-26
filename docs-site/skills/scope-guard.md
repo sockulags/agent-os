@@ -52,7 +52,12 @@ current mandate allows that tracker write."
 
 ## Local improvement and follow-ups
 
-Cohesive behavior-preserving extraction on the touched surface is allowed. The implementer can reject
+Cohesive behavior-preserving extraction on the touched surface is allowed. A delivery unit's
+`Target shape` is part of the boundary, so the reshape and removals it names are required work. For
+work without a unit, the same holds for the shape the implementation needs in the code it touches
+and the callers that must move with it, as [quality-ratchet](/skills/quality-ratchet) decides it.
+Either needs a new decision only when it changes a public interface, adds a dependency, or reaches
+beyond those callers. The implementer can reject
 unsupported review requests with evidence. For worthwhile adjacent work, search for an existing
 issue and draft the problem, impact, and acceptance condition. Create or update it only under
 existing request or project-policy authority that does not conflict with an explicit read-only

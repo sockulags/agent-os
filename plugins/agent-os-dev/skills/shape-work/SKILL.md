@@ -32,8 +32,14 @@ where that is the true answer:
   sentence or two.
 - **Boundaries:** the non-goals a worker would plausibly cross, and what neighboring units own
   instead.
-- **Change surface:** the modules, interfaces, and existing code to extend, found by reading the
-  repository, in a few lines. It names seams and does not list steps or every file.
+- **Change surface:** the modules, interfaces, and existing code the unit changes, found by reading
+  the repository, in a few lines. It names seams and does not list steps or every file.
+- **Target shape:** how that code should be organized once the unit is delivered, decided as if this
+  requirement had been there from the start, and what the unit removes on the way: the old path and
+  its callers, tests that protect only the replaced implementation, and comments that explain a
+  workaround. An existing pattern shows what fit when it was written; it does not decide this. One
+  to three lines that name structure, not steps. Write `extend as is` with the reason when the
+  existing design already fits.
 - **Acceptance:** the checks that decide done, written out in the unit as given, when, then or as
   assertions, one line each, each citing its spec example. Cover the behaviors this unit owns, not
   every variation. A spec example shared between units states exactly this unit's part. A bare

@@ -7,6 +7,10 @@ responsibilities that make the requested behavior unsafe to change can justify s
 line count, personal style, and an equally valid design alternative cannot. Tests are code to
 maintain: changed behavior that nothing protects and a new test that `proportional-testing` would
 not keep, such as one duplicating an existing case or asserting internal calls, are both findings.
+So is structure the candidate leaves behind: an old path kept beside its replacement, a unit's
+target shape not reached with no reason stated, and a comment in the code the candidate touches that `quality-ratchet`
+would not keep. The required change for such a comment is to delete it and fix what it points at,
+not to reword it.
 
 Separate required corrections from useful nonblocking follow-ups. Omit cosmetic preferences and
 speculative hardening. No findings is a valid result. Do not manufacture work to justify review.

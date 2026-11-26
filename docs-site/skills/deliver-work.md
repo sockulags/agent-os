@@ -41,7 +41,7 @@ resume from a [work record](/reference/work-records).
 ```mermaid
 flowchart TD
     A[One ready issue or bounded request] --> B[Contract: outcome, boundaries,<br>ground truth, delivery target]
-    B --> C[Smallest complete implementation]
+    B --> C[Shape settled, then the smallest<br>complete implementation of it]
     C --> D[Proportional relevant checks]
     D --> C
     D --> E{Review gate}
@@ -75,7 +75,8 @@ quality baseline across the sequence and refresh candidate checks instead of sta
 
 Then inspect, start the available [quality-ratchet](/skills/quality-ratchet) baseline before the
 first mutation, classify review, implement, check the candidate, adapt, review the diff, and verify
-the final candidate. The ratchet allows bounded behavior-preserving improvement on the touched
+the final candidate. The implementation is the smallest complete one of the settled shape, with
+what it replaces removed first. The ratchet also allows bounded improvement on the touched
 surface, but its raw counts are evidence rather than gates. Run its candidate check before the
 semantic review and pass the evidence to that review. Diff review automatically applies the
 [simplify](/skills/simplify) review lens before the candidate is frozen, so supported
@@ -196,7 +197,9 @@ Batch workers stay in their assigned task workspace and return a commit SHA, cha
 and remaining uncertainty. The coordinator owns integration, aggregate review, and aggregate
 verification.
 
-Before implementation, look for existing behavior and contract owners through quality-ratchet.
+Before implementation, settle the shape: the unit's `Target shape` when it has one, otherwise
+quality-ratchet's shape decision, which looks at existing behavior and contract owners and asks
+whether their design still fits.
 Use a bounded experiment only for a solution-changing uncertainty that observation can settle.
 At each unit boundary, recommend the next action and continue only while the original request
 covers the remaining ready work. One authorized issue never grants authority for its whole epic.

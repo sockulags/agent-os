@@ -31,6 +31,13 @@ Leave a touched test file no worse than you found it. When you add a case, merge
 same rule into one table-driven test, name tests by the rule they protect rather than the issue that
 added them, and remove assertions the new case makes redundant.
 
+Judge the existing cases in a test file you touch, and the tests of code you reshape, by two
+imagined edits. Break the behavior: the test must fail. Change only the internals: the test must
+still pass. Rewrite a case that fails either edit so it drives the public behavior, or delete it
+when another case already protects that behavior or the behavior is gone. This needs no separate
+approval; name each deleted test and its reason in the report. A large suite is no reason to delete,
+and a test locked by `lock-test` stays as it is.
+
 For a confirmed bug, establish one reproducing regression check when practical, prove it fails for
 the expected reason, fix it, then run that check and relevant affected tests. Expand execution only
 when the blast radius is uncertain, shared infrastructure changed, or project policy requires a

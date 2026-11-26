@@ -103,8 +103,9 @@ through the work loop and the review gate.
 
 ## Work loop
 
-1. Inspect enough of the affected system to choose a coherent change. Apply quality-ratchet's
-   reuse and responsibility guidance before writing. If a solution-changing uncertainty remains,
+1. Inspect enough of the affected system to choose a coherent change. Settle the shape before
+   writing: the unit's `Target shape` when it has one, otherwise quality-ratchet's shape decision.
+   If a solution-changing uncertainty remains,
    use the [experiment decision](../shape-work/references/prototypes.md); clear tasks need no prototype.
 2. If available, run [`quality-ratchet`](../quality-ratchet/SKILL.md)'s `begin` before the first
    mutation. It captures the exact worktree entry state without stashing or editing user files; an
@@ -112,8 +113,9 @@ through the work loop and the review gate.
 3. Classify the review gate before editing. If review is required, confirm the current tool list
    contains a real reviewer launch tool before mutation. Re-evaluate the gate against the completed
    diff.
-4. Make the smallest complete implementation. Allow only the quality-ratchet's bounded,
-   behavior-preserving improvement on the touched surface. Use `diagnose-before-fix` when the
+4. Make the smallest complete implementation of that shape, removing what it replaces before
+   adding to it. Beyond the shape, allow only the quality-ratchet's bounded improvement on the
+   touched surface. Use `diagnose-before-fix` when the
    cause is unknown and `scope-guard` when discoveries threaten the boundary.
 5. Apply [`proportional-testing`](../proportional-testing/SKILL.md) when selecting or creating tests.
    Run fast, relevant checks while working and adapt from their results.

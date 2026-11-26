@@ -26,7 +26,8 @@
         "check-work.md#CW-P8 EN pull request review",
         "check-work.md#CW-P9 EN last commit",
         "check-work.md#CW-P10 EN HO auth changes",
-        "check-work.md#CW-P11 Unneeded test"
+        "check-work.md#CW-P11 Unneeded test",
+        "check-work.md#CW-P12 Explaining comment"
       ],
       "negative": [
         "check-work.md#CW-N1 Test-only request",
@@ -146,14 +147,16 @@
         "record-lesson.md#RL-P8 EN repeated correction",
         "record-lesson.md#RL-P9 EN HO wrong file",
         "record-lesson.md#RL-P10 EN remember",
-        "record-lesson.md#RL-P11 One-off correction"
+        "record-lesson.md#RL-P11 One-off correction",
+        "record-lesson.md#RL-P12 Enforcement level"
       ],
       "negative": [
         "record-lesson.md#RL-N1 Session detail",
         "record-lesson.md#RL-N2 Already recorded",
         "record-lesson.md#RL-N3 Clarifying question",
         "record-lesson.md#RL-N4 Requested iteration",
-        "record-lesson.md#RL-N5 EN clarifying question"
+        "record-lesson.md#RL-N5 EN clarifying question",
+        "record-lesson.md#RL-N6 Judgment lesson"
       ]
     },
     "capture-intent": {
@@ -247,7 +250,8 @@
         "scope-guard.md#Positive EN1",
         "scope-guard.md#Positive EN2",
         "scope-guard.md#Positive EN3",
-        "scope-guard.md#Positive EN4 HO"
+        "scope-guard.md#Positive EN4 HO",
+        "scope-guard.md#Positive 5 \u2014 required reshape"
       ],
       "negative": [
         "scope-guard.md#Negative 1",
@@ -266,7 +270,8 @@
         "proportional-testing.md#Positive EN1",
         "proportional-testing.md#Positive EN2",
         "proportional-testing.md#Positive EN3",
-        "proportional-testing.md#Positive EN4 HO"
+        "proportional-testing.md#Positive EN4 HO",
+        "proportional-testing.md#Positive 5 \u2014 existing coupled test"
       ],
       "negative": [
         "proportional-testing.md#Negative 1",
@@ -288,7 +293,9 @@
         "quality-ratchet.md#Positive EN1",
         "quality-ratchet.md#Positive EN2",
         "quality-ratchet.md#Positive EN3",
-        "quality-ratchet.md#Positive EN4 HO"
+        "quality-ratchet.md#Positive EN4 HO",
+        "quality-ratchet.md#Positive 8 \u2014 outgrown pattern",
+        "quality-ratchet.md#Positive 9 \u2014 workaround comment"
       ],
       "negative": [
         "quality-ratchet.md#Negative 1 \u2014 legitimate runtime selection",
@@ -297,7 +304,9 @@
         "quality-ratchet.md#Negative 4 \u2014 missing analyzers",
         "quality-ratchet.md#Negative 5 \u2014 advisory exception signal",
         "quality-ratchet.md#Negative 6 \u2014 dynamic test cache",
-        "quality-ratchet.md#Negative EN1"
+        "quality-ratchet.md#Negative EN1",
+        "quality-ratchet.md#Negative 7 \u2014 design still fits",
+        "quality-ratchet.md#Negative 8 \u2014 comments that stay"
       ]
     },
     "simplify": {
@@ -329,14 +338,16 @@
         "shape-work.md#SW-P8 Shared example",
         "shape-work.md#SW-P9 Bounded unit",
         "shape-work.md#SW-P10 Issues only",
-        "shape-work.md#SW-P11 No writable tracker"
+        "shape-work.md#SW-P11 No writable tracker",
+        "shape-work.md#SW-P12 Target shape"
       ],
       "negative": [
         "shape-work.md#SW-N1",
         "shape-work.md#SW-N2",
         "shape-work.md#SW-N3",
         "shape-work.md#SW-N4 Routine evidence",
-        "shape-work.md#SW-N5 One-line unit"
+        "shape-work.md#SW-N5 One-line unit",
+        "shape-work.md#SW-N6 Design already fits"
       ]
     },
     "verify-before-done": {

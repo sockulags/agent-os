@@ -23,9 +23,10 @@ or public API compatibility, each with one sentence on why.>
   loss risk, a broken public contract, or an edit to an accepted intent or spec.
 - **Should fix:** a defect with limited impact; changed behavior that no existing test, type, or lint
   rule protects; a new test that duplicates an existing one, asserts internal calls or module
-  structure instead of behavior, or copies setup a shared fixture already covers; or complexity the
-  change does not need.
-- **Minor:** naming, comments, or local readability. Report at most <three> minor findings per review.
+  structure instead of behavior, or copies setup a shared fixture already covers; an old path left
+  beside its replacement; a comment in the touched code that explains the project's own code,
+  narrates it, or suppresses a correctness rule; or complexity the change does not need.
+- **Minor:** naming or local readability. Report at most <three> minor findings per review.
 
 ## Out of scope for review
 

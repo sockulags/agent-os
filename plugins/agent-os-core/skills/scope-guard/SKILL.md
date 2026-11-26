@@ -38,6 +38,12 @@ through `shape-work`.
 Behavior-preserving extraction within the touched surface is allowed when it clarifies responsibility
 or reuses an existing contract. Do not classify every new helper as an architecture change.
 
+A unit's `Target shape` is part of the boundary: the reshape and the removals it names are required
+work. For work without a unit, the same holds for the shape the implementation needs in the code it
+touches and the callers that must move with it, as agent-os-dev's quality-ratchet decides it. Either
+one needs a new decision only when it changes a public interface, adds a dependency, or reaches
+beyond those callers.
+
 For an actionable adjacent item, search for an existing issue first. If the request or project
 policy authorizes follow-up issue creation, and no explicit read-only instruction forbids it, create
 or update one concrete follow-up with its problem, impact, and acceptance condition. Otherwise
