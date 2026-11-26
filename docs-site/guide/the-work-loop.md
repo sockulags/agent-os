@@ -87,11 +87,15 @@ The automatic disciplines run in every session, and agent-os-dev pairs the impor
   boundary, and the guard hook blocks edits to it during delivery;
 - `diagnose-before-fix` establishes a supported cause and commits the failing test first; the guard
   hook keeps that test locked until the fix passes;
-- `quality-ratchet` records exact entry and candidate evidence; its Stop hook blocks a turn that ends
-  with a stale check or a failed required check from `.agent-os/quality.json`;
+- `quality-ratchet` decides the shape the touched code should have before the first edit, instead of
+  repeating the existing pattern, removes comments that explain the project's own code, and records
+  exact entry and candidate evidence; its Stop hook blocks a turn that ends with a stale check or a
+  failed required check from `.agent-os/quality.json`;
 - `verify-before-done` matches completion claims to fresh evidence;
-- `proportional-testing` picks the smallest test set that still guards the change;
-- `record-lesson` treats corrections as misunderstanding signals and offers to keep the durable ones.
+- `proportional-testing` picks the smallest test set that still guards the change, and rewrites or
+  deletes existing tests in touched files that do not protect behavior;
+- `record-lesson` treats corrections as misunderstanding signals and offers to keep the durable
+  ones, as structure, a check, or a test before policy prose.
 
 Status is never written into the files during delivery. A draft pull request with
 `Intent-Unit: <intent-id>/<unit-key>` claims a unit, so several people can deliver units of the same

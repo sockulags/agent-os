@@ -63,13 +63,18 @@ writes out what it is accountable for and cites its source, and when the two dis
 `built_on` marks restated text stale when the spec changes. Before publishing, shape-work reads each
 unit as a worker who has only it and the repository, adds whatever that worker would have to guess,
 and removes whatever would not change what they build or check. A unit is a work order, not a design
-document: a one-line change gets one-line fields, a typical unit fits in about 4,000 characters, it
+document. Its `Target shape` field is where the structure is decided before delivery: how the
+touched code should be organized as if the requirement had been there from the start, and what the
+unit removes on the way, such as the old path and its callers, tests that protect only the replaced
+implementation, and comments that explain a workaround. An existing pattern does not decide it, and
+`extend as is` with a reason is a valid answer. Because the removals are written into the unit,
+[scope-guard](/skills/scope-guard) treats them as required work rather than drift. A one-line change gets one-line fields, a typical unit fits in about 4,000 characters, it
 carries only the decisions a worker could otherwise get wrong and at most three risks, and it holds
 no code or implementation steps.
 
 For an initiative, `plan.md` lists each unit as `- [U1] title`, optionally followed by ` — depends on U1` and
 ` — blocked: reason`, and gives each unit a `### U1 title` section with its outcome, boundaries,
-change surface, written-out acceptance, ground truth, what it consumes from each dependency, settled
+change surface, target shape, written-out acceptance, ground truth, what it consumes from each dependency, settled
 decisions, delivery target, and open risks. Unit keys never change. Delivery status is never
 written into the plan: a draft pull request with `Intent-Unit: <intent-id>/<unit-key>` claims a unit,
 and its merge delivers it. An issue without an intent is claimed by a draft pull request that links

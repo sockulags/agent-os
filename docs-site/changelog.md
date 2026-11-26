@@ -8,6 +8,40 @@ description: What changed in each agent-os release, in plain terms.
 One entry per release: what changed, and what it means for how you work. Full commit-level history
 lives on [GitHub](https://github.com/sockulags/agent-os/commits/main).
 
+## 0.19.0 — 2026-11-26
+
+Agents decide how the touched code should be organized before they change it, instead of extending
+whatever pattern is already there. Until now planning settled the product, delivery asked for the
+smallest change that reuses what exists, and `scope-guard` sorted every rewrite as adjacent work, so
+a pattern that had stopped fitting was repeated with each new change.
+
+- **Target shape in every unit:** `shape-work` writes a `Target shape` field that names the
+  structure the code should have as if the requirement had been there from the start, and what the
+  unit removes on the way: the old path and its callers, tests that protect only the replaced
+  implementation, and comments that explain a workaround. `extend as is` with a reason is a valid
+  answer. Units shaped before this release have no such field; delivery then makes the decision
+  itself.
+- **Shape decision without a unit:** `quality-ratchet` makes the same decision before the first
+  edit, removes what the change makes dead before it adds, and moves callers in the same change.
+  `deliver-work` builds the smallest complete implementation of that shape. `scope-guard` counts the
+  reshape of the touched code and its callers as required work, unless it changes a public
+  interface, adds a dependency, or reaches further.
+- **Comments that explain the project's own code go:** in the code a change touches, the agent
+  deletes comments that explain why code is odd, what it works around, or that it must not be
+  changed, narration, commented-out code, and suppressions of correctness rules, and fixes what each
+  points at. When the fix reaches beyond the touched code, the comment still goes and the rest is
+  reported as an open item. License headers, public contract documentation, issue links, stylistic
+  suppressions, and notes on behavior an external dependency forces stay.
+- **Existing tests are judged too:** `proportional-testing` rewrites or deletes a test in a touched
+  file that passes when the behavior breaks or fails when only the internals change, and names each
+  deleted test in the report. A test locked by `lock-test` is left alone.
+- **Review:** `check-work` and the `REVIEW.md` template treat an old path left beside its
+  replacement, a target shape not reached with no reason, and an explaining comment as Should fix
+  findings. An existing `REVIEW.md` keeps its old text until you update it.
+- **Lessons at the strongest level:** `record-lesson` offers a lesson as a structural change, then a
+  type, lint rule, hook, or validator, then a test, and as policy prose last. Each policy line ends
+  with what enforces it, or `prose only`.
+
 ## 0.18.0 — 2026-11-23
 
 Tests are treated as code to maintain, not only as evidence for a change. In one project the agents'

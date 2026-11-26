@@ -82,7 +82,7 @@ Always on; no invocation.
 |---|---|---|---|
 | [`diagnose-before-fix`](/skills/diagnose-before-fix) | discipline | automatic | Reproduce and root-cause before patching |
 | [`proportional-testing`](/skills/proportional-testing) | discipline | automatic | Minimum meaningful regression coverage |
-| [`quality-ratchet`](/skills/quality-ratchet) | discipline | automatic | Compare exact entry and candidate evidence without score gates |
+| [`quality-ratchet`](/skills/quality-ratchet) | discipline | automatic | Decide the shape first, then compare entry and candidate evidence without score gates |
 
 The agent-os-dev hooks back several disciplines: the quality-ratchet Stop gate, and the guard hooks
 described in [Guard hooks](/reference/guards).

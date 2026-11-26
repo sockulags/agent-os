@@ -24,6 +24,13 @@ as evidence, or folds into the existing case for the same rule. A touched test f
 cases for the same rule merge into one table-driven test named by that rule, and assertions the new
 case makes redundant go.
 
+Existing cases in a touched test file, and the tests of code that is reshaped, are judged by two
+imagined edits: break the behavior and the test must fail, change only the internals and it must
+still pass. A case that fails either edit is rewritten to drive the public behavior, or deleted when
+another case already protects that behavior or the behavior is gone. That needs no separate
+approval, and each deleted test is named with its reason in the report. A large suite is no reason
+to delete, and a test locked by `lock-test` stays as it is.
+
 For a confirmed bug, one reproducing regression check is established when practical, shown to fail
 for the expected reason, and rerun after the fix. Relevant affected tests follow; broader suites are
 reserved for uncertain blast radius, shared infrastructure, or required repository gates.

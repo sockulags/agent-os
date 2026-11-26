@@ -23,6 +23,11 @@ delegation, framework boilerplate, private structure, mocks of the project's own
 that reproduce the implementation. A behavior-preserving refactor should not force broad test
 rewrites.
 
+Existing tests are held to the same standard when their file is touched or the code they cover is
+reshaped. Break the behavior and the test must fail; change only the internals and it must still
+pass. A test that fails either edit is rewritten to drive the public behavior, or deleted when
+another test already protects that behavior or the behavior is gone.
+
 ## Reuse before adding
 
 Search before writing. Prefer extending an existing behavioral test, adding a table-driven case,

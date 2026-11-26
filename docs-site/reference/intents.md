@@ -106,6 +106,7 @@ the project policy asks for them.
 Outcome: `GET /reports/:id/export` returns the active filtered result as CSV.
 Boundaries: no UI (U2), no Excel (U3).
 Change surface: the report query in `reports/service.ts`, a new route beside `reports/routes.ts`.
+Target shape: extend as is; the export reuses the report query, so no second query path is added.
 Acceptance:
 - Given a filter matching 3 rows, when exported, then the CSV holds those 3 rows (spec example 1).
 - Given a user without report access, when exporting, then the response is 403 (spec example 2).

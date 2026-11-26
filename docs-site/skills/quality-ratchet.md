@@ -1,8 +1,8 @@
 ---
 title: quality-ratchet
-description: Keep implementation quality from regressing without turning delivery into cleanup.
-skill-description: Quality ratchet for code you are implementing or about to deliver, so the touched code ends up no worse than it was. Records the entry state before the first edit, compares the candidate with it, and keeps cleanup bounded to the code the change touches. Use when adding a feature or changing existing code, when reviewing your own implementation or candidate before delivery, and when the user says things like don't make it worse, keep it at least as clean as it is now, no quality regressions compared with main, tidy it up while you're there but only what you touch, check the candidate, or this has too many layers. Not for repository-wide tech-debt hunts, reviewing someone else's pull request, or cutting line counts.
-summary: Compare exact entry and candidate evidence without score gates
+description: Decide the shape the change needs and keep implementation quality from regressing without turning delivery into cleanup.
+skill-description: Quality ratchet for code you are implementing or about to deliver, so the touched code ends up in the shape the change needs and no worse than it was. Decides that shape before the first edit instead of repeating the existing pattern, records the entry state, compares the candidate with it, and keeps cleanup bounded to the code the change touches. Use when adding a feature or changing existing code, when reviewing your own implementation or candidate before delivery, and when the user says things like don't make it worse, keep it at least as clean as it is now, no quality regressions compared with main, tidy it up while you're there but only what you touch, check the candidate, or this has too many layers. Not for repository-wide tech-debt hunts, reviewing someone else's pull request, or cutting line counts.
+summary: Decide the shape first, then compare entry and candidate evidence without score gates
 ---
 
 # quality-ratchet
@@ -13,12 +13,42 @@ summary: Compare exact entry and candidate evidence without score gates
 the exact Git worktree state at the implementation entry point. It does not score the patch, enforce
 raw LOC thresholds, or replace semantic review.
 
+## Shape decision
+
+Before the first edit the agent decides what shape the touched code should have with the change in
+it, by asking what it would build if the requirement had been there from the start. An existing
+pattern shows what fit when it was written and is not a rule to repeat. When the existing design
+still fits, its owner is extended. When it does not, the touched code is reshaped, its callers move
+in the same change, and the old path is not left beside the new one. Removal comes first: what the
+change makes dead goes, including tests that protect only the replaced implementation. A delivery
+unit's `Target shape` is this decision already made by [shape-work](/skills/shape-work); when the
+code shows a better shape inside the same outcome and boundaries, the agent builds that one and
+states the difference and the reason. The
+decision covers the touched code and the callers it must move; a larger reshape is reported as the
+one adjacent opportunity.
+
+## Comments
+
+A comment that explains the project's own code is treated as a defect in that code. That covers a
+comment that says why the code is odd, what it works around, or that it must not be changed,
+narration of what the next lines do, commented-out code, and a lint or type suppression whose rule
+guards correctness or safety. The agent adds none. In the code the change touches it deletes every
+such comment and fixes what the comment points at in the same change: it reshapes or renames until
+the behavior is obvious, fixes the suppressed error, or encodes a `do not change` constraint as a
+type, test, or lint rule. When that fix reaches beyond the touched code, the comment still goes, the
+smallest fix that fits is made, and the symbol and what remains are reported as an open item. When
+it is unclear whether a comment may stay, it goes.
+
+Only these stay: license headers, documentation of a public contract, a link to an issue or
+specification for a constraint the code cannot express, a suppression of a rule that is only
+stylistic, and a note on behavior that an external dependency, platform, or protocol forces.
+
 ## Delivery loop
 
 When the discipline is available, `deliver-work` runs:
 
 1. the loaded skill's `scripts/quality-delta.mjs begin` before the first mutation;
-2. the bounded implementation, including behavior-preserving improvement on the touched surface;
+2. the implementation of the decided shape, including bounded improvement on the touched surface;
 3. the same installed runner's `check` command before `simplify` review mode;
 4. the normal simplification, correctness, security, scope, independent-review, and verification
    gates;

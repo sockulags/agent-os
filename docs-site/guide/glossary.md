@@ -104,12 +104,17 @@ disagree, the spec wins.
 **Stale.** A spec or plan whose `built_on` revision is older than its source. Nothing is shaped or
 delivered from it until someone checks it again.
 
+**Target shape.** The field of a unit that says how the touched code should be organized once the
+unit is delivered, decided as if the requirement had been there from the start, and what the unit
+removes on the way. `extend as is` means the existing design already fits. Without a unit,
+[`quality-ratchet`](/skills/quality-ratchet) makes the same decision before the first edit.
+
 **Tracker mandate.** A section in the project policy that allows the agent to write to an issue
 tracker such as GitHub Issues or Jira beyond the new issues `shape-work` creates. Without it, the
 agent reports other tracker changes instead of making them.
 
 **Unit.** One piece of delivery: the smallest result that is useful or can be checked on its own,
-usually one tracker issue and one pull request. A unit names its outcome, boundaries, the code to change, acceptance, and
+usually one tracker issue and one pull request. A unit names its outcome, boundaries, the code to change, its target shape, acceptance, and
 ground truth.
 
 **Workflow file.** `.agent-os/workflow.md`, the per-project file with the routes, the tracker, where

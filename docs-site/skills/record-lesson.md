@@ -38,5 +38,15 @@ skill stops with the exact lesson text as a handoff.
 
 The lesson lands as the smallest rule the next agent can act on, with the observed failure that
 motivates it. An existing line with the same meaning is updated rather than duplicated, a line the
-lesson proves wrong is deleted, and the resulting diff is shown. A machine-checkable lesson belongs
-in a test, script, hook, or validator, with at most a pointer left in policy prose.
+lesson proves wrong is deleted, and the resulting diff is shown.
+
+## Choose the enforcement
+
+Nothing fails when an agent skips a sentence, and an agent copies the nearest example before it
+reads policy. The lesson is offered at the highest level that works: a change that makes the mistake
+impossible, with the old way deleted so nothing is left to copy; then a type, lint rule, hook, or
+validator whose error names what to use instead; then a test; and policy prose last, for judgment
+that nothing can check. The first three change the repository, so they need the person's agreement
+and follow the project's delivery rules, and a change larger than the current task is offered as a
+follow-up while the prose rule holds the place. Each policy line ends with what enforces it, or
+`prose only`. A correction that repeats a `prose only` rule moves it up a level.

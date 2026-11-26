@@ -66,6 +66,7 @@ source: files
 Outcome:
 Boundaries:
 Change surface:
+Target shape:
 Acceptance:
 Ground truth:
 Dependencies:
@@ -110,6 +111,7 @@ Status: ready | blocked
 ## Outcome
 ## Boundaries
 ## Change surface
+## Target shape
 ## Acceptance
 ## Ground truth
 ## Dependencies

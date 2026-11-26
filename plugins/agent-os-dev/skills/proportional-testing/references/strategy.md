@@ -28,6 +28,11 @@ Before adding coverage, search for an existing behavioral test. Prefer extending
 to a table-driven test, and reusing its fixtures. One strong regression test is better than several
 tests with equivalent setup and assertions.
 
+Existing tests are held to the same standard when you touch their file or reshape the code they
+cover. Imagine breaking the behavior: the test must fail. Imagine changing only the internals: it
+must still pass. Rewrite a test that fails either edit so it drives the public behavior, or delete
+it when another test already protects that behavior or the behavior is gone.
+
 ## Choose the cheapest sufficient level
 
 Use a focused unit or component test when it can prove the contract. Use integration or end-to-end

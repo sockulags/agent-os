@@ -46,7 +46,7 @@ truth, and `plan.md` for delivery units. See the
 | `check-work` | workflow | automatic | Independently review a candidate and report or fix supported findings |
 | `diagnose-before-fix` | discipline | automatic | Reproduce and root-cause before patching |
 | `proportional-testing` | discipline | automatic | Minimum meaningful regression coverage |
-| `quality-ratchet` | discipline | automatic | Compare exact entry and candidate evidence without score gates |
+| `quality-ratchet` | discipline | automatic | Decide the shape first, then compare entry and candidate evidence without score gates |
 
 Manual skills carry `disable-model-invocation: true` (Claude) and `agents/openai.yaml` with
 `policy.allow_implicit_invocation: false` (Codex). Automatic skills carry neither gate; their
