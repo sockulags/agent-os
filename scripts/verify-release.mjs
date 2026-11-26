@@ -12,6 +12,7 @@ const packageJson = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 
 const version = process.argv[2] || packageJson.version
 const tag = `v${version}`
 const packageSpec = `${packageJson.name}@${version}`
+const githubRepository = packageJson.repository.replace(/^https:\/\//, '')
 
 if (!/^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/.test(version)) {
   throw new Error('Usage: node scripts/verify-release.mjs <stable-version>')
@@ -74,13 +75,13 @@ function checkGitHubRelease() {
   run('git', ['merge-base', '--is-ancestor', tagCommit, mainCommit])
 
   const release = readJson('gh', [
-    'release', 'view', tag, '--json', 'isDraft,isPrerelease,tagName,url'
+    'release', 'view', tag, '--repo', githubRepository, '--json', 'isDraft,isPrerelease,tagName,url'
   ])
   assert(release.tagName === tag && !release.isDraft && !release.isPrerelease,
     `${tag} must have a published stable GitHub Release`)
 
   const runs = readJson('gh', [
-    'run', 'list', '--branch', 'main', '--limit', '30',
+    'run', 'list', '--repo', githubRepository, '--branch', 'main', '--limit', '30',
     '--json', 'workflowName,status,conclusion,headSha,url'
   ])
   for (const workflow of ['Validate', 'Docs']) {
@@ -116,8 +117,8 @@ function checkNpmPackage() {
     const publicName = run('npm', [
       'pack', '--silent', packageSpec, '--pack-destination', publicPackRoot
     ])
-    run('tar', ['-xf', path.join(localPackRoot, localName), '-C', localExtractRoot])
-    run('tar', ['-xf', path.join(publicPackRoot, publicName), '-C', publicExtractRoot])
+    run('tar', ['-xf', localName, '-C', path.relative(localPackRoot, localExtractRoot)], { cwd: localPackRoot })
+    run('tar', ['-xf', publicName, '-C', path.relative(publicPackRoot, publicExtractRoot)], { cwd: publicPackRoot })
 
     const localPackageRoot = path.join(localExtractRoot, 'package')
     const publicPackageRoot = path.join(publicExtractRoot, 'package')

@@ -66,8 +66,9 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           VERSION="$(node -p "require('./package.json').version")"
-          for attempt in 1 2 3 4 5 6; do
+          for attempt in $(seq 1 30); do
             node scripts/verify-release.mjs "$VERSION" && exit 0
+            echo "Attempt $attempt of 30 did not verify; the registry can take several minutes to serve a new version."
             sleep 30
           done
           exit 1
