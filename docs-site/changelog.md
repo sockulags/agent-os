@@ -8,6 +8,20 @@ description: What changed in each agent-os release, in plain terms.
 One entry per release: what changed, and what it means for how you work. Full commit-level history
 lives on [GitHub](https://github.com/sockulags/agent-os/commits/main).
 
+## 0.19.1 — 2026-11-26
+
+Fixes for updating a plugin installation and for verifying a release. No skill changed.
+
+- **Claude plugin update:** `npx @sockulags/agent-os update --method plugin` ran
+  `claude plugin install`, which leaves an already installed plugin at its old version. It now runs
+  `claude plugin update` after the install, so the plugins move to the new version. If you updated a
+  Claude plugin installation to 0.19.0 with the installer, run the update again or check the result
+  with `npx @sockulags/agent-os@latest doctor`.
+- **Release verification:** the publish workflow waits up to fifteen minutes for the npm registry to
+  serve a new version, instead of three. `verify-release.mjs` names the GitHub repository
+  explicitly, so a `GH_HOST` that points at another host no longer breaks it, and it runs from Git
+  Bash on Windows.
+
 ## 0.19.0 — 2026-11-26
 
 Agents decide how the touched code should be organized before they change it, instead of extending
