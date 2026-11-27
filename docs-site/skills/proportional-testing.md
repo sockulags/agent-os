@@ -13,8 +13,17 @@ Prevents small changes from accumulating broad, redundant, or implementation-cou
 
 Before adding a test, the agent identifies the changed observable behavior, searches existing
 coverage, and names a realistic regression the new test would catch. If there is no clear answer,
-the test is not added. Existing or table-driven tests are extended when practical, and the cheapest
-sufficient test level is preferred.
+the test is not added. Existing or table-driven tests are extended when practical.
+
+The unit under test is a rule or a flow, not a file. Behavior that passes through several of the
+project's own layers gets a flow test: it enters where a caller enters, runs the real code
+underneath, and replaces only what lies outside the system, such as another service, the browser,
+object storage, or the clock. A rule with many input combinations, or a branch a flow cannot reach
+cheaply, gets a focused test on the code that decides it. Code that only forwards gets no test. The
+level is not copied from the nearest existing test, shared setup is reused instead of copied, and
+the cases a flow test replaces are deleted in the same change after the behavior has been broken
+once to see the flow test fail. A flow test that needs a database is registered the way the project
+runs such tests, and the report says whether the delivery gate runs it.
 
 A test that proves the change is not automatically committed. It stays in the suite only as a
 lasting guard: it protects observable behavior, no existing test, type, or lint rule already catches
