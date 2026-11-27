@@ -37,12 +37,33 @@ same behavior with slightly different wording or fixtures.
 Before adding another test, ask: **What realistic regression would this catch that existing tests,
 types, and lint rules would not?** If there is no clear answer, do not add it.
 
-## Use the cheapest sufficient level
+## Choose the level that proves the behavior
 
-Use a focused unit or component test when it proves the contract. Escalate to integration or
-end-to-end only when the behavior genuinely depends on those boundaries. Mock real system
-boundaries rather than internal implementation. Balance protection against execution time,
-maintenance, flakiness, setup complexity, and duplication.
+Test a rule or a flow, not a file. A test file per source file, each testing its layer against a
+mock of the layer below, checks that every layer calls the next one and leaves the lowest layer,
+where data is filtered and written, least tested. It also grows with the code, because every
+forwarding function gets a test although it decides nothing.
+
+- **A flow through several of the project's own layers** is tested by entering where a caller
+  enters and running the real code underneath, against the real database when one is involved. Only
+  what lies outside the system is replaced: another service, an identity provider, the browser,
+  object storage, the clock.
+- **A rule with many input combinations**, or a branch a flow cannot reach cheaply such as a race or
+  a rare failure, gets a focused test on the code that decides it, with mocks only at real system
+  boundaries.
+- **Code that only forwards** gets no test of its own.
+
+The level is not taken from the nearest existing test. When behavior crosses layers, the agent
+writes the flow test, breaks the behavior once to see it fail, and removes the cases it replaces.
+Flow setup lives in one shared test-support module instead of being copied into each file. A flow
+test that needs a service protects nothing unless the delivery gate runs it, so the agent registers
+it the way the project runs such tests and reports whether the gate includes it.
+
+Balance protection against execution time, maintenance, flakiness, setup complexity, and
+duplication.
+
+In one project, six unit test files with 63 cases caught 40 of 73 deliberately introduced faults in
+a flow. Sixteen flow tests with 29 of the old cases kept caught 58, in fewer lines.
 
 ## Bug fixes
 

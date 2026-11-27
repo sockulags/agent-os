@@ -33,11 +33,33 @@ cover. Imagine breaking the behavior: the test must fail. Imagine changing only 
 must still pass. Rewrite a test that fails either edit so it drives the public behavior, or delete
 it when another test already protects that behavior or the behavior is gone.
 
-## Choose the cheapest sufficient level
+## Choose the level that proves the behavior
 
-Use a focused unit or component test when it can prove the contract. Use integration or end-to-end
-tests only when the behavior depends on boundaries they exercise. Mock genuine system boundaries,
-not every internal dependency.
+Test a rule or a flow, not a file. A test file per source file, each testing its layer against a
+mock of the layer below, checks that every layer calls the next one and leaves the lowest layer,
+where data is filtered and written, least tested. It also grows with the code: every forwarding
+function gets a test although it decides nothing.
+
+Pick the level by where the behavior can be observed:
+
+- **A flow through several of the project's own layers** is proven by entering where a caller
+  enters and running the real code underneath, against the real database when one is involved.
+  Replace only what lies outside the system: another service, an identity provider, the browser,
+  object storage, the clock. One such test checks the argument order, the mapping and the query
+  together, which a test per layer cannot.
+- **A rule with many input combinations**, or a branch a flow cannot reach cheaply such as a race or
+  a rare failure, is proven by a focused test on the code that decides it. Mock genuine system
+  boundaries there, not the project's own modules.
+- **Code that only forwards** gets no test of its own.
+
+Do not take the level from the nearest existing test. An existing file-by-file test shows what was
+written before; when the behavior crosses layers, write the flow test and remove the cases it
+replaces, after breaking the behavior once to see the flow test fail.
+
+Keep flow setup in one shared place, such as a test-support module that builds the schema, the
+seed data and a signed-in user in one call. Copying that setup into each test file is where test
+code grows fastest. A flow test that needs a service must run in the delivery gate to protect
+anything: register it the way the project runs such tests and report whether the gate includes it.
 
 Keep unit tests fast, deterministic, and isolated. If a test needs broad application startup,
 external infrastructure, network access, substantial global state, or expensive fixtures, classify

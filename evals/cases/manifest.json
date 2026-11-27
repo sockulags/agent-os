@@ -271,14 +271,19 @@
         "proportional-testing.md#Positive EN2",
         "proportional-testing.md#Positive EN3",
         "proportional-testing.md#Positive EN4 HO",
-        "proportional-testing.md#Positive 5 \u2014 existing coupled test"
+        "proportional-testing.md#Positive 5 \u2014 existing coupled test",
+        "proportional-testing.md#Positive 6 \u2014 flow across layers",
+        "proportional-testing.md#Positive 7 \u2014 flow replaces mocked cases",
+        "proportional-testing.md#Positive 8 \u2014 opt-in flow test"
       ],
       "negative": [
         "proportional-testing.md#Negative 1",
         "proportional-testing.md#Negative 2",
         "proportional-testing.md#Negative 3 \u2014 count-driven deletion",
         "proportional-testing.md#Negative EN1",
-        "proportional-testing.md#Negative EN2 HO"
+        "proportional-testing.md#Negative EN2 HO",
+        "proportional-testing.md#Negative 4 \u2014 combinations stay focused",
+        "proportional-testing.md#Negative 5 \u2014 forwarding function"
       ]
     },
     "quality-ratchet": {
